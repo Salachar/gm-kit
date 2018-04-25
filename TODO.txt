@@ -1,0 +1,9 @@
+TODO:
+    - One way walls, for elevation
+    - Give the walls a clearer border color
+        - FIXED
+    - Wall end dragging
+    - Map moving with middle or right mouse click and drag
+    - Map moving with edge hover
+        - FIXED
+    - Option to see light on display window

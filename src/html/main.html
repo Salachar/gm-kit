@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Map Editor</title>
+        <link rel="stylesheet" href="../css/style.css"></link>
+        <script src="../js/config.js"></script>
+    </head>
+
+    <body>
+        <div id="toast"></div>
+
+        <div id="controls">
+            <div id="load_files" class="button">Load</div>
+            <div id="save_map" class="button">Save</div>
+            <div id="save_all_maps" class="button">Save All</div>
+
+            <div id="wall_snap_end" class="radio radio_snap"></div>
+            <div class="radio_label">Snap End</div>
+            <div id="wall_snap_line" class="radio radio_snap"></div>
+            <div class="radio_label">Snap Line</div>
+            <div id="wall_snap_none" class="radio radio_snap checked"></div>
+            <div class="radio_label">Snap None</div>
+
+            <div id="help" class="button">Help</div>
+
+            <div id="create_door" class="checkbox"></div>
+            <div class="checkbox_label">Door</div>
+        </div>
+
+        <div id="help_box" class="hide">
+            <table id="help_table">
+                <tr>
+                    <th class="help_key">Key</th>
+                    <th></th>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">+</td>
+                    <td class="help_desc">Zoom in on the currently selected map</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">-</td>
+                    <td class="help_desc">Zoom out on the currently selected map</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">SHIFT</td>
+                    <td class="help_desc">Hold down to allow quick placement of walls</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">ESC</td>
+                    <td class="help_desc">Cancel current placements (main for Light Links)</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">A</td>
+                    <td class="help_desc">Place light</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">E</td>
+                    <td class="help_desc">Enable map lighting</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">D</td>
+                    <td class="help_desc">Disable map lighting</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">L</td>
+                    <td class="help_desc">Lighting disabled: Begin placing Light Links.<br>Lighting enabled: Add light at opposite Link closest to mouse</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">O</td>
+                    <td class="help_desc">Toggle closest door to mouse</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">T</td>
+                    <td class="help_desc">Switch closest door to wall or vice versa</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">R</td>
+                    <td class="help_desc">Remove object closest to mouse</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">S</td>
+                    <td class="help_desc">Put map on second window</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">[</td>
+                    <td class="help_desc">Increase dimmer overlay on display window</td>
+                </tr>
+                <tr class="help_section">
+                    <td class="help_key">]</td>
+                    <td class="help_desc">Decrease dimmer overlay on display window</td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="map_tabs"></div>
+
+        <div id="no_map_screen">
+            <div id="no_map_screen_load">CLICK TO<br>LOAD MAP</div>
+        </div>
+
+        <div id="map_container">
+            <div id="map_scroll_top" class="map_scroller"></div>
+            <div id="map_scroll_right" class="map_scroller"></div>
+            <div id="map_scroll_bottom" class="map_scroller"></div>
+            <div id="map_scroll_left" class="map_scroller"></div>
+        </div>
+
+        <div id="map_list_modal_wrap" class="hidden">
+            <div id="map_list_modal">
+                <div id="map_list_modal_title">
+                    Choose the map or file to load:
+                    <div id="map_list_modal_open" class="button">OPEN SELECTED</div>
+                    <div id="map_list_modal_close"></div>
+                </div>
+                <div id="map_list_modal_body"></div>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        require('../js/main.js')
+    </script>
+</html>
