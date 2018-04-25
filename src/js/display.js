@@ -1,4 +1,3 @@
-// const FileManager = require('./file_manager');
 const SoundManager = require('./sound_manager');
 const QuadrantManager = require('./quadrant_manager');
 const MapInstance = require('./map/map');
@@ -79,12 +78,6 @@ class DisplayManager {
             this.onMapLoad(map);
         });
 
-        // IPC.on('event', (e, event) => {
-        //     this.onEvent(event.event, event.data.data, {
-        //         map_name: event.data.map_name
-        //     });
-        // });
-
         window.addEventListener('message', (e) => {
             let event = e.data;
 
@@ -146,7 +139,6 @@ class DisplayManager {
 }
 
 $(document).ready(() => {
-    // CONFIG.params.window = 'display';
     DISPLAY_WINDOW = true;
 
     window.SoundManager = new SoundManager();
@@ -161,12 +153,9 @@ $(document).ready(() => {
         window.DisplayManager.onEvent(event, data);
     }
 
-    console.log(window.opener);
     window.opener.postMessage({
         event: 'display_window_loaded'
     });
-    // window.opener.post
-    // IPC.send('display_window_loaded');
 });
 
 $(window).resize(function () {

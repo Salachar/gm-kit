@@ -327,8 +327,9 @@ class CanvasManager {
     drawLight (opts) {
         opts = opts || {};
         window.requestAnimationFrame(() => {
+            // if (!this.parent.lighting_enabled) return;
+            const light_polys = opts.polys || this.parent.LightManager.getAllLightPolygons(opts);
             if (!this.parent.lighting_enabled) return;
-            const light_polys = this.parent.LightManager.getAllLightPolygons(opts);
             // Refresh the Fog of War Canvas (full transparent gray after this)
             this.drawFogOfWar();
             // Cut the lights out of the shadow context, shadow context only

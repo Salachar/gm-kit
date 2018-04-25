@@ -373,6 +373,15 @@ class MapInstance {
 
     onEvent (event, data) {
         switch (event) {
+            case 'light_poly_update':
+                if (DISPLAY_WINDOW) {
+                    this.CanvasManager.drawLight({
+                        force_update: true,
+                        polys: data
+                    });
+                }
+                break;
+
             case 'image_loaded':
                 this.SegmentManager.updateBounds(data);
                 if (DISPLAY_WINDOW) {
@@ -444,7 +453,6 @@ class MapInstance {
                 break;
 
             case 'light_move':
-                console.log('light_move');
                 this.LightManager.moveLight(data);
                 break;
 

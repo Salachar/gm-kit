@@ -16,6 +16,4 @@ describe('Light Manager', function () {
         const lights_length = Object.keys(this.light_manager.lights).length;
         expect(lights_length).to.equal(0);
     });
-
-    // it
 });

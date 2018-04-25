@@ -170,7 +170,6 @@ class SegmentManager {
 	}
 
 	addSegment (opts) {
-        console.log(opts);
         opts = opts || {};
         let { door, segment } = opts;
 

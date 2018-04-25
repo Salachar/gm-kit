@@ -69,7 +69,7 @@ function createWindow (opts) {
 
     windows[wt].loadURL(window_url);
 
-    // windows[wt].webContents.openDevTools();
+    windows[wt].webContents.openDevTools();
 
     if (wt === 'main') {
         windows[wt].on('closed', function () {
@@ -142,36 +142,6 @@ IPC.on('save_map', (e, maps) => {
         text: 'Map(s) successfully saved'
     });
 });
-
-// IPC.on('display_window', (e, map) => {
-//     // If the window is created, we just need to send the map
-//     if (windows.display) {
-//         windows.display.send('display_map', map);
-//         return;
-//     }
-
-//     // Otherwise we need to create the window and wait
-//     // for the ready event to send the map
-//     display_map = map;
-//     if (!windows.display) {
-//         createWindow({
-//             type: 'display'
-//         });
-//     }
-// });
-
-// IPC.on('display_window_loaded', (e) => {
-//     windows.display.send('display_map', display_map);
-//     display_map = null;
-// });
-
-// IPC.on('event', (e, event) => {
-//     if (event.window === 'display') {
-//         windows.main.send('event', event);
-//     } else if (windows.display) {
-//         windows.display.send('event', event);
-//     }
-// });
 
 function generateMapList () {
     let map_list = {};

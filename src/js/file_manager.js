@@ -22,10 +22,7 @@ class FileManager {
     }
 
     createFileTree (map_list) {
-        // debugger;
         this.map_list = map_list;
-
-        console.log(map_list);
 
         this.el_modal_body.innerHTML = '';
         this.addSection(map_list, this.el_modal_body);

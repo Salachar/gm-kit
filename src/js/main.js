@@ -138,7 +138,6 @@ class MapManager {
     }
 
     showInDisplayWindow () {
-        console.log('showInDisplayWindow');
         let current_map_data =  (this.current_map || {}).data || {};
 
         if (window.display_window && !window.display_window.closed) {
@@ -149,18 +148,13 @@ class MapManager {
             return;
         }
 
-        window.display_window =  window.open('../html/display.html', 'electron', 'autoHideMenuBar=1,titleBarStyle=hidden' );
-
-        // IPC.send('display_window', (this.current_map || {}).data || {});
+        window.display_window =  window.open('../html/display.html', 'electron', 'autoHideMenuBar=1,titleBarStyle=hidden');
     }
 
     setEvents () {
         window.addEventListener('message', (e) => {
             let event = e.data;
-
-            console.log(e);
             if (event.event === 'display_window_loaded') {
-                console.log('stuff');
                 this.showInDisplayWindow();
                 return;
             }
@@ -292,10 +286,6 @@ class MapManager {
                     break;
             }
         });
-
-        // IPC.on('event', (e, event) => {
-        //     // console.log(event);
-        // });
     }
 }
 
@@ -306,36 +296,9 @@ $(document).ready(() => {
     window.MapManager = new MapManager();
     window.Mouse = new Mouse();
 
-    const no_propogate = {
+    const propogate = {
         'image_loaded': true,
-        'first_light_link_placed': true,
-        'second_light_link_placed': true,
-        'enable_light': true,
-        'disable_light': true,
-        'place_link': false,
-        'cancel_placements': true,
-        'switch_wall_door': false,
-        'quick_place_started': true,
-        'quick_place_ended': true,
-        'toggle_closest_door': false,
-        'add_light': false,
-        'add_segment': false,
-        'light_moved': true,
-        'light_added': true,
-        'light_move': false,
-        'lights_cleared': false,
-        'select_light': false,
-        'deselect_light': false,
-        'select_door': false,
-        'deselect_door': false,
-        'door_drag': false,
-        'door_activated': false,
-        'draw_walls': false,
-        'remove_closest': false,
-        'remove_light': false,
-        'remove_wall': false,
-        'remove_door': false,
-        'remove_light_link': false,
+        'light_poly_update': true,
         'scroll_left': 'ALT',
         'scroll_right': 'ALT',
         'scroll_up': 'ALT',
@@ -345,15 +308,12 @@ $(document).ready(() => {
     window.fireEvent = (event, data) => {
         window.MapManager.onEvent(event, data);
 
-        // Don't send the event if it is ALT-able and ALT isnt down.
-        if (no_propogate[event] === 'ALT' && !KEY_DOWN[KEYS.ALT]) return;
+        if (propogate[event] === 'ALT' && !KEY_DOWN[KEYS.ALT]) return;
 
-        // Don't send the event if we don't want it to propogate at all.
-        if (no_propogate[event] === true) return;
+        if (!propogate[event]) return;
 
         if (window.display_window) {
             window.display_window.postMessage({
-                window: CONFIG.params.window,
                 event: event,
                 data: {
                     map_name: window.MapManager.current_map.name,
@@ -361,15 +321,6 @@ $(document).ready(() => {
                 }
             });
         }
-
-        // IPC.send('event', {
-        //     window: CONFIG.params.window,
-        //     event: event,
-        //     data: {
-        //         map_name: window.MapManager.current_map.name,
-        //         data: data
-        //     }
-        // });
     }
 });
 

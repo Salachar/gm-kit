@@ -123,18 +123,12 @@ class LightManager {
     }
 
     getAllLightPolygons (opts) {
-        // Get all of the light polygons
         opts = opts || {};
         let polys = [];
-        // if (this.lights.length) {
-        //     for (var i = 0; i < this.lights.length; ++i) {
-        //         polys.push(this.getLightPolygon(this.lights[i], opts.force_update));
-        //     }
-        // }
         for (let l in this.lights) {
             polys.push(this.getLightPolygon(this.lights[l], opts.force_update));
         }
-
+        fireEvent('light_poly_update', polys);
         return polys;
     }
 
@@ -155,7 +149,6 @@ class LightManager {
             var dist = Math.sqrt(x_sq + y_sq);
 
             if (dist < this.light_width) {
-                // this.selected_light = light;
                 fireEvent('select_light', {
                     id: light.id
                 });
