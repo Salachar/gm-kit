@@ -18,7 +18,14 @@ class FileManager {
         this.el_modal_body = document.getElementById('map_list_modal_body');
         this.el_open_button = document.getElementById('map_list_modal_open');
 
+        this.addInfoTitle();
         this.setEvents();
+    }
+
+    addInfoTitle () {
+        if (!CONFIG.params.map_dir) return;
+        let map_dir_location = document.getElementById('map_dir_location');
+        map_dir_location.setAttribute('title', CONFIG.params.map_dir);
     }
 
     createFileTree (map_list) {
@@ -36,7 +43,7 @@ class FileManager {
                 addTo: node
             });
             let section_title = createElement('div', 'map_list_section_title', {
-                html: s,
+                html: s.replace(/_/g, ' '),
                 addTo: section_node
             });
             let section_container = createElement('div', 'map_list_section_container', {

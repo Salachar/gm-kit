@@ -8,8 +8,6 @@ class SegmentManager {
     	this.walls = (map.json || {}).walls || [];
     	this.doors = (map.json || {}).doors || [];
 
-        this.door_grab_dist = 20;
-        // this.create_door = false;
         this.selected_door = null;
 
     	this.quadrants = {
@@ -236,7 +234,7 @@ class SegmentManager {
             var y_sq = (y2 - y1) * (y2 - y1);
             var dist = Math.sqrt(x_sq + y_sq);
 
-            if (dist < this.door_grab_dist) {
+            if (dist <= CONFIG.door_grab_dist) {
                 fireEvent('select_door', {
                     index: i,
                     grab_point: 'p1'
@@ -251,7 +249,7 @@ class SegmentManager {
             y_sq = (y2 - y1) * (y2 - y1);
             dist = Math.sqrt(x_sq + y_sq);
 
-            if (dist < this.door_grab_dist) {
+            if (dist <= CONFIG.door_grab_dist) {
                 fireEvent('select_door', {
                     index: i,
                     grab_point: 'p2'
@@ -454,10 +452,6 @@ class SegmentManager {
         }
 
         return null;
-    }
-
-    toggleBetweenDoorAndWall () {
-
     }
 
 	updateBounds (opts) {

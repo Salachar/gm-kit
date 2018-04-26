@@ -47,6 +47,8 @@ let CONFIG = {
 
     create_door: false,
 
+    door_grab_dist: 20,
+
     quick_place: false,
 
     params: {},

@@ -11,6 +11,7 @@ const url = require('url')
 
 const base_dir = 'maps';
 let map_dir = '';
+let map_dir_exists = false;
 
 let LOCAL = false;
 
@@ -35,6 +36,13 @@ function generateMapDir () {
         app_path_split.pop();
         app_path_split.push(base_dir);
         map_dir = app_path_split.join(dir_split);
+    }
+
+    if (fs.existsSync(map_dir)) {
+        map_dir_exists = true;
+    } else {
+        map_dir_exists = false;
+        fs.mkdirSync(map_dir);
     }
 }
 

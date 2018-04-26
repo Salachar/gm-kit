@@ -380,7 +380,7 @@ html, body {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 100;
+    z-index: 200;
 }
 
 #map_list_modal {
@@ -407,6 +407,10 @@ html, body {
     right: 0;
     box-shadow: 0px 1px 2px 2px #444;
     z-index: 101;
+}
+
+#map_dir_location {
+    cursor: pointer;
 }
 
 #map_list_modal_open {
@@ -449,6 +453,7 @@ html, body {
     padding: 0.3rem 0.5rem;
     background-color: #555;
     /*cursor: pointer;*/
+    text-transform: capitalize;
 }
 
 .map_list_section_container {

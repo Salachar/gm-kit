@@ -7,3 +7,25 @@ TODO:
     - Map moving with edge hover
         - FIXED
     - Option to see light on display window
+
+Newly Added:
+    - Arrow Key Scrolling:
+        Selected window will now scroll with the arrow keys
+    - Edge Hover Scrolling:
+        Hover over the edge of the map to scroll in that direction
+    - Secondary Window scrolling using Main Window:
+        Holding 'ALT' and doing one of the above scrolling methods
+        on the Main Window will scroll the Secondary Window
+    - One second delay to edge hovering
+        To prevent unwanted edge hovering when moving out of the map area
+        the user must stay on the hover location for one second before scrolling
+        will start
+    - Map Dir Creation:
+        If the maps directory location doesn't exist, which should be
+        located next to the executable, one will now be created
+    - Map Dir Location Info:
+        On the map selection modal, there is no an info icon, hovering over
+        this will tell you where the maps directory is located on your
+        machine
+    - Improved Lighting Performance on Secondary Display
+    - Improved section titles on the map select modal
