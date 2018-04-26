@@ -46,14 +46,10 @@ function generateMapDir () {
     }
 }
 
-function createWindow (opts) {
+function createWindow () {
     generateMapDir();
 
-    opts = opts || {};
-
-    // "main" || "display"
-    opts.type = opts.type || 'main';
-    const wt = opts.type;
+    const wt = 'main';
 
     windows[wt] = new BrowserWindow({
         width: 1000,
@@ -77,7 +73,7 @@ function createWindow (opts) {
 
     windows[wt].loadURL(window_url);
 
-    windows[wt].webContents.openDevTools();
+    // windows[wt].webContents.openDevTools();
 
     if (wt === 'main') {
         windows[wt].on('closed', function () {
