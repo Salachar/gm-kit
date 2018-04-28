@@ -180,7 +180,7 @@ class SegmentManager {
 
 	    if (s.p1x === s.p2x && s.p1y === s.p2y) {
 	        console.log('Wall/Door points are the same, not adding');
-	    } else if ((CONFIG.snap.end || CONFIG.snap.line) && dist < CONFIG.snap.distance) {
+	    } else if (((CONFIG.snap.end || CONFIG.snap.line) && !CONFIG.quick_place) && dist < CONFIG.snap.distance) {
 	        console.log('Wall/Door is too short, not adding');
 	    } else if (door) {
 	        this.addDoor(s);

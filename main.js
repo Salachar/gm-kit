@@ -218,7 +218,6 @@ function generateMapList () {
 
         if (!LOCAL) relative_directory = relative_directory.replace(base_dir, '');
 
-
         if (file_obj.image) {
             if (LOCAL) {
                 file_obj.image = path.join(__dirname, relative_directory + '/' + file_obj.image);
@@ -238,8 +237,8 @@ function generateMapList () {
         let curr = map_list;
         for (let i = 0; i <= dir_split.length; ++i) {
             if (i === dir_split.length) {
-                // We've created the full path in the map_list, now add the
-                // file under the file name
+                // We've created the full path in the map_list, now
+                // add the file under the file name
                 curr[file_obj.name] = file_obj;
             } else {
                 // Keep moving through map_list and create objects when needed
