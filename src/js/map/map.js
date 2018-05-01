@@ -4,6 +4,8 @@ const LightManager = require('./light_manager');
 const LinkManager = require('./link_manager');
 const ObjectManager = require('./object_manager');
 
+const getNormal = require('../helpers').getNormal;
+
 class MapInstance {
     constructor (map = {}) {
         this.map = map;
@@ -21,6 +23,16 @@ class MapInstance {
         this.LightManager = new LightManager(map, this);
         this.LinkManager = new LinkManager(map, this);
         this.ObjectManager = new ObjectManager(this);
+
+        this.last_quickplace_coord = {
+            x: null,
+            y: null
+        };
+
+        this.one_way_wall = {
+            segment: null,
+            points: null
+        };
 
         // Stuff
         this.node = this.CanvasManager.canvas_container;
@@ -138,19 +150,15 @@ class MapInstance {
                 break;
             case KEYS.LEFT:
                 fireEvent('scroll_left');
-                // this.CanvasManager.scrollLeft();
                 break;
             case KEYS.RIGHT:
                 fireEvent('scroll_right');
-                // this.CanvasManager.scrollRight();
                 break;
             case KEYS.UP:
                 fireEvent('scroll_up');
-                // this.CanvasManager.scrollUp();
                 break;
             case KEYS.DOWN:
                 fireEvent('scroll_down');
-                // this.CanvasManager.scrollDown();
                 break;
             default:
                 break;
@@ -177,33 +185,23 @@ class MapInstance {
             return this.SegmentManager.checkForDoors();
         }
 
-        if (CONFIG.quick_place) {
-            return fireEvent('add_segment', {
-                segment: {
-                    p1x: Mouse.upX,
-                    p1y: Mouse.upY,
-                    p2x: Mouse.downX,
-                    p2y: Mouse.downY
-                },
-                door: CONFIG.create_door
-            });
-        }
-
-        if (CONFIG.snap.end) {
-            var point = this.SegmentManager.checkForWallEnds({
-                show_indicator: false
-            });
-            if (point) {
-                this.SegmentManager.new_wall.start.x = point.x;
-                this.SegmentManager.new_wall.start.y = point.y;
-                return;
+        if (CONFIG.create_one_way_wall) {
+            if (this.one_way_wall.points && this.one_way_wall.segment) {
+                this.one_way_wall.segment.one_way = this.one_way_wall.points;
             }
+            return;
         }
 
-        if (CONFIG.snap.line) {
-            var point = this.SegmentManager.checkForWallLines({
+        if (CONFIG.quick_place) {
+            return this.mouseDownQuickPlace();
+        }
+
+        if (CONFIG.snap.end || CONFIG.snap.line) {
+            let wall_function = (CONFIG.snap.end) ? 'checkForWallEnds' : 'checkForWallLines';
+            let point = this.SegmentManager[wall_function]({
                 show_indicator: false
             });
+
             if (point) {
                 this.SegmentManager.new_wall.start.x = point.x;
                 this.SegmentManager.new_wall.start.y = point.y;
@@ -217,8 +215,29 @@ class MapInstance {
         this.SegmentManager.new_wall.start.y = Mouse.downY;
     }
 
+    mouseDownQuickPlace () {
+        let new_segment = {
+            p1x: this.last_quickplace_coord.x,
+            p1y: this.last_quickplace_coord.y,
+            p2x: Mouse.downX,
+            p2y: Mouse.downY
+        }
+
+        this.last_quickplace_coord.x = Mouse.downX;
+        this.last_quickplace_coord.y = Mouse.downY;
+
+        return fireEvent('add_segment', {
+            segment: new_segment,
+            door: CONFIG.create_door
+        });
+    }
+
     mouseUp () {
         if (!Mouse.left) return;
+
+        if (CONFIG.create_one_way_wall) {
+            return;
+        }
 
         if (this.LightManager.selected_light) {
             return fireEvent('deselect_light');
@@ -232,35 +251,43 @@ class MapInstance {
             return;
         }
 
-        var new_wall = null;
+        var new_wall = {
+            p1x: this.SegmentManager.new_wall.start.x,
+            p1y: this.SegmentManager.new_wall.start.y,
+            p2x: Mouse.upX,
+            p2y: Mouse.upY
+        };
+
         // If the snap indicator is showing, then we dont want to put the point on the mouse
         // but where the indicator is showing instead.
         if (CONFIG.snap.indicator.show) {
-            new_wall = {
-                p1x: this.SegmentManager.new_wall.start.x,
-                p1y: this.SegmentManager.new_wall.start.y,
-                p2x: CONFIG.snap.indicator.x,
-                p2y: CONFIG.snap.indicator.y
-            };
-        } else {
-            new_wall = {
-                p1x: this.SegmentManager.new_wall.start.x,
-                p1y: this.SegmentManager.new_wall.start.y,
-                p2x: Mouse.upX,
-                p2y: Mouse.upY
-            };
+            new_wall.p2x = CONFIG.snap.indicator.x;
+            new_wall.p2y = CONFIG.snap.indicator.y;
         }
+
+        this.last_quickplace_coord.x = new_wall.p2x;
+        this.last_quickplace_coord.y = new_wall.p2y;
 
         fireEvent('add_segment', {
             segment: new_wall,
             door: CONFIG.create_door
         });
-        this.CanvasManager.drawPlacements();
     }
 
     mouseMove () {
-        if (Mouse.down && Mouse.left && DISPLAY_WINDOW) {
-            this.CanvasManager.moveMap();
+        if (CONFIG.create_one_way_wall) {
+            let closest_wall = this.ObjectManager.findClosest('wall')
+            let one_way_info = getNormal(closest_wall);
+            if (one_way_info) {
+                this.one_way_wall.segment = closest_wall.segment;
+                this.one_way_wall.points = one_way_info;
+            } else {
+                this.one_way_wall.segment = null;
+                this.one_way_wall.points = null;
+            }
+
+            this.CanvasManager.drawPlacements();
+            this.CanvasManager.drawWallLines();
             return;
         }
 
@@ -276,75 +303,16 @@ class MapInstance {
         }
 
         if (this.lighting_enabled && this.SegmentManager.selected_door) {
-            let selected_door = this.SegmentManager.selected_door;
-
-            if (!selected_door.p1_grab && !selected_door.p2_grab) return;
-
-            // Determine what point was grabbed and what point is stationary
-            var point_to_move_x = null;
-            var point_to_move_y = null;
-            var still_point_x = null;
-            var still_point_y = null;
-            if (selected_door.p1_grab) {
-                point_to_move_x = (selected_door.temp_p1x) ? 'temp_p1x' : 'p1x';
-                point_to_move_y = (selected_door.temp_p1y) ? 'temp_p1y' : 'p1y';
-                still_point_x = (selected_door.temp_p2x) ? 'temp_p2x' : 'p2x';
-                still_point_y = (selected_door.temp_p2y) ? 'temp_p2y' : 'p2y';
-            }
-            if (selected_door.p2_grab) {
-                point_to_move_x = (selected_door.temp_p2x) ? 'temp_p2x' : 'p2x';
-                point_to_move_y = (selected_door.temp_p2y) ? 'temp_p2y' : 'p2y';
-                still_point_x = (selected_door.temp_p1x) ? 'temp_p1x' : 'p1x';
-                still_point_y = (selected_door.temp_p1y) ? 'temp_p1y' : 'p1y';
-            }
-
-            // Get the vector from the mouse to the part of
-            // the door not moving (the hinge). The door will be
-            // along this line
-            var v1 = Mouse.x - selected_door[still_point_x];
-            var v2 = Mouse.y - selected_door[still_point_y];
-
-            // Get the unit fot that vector
-            var v_mag = Math.sqrt((v1 * v1) + (v2 * v2));
-            var u1 = v1 / v_mag;
-            var u2 = v2 / v_mag;
-
-            // If there is no length for the door, we need to get it
-            if (!selected_door.length) {
-                var seg_x = selected_door.p1x - selected_door.p2x;
-                var seg_y = selected_door.p1y - selected_door.p2y;
-                var seg_l = Math.sqrt((seg_x * seg_x) + (seg_y * seg_y));
-                selected_door.length = seg_l;
-            }
-
-            // Unit vector * door length = new vector for door
-            var d_u1 = u1 * selected_door.length;
-            var d_u2 = u2 * selected_door.length;
-
-            // Get the new temporary ending point for the door
-            var new_p1 = selected_door[still_point_x] + d_u1;
-            var new_p2 = selected_door[still_point_y] + d_u2;
-
-            // No "temp" means this is the first time the door is being moved
-            // otherwise its an update to an already opened door
-            let point_info = {};
-            if (point_to_move_x.indexOf('temp') === -1) {
-                point_info['temp_' + point_to_move_x] = new_p1;
-                point_info['temp_' + point_to_move_y] = new_p2;
-            } else {
-                point_info[point_to_move_x] = new_p1;
-                point_info[point_to_move_y] = new_p2;
-            }
-
-            fireEvent('door_drag', point_info);
-
-            return;
+            return this.dragDoor();
         }
 
         if (this.lighting_enabled) return;
 
         if (Mouse.down || CONFIG.quick_place) {
             this.CanvasManager.drawPlacements();
+
+            if (CONFIG.quick_place) return;
+
             if (CONFIG.snap.end) {
                 this.SegmentManager.checkForWallEnds({
                     show_indicator: true
@@ -356,6 +324,70 @@ class MapInstance {
                 });
             }
         }
+    }
+
+    dragDoor () {
+        let selected_door = this.SegmentManager.selected_door;
+
+        if (!selected_door.p1_grab && !selected_door.p2_grab) return;
+
+        // Determine what point was grabbed and what point is stationary
+        var point_to_move_x = null;
+        var point_to_move_y = null;
+        var still_point_x = null;
+        var still_point_y = null;
+        if (selected_door.p1_grab) {
+            point_to_move_x = (selected_door.temp_p1x) ? 'temp_p1x' : 'p1x';
+            point_to_move_y = (selected_door.temp_p1y) ? 'temp_p1y' : 'p1y';
+            still_point_x = (selected_door.temp_p2x) ? 'temp_p2x' : 'p2x';
+            still_point_y = (selected_door.temp_p2y) ? 'temp_p2y' : 'p2y';
+        }
+        if (selected_door.p2_grab) {
+            point_to_move_x = (selected_door.temp_p2x) ? 'temp_p2x' : 'p2x';
+            point_to_move_y = (selected_door.temp_p2y) ? 'temp_p2y' : 'p2y';
+            still_point_x = (selected_door.temp_p1x) ? 'temp_p1x' : 'p1x';
+            still_point_y = (selected_door.temp_p1y) ? 'temp_p1y' : 'p1y';
+        }
+
+        // Get the vector from the mouse to the part of
+        // the door not moving (the hinge). The door will be
+        // along this line
+        var v1 = Mouse.x - selected_door[still_point_x];
+        var v2 = Mouse.y - selected_door[still_point_y];
+
+        // Get the unit fot that vector
+        var v_mag = Math.sqrt((v1 * v1) + (v2 * v2));
+        var u1 = v1 / v_mag;
+        var u2 = v2 / v_mag;
+
+        // If there is no length for the door, we need to get it
+        if (!selected_door.length) {
+            var seg_x = selected_door.p1x - selected_door.p2x;
+            var seg_y = selected_door.p1y - selected_door.p2y;
+            var seg_l = Math.sqrt((seg_x * seg_x) + (seg_y * seg_y));
+            selected_door.length = seg_l;
+        }
+
+        // Unit vector * door length = new vector for door
+        var d_u1 = u1 * selected_door.length;
+        var d_u2 = u2 * selected_door.length;
+
+        // Get the new temporary ending point for the door
+        var new_p1 = selected_door[still_point_x] + d_u1;
+        var new_p2 = selected_door[still_point_y] + d_u2;
+
+        // No "temp" means this is the first time the door is being moved
+        // otherwise its an update to an already opened door
+        let point_info = {};
+        if (point_to_move_x.indexOf('temp') === -1) {
+            point_info['temp_' + point_to_move_x] = new_p1;
+            point_info['temp_' + point_to_move_y] = new_p2;
+        } else {
+            point_info[point_to_move_x] = new_p1;
+            point_info[point_to_move_y] = new_p2;
+        }
+
+        return fireEvent('door_drag', point_info);
     }
 
     enableLight () {
@@ -437,6 +469,7 @@ class MapInstance {
                 this.SegmentManager.addSegment(data);
                 CONFIG.snap.indicator.show = false;
                 this.CanvasManager.drawWallLines();
+                this.CanvasManager.drawPlacements();
                 if (this.lighting_enabled) {
                     this.SegmentManager.clearSegments();
                     this.SegmentManager.prepareSegments();

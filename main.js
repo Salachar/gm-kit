@@ -73,7 +73,7 @@ function createWindow () {
 
     windows[wt].loadURL(window_url);
 
-    // windows[wt].webContents.openDevTools();
+    windows[wt].webContents.openDevTools();
 
     if (wt === 'main') {
         windows[wt].on('closed', function () {

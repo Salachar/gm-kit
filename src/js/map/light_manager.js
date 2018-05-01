@@ -1,3 +1,5 @@
+const pDistance = require('../helpers').pDistance;
+
 class LightManager {
     constructor (map = {}, parent) {
         this.map = map;
@@ -73,6 +75,13 @@ class LightManager {
 
                     // Continue to the next wall if there was no intersect info.
                     if (!info) continue;
+
+                    // We intersected a one way wall
+                    if (s.one_way) {
+                        let dist_open = pDistance(light, s.one_way.open).distance;
+                        let dist_closed = pDistance(light, s.one_way.closed).distance;
+                        if (dist_open > dist_closed) continue;
+                    }
 
                     // If there was intersect info, check if the intersected wall is
                     // closer than any previously found wall.

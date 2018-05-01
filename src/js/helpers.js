@@ -37,8 +37,12 @@ const Helpers = {
         return value * value;
     },
 
-    pDistance: function (point, line) {
+    pDistance: function (point, line, opts = {}) {
+        if (!point || !line) return;
+        if (line.segment) line = line.segment;
+
         // The line can also be a light, which will only have an X and a Y
+        // In this case, just calculate the point to point distance and return.
         if (line.x && line.y && !line.p1x) {
             var distance = Math.sqrt(Helpers.sqr(line.x - point.x) + Helpers.sqr(line.y - point.y));
             return {
@@ -84,6 +88,86 @@ const Helpers = {
             x: xx,
             y: yy
         }
+    },
+
+    getNormal (segment) {
+        if (!segment) return;
+        if (segment.segment) segment = segment.segment;
+
+        // Get a perpendicular to the segment
+        // let perp = {
+        //     p1x: segment.p1x,
+        //     p1y: segment.p1y,
+        //     p2x: segment.p2y,
+        //     p2y: segment.p2x * -1
+        // };
+
+        // Get a unit vector of that perpendicular
+        let unit_vector = Helpers.getUnitVector(segment);
+
+        let perp_unit_vector = {
+            x: unit_vector.y,
+            y: unit_vector.x * -1
+        };
+
+        // Get the middle of the origin segment
+        let middle_point = Helpers.getSegmentMiddle(segment);
+
+        // Add some distance to the unit normal (for show)
+        let dist_mod = 20;
+        let mod_vector = {
+            x: perp_unit_vector.x * dist_mod,
+            y: perp_unit_vector.y * dist_mod
+        };
+
+        let point_one = {
+            x: middle_point.x + mod_vector.x,
+            y: middle_point.y + mod_vector.y
+        };
+
+        let point_two = {
+            x: middle_point.x - mod_vector.x,
+            y: middle_point.y - mod_vector.y
+        };
+
+        let dist_one = Helpers.pDistance(Mouse, point_one);
+        let dist_two = Helpers.pDistance(Mouse, point_two);
+
+        if (dist_one.distance <= dist_two.distance) {
+            return {
+                open: point_one,
+                closed: point_two
+            };
+        }
+        return {
+            open: point_two,
+            closed: point_one
+        };
+        // return {
+        //     x: middle_point.x + (unit_vector.x * 5),
+        //     y: middle_point.y + (unit_vector.y * 5)
+        // };
+    },
+
+    getUnitVector (segment) {
+        let vector = {
+            x: segment.p2x - segment.p1x,
+            y: segment.p2y - segment.p1y
+        };
+
+        let mag = Math.sqrt(Helpers.sqr(vector.x) + Helpers.sqr(vector.y));
+
+        return {
+            x: vector.x / mag,
+            y: vector.y / mag
+        };
+    },
+
+    getSegmentMiddle (segment) {
+        return {
+            x: segment.p1x + ((segment.p2x - segment.p1x) * 0.5),
+            y: segment.p1y + ((segment.p2y - segment.p1y) * 0.5)
+        };
     },
 
     createElement: function (type, classes, opts) {

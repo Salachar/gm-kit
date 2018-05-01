@@ -229,6 +229,15 @@ class MapManager {
             this.setRadioState(e.currentTarget);
         });
 
+        document.getElementById('create_one_way_wall').addEventListener('click', (e) => {
+            CONFIG.create_one_way_wall = !CONFIG.create_one_way_wall;
+            if (CONFIG.create_one_way_wall) {
+                e.currentTarget.classList.add('checked');
+            } else {
+                e.currentTarget.classList.remove('checked');
+            }
+        });
+
         document.getElementById('create_door').addEventListener('click', (e) => {
             CONFIG.create_door = !CONFIG.create_door;
             if (CONFIG.create_door) {

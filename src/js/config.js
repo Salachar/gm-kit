@@ -67,7 +67,11 @@ let CONFIG = {
             outer_color: '#0000FF',
             outer_width: 4,
             inner_color: '#FFFFFF',
-            inner_width: 1
+            inner_width: 1,
+            highlight_outer_color: '#FF00FF',
+            highlight_outer_width: 6,
+            highlight_inner_color: '#FFFFFF',
+            highlight_inner_width: 2,
         },
         fog: {
             control: {

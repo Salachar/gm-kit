@@ -1,5 +1,6 @@
 const createElement = require('../helpers').createElement;
 const rgba = require('../helpers').rgba;
+const getNormal = require('../helpers').getNormal;
 
 class CanvasManager {
     constructor (map = {}, parent) {
@@ -192,7 +193,7 @@ class CanvasManager {
         this.control_context.clearRect(0, 0, this.wall_canvas.width, this.wall_canvas.height);
     }
 
-    drawPlacements () {
+    drawPlacements (point) {
         const context = this.control_context;
 
         this.clearControlContext();
@@ -203,6 +204,7 @@ class CanvasManager {
 
         context.save();
             context.lineCap = 'round';
+            this.drawOneWayPoint (context);
             this.drawLinkBeingPlaced(context);
             this.drawWallBeingPlaced(context);
             this.drawSnapIndicator(context);
@@ -240,6 +242,19 @@ class CanvasManager {
         context.restore();
     }
 
+    drawOneWayPoint (context) {
+        if (!CONFIG.create_one_way_wall || !this.parent.one_way_wall.points) return;
+        context.save();
+            this.canvasCircle(
+                context,
+                this.parent.one_way_wall.points.open.x,
+                this.parent.one_way_wall.points.open.y,
+                CONFIG.display.wall.highlight_outer_width,
+                CONFIG.display.wall.highlight_outer_color
+            );
+        context.restore();
+    }
+
     drawLinkBeingPlaced (context) {
         if (this.parent.LinkManager.first.x && this.parent.LinkManager.first.y) {
             this.canvasCircle(context, this.parent.LinkManager.first.x, this.parent.LinkManager.first.y, 30, '#FF0000');
@@ -263,14 +278,43 @@ class CanvasManager {
 
     drawWalls (context) {
         const walls = this.parent.SegmentManager.walls;
+
+        let closest_wall = null;
+        if (CONFIG.create_one_way_wall) {
+            closest_wall = this.parent.ObjectManager.findClosest('wall');
+        }
+
         let wall = null;
         for (var i = 0; i < walls.length; ++i) {
             wall = walls[i];
             context.beginPath();
             context.moveTo(wall.p1x, wall.p1y);
             context.lineTo(wall.p2x, wall.p2y);
-            this.canvasStroke(context, CONFIG.display.wall.outer_color, CONFIG.display.wall.outer_width);
-            this.canvasStroke(context, CONFIG.display.wall.inner_color, CONFIG.display.wall.inner_width);
+
+            if (closest_wall && closest_wall.index === i) {
+                this.canvasStroke(context, CONFIG.display.wall.highlight_outer_color, CONFIG.display.wall.highlight_outer_width);
+                this.canvasStroke(context, CONFIG.display.wall.highlight_inner_color, CONFIG.display.wall.highlight_inner_width);
+            } else {
+                this.canvasStroke(context, CONFIG.display.wall.outer_color, CONFIG.display.wall.outer_width);
+                this.canvasStroke(context, CONFIG.display.wall.inner_color, CONFIG.display.wall.inner_width);
+            }
+
+            if (wall.one_way) {
+                this.canvasCircle(
+                    context,
+                    wall.one_way.open.x,
+                    wall.one_way.open.y,
+                    CONFIG.display.wall.outer_width,
+                    CONFIG.display.wall.outer_color
+                );
+                this.canvasCircle(
+                    context,
+                    wall.one_way.open.x,
+                    wall.one_way.open.y,
+                    CONFIG.display.wall.inner_width,
+                    CONFIG.display.wall.inner_color
+                );
+            }
         }
     }
 
@@ -296,8 +340,9 @@ class CanvasManager {
                 this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
             }
             if (CONFIG.quick_place) {
+                if (!this.parent.last_quickplace_coord.x) return;
                 context.beginPath();
-                context.moveTo(Mouse.upX, Mouse.upY);
+                context.moveTo(this.parent.last_quickplace_coord.x, this.parent.last_quickplace_coord.y);
                 context.lineTo(Mouse.x, Mouse.y);
                 this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
             }
