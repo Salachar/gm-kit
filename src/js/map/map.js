@@ -416,6 +416,7 @@ class MapInstance {
 
             case 'create_one_way_wall_toggled':
                 this.CanvasManager.drawPlacements();
+                this.CanvasManager.drawWallLines();
                 break;
 
             case 'image_loaded':
