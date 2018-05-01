@@ -332,7 +332,7 @@ class CanvasManager {
     }
 
     drawWallBeingPlaced (context) {
-        if (!CONFIG.lighting_enabled) {
+        if (!CONFIG.lighting_enabled && !CONFIG.create_one_way_wall) {
             if (Mouse.down && !CONFIG.quick_place) {
                 context.beginPath();
                 context.moveTo(this.parent.SegmentManager.new_wall.start.x, this.parent.SegmentManager.new_wall.start.y);

@@ -275,23 +275,7 @@ class MapInstance {
     }
 
     mouseMove () {
-        if (CONFIG.create_one_way_wall) {
-            let closest_wall = this.ObjectManager.findClosest('wall')
-            let one_way_info = getNormal(closest_wall);
-            if (one_way_info) {
-                this.one_way_wall.segment = closest_wall.segment;
-                this.one_way_wall.points = one_way_info;
-            } else {
-                this.one_way_wall.segment = null;
-                this.one_way_wall.points = null;
-            }
-
-            this.CanvasManager.drawPlacements();
-            this.CanvasManager.drawWallLines();
-            return;
-        }
-
-        if (!Mouse.left) return;
+        // if (!Mouse.left && !CONFIG.create_one_way_wall) return;
 
         if (this.LightManager.selected_light) {
             fireEvent('light_move', {
@@ -307,6 +291,22 @@ class MapInstance {
         }
 
         if (this.lighting_enabled) return;
+
+        if (CONFIG.create_one_way_wall) {
+            let closest_wall = this.ObjectManager.findClosest('wall')
+            let one_way_info = getNormal(closest_wall);
+            if (one_way_info) {
+                this.one_way_wall.segment = closest_wall.segment;
+                this.one_way_wall.points = one_way_info;
+            } else {
+                this.one_way_wall.segment = null;
+                this.one_way_wall.points = null;
+            }
+
+            this.CanvasManager.drawPlacements();
+            this.CanvasManager.drawWallLines();
+            return;
+        }
 
         if (Mouse.down || CONFIG.quick_place) {
             this.CanvasManager.drawPlacements();
@@ -412,6 +412,10 @@ class MapInstance {
                         polys: data
                     });
                 }
+                break;
+
+            case 'create_one_way_wall_toggled':
+                this.CanvasManager.drawPlacements();
                 break;
 
             case 'image_loaded':
@@ -522,6 +526,10 @@ class MapInstance {
                 break;
 
             case 'draw_walls':
+                this.CanvasManager.drawWallLines();
+                break;
+
+            case 'remove_one_way':
                 this.CanvasManager.drawWallLines();
                 break;
 

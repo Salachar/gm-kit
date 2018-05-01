@@ -236,6 +236,7 @@ class MapManager {
             } else {
                 e.currentTarget.classList.remove('checked');
             }
+            fireEvent('create_one_way_wall_toggled');
         });
 
         document.getElementById('create_door').addEventListener('click', (e) => {

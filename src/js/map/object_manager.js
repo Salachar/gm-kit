@@ -88,17 +88,25 @@ class ObjectManager {
 
         var closest = closest_wall || {distance: 999999999};
         var item = 'wall';
+
         if (closest_door && closest_door.distance < closest.distance) {
             closest = closest_door;
             item = 'door';
         }
+
         if (closest_light_link && closest_light_link.distance < closest.distance) {
             closest = closest_light_link;
             item = 'light_link';
         }
+
         if (closest_light && closest_light.distance < closest.distance) {
             closest = closest_light;
             item = 'light';
+        }
+
+        if (item === 'wall' && closest.segment && closest.segment.one_way) {
+            delete closest.segment.one_way;
+            item = 'one_way';
         }
 
         if (this.parent.lighting_enabled && item !== 'light') return;
