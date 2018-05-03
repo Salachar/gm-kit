@@ -1,14 +1,13 @@
 TODO:
     - One way walls, for elevation
-    - Give the walls a clearer border color
-        - FIXED
     - Wall end dragging
     - Map moving with middle or right mouse click and drag
-    - Map moving with edge hover
-        - FIXED
     - Option to see light on display window
+    - Read in config is present
+    - Let user specify map directory
+        - Gets written to config
 
-Newly Added:
+Updates (4/23/2018):
     - Arrow Key Scrolling:
         Selected window will now scroll with the arrow keys
     - Edge Hover Scrolling:
@@ -29,3 +28,7 @@ Newly Added:
         machine
     - Improved Lighting Performance on Secondary Display
     - Improved section titles on the map select modal
+
+Updates (5/1/2018):
+    - Added One Way Walls for elevation purposes
+    - Added example map
