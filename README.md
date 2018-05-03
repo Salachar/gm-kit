@@ -5,6 +5,12 @@
 - Dual windows allow for DM window to easily control everything the PCs see on the secondary display window
 - Tab support for easily switching maps on the fly
 
+## Map Options
+- **Walls**: Standard light blocking wall, no light can go through
+- **Door**: Blocks light, can toggled open/closed or dragged to be open however much the DM desires (image example below)
+- **One Way Wall** To help with lighting elevation, these walls block light in one direction and let it through in the other (image example below)
+- **Wall Snapping** Toggleable options to make wall placement easer. Snaps walls being placed to end of nearby wall (snap end) or anywhere on the nearby wall (snap line) if ending wall placement within a certain distance
+
 ## Sample Images
 #### DM View
 ![DM View](https://lh3.googleusercontent.com/78_TrFnRghv2toklC9K5skBRMZAxlWbFSrIIqwZUxdLkn5jzpUzuH4SKRr23huck_U4fkbj3IGFPtg7OrvhTTn0BPoHzhi6rN6-0RkKVZyALBJzfarHIFY-gscKKBGSM9O6qKjzauXkrC3eSk58jeT_8KAc5Rn1cActDguHvmiYWqTH2ze5nS3_l4oWHxjQAUX5EfO2PYb7VYwqjsnM-gF1JwPCbzbQ9koWQnENIPwDiCCxP8JrLzVb72aSrKjDddr78nBgxnA4VMceQZPelsLO7zCJrO9uIhAppIZGU-SsZwix_camsYmw20bVgXYkYbNdAOwB-qtwTDY7CaEOHIq7_0deG0ZbTJcNhMHYTuvUyRosBjmEjcz97qHkjz6N4qK-JDyA_hIF2UOs7GTDs0mPOgkk-zBUE-9hUWq4oW0y-LW6YjAbttY9z_IRamO3HLcMaLtGXSuixUpj5cI5qRDEQqVMdq3l2CdqbVqEhhjaisVHiLE9YL0ECv3rc5iDooHGRoHcBi33MKM1RixSOkl3uFR-bN1ElVKE5ktNKyBsniTgIbjx45KeEWygw6qLi2ye8uAMZXTFzOgV5tMeuX2Tztigqz303FNFwP1jXsR3EIbkAR6ZWqfczRmwuCpAl6zexWW5wqg_eZOGPi-v8saFEU8sNE1OC=w1255-h890-no)
