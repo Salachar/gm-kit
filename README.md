@@ -7,8 +7,8 @@
 
 ## Map Options
 - **Walls**: Standard light blocking wall, no light can go through
-- **Door**: Blocks light, can toggled open/closed or dragged to be open however much the DM desires (image example below)
-- **One Way Wall** To help with lighting elevation, these walls block light in one direction and let it through in the other (image example below)
+- **One Way Walls** To help with lighting and elevation, these walls block light in one direction and let it through in the other (image example below)
+- **Doors**: Blocks light, can toggled open/closed or dragged to be open however much the DM desires (image example below)
 - **Wall Snapping** Toggleable options to make wall placement easer. Snaps walls being placed to end of nearby wall (snap end) or anywhere on the nearby wall (snap line) if ending wall placement within a certain distance
 
 ## Sample Images
