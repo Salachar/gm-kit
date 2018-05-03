@@ -7,6 +7,15 @@ TODO:
     - Let user specify map directory
         - Gets written to config
 
+Look Into:
+    - Removing length from wall information, as it is not used
+        - Will need to be removed/added based on toggling walls/doors
+    - Remove Light Links
+        - There are not needed for the dual window application and are legacy
+    - Whole integers for segment x/y, I can't see why rounding to the nearest whole hurts
+        anything and would reduce .json file size (not important) and payload of light data
+        to the secondary screen (more important)
+
 Updates (4/23/2018):
     - Arrow Key Scrolling:
         Selected window will now scroll with the arrow keys
