@@ -1,7 +1,7 @@
 {
   "name": "Map-Editor",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Electron based D&D dynamic lighting application",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,10 +9,7 @@
     "build-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --prune=true --out=build",
     "build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true --out=build"
   },
-  "repository": "",
-  "keywords": [],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Raymond Davidson",
   "devDependencies": {
     "chai": "^4.1.2",
     "electron": "^1.8.4",
