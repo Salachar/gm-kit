@@ -36,6 +36,43 @@ class SegmentManager {
         this.all_segments = null;
     }
 
+    sanitize () {
+        this.walls.forEach((wall) => {
+            wall.p1x = Math.round(wall.p1x);
+            wall.p1y = Math.round(wall.p1y);
+
+            wall.p2x = Math.round(wall.p2x);
+            wall.p2y = Math.round(wall.p2y);
+
+            if (wall.one_way) {
+                wall.one_way.open.x = Math.round(wall.one_way.open.x);
+                wall.one_way.open.y = Math.round(wall.one_way.open.y);
+
+                wall.one_way.closed.x = Math.round(wall.one_way.closed.x);
+                wall.one_way.closed.y = Math.round(wall.one_way.closed.y);
+            }
+
+            delete wall.length
+        });
+
+        this.doors.forEach((door) => {
+            door.p1x = Math.round(door.p1x);
+            door.p1y = Math.round(door.p1y);
+
+            door.p2x = Math.round(door.p2x);
+            door.p2y = Math.round(door.p2y);
+
+            // Delete all the useless shit we don't need in the save data
+            // for a door.
+            delete door.temp_p1x;
+            delete door.temp_p1y;
+            delete door.temp_p2x;
+            delete door.temp_p2y;
+            delete door.length;
+            delete door.open;
+        });
+    }
+
     prepareSegments () {
         this.all_segments = this.allSegments();
         this.createQuadrants();
@@ -190,15 +227,18 @@ class SegmentManager {
 	}
 
 	finalizeSegment (segment) {
-	    segment.p1x = parseFloat(segment.p1x.toFixed(2), 10);
-	    segment.p1y = parseFloat(segment.p1y.toFixed(2), 10);
-	    segment.p2x = parseFloat(segment.p2x.toFixed(2), 10);
-	    segment.p2y = parseFloat(segment.p2y.toFixed(2), 10);
-	    segment.length = this.segmentLength(segment);
+        // There is no reason to need floating point precicsion for pixel placement
+        // All wall points will round the same up or down and will still "connect"
+        // properly even after rounded
+	    segment.p1x = Math.round(segment.p1x);
+	    segment.p1y = Math.round(segment.p1y);
+	    segment.p2x = Math.round(segment.p2x);
+	    segment.p2y = Math.round(segment.p2y);
 	    return segment;
 	}
 
 	segmentLength (segment) {
+        // Currently only doors use this for the purpose of the door dragging
 	    var seg_x = segment.p1x - segment.p2x;
 	    var seg_y = segment.p1y - segment.p2y;
 	    var seg_l = Math.sqrt((seg_x * seg_x) + (seg_y * seg_y));

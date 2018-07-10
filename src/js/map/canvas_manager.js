@@ -205,7 +205,6 @@ class CanvasManager {
         context.save();
             context.lineCap = 'round';
             this.drawOneWayPoint (context);
-            this.drawLinkBeingPlaced(context);
             this.drawWallBeingPlaced(context);
             this.drawSnapIndicator(context);
         context.restore();
@@ -218,7 +217,6 @@ class CanvasManager {
         if (!this.draw_walls) return;
 
         context.save();
-            this.drawLightLinks(context);
             context.lineCap = 'round';
             this.drawWalls(context);
             this.drawDoors(context);
@@ -253,27 +251,6 @@ class CanvasManager {
                 CONFIG.display.wall.highlight_outer_color
             );
         context.restore();
-    }
-
-    drawLinkBeingPlaced (context) {
-        if (this.parent.LinkManager.first.x && this.parent.LinkManager.first.y) {
-            this.canvasCircle(context, this.parent.LinkManager.first.x, this.parent.LinkManager.first.y, 30, '#FF0000');
-        }
-    }
-
-    drawLightLinks (context) {
-        const links = this.parent.LinkManager.links;
-        let link = null;
-        for (let i = 0; i < links.length; ++i) {
-            link = links[i];
-            let color = rgba(120, 120, 200, 0.5);
-            this.canvasCircle(context, link.first.x, link.first.y, 30, color);
-            this.canvasCircle(context, link.second.x, link.second.y, 30, color);
-            context.beginPath();
-            context.moveTo(link.first.x, link.first.y);
-            context.lineTo(link.second.x, link.second.y);
-            this.canvasStroke(context, color, 6);
-        }
     }
 
     drawWalls (context) {

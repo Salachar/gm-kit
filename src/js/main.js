@@ -151,7 +151,25 @@ class MapManager {
             return;
         }
 
-        window.display_window =  window.open('../html/display.html', 'electron', 'autoHideMenuBar=1,titleBarStyle=hidden');
+        const window_options = {
+            autoHideMenuBar: 1,
+            titleBarStyle: 'hidden',
+            width: 1280,
+            height: 720,
+            top: 360,
+            left: 3500,
+        };
+
+        let option_param = '';
+        for (let x in window_options) {
+            option_param += x + '=' + window_options[x] + ','
+        }
+
+        window.display_window =  window.open(
+            '../html/display.html',
+            'electron',
+            option_param
+        );
     }
 
     setEvents () {
@@ -324,10 +342,14 @@ $(document).ready(() => {
     const propogate = {
         'image_loaded': true,
         'light_poly_update': true,
+
         'scroll_left': 'ALT',
         'scroll_right': 'ALT',
         'scroll_up': 'ALT',
         'scroll_down': 'ALT',
+
+        'zoom_in': 'ALT',
+        'zoom_out': 'ALT'
     };
 
     window.fireEvent = (event, data) => {

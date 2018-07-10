@@ -59,9 +59,9 @@ function createWindow () {
     windows[wt].setMenu(null);
 
     if (wt === 'main') {
-        windows[wt].setPosition(10, 100);
+        windows[wt].setPosition(3500, 100);
     } else {
-        windows[wt].setPosition(610, 100);
+        windows[wt].setPosition(3500, 700);
     }
 
     let window_url = url.format({

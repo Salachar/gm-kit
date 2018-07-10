@@ -8,7 +8,10 @@ const getWindowDimensions = require('./helpers').getWindowDimensions;
 const createElement = require('./helpers').createElement;
 
 let scroll_timer = null;
+let scroll_wait_timer = null;
+
 const SCROLL_FREQUENCY = 50;
+const SCROLL_WAIT_TIME = 1000;
 
 class DisplayManager {
     constructor () {
@@ -92,39 +95,51 @@ class DisplayManager {
         });
 
         document.getElementById('map_scroll_top').addEventListener('mouseover', (e) => {
-            scroll_timer = setInterval(() => {
-                fireEvent('scroll_up');
-            }, SCROLL_FREQUENCY);
+            scroll_wait_timer = setTimeout(() => {
+                scroll_timer = setInterval(() => {
+                    fireEvent('scroll_up');
+                }, SCROLL_FREQUENCY);
+            }, SCROLL_WAIT_TIME);
         });
         document.getElementById('map_scroll_top').addEventListener('mouseleave', (e) => {
             clearInterval(scroll_timer);
+            clearTimeout(scroll_wait_timer);
         });
 
         document.getElementById('map_scroll_right').addEventListener('mouseover', (e) => {
-            scroll_timer = setInterval(() => {
-                fireEvent('scroll_right');
-            }, SCROLL_FREQUENCY);
+            scroll_wait_timer = setTimeout(() => {
+                scroll_timer = setInterval(() => {
+                    fireEvent('scroll_right');
+                }, SCROLL_FREQUENCY);
+            }, SCROLL_WAIT_TIME);
         });
         document.getElementById('map_scroll_right').addEventListener('mouseleave', (e) => {
             clearInterval(scroll_timer);
+            clearTimeout(scroll_wait_timer);
         });
 
         document.getElementById('map_scroll_bottom').addEventListener('mouseover', (e) => {
-            scroll_timer = setInterval(() => {
-                fireEvent('scroll_down');
-            }, SCROLL_FREQUENCY);
+            scroll_wait_timer = setTimeout(() => {
+                scroll_timer = setInterval(() => {
+                    fireEvent('scroll_down');
+                }, SCROLL_FREQUENCY);
+            }, SCROLL_WAIT_TIME);
         });
         document.getElementById('map_scroll_bottom').addEventListener('mouseleave', (e) => {
             clearInterval(scroll_timer);
+            clearTimeout(scroll_wait_timer);
         });
 
         document.getElementById('map_scroll_left').addEventListener('mouseover', (e) => {
-            scroll_timer = setInterval(() => {
-                fireEvent('scroll_left');
-            }, SCROLL_FREQUENCY);
+            scroll_wait_timer = setTimeout(() => {
+                scroll_timer = setInterval(() => {
+                    fireEvent('scroll_left');
+                }, SCROLL_FREQUENCY);
+            }, SCROLL_WAIT_TIME);
         });
         document.getElementById('map_scroll_left').addEventListener('mouseleave', (e) => {
             clearInterval(scroll_timer);
+            clearTimeout(scroll_wait_timer);
         });
 
         document.body.addEventListener('keydown', (e) => {

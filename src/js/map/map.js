@@ -1,7 +1,6 @@
 const CanvasManager = require('./canvas_manager');
 const SegmentManager = require('./segment_manager');
 const LightManager = require('./light_manager');
-const LinkManager = require('./link_manager');
 const ObjectManager = require('./object_manager');
 
 const getNormal = require('../helpers').getNormal;
@@ -21,7 +20,6 @@ class MapInstance {
         this.SegmentManager = new SegmentManager(map, this);
         this.CanvasManager = new CanvasManager(map, this);
         this.LightManager = new LightManager(map, this);
-        this.LinkManager = new LinkManager(map, this);
         this.ObjectManager = new ObjectManager(this);
 
         this.last_quickplace_coord = {
@@ -53,9 +51,12 @@ class MapInstance {
     }
 
     get data () {
-        this.SegmentManager.closeAllDoors();
+        // this.SegmentManager.closeAllDoors();
         // Lights are important, but not saved.
-        // Only info to save goes in the json section
+        // Only info to save goes in the json sectio
+
+        this.SegmentManager.sanitize();
+
         return {
             name: this.name,
             json_directory: this.map.json_directory,
@@ -63,12 +64,11 @@ class MapInstance {
             image: this.image,
             lights_data: {
                 lights: this.LightManager.lights,
-                lights_added: this.LightManager.lights_added
+                lights_added: this.LightManager.lights_added,
             },
             json: {
                 walls: this.SegmentManager.walls,
                 doors: this.SegmentManager.doors,
-                light_links: this.LinkManager.links
             }
         };
     }
@@ -94,13 +94,8 @@ class MapInstance {
         }
     }
 
-    cancelPlacements () {
-        this.LinkManager.clear();
-        this.CanvasManager.drawPlacements();
-        Toast.message('All in-progress placements have been canceled');
-    }
-
     setZoom (new_zoom) {
+        if (KEY_DOWN[KEYS.ALT] && !DISPLAY_WINDOW) return;
         this.zoom = new_zoom;
         this.node.style.zoom = this.zoom;
     }
@@ -112,16 +107,15 @@ class MapInstance {
         };
         switch (key) {
             case KEYS.MINUS:
-                this.setZoom(this.zoom - 0.025);
+                // this.setZoom(this.zoom - 0.025);
+                fireEvent('zoom_out');
                 break;
             case KEYS.PLUS:
-                this.setZoom(this.zoom + 0.025);
+                // this.setZoom(this.zoom + 0.025);
+                fireEvent('zoom_in');
                 break;
             case KEYS.SHIFT:
                 fireEvent('quick_place_started');
-                break;
-            case KEYS.ESC:
-                fireEvent('cancel_placements');
                 break;
             case KEYS.A:
                 fireEvent('add_light', point);
@@ -131,9 +125,6 @@ class MapInstance {
                 break;
             case KEYS.E:
                 fireEvent('enable_light');
-                break;
-            case KEYS.L:
-                fireEvent('place_link', point);
                 break;
             case KEYS.O:
                 fireEvent('toggle_closest_door', point);
@@ -219,12 +210,14 @@ class MapInstance {
         let new_segment = {
             p1x: this.last_quickplace_coord.x,
             p1y: this.last_quickplace_coord.y,
-            p2x: Mouse.downX,
-            p2y: Mouse.downY
+            p2x: Math.round(Mouse.downX),
+            p2y: Math.round(Mouse.downY)
         }
 
-        this.last_quickplace_coord.x = Mouse.downX;
-        this.last_quickplace_coord.y = Mouse.downY;
+        // this.last_quickplace_coord.x = Mouse.downX;
+        // this.last_quickplace_coord.y = Mouse.downY;
+        this.last_quickplace_coord.x = new_segment.p2x;
+        this.last_quickplace_coord.y = new_segment.p2y;
 
         return fireEvent('add_segment', {
             segment: new_segment,
@@ -360,12 +353,10 @@ class MapInstance {
         var u1 = v1 / v_mag;
         var u2 = v2 / v_mag;
 
-        // If there is no length for the door, we need to get it
+        // If there is no length for the door, we need to get it.
+        // There will never be a length the first time a door is dragged
         if (!selected_door.length) {
-            var seg_x = selected_door.p1x - selected_door.p2x;
-            var seg_y = selected_door.p1y - selected_door.p2y;
-            var seg_l = Math.sqrt((seg_x * seg_x) + (seg_y * seg_y));
-            selected_door.length = seg_l;
+            selected_door.length = this.SegmentManager.segmentLength(selected_door);
         }
 
         // Unit vector * door length = new vector for door
@@ -426,31 +417,12 @@ class MapInstance {
                 }
                 break;
 
-            case 'first_light_link_placed':
-                this.CanvasManager.drawPlacements();
-                break;
-
-            case 'second_light_link_placed':
-                // Clear out the first Link drawn to the controls
-                this.CanvasManager.drawPlacements();
-                // Draw the complete link on the wall canvas
-                this.CanvasManager.drawWallLines();
-                break;
-
             case 'enable_light':
                 this.enableLight();
                 break;
 
             case 'disable_light':
                 this.disableLight();
-                break;
-
-            case 'place_link':
-                this.LinkManager.place(data);
-                break;
-
-            case 'cancel_placements':
-                this.cancelPlacements();
                 break;
 
             case 'switch_wall_door':
@@ -565,17 +537,6 @@ class MapInstance {
                     });
                 }
                 break;
-            case 'remove_light_link':
-                this.LinkManager.removeLink(data);
-                this.CanvasManager.drawWallLines();
-                if (this.lighting_enabled) {
-                    this.SegmentManager.clearSegments();
-                    this.SegmentManager.prepareSegments();
-                    this.CanvasManager.drawLight({
-                        force_update: true
-                    });
-                }
-                break;
 
             case 'scroll_left':
                 this.CanvasManager.scrollLeft();
@@ -591,6 +552,15 @@ class MapInstance {
 
             case 'scroll_down':
                 this.CanvasManager.scrollDown();
+                break;
+
+            case 'zoom_in':
+                this.setZoom(this.zoom + 0.025);
+                break;
+
+            case 'zoom_out':
+                this.setZoom(this.zoom - 0.025);
+                break;
 
             default:
                 break;

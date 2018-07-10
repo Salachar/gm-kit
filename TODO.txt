@@ -1,20 +1,10 @@
 TODO:
-    - One way walls, for elevation
     - Wall end dragging
     - Map moving with middle or right mouse click and drag
     - Option to see light on display window
     - Read in config is present
     - Let user specify map directory
         - Gets written to config
-
-Look Into:
-    - Removing length from wall information, as it is not used
-        - Will need to be removed/added based on toggling walls/doors
-    - Remove Light Links
-        - There are not needed for the dual window application and are legacy
-    - Whole integers for segment x/y, I can't see why rounding to the nearest whole hurts
-        anything and would reduce .json file size (not important) and payload of light data
-        to the secondary screen (more important)
 
 Updates (4/23/2018):
     - Arrow Key Scrolling:
@@ -44,3 +34,15 @@ Updates (5/1/2018):
 
 Updates (5/3/2018):
     - Added a README to help showcase the application
+
+Updates (7/9/2018):
+    - Sanitize map data on save
+        - Remove length for segments *not needed
+            - only needed for door dragging, computed on runtime now
+        - Round all segments to whole integer *floats not needed
+        - Remove light links, not needed in dual map setup
+    - Remove Light Links
+        - There are not needed for the dual window application and are legacy
+    - Whole integers for segment x/y, I can't see why rounding to the nearest whole hurts
+        anything and would reduce .json file size (not important) and payload of light data
+        to the secondary screen (more important)

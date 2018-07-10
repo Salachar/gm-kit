@@ -25,9 +25,6 @@ class ObjectManager {
                     search_array.push(this.parent.LightManager.lights[l]);
                 }
                 break;
-            case 'light_link':
-                search_array = this.parent.LinkManager.links;
-                break;
             case 'door':
                 search_array = this.parent.SegmentManager.doors;
                 break;
@@ -84,7 +81,6 @@ class ObjectManager {
         var closest_light = this.findClosest('light', point);
         var closest_wall = this.findClosest('wall', point);
         var closest_door = this.findClosest('door', point);
-        var closest_light_link = this.findClosest('light_link', point);
 
         var closest = closest_wall || {distance: 999999999};
         var item = 'wall';
@@ -92,11 +88,6 @@ class ObjectManager {
         if (closest_door && closest_door.distance < closest.distance) {
             closest = closest_door;
             item = 'door';
-        }
-
-        if (closest_light_link && closest_light_link.distance < closest.distance) {
-            closest = closest_light_link;
-            item = 'light_link';
         }
 
         if (closest_light && closest_light.distance < closest.distance) {
