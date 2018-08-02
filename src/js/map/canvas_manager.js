@@ -8,7 +8,7 @@ class CanvasManager {
         this.parent = parent;
 
         // Initialize to false for display window, true otherwise
-        this.draw_walls = !DISPLAY_WINDOW;
+        this.draw_walls = !CONFIG.is_display;
 
         this.createCanvasElements(map);
         this.setCanvasMouseEvents();
@@ -24,66 +24,33 @@ class CanvasManager {
             addTo: document.getElementById('map_container')
         });
 
-        this.control_canvas = createElement('canvas', 'control_canvas map_canvas', {
-            addTo: this.canvas_container
+        ['control', 'image', 'wall', 'light', 'lights', 'shadow'].forEach((canvas_type) => {
+            let canvas_name = canvas_type + '_canvas';
+            this[canvas_name] = createElement('canvas', `${canvas_name} map_canvas`, {
+                addTo: this.canvas_container
+            });
+            this[canvas_type + '_context'] = this[canvas_name].getContext('2d');
         });
-        this.control_context = this.control_canvas.getContext('2d');
-
-        this.image_canvas = createElement('canvas', 'map_canvas map_canvas', {
-            addTo: this.canvas_container
-        });
-        this.image_context = this.image_canvas.getContext('2d');
-
-        this.wall_canvas = createElement('canvas', 'wall_canvas map_canvas', {
-            addTo: this.canvas_container
-        });
-        this.wall_context = this.wall_canvas.getContext('2d');
-
-        this.light_canvas = createElement('canvas', 'light_canvas map_canvas', {
-            addTo: this.canvas_container
-        });
-        this.light_context = this.light_canvas.getContext('2d');
-
-        this.lights_canvas = createElement('canvas', 'lights_canvas map_canvas', {
-            addTo: this.canvas_container
-        });
-        this.lights_context = this.lights_canvas.getContext('2d');
-
-        this.shadow_canvas = createElement('canvas', 'shadow_canvas map_canvas', {
-            addTo: this.canvas_container
-        });
-        this.shadow_context = this.shadow_canvas.getContext('2d');
     }
 
     scrollLeft () {
-        // We don't want to scroll the main window if ALT is pressed
-        if (KEY_DOWN[KEYS.ALT] && !DISPLAY_WINDOW) return;
         this.canvas_container.scrollLeft = this.canvas_container.scrollLeft - CONFIG.scroll_speed;
     }
 
     scrollRight () {
-        // We don't want to scroll the main window if ALT is pressed
-        if (KEY_DOWN[KEYS.ALT] && !DISPLAY_WINDOW) return;
         this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + CONFIG.scroll_speed;
     }
 
     scrollUp () {
-        // We don't want to scroll the main window if ALT is pressed
-        if (KEY_DOWN[KEYS.ALT] && !DISPLAY_WINDOW) return;
         this.canvas_container.scrollTop = this.canvas_container.scrollTop - CONFIG.scroll_speed;
     }
 
     scrollDown () {
-        // We don't want to scroll the main window if ALT is pressed
-        if (KEY_DOWN[KEYS.ALT] && !DISPLAY_WINDOW) return;
         this.canvas_container.scrollTop = this.canvas_container.scrollTop + CONFIG.scroll_speed;
     }
 
     setCanvasMouseEvents () {
-        if (DISPLAY_WINDOW) {
-            // console.log('No mouse events needed for display window');
-            return;
-        }
+        if (CONFIG.is_display) return;
 
         this.control_canvas.addEventListener('mousedown', (e) => {
             // if (e.which == 3) return;
@@ -106,7 +73,6 @@ class CanvasManager {
             };
             Mouse.moveEvent(e, pos);
             this.parent.mouseMove();
-            // fireEvent('mouse_move',
         });
     }
 
@@ -117,7 +83,6 @@ class CanvasManager {
             this.map_image_width = img.naturalWidth;
             this.map_image_height = img.naturalHeight;
 
-            // this.draw_walls = true;
             this.resizeCanvases();
 
             fireEvent('image_loaded', {
@@ -141,20 +106,10 @@ class CanvasManager {
     drawFogOfWar () {
         this.clearFogOfWar();
         this.shadow_context.save();
-            if (DISPLAY_WINDOW) {
-                this.shadow_context.globalAlpha = CONFIG.display.fog.display.seen.opacity;
-            } else {
-                this.shadow_context.globalAlpha = CONFIG.display.fog.control.seen.opacity;
-            }
-
+            this.shadow_context.globalAlpha = CONFIG.display.fog[CONFIG.window].seen.opacity;
             this.shadow_context.beginPath();
             this.shadow_context.rect(0, 0, this.map_image_width, this.map_image_height);
-
-            if (DISPLAY_WINDOW) {
-                this.shadow_context.fillStyle = CONFIG.display.fog.display.seen.color;
-            } else {
-                this.shadow_context.fillStyle = CONFIG.display.fog.control.seen.color;
-            }
+            this.shadow_context.fillStyle = CONFIG.display.fog[CONFIG.window].seen.color;
             this.shadow_context.fill();
         this.shadow_context.restore();
     }
@@ -167,20 +122,10 @@ class CanvasManager {
         // Fill the canvas with shadow
         this.clearLight();
         this.light_context.save();
-            if (DISPLAY_WINDOW) {
-                this.light_context.globalAlpha = CONFIG.display.fog.display.hidden.opacity;
-            } else {
-                this.light_context.globalAlpha = CONFIG.display.fog.control.hidden.opacity;
-            }
-
+            this.light_context.globalAlpha = CONFIG.display.fog[CONFIG.window].hidden.opacity;
             this.light_context.beginPath();
             this.light_context.rect(0, 0, this.map_image_width, this.map_image_height);
-
-            if (DISPLAY_WINDOW) {
-                this.light_context.fillStyle = CONFIG.display.fog.display.hidden.color;
-            } else {
-                this.light_context.fillStyle = CONFIG.display.fog.control.hidden.color;
-            }
+            this.light_context.fillStyle = CONFIG.display.fog[CONFIG.window].hidden.color;
             this.light_context.fill();
         this.light_context.restore();
     }
@@ -366,7 +311,7 @@ class CanvasManager {
     }
 
     drawLights () {
-        if (DISPLAY_WINDOW) return;
+        if (CONFIG.is_display) return;
         const context = this.lights_context;
         const lights = this.parent.LightManager.lights;
 

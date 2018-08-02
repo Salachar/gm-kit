@@ -29,7 +29,7 @@ class QuadrantManager {
         this.createAngles();
     }
 
-    getWalls (map, light_quadrant, angle_quadrant) {
+    getSegments (map, light_quadrant, angle_quadrant) {
         const is_same_quadrant = light_quadrant === angle_quadrant;
         if (is_same_quadrant) {
             return map.SegmentManager.quadrants[angle_quadrant];

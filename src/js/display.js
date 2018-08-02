@@ -154,7 +154,8 @@ class DisplayManager {
 }
 
 $(document).ready(() => {
-    DISPLAY_WINDOW = true;
+    CONFIG.is_display = true;
+    CONFIG.window = 'display';
 
     window.SoundManager = new SoundManager();
     window.QuadrantManager = new QuadrantManager();

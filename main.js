@@ -17,11 +17,7 @@ let LOCAL = false;
 
 // Need a reference to hang onto the first map needed to display
 let display_map = null;
-
-let windows = {
-    main: null,
-    display: null
-}
+let WINDOW = null;
 
 function generateMapDir () {
     let app_path = app.getPath('exe');
@@ -49,41 +45,26 @@ function generateMapDir () {
 function createWindow () {
     generateMapDir();
 
-    const wt = 'main';
-
-    windows[wt] = new BrowserWindow({
-        width: 1000,
+    WINDOW = new BrowserWindow({
+        width: 800,
         height: 600,
         icon: __dirname + '/map.png'
     });
-    windows[wt].setMenu(null);
-
-    if (wt === 'main') {
-        windows[wt].setPosition(3500, 100);
-    } else {
-        windows[wt].setPosition(3500, 700);
-    }
+    WINDOW.setMenu(null);
+    WINDOW.setPosition(10, 100);
 
     let window_url = url.format({
-        pathname: path.join(__dirname, `./src/html/${wt}.html`),
+        pathname: path.join(__dirname, `./src/html/main.html`),
         protocol: 'file:',
         slashes: true
     });
-    window_url += `?window=${wt}&map_dir=${map_dir}`;
+    window_url += `?map_dir=${map_dir}`;
 
-    windows[wt].loadURL(window_url);
-
-    windows[wt].webContents.openDevTools();
-
-    if (wt === 'main') {
-        windows[wt].on('closed', function () {
-            app.quit();
-        });
-    } else {
-        windows[wt].on('closed', function () {
-            windows[wt] = null;
-        });
-    }
+    WINDOW.loadURL(window_url);
+    WINDOW.webContents.openDevTools();
+    WINDOW.on('closed', function () {
+        app.quit();
+    });
 }
 
 // This method will be called when Electron has finished
@@ -126,7 +107,7 @@ IPC.on('load_map', (e, maps) => {
         loaded_maps[map.name] = map_data;
     }
 
-    windows.main.webContents.send('map_loaded', loaded_maps);
+    WINDOW.webContents.send('map_loaded', loaded_maps);
 });
 
 IPC.on('save_map', (e, maps) => {
@@ -141,7 +122,7 @@ IPC.on('save_map', (e, maps) => {
             console.log('Unable to save map: ' + map.name);
         }
     }
-    windows.main.webContents.send('message', {
+    WINDOW.webContents.send('message', {
         type: 'success',
         text: 'Map(s) successfully saved'
     });
@@ -152,7 +133,7 @@ function generateMapList () {
     let cur_path = map_dir;
 
     readDir(cur_path);
-    windows.main.webContents.send('maps_loaded', map_list);
+    WINDOW.webContents.send('maps_loaded', map_list);
 
     function readDir (dir) {
         fs.readdirSync(dir).forEach((file) => {

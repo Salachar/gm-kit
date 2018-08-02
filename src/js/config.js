@@ -30,6 +30,9 @@ const KEYS = {
 };
 
 let CONFIG = {
+    window: 'control',
+    is_display: false,
+
     window_width: null,
     window_height: null,
 
@@ -105,6 +108,3 @@ window_search.forEach((param) => {
     param = param.split('=');
     CONFIG.params[param[0]] = param[1];
 });
-
-let DISPLAY_WINDOW = false; // CONFIG.params.window === 'display';
-

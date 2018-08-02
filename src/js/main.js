@@ -154,10 +154,10 @@ class MapManager {
         const window_options = {
             autoHideMenuBar: 1,
             titleBarStyle: 'hidden',
-            width: 1280,
-            height: 720,
+            width: 800,
+            height: 600,
             top: 360,
-            left: 3500,
+            left: 10,
         };
 
         let option_param = '';
@@ -353,21 +353,25 @@ $(document).ready(() => {
     };
 
     window.fireEvent = (event, data) => {
-        window.MapManager.onEvent(event, data);
-
-        if (propogate[event] === 'ALT' && !KEY_DOWN[KEYS.ALT]) return;
-
-        if (!propogate[event]) return;
-
+        // Only send the even to the display window
         if (window.display_window) {
-            window.display_window.postMessage({
-                event: event,
-                data: {
-                    map_name: window.MapManager.current_map.name,
-                    data: data
-                }
-            });
+            let alt_event = propogate[event] === 'ALT' && KEY_DOWN[KEYS.ALT];
+            let prop_event = propogate[event] === true;
+
+            if (prop_event || alt_event) {
+                window.display_window.postMessage({
+                    event: event,
+                    data: {
+                        map_name: window.MapManager.current_map.name,
+                        data: data
+                    }
+                });
+            }
+
+            if (alt_event) return;
         }
+
+        window.MapManager.onEvent(event, data);
     }
 });
 

@@ -28,19 +28,21 @@ class LightManager {
             };
         }
 
-        var light_quadrant_key = QuadrantManager.getQuadrant(this.parent, light);
-        var r = null;
-        var s = null;
-        var t1 = null;
-        var t2 = null;
-        var intersects = [];
-        var closestPoint = null;
-        for (let i = 0; i < QuadrantManager.angle_quadrants.length; ++i) {
-            var angle_quadrant =  QuadrantManager.angle_quadrants[i];
-            var angle_quadrant_key = QuadrantManager.angle_quadrants_key[i];
+        const light_quadrant_key = QuadrantManager.getQuadrant(this.parent, light);
 
-            var walls_to_check = QuadrantManager.getWalls(this.parent, light_quadrant_key, angle_quadrant_key);
-            var walls_length = walls_to_check.length;
+        let r = null;
+        let s = null;
+        let t1 = null;
+        let t2 = null;
+        let intersects = [];
+        let closestPoint = null;
+
+        for (let i = 0; i < QuadrantManager.angle_quadrants.length; ++i) {
+            const angle_quadrant =  QuadrantManager.angle_quadrants[i];
+            const angle_quadrant_key = QuadrantManager.angle_quadrants_key[i];
+
+            const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, angle_quadrant_key);
+            const segments_length = segments_to_check.length;
 
             for (let k = 0; k < angle_quadrant.length; ++k) {
                 r = {
@@ -50,18 +52,14 @@ class LightManager {
                     dy : angle_quadrant[k].y
                 };
 
-                s = null;
-                t1 = null;
-                t2 = null;
-
                 closestPoint = {
                     x : null,
                     y : null,
                     t1 : null
                 };
 
-                for (var j = 0; j < walls_length; ++j) {
-                    s = walls_to_check[j];
+                for (var j = 0; j < segments_length; ++j) {
+                    const s = segments_to_check[j];
                     // Skip any doors that are open.
                     if (s.open) continue;
 
@@ -137,6 +135,7 @@ class LightManager {
         for (let l in this.lights) {
             polys.push(this.getLightPolygon(this.lights[l], opts.force_update));
         }
+        // This event is only for the display window. When we're drawing
         fireEvent('light_poly_update', polys);
         return polys;
     }

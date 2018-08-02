@@ -15,7 +15,7 @@ class MapInstance {
         // Zoom is now map specific
         this.zoom = 1;
         // Whether light is enabled or not for this map
-        this.lighting_enabled = DISPLAY_WINDOW;
+        this.lighting_enabled = CONFIG.is_display;
 
         this.SegmentManager = new SegmentManager(map, this);
         this.CanvasManager = new CanvasManager(map, this);
@@ -51,16 +51,11 @@ class MapInstance {
     }
 
     get data () {
-        // this.SegmentManager.closeAllDoors();
-        // Lights are important, but not saved.
-        // Only info to save goes in the json sectio
-
         this.SegmentManager.sanitize();
 
         return {
             name: this.name,
             json_directory: this.map.json_directory,
-            // directory: this.map.directory,
             image: this.image,
             lights_data: {
                 lights: this.LightManager.lights,
@@ -95,7 +90,6 @@ class MapInstance {
     }
 
     setZoom (new_zoom) {
-        if (KEY_DOWN[KEYS.ALT] && !DISPLAY_WINDOW) return;
         this.zoom = new_zoom;
         this.node.style.zoom = this.zoom;
     }
@@ -107,11 +101,9 @@ class MapInstance {
         };
         switch (key) {
             case KEYS.MINUS:
-                // this.setZoom(this.zoom - 0.025);
                 fireEvent('zoom_out');
                 break;
             case KEYS.PLUS:
-                // this.setZoom(this.zoom + 0.025);
                 fireEvent('zoom_in');
                 break;
             case KEYS.SHIFT:
@@ -268,8 +260,6 @@ class MapInstance {
     }
 
     mouseMove () {
-        // if (!Mouse.left && !CONFIG.create_one_way_wall) return;
-
         if (this.LightManager.selected_light) {
             fireEvent('light_move', {
                 id: this.LightManager.selected_light.id,
@@ -355,9 +345,7 @@ class MapInstance {
 
         // If there is no length for the door, we need to get it.
         // There will never be a length the first time a door is dragged
-        if (!selected_door.length) {
-            selected_door.length = this.SegmentManager.segmentLength(selected_door);
-        }
+        selected_door.length = selected_door.length || this.SegmentManager.segmentLength(selected_door);
 
         // Unit vector * door length = new vector for door
         var d_u1 = u1 * selected_door.length;
@@ -388,16 +376,26 @@ class MapInstance {
     }
 
     disableLight () {
-        if (DISPLAY_WINDOW) return;
+        if (CONFIG.is_display) return;
         this.lighting_enabled = false;
         this.SegmentManager.clearSegments();
         this.CanvasManager.disableLight();
     }
 
+    updateLighting () {
+        this.SegmentManager.clearSegments();
+        this.SegmentManager.prepareSegments();
+        if (this.lighting_enabled || display_window) {
+            this.CanvasManager.drawLight({
+                force_update: true
+            });
+        }
+    }
+
     onEvent (event, data) {
         switch (event) {
             case 'light_poly_update':
-                if (DISPLAY_WINDOW) {
+                if (CONFIG.is_display) {
                     this.CanvasManager.drawLight({
                         force_update: true,
                         polys: data
@@ -412,7 +410,7 @@ class MapInstance {
 
             case 'image_loaded':
                 this.SegmentManager.updateBounds(data);
-                if (DISPLAY_WINDOW) {
+                if (CONFIG.is_display) {
                     fireEvent('enable_light');
                 }
                 break;
@@ -447,13 +445,7 @@ class MapInstance {
                 CONFIG.snap.indicator.show = false;
                 this.CanvasManager.drawWallLines();
                 this.CanvasManager.drawPlacements();
-                if (this.lighting_enabled) {
-                    this.SegmentManager.clearSegments();
-                    this.SegmentManager.prepareSegments();
-                    this.CanvasManager.drawLight({
-                        force_update: true
-                    });
-                }
+                this.updateLighting();
                 break;
 
             case 'light_moved':
@@ -518,24 +510,12 @@ class MapInstance {
             case 'remove_wall':
                 this.SegmentManager.removeWall(data);
                 this.CanvasManager.drawWallLines();
-                if (this.lighting_enabled) {
-                    this.SegmentManager.clearSegments();
-                    this.SegmentManager.prepareSegments();
-                    this.CanvasManager.drawLight({
-                        force_update: true
-                    });
-                }
+                this.updateLighting();
                 break;
             case 'remove_door':
                 this.SegmentManager.removeDoor(data);
                 this.CanvasManager.drawWallLines();
-                if (this.lighting_enabled) {
-                    this.SegmentManager.clearSegments();
-                    this.SegmentManager.prepareSegments();
-                    this.CanvasManager.drawLight({
-                        force_update: true
-                    });
-                }
+                this.updateLighting();
                 break;
 
             case 'scroll_left':
