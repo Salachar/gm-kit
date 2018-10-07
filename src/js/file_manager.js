@@ -24,37 +24,34 @@ class FileManager {
 
     addInfoTitle () {
         if (!CONFIG.params.map_dir) return;
-        let map_dir_location = document.getElementById('map_dir_location');
-        map_dir_location.setAttribute('title', CONFIG.params.map_dir);
+        document.getElementById('map_dir_location').setAttribute('title', CONFIG.params.map_dir);
     }
 
     createFileTree (map_list) {
         this.map_list = map_list;
-
         this.el_modal_body.innerHTML = '';
         this.addSection(map_list, this.el_modal_body);
-
         this.openModal();
     }
 
     addSection (sections, node) {
-        for (var s in sections) {
-            let section_node = createElement('div', 'map_list_section', {
+        for (let s in sections) {
+            const section_node = createElement('div', 'map_list_section', {
                 addTo: node
             });
-            let section_title = createElement('div', 'map_list_section_title', {
+            createElement('div', 'map_list_section_title', {
                 html: s.replace(/_/g, ' '),
                 addTo: section_node
             });
-            let section_container = createElement('div', 'map_list_section_container', {
+            const section_container = createElement('div', 'map_list_section_container', {
                 addTo: section_node
             });
 
             if (s.match(/complete|image_only|json_only/)) {
-                for (var f in sections[s]) {
+                for (let f in sections[s]) {
                     // Closure to make sure reference to map is kept
                     ((map) => {
-                        let map_node = createElement('div', 'map_list_map', {
+                        const map_node = createElement('div', 'map_list_map', {
                             html: map.name,
                             addTo: section_container,
                             events: {
@@ -66,15 +63,13 @@ class FileManager {
                                 }
                             }
                         });
-
-                        let map_node_checkbox = createElement('div', 'checkbox', {
+                        createElement('div', 'checkbox', {
                             addTo: map_node,
                             events: {
                                 click: (e) => {
                                     e.preventDefault();
-                                    let node = e.currentTarget;
-                                    let is_checked = e.currentTarget.classList.contains('checked');
-                                    if (is_checked) {
+                                    const node = e.currentTarget;
+                                    if (e.currentTarget.classList.contains('checked')) {
                                         node.classList.remove('checked');
                                         this.removeMap(map);
                                     } else {
@@ -127,7 +122,7 @@ class FileManager {
         });
 
         document.getElementById('save_map').addEventListener('click', (e) => {
-            let map_data = window.MapManager.getMapData();
+            const map_data = window.MapManager.getMapData();
             if (!map_data) {
                 Toast.error('There is no map to save');
                 return;
@@ -136,12 +131,12 @@ class FileManager {
         });
 
         document.getElementById('save_all_maps').addEventListener('click', (e) => {
-            let map_data = window.MapManager.getAllMapData();
+            const map_data = window.MapManager.getAllMapData();
             if (!map_data) {
                 Toast.error('There are no maps to save');
                 return;
             }
-            IPC.send('save_map',map_data);
+            IPC.send('save_map', map_data);
         });
 
         IPC.on('maps_loaded', (e, maps) => {
