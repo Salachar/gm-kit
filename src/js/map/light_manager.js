@@ -1,3 +1,5 @@
+const Store = require('../store');
+
 const pDistance = require('../helpers').pDistance;
 
 class LightManager {
@@ -11,6 +13,20 @@ class LightManager {
         const lights_data = (map || {}).lights_data || {};
         this.lights = lights_data.lights || {};
         this.lights_added = lights_data.lights_added || 0;
+
+        Store.register({
+            'add_light': this.onAddLight.bind(this),
+            'light_move': this.onLightMove.bind(this),
+            'deselect_light': this.deselectLight.bind(this),
+        }, parent.name);
+    }
+
+    onAddLight (data) {
+       this.addLight(data.point);
+    }
+
+    onLightMove (data) {
+        this.moveLight(data.light);
     }
 
     getLightPolygon (light, force_update) {
@@ -30,38 +46,28 @@ class LightManager {
 
         const light_quadrant_key = QuadrantManager.getQuadrant(this.parent, light);
 
-        let r = null;
-        let s = null;
-        let t1 = null;
-        let t2 = null;
         let intersects = [];
-        let closestPoint = null;
+        Object.keys(QuadrantManager.angle_quadrants).forEach((key) => {
+            const quadrant_array = QuadrantManager.angle_quadrants[key];
+            const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, key);
 
-        for (let i = 0; i < QuadrantManager.angle_quadrants.length; ++i) {
-            const angle_quadrant =  QuadrantManager.angle_quadrants[i];
-            const angle_quadrant_key = QuadrantManager.angle_quadrants_key[i];
-
-            const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, angle_quadrant_key);
-            const segments_length = segments_to_check.length;
-
-            for (let k = 0; k < angle_quadrant.length; ++k) {
-                r = {
+            quadrant_array.forEach((vector) => {
+                const r = {
                     px : light.x,
                     py : light.y,
-                    dx : angle_quadrant[k].x,
-                    dy : angle_quadrant[k].y
+                    dx : vector.x,
+                    dy : vector.y
                 };
 
-                closestPoint = {
+                const closestPoint = {
                     x : null,
                     y : null,
                     t1 : null
                 };
 
-                for (var j = 0; j < segments_length; ++j) {
-                    const s = segments_to_check[j];
+                segments_to_check.forEach((s) => {
                     // Skip any doors that are open.
-                    if (s.open) continue;
+                    if (s.open) return;
 
                     // Get any intersection info for this light ray and wall.
                     var info = this.getIntersection(r, {
@@ -72,13 +78,13 @@ class LightManager {
                     });
 
                     // Continue to the next wall if there was no intersect info.
-                    if (!info) continue;
+                    if (!info) return;
 
                     // We intersected a one way wall
                     if (s.one_way) {
                         let dist_open = pDistance(light, s.one_way.open).distance;
                         let dist_closed = pDistance(light, s.one_way.closed).distance;
-                        if (dist_open > dist_closed) continue;
+                        if (dist_open > dist_closed) return;
                     }
 
                     // If there was intersect info, check if the intersected wall is
@@ -90,15 +96,15 @@ class LightManager {
                             closestPoint.t1 = info.t1;
                         }
                     }
-                }
+                });
 
                 // t1 is the distance, if there is no distance, something weird happened.
                 // Either way, just ignore the wall and move on.
                 if (closestPoint.t1 != null) {
                     intersects.push(closestPoint);
                 }
-            }
-        }
+            });
+        });
 
         // pos is the position of the light, and intersects are all the points it's light
         // rays hit. Connecting all those points together gives the polygon "lit area" that
@@ -106,8 +112,8 @@ class LightManager {
         light.intersects = intersects;
         return {
             pos : {
-                x : r.px,
-                y : r.py
+                x : light.x,
+                y : light.y
             },
             intersects : intersects
         };
@@ -136,7 +142,7 @@ class LightManager {
             polys.push(this.getLightPolygon(this.lights[l], opts.force_update));
         }
         // This event is only for the display window. When we're drawing
-        fireEvent('light_poly_update', polys);
+        Store.fire('light_poly_update', polys);
         return polys;
     }
 
@@ -157,18 +163,12 @@ class LightManager {
             var dist = Math.sqrt(x_sq + y_sq);
 
             if (dist < this.light_width) {
-                fireEvent('select_light', {
-                    id: light.id
-                });
+                this.selected_light = light;
                 return true;
             }
         }
 
         return false;
-    }
-
-    selectLight (opts = {}) {
-        this.selected_light = this.lights[opts.id];
     }
 
     deselectLight () {
@@ -184,14 +184,14 @@ class LightManager {
         };
         this.lights[new_light.id] = new_light;
         this.lights_added++;
-        fireEvent('light_added', new_light);
+        Store.fire('light_added');
     }
 
     moveLight (opts) {
         opts = opts || {};
         this.lights[opts.id].x = opts.x;
         this.lights[opts.id].y = opts.y;
-        fireEvent('light_moved');
+        Store.fire('light_moved');
     }
 
     removeLight (closest) {
@@ -201,7 +201,7 @@ class LightManager {
     clearLights () {
         this.selected_light = null;
         this.lights = {};
-        fireEvent('lights_cleared');
+        Store.fire('lights_cleared');
     }
 }
 module.exports = LightManager;

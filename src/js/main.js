@@ -1,3 +1,5 @@
+const Store = require('./store');
+
 const FileManager = require('./file_manager');
 const SoundManager = require('./sound_manager');
 const QuadrantManager = require('./quadrant_manager');
@@ -7,6 +9,8 @@ const Mouse = require('./mouse');
 
 const getWindowDimensions = require('./helpers').getWindowDimensions;
 const createElement = require('./helpers').createElement;
+
+const controls = require('./controls');
 
 let scroll_timer = null;
 let scroll_wait_timer = null;
@@ -24,21 +28,29 @@ class MapManager {
         this.current_map = null;
 
         this.el_tabs = document.getElementById('map_tabs');
+        this.el_help_table = document.getElementById('help_table');
+
+        this.el_map_scroll_top = document.getElementById('map_scroll_top');
+        this.el_map_scroll_right = document.getElementById('map_scroll_right');
+        this.el_map_scroll_bottom = document.getElementById('map_scroll_bottom');
+        this.el_map_scroll_left = document.getElementById('map_scroll_left');
 
         getWindowDimensions();
         this.setEvents();
+        this.addHelp();
+
+        Store.register({
+            'hide_scroller': this.onHideScroller.bind(this),
+            'show_scroller': this.onShowScroller.bind(this),
+        });
     }
 
-    onEvent (event, data) {
-        switch (event) {
-            default:
-                // console.log('MapManager >> Event "' + event + '" not handled');
-                break;
-        }
+    onHideScroller (data) {
+        this['el_map_scroll_' + data.scroller].style.display = 'none';
+    }
 
-        if (this.current_map) {
-            this.current_map.onEvent(event, data);
-        }
+    onShowScroller (data) {
+        this['el_map_scroll_' + data.scroller].style.display = 'block';
     }
 
     onMapLoad (maps) {
@@ -56,6 +68,8 @@ class MapManager {
     }
 
     setActiveMap (map_name) {
+        Store.key = map_name;
+        Store.clear();
         if (this.current_map) {
             this.current_map.active = false;
             this.current_map.hide();
@@ -85,6 +99,8 @@ class MapManager {
             this.setActiveMap(map_keys[map_keys.length - 1]);
         }
         if (!map_keys.length) {
+            Store.key = null;
+            Store.clear();
             document.getElementById('no_map_screen').classList.remove('hidden');
         }
     }
@@ -152,8 +168,8 @@ class MapManager {
         }
 
         const window_options = {
-            autoHideMenuBar: 1,
-            titleBarStyle: 'hidden',
+            // autoHideMenuBar: 1,
+            // titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -172,6 +188,26 @@ class MapManager {
         );
     }
 
+    addHelp () {
+        // <tr class="help_section">
+        //     <td class="help_key">SHIFT</td>
+        //     <td class="help_desc">Hold down to allow quick placement of walls</td>
+        // </tr>
+        controls.forEach((control) => {
+            let help_control = createElement('tr', 'help_section', {
+                addTo: this.el_help_table
+            });
+            createElement('td', 'help_key', {
+                html: control.key,
+                addTo: help_control
+            });
+            createElement('td', 'help_key', {
+                html: control.text,
+                addTo: help_control
+            });
+        });
+    }
+
     setEvents () {
         window.addEventListener('message', (e) => {
             let event = e.data;
@@ -184,7 +220,7 @@ class MapManager {
         document.getElementById('map_scroll_top').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_up');
+                    Store.fire('scroll_up');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -196,7 +232,7 @@ class MapManager {
         document.getElementById('map_scroll_right').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_right');
+                    Store.fire('scroll_right');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -208,7 +244,7 @@ class MapManager {
         document.getElementById('map_scroll_bottom').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_down');
+                    Store.fire('scroll_down');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -220,7 +256,7 @@ class MapManager {
         document.getElementById('map_scroll_left').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_left');
+                    Store.fire('scroll_left');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -254,7 +290,7 @@ class MapManager {
             } else {
                 e.currentTarget.classList.remove('checked');
             }
-            fireEvent('create_one_way_wall_toggled');
+            Store.fire('create_one_way_wall_toggled');
         });
 
         document.getElementById('create_door').addEventListener('click', (e) => {
@@ -276,14 +312,20 @@ class MapManager {
             KEY_DOWN[e.keyCode] = true;
 
             switch (e.keyCode) {
+                case KEYS.CONTROL:
+                    CONFIG.move_segment = true;
+                    CONFIG.quick_place = false;
+                    Store.fire('move_segment_toggled');
+                    break;
                 case KEYS.SHIFT:
-                     CONFIG.quick_place = true;
+                    CONFIG.move_segment = false;
+                    CONFIG.quick_place = true;
                     break;
                 case KEYS.LEFT_BRACKET:
-                    fireEvent('dim_down');
+                    Store.fire('dim_down');
                     break;
                 case KEYS.RIGHT_BRACKET:
-                    fireEvent('dim_up');
+                    Store.fire('dim_up');
                     break;
                 default:
                     // console.log('APP >> Keydown: Unhandled keyCode: ' + e.keyCode);
@@ -301,11 +343,15 @@ class MapManager {
             KEY_DOWN[e.keyCode] = false;
 
             switch (e.keyCode) {
+                case KEYS.CONTROL:
+                    CONFIG.move_segment = false;
+                    break;
                 case KEYS.SHIFT:
                     CONFIG.quick_place = false;
                     break;
                 case KEYS.S:
                     this.showInDisplayWindow();
+                    break;
                 default:
                     // console.log('APP >> Keyup: Unhandled keyCode: ' + e.keyCode);
                     break;
@@ -332,50 +378,15 @@ class MapManager {
     }
 }
 
-$(document).ready(() => {
+window.onload = () => {
     window.SoundManager = new SoundManager();
     window.QuadrantManager = new QuadrantManager();
     window.Toast = new ToastMesseger();
     window.MapManager = new MapManager();
     window.Mouse = new Mouse();
+};
 
-    const propogate = {
-        'image_loaded': true,
-        'light_poly_update': true,
-
-        'scroll_left': 'ALT',
-        'scroll_right': 'ALT',
-        'scroll_up': 'ALT',
-        'scroll_down': 'ALT',
-
-        'zoom_in': 'ALT',
-        'zoom_out': 'ALT'
-    };
-
-    window.fireEvent = (event, data) => {
-        // Only send the even to the display window
-        if (window.display_window) {
-            let alt_event = propogate[event] === 'ALT' && KEY_DOWN[KEYS.ALT];
-            let prop_event = propogate[event] === true;
-
-            if (prop_event || alt_event) {
-                window.display_window.postMessage({
-                    event: event,
-                    data: {
-                        map_name: window.MapManager.current_map.name,
-                        data: data
-                    }
-                });
-            }
-
-            if (alt_event) return;
-        }
-
-        window.MapManager.onEvent(event, data);
-    }
-});
-
-$(window).resize(function () {
+window.onresize = () => {
     getWindowDimensions();
-});
+};
 

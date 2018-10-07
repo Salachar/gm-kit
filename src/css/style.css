@@ -47,7 +47,6 @@ html, body {
     top: 0;
     left: 0;
     z-index: 20;
-    /*padding: 3px 0 3px 26px;*/
     right: 0;
     height: 2rem;
     font-size: 0.7rem;
@@ -55,7 +54,7 @@ html, body {
     box-sizing: border-box;
     transition: 0.3s all ease;
     white-space: nowrap;
-    overflow: scroll;
+    overflow: hidden;
 }
 
 .button {

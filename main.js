@@ -1,13 +1,13 @@
-const electron = require('electron')
+const electron = require('electron');
 // Module to control application life.
-const app = electron.app
+const app = electron.app;
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
+const BrowserWindow = electron.BrowserWindow;
 const IPC = electron.ipcMain;
 
-const fs = require('fs');
-const path = require('path')
-const url = require('url')
+const fs = require('fs');;
+const path = require('path');
+const url = require('url');
 
 const base_dir = 'maps';
 let map_dir = '';
@@ -46,8 +46,8 @@ function createWindow () {
     generateMapDir();
 
     WINDOW = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1200,
+        height: 800,
         icon: __dirname + '/map.png'
     });
     WINDOW.setMenu(null);

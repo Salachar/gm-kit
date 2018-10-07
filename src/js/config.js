@@ -1,6 +1,5 @@
 const electron = require('electron');
 const IPC = electron.ipcRenderer;
-const $ = require('jquery');
 
 const KEY_DOWN = {};
 
@@ -8,6 +7,7 @@ const KEYS = {
     MINUS: 189,
     PLUS: 187,
     SHIFT: 16,
+    CONTROL: 17,
     ALT: 18,
     ESC: 27,
     LEFT: 37,
@@ -52,23 +52,27 @@ let CONFIG = {
 
     door_grab_dist: 20,
 
+    move_point_dist: 20,
+
+    move_segment: false,
+
     quick_place: false,
 
     params: {},
 
-    scroll_speed: 50,
+    scroll_speed: 25,
 
     display: {
         door: {
             outer_color: '#FF0000',
-            outer_width: 4,
+            outer_width: 3,
             inner_color: '#FFFFFF',
             inner_width: 1
         },
         wall: {
             place_color: '#FF0000',
             outer_color: '#0000FF',
-            outer_width: 4,
+            outer_width: 3,
             inner_color: '#FFFFFF',
             inner_width: 1,
             highlight_outer_color: '#FF00FF',

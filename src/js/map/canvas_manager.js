@@ -2,6 +2,10 @@ const createElement = require('../helpers').createElement;
 const rgba = require('../helpers').rgba;
 const getNormal = require('../helpers').getNormal;
 
+const Store = require('../store');
+
+const MAX_MAP_SIZE = 3000;
+
 class CanvasManager {
     constructor (map = {}, parent) {
         this.map = map;
@@ -17,6 +21,60 @@ class CanvasManager {
         this.map_image = null;
         this.map_image_width = CONFIG.window_width;
         this.map_image_height = CONFIG.window_height;
+
+        Store.register({
+            'move_segment_toggled': this.onMoveSegmentToggled.bind(this),
+            'create_one_way_wall_toggled' : this.onCreateOneWayWallToggled.bind(this),
+            'light_poly_update': this.onLightPolyUpdate.bind(this),
+            'quick_place_started': this.onQuickPlaceToggled.bind(this),
+            'quick_place_ended': this.onQuickPlaceToggled.bind(this),
+            'lights_cleared': this.onLightsCleared.bind(this),
+            'scroll_up': this.scrollUp.bind(this),
+            'scroll_right': this.scrollRight.bind(this),
+            'scroll_down': this.scrollDown.bind(this),
+            'scroll_left': this.scrollLeft.bind(this),
+            'door_activated': this.onDoorActivated.bind(this),
+            'draw_walls': this.drawWallLines.bind(this),
+            'move_point_ended': this.refreshPlacements.bind(this),
+        }, parent.name);
+    }
+
+    onMoveSegmentToggled () {
+        this.drawPlacements();
+        this.drawWallLines();
+    }
+
+    onCreateOneWayWallToggled () {
+        this.drawPlacements();
+        this.drawWallLines();
+    }
+
+    onLightPolyUpdate (data) {
+        if (CONFIG.is_display) {
+            this.drawLight({
+                force_update: true,
+                polys: data
+            });
+        }
+    }
+
+    onQuickPlaceToggled () {
+        this.drawPlacements();
+    }
+
+    onLightsCleared () {
+        this.drawLights();
+    }
+
+    onDoorActivated () {
+        this.drawPlacements();
+        this.drawLight({
+            force_update: true
+        });
+    }
+
+    refreshPlacements () {
+        this.drawPlacements();
     }
 
     createCanvasElements (map) {
@@ -31,6 +89,12 @@ class CanvasManager {
             });
             this[canvas_type + '_context'] = this[canvas_name].getContext('2d');
         });
+
+        this.canvas_container.addEventListener('scroll', (e) => {
+            console.log(e);
+            this.checkScroll(e);
+        });
+        this.checkScroll();
     }
 
     scrollLeft () {
@@ -47,6 +111,53 @@ class CanvasManager {
 
     scrollDown () {
         this.canvas_container.scrollTop = this.canvas_container.scrollTop + CONFIG.scroll_speed;
+    }
+
+    checkScroll (e) {
+        const left = Math.ceil(this.canvas_container.scrollLeft);
+        const top = Math.ceil(this.canvas_container.scrollTop);
+        const width = this.canvas_container.clientWidth;
+        const height = this.canvas_container.clientHeight;
+
+        if (left <= 0) {
+            Store.fire('hide_scroller', {
+                scroller: 'left'
+            });
+        } else {
+            Store.fire('show_scroller' ,{
+                scroller: 'left'
+            });
+        }
+
+        if (left + width >= this.map_image_width) {
+            Store.fire('hide_scroller', {
+                scroller: 'right'
+            });
+        } else {
+            Store.fire('show_scroller' ,{
+                scroller: 'right'
+            });
+        }
+
+        if (top <= 0) {
+            Store.fire('hide_scroller', {
+                scroller: 'top'
+            });
+        } else {
+            Store.fire('show_scroller' ,{
+                scroller: 'top'
+            });
+        }
+
+        if (top + height >= this.map_image_height) {
+            Store.fire('hide_scroller', {
+                scroller: 'bottom'
+            });
+        } else {
+            Store.fire('show_scroller' ,{
+                scroller: 'bottom'
+            });
+        }
     }
 
     setCanvasMouseEvents () {
@@ -78,16 +189,37 @@ class CanvasManager {
 
     loadImage () {
         if (!this.map.image) return;
+
         let img = new Image;
         img.onload = () => {
-            this.map_image_width = img.naturalWidth;
-            this.map_image_height = img.naturalHeight;
+            const natural_width = img.naturalWidth;
+            const natural_height = img.naturalHeight;
+            this.map_image_width = natural_width;
+            this.map_image_height = natural_height;
+            if (natural_width > MAX_MAP_SIZE || natural_height > MAX_MAP_SIZE) {
+                const ratio = img.naturalWidth / img.naturalHeight;
+                if (ratio > 1) {
+                    // Image is wider than it is taller
+                    this.map_image_width = MAX_MAP_SIZE;
+                    this.map_image_height = this.map_image_width / ratio;
+                } else if (ratio < 1) {
+                    // Image is taller than it is wider
+                    this.map_image_height = MAX_MAP_SIZE;
+                    this.map_image_width = this.map_image_height * ratio;
+                } else {
+                    // Image is a square or something
+                    this.map_image_width = MAX_MAP_SIZE;
+                    this.map_image_height = MAX_MAP_SIZE;
+                }
+            }
 
             this.resizeCanvases();
 
-            fireEvent('image_loaded', {
-                width: this.map_image_width,
-                height: this.map_image_height
+            Store.fire('image_loaded', {
+                image_dimensions: {
+                    width: this.map_image_width,
+                    height: this.map_image_height
+                }
             });
 
             this.drawMap(img);
@@ -152,6 +284,7 @@ class CanvasManager {
             this.drawOneWayPoint (context);
             this.drawWallBeingPlaced(context);
             this.drawSnapIndicator(context);
+            this.drawWallEndIndicator(context);
         context.restore();
     }
 
@@ -254,10 +387,10 @@ class CanvasManager {
     }
 
     drawWallBeingPlaced (context) {
-        if (!CONFIG.lighting_enabled && !CONFIG.create_one_way_wall) {
-            if (Mouse.down && !CONFIG.quick_place) {
+        if (!CONFIG.lighting_enabled && !CONFIG.create_one_way_wall && !CONFIG.move_segment) {
+            if (Mouse.down && !CONFIG.quick_place && this.parent.SegmentManager.new_wall) {
                 context.beginPath();
-                context.moveTo(this.parent.SegmentManager.new_wall.start.x, this.parent.SegmentManager.new_wall.start.y);
+                context.moveTo(this.parent.SegmentManager.new_wall.x, this.parent.SegmentManager.new_wall.y);
                 context.lineTo(Mouse.x, Mouse.y);
                 this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
             }
@@ -287,14 +420,30 @@ class CanvasManager {
         context.restore();
     }
 
+    drawWallEndIndicator (context) {
+        if (!CONFIG.move_segment) return;
+        const wall_end = this.parent.SegmentManager.findClosestWallEnd();
+        if (!wall_end) return;
+        context.save();
+            context.globalAlpha = 0.4;
+            this.canvasCircle(
+                context,
+                wall_end.x,
+                wall_end.y,
+                CONFIG.move_point_dist,
+                CONFIG.snap.color
+            );
+        context.restore();
+    }
+
     drawMap (img) {
         this.image_context.drawImage(img, 0, 0, this.map_image_width, this.map_image_height);
     }
 
-    drawLight (opts) {
-        opts = opts || {};
+    drawLight (opts = {}) {
         window.requestAnimationFrame(() => {
-            // if (!this.parent.lighting_enabled) return;
+            // Getting all the light polys even if we aren't going to draw them, as the
+            // display window uses these light polys
             const light_polys = opts.polys || this.parent.LightManager.getAllLightPolygons(opts);
             if (!this.parent.lighting_enabled) return;
             // Refresh the Fog of War Canvas (full transparent gray after this)
@@ -385,8 +534,8 @@ class CanvasManager {
     }
 
     resizeCanvas (canvas) {
-        $(canvas).attr('width', this.map_image_width);
-        $(canvas).attr('height', this.map_image_height);
+        canvas.setAttribute('width', this.map_image_width);
+        canvas.setAttribute('height', this.map_image_height);
         canvas.style.width = this.map_image_width + 'px';
         canvas.style.height = this.map_image_height + 'px';
     }

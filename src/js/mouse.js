@@ -2,6 +2,7 @@ class Mouse {
     constructor () {
         this.x = null;
         this.y = null;
+
         this.key_x = null;
         this.key_y = null;
         this.prevX = null;

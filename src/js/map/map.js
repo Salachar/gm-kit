@@ -3,6 +3,8 @@ const SegmentManager = require('./segment_manager');
 const LightManager = require('./light_manager');
 const ObjectManager = require('./object_manager');
 
+const Store = require('../store');
+
 const getNormal = require('../helpers').getNormal;
 
 class MapInstance {
@@ -32,10 +34,81 @@ class MapInstance {
             points: null
         };
 
+        this.move_segment = null;
+
         // Stuff
         this.node = this.CanvasManager.canvas_container;
 
         this.el_tab = null;
+
+        Store.register({
+            'enable_light': this.onEnableLight.bind(this),
+            'disable_light': this.onDisableLight.bind(this),
+            'add_segment': this.onAddSegment.bind(this),
+            'light_moved': this.onLightChange.bind(this),
+            'light_added': this.onLightChange.bind(this),
+            'door_drag': this.onDoorDrag.bind(this),
+            'zoom_in': this.onZoomIn.bind(this),
+            'zoom_out': this.onZoomOut.bind(this),
+            'remove_light': this.onRemoveLight.bind(this),
+            'remove_wall': this.onRemoveWall.bind(this),
+            'remove_door': this.onRemoveDoor.bind(this),
+        }, this.name);
+    }
+
+    onZoomIn () {
+        this.setZoom(this.zoom + 0.025);
+    }
+
+    onZoomOut () {
+        this.setZoom(this.zoom - 0.025);
+    }
+
+    onEnableLight () {
+        this.enableLight();
+    }
+
+    onDisableLight () {
+        this.disableLight();
+    }
+
+    onAddSegment (data) {
+        this.SegmentManager.addSegment(data.add_segment);
+        CONFIG.snap.indicator.show = false;
+        this.CanvasManager.drawWallLines();
+        this.CanvasManager.drawPlacements();
+        this.updateLighting();
+    }
+
+    onLightChange () {
+        this.CanvasManager.drawLights();
+        this.CanvasManager.drawLight();
+    }
+
+    onDoorDrag (data) {
+        this.SegmentManager.updateSelectedDoor(data.door_point);
+        this.CanvasManager.drawPlacements();
+        this.CanvasManager.drawLight({
+            force_update: true
+        });
+    }
+
+    onRemoveLight (data) {
+        this.LightManager.removeLight(data.object);
+        this.CanvasManager.drawLights();
+        this.CanvasManager.drawLight();
+    }
+
+    onRemoveWall (data) {
+        this.SegmentManager.removeWall(data);
+        this.CanvasManager.drawWallLines();
+        this.updateLighting();
+    }
+
+    onRemoveDoor (data) {
+        this.SegmentManager.removeDoor(data);
+        this.CanvasManager.drawWallLines();
+        this.updateLighting();
     }
 
     set tab (tab) {
@@ -80,6 +153,7 @@ class MapInstance {
         if (this.tab) {
             this.tab.classList.add('selected');
         }
+        this.CanvasManager.checkScroll();
     }
 
     shutdown () {
@@ -99,49 +173,58 @@ class MapInstance {
             x: Mouse.x,
             y: Mouse.y
         };
+
         switch (key) {
             case KEYS.MINUS:
-                fireEvent('zoom_out');
+                Store.fire('zoom_out');
                 break;
             case KEYS.PLUS:
-                fireEvent('zoom_in');
+                Store.fire('zoom_in');
                 break;
             case KEYS.SHIFT:
-                fireEvent('quick_place_started');
+                Store.fire('quick_place_started');
                 break;
             case KEYS.A:
-                fireEvent('add_light', point);
+                Store.fire('add_light', {
+                    point: point
+                });
                 break;
             case KEYS.D:
-                fireEvent('disable_light');
+                Store.fire('disable_light');
                 break;
             case KEYS.E:
-                fireEvent('enable_light');
+                Store.fire('enable_light');
                 break;
             case KEYS.O:
-                fireEvent('toggle_closest_door', point);
+                Store.fire('toggle_closest_door', {
+                    point: point
+                });
                 break;
             case KEYS.R:
-                fireEvent('remove_closest', point);
+                Store.fire('remove_closest', {
+                    point: point
+                });
                 break;
             case KEYS.T:
-                fireEvent('switch_wall_door', point);
+                Store.fire('switch_wall_door', {
+                    point: point
+                });
                 break;
             case KEYS.W:
                 // Doesn't apply to display canvas (yet)
                 this.CanvasManager.toggleWalls();
                 break;
             case KEYS.LEFT:
-                fireEvent('scroll_left');
+                Store.fire('scroll_left');
                 break;
             case KEYS.RIGHT:
-                fireEvent('scroll_right');
+                Store.fire('scroll_right');
                 break;
             case KEYS.UP:
-                fireEvent('scroll_up');
+                Store.fire('scroll_up');
                 break;
             case KEYS.DOWN:
-                fireEvent('scroll_down');
+                Store.fire('scroll_down');
                 break;
             default:
                 break;
@@ -150,8 +233,11 @@ class MapInstance {
 
     onKeyUp (key) {
         switch (key) {
+            case KEYS.CONTROL:
+                Store.fire('move_point_ended');
+                break;
             case KEYS.SHIFT:
-                 fireEvent('quick_place_ended');
+                Store.fire('quick_place_ended');
                 break;
             default:
                 break;
@@ -166,6 +252,17 @@ class MapInstance {
 
         if (this.lighting_enabled) {
             return this.SegmentManager.checkForDoors();
+        }
+
+        if (CONFIG.move_segment) {
+            const move_wall_end = this.SegmentManager.findClosestWallEnd();
+            Store.set({
+                move_wall_end: move_wall_end
+            });
+            this.SegmentManager.moveWithMouse(move_wall_end);
+            this.CanvasManager.drawPlacements();
+            this.CanvasManager.drawWallLines();
+            return;
         }
 
         if (CONFIG.create_one_way_wall) {
@@ -186,16 +283,20 @@ class MapInstance {
             });
 
             if (point) {
-                this.SegmentManager.new_wall.start.x = point.x;
-                this.SegmentManager.new_wall.start.y = point.y;
+                this.SegmentManager.new_wall = {
+                    x: point.x,
+                    y: point.y
+                };
                 return;
             }
         }
 
         if (this.lighting_enabled) return;
 
-        this.SegmentManager.new_wall.start.x = Mouse.downX;
-        this.SegmentManager.new_wall.start.y = Mouse.downY;
+        this.SegmentManager.new_wall = {
+            x: Mouse.downX,
+            y: Mouse.downY
+        };
     }
 
     mouseDownQuickPlace () {
@@ -211,34 +312,40 @@ class MapInstance {
         this.last_quickplace_coord.x = new_segment.p2x;
         this.last_quickplace_coord.y = new_segment.p2y;
 
-        return fireEvent('add_segment', {
-            segment: new_segment,
-            door: CONFIG.create_door
+        return Store.fire('add_segment', {
+            add_segment: {
+                segment: new_segment,
+                door: CONFIG.create_door
+            }
         });
     }
 
     mouseUp () {
         if (!Mouse.left) return;
 
-        if (CONFIG.create_one_way_wall) {
-            return;
-        }
+        Store.set({
+            move_wall_end: null
+        });
 
         if (this.LightManager.selected_light) {
-            return fireEvent('deselect_light');
+            Store.fire('deselect_light');
         }
 
         if (this.SegmentManager.selected_door) {
-            return fireEvent('deselect_door');
+            Store.fire('deselect_door');
         }
 
-        if (this.lighting_enabled || CONFIG.quick_place) {
-            return;
-        }
+        if (CONFIG.move_segment) return;
+
+        if (CONFIG.create_one_way_wall) return;
+
+        if (this.lighting_enabled || CONFIG.quick_place) return;
+
+        if (!this.SegmentManager.new_wall) return;
 
         var new_wall = {
-            p1x: this.SegmentManager.new_wall.start.x,
-            p1y: this.SegmentManager.new_wall.start.y,
+            p1x: this.SegmentManager.new_wall.x,
+            p1y: this.SegmentManager.new_wall.y,
             p2x: Mouse.upX,
             p2y: Mouse.upY
         };
@@ -253,18 +360,31 @@ class MapInstance {
         this.last_quickplace_coord.x = new_wall.p2x;
         this.last_quickplace_coord.y = new_wall.p2y;
 
-        fireEvent('add_segment', {
-            segment: new_wall,
-            door: CONFIG.create_door
+        Store.fire('add_segment', {
+            add_segment: {
+                segment: new_wall,
+                door: CONFIG.create_door
+            }
         });
+
+        this.SegmentManager.new_wall = null;
     }
 
     mouseMove () {
+        if (Store.get('move_wall_end')) {
+            this.SegmentManager.moveWithMouse(Store.get('move_wall_end'));
+            this.CanvasManager.drawPlacements();
+            this.CanvasManager.drawWallLines();
+            return;
+        }
+
         if (this.LightManager.selected_light) {
-            fireEvent('light_move', {
-                id: this.LightManager.selected_light.id,
-                x: Mouse.x,
-                y: Mouse.y
+            Store.fire('light_move', {
+                light: {
+                    id: this.LightManager.selected_light.id,
+                    x: Mouse.x,
+                    y: Mouse.y
+                }
             });
             return;
         }
@@ -366,7 +486,9 @@ class MapInstance {
             point_info[point_to_move_y] = new_p2;
         }
 
-        return fireEvent('door_drag', point_info);
+        return Store.fire('door_drag', {
+            door_point: point_info
+        });
     }
 
     enableLight () {
@@ -385,165 +507,10 @@ class MapInstance {
     updateLighting () {
         this.SegmentManager.clearSegments();
         this.SegmentManager.prepareSegments();
-        if (this.lighting_enabled || display_window) {
+        if (this.lighting_enabled || window.display_window) {
             this.CanvasManager.drawLight({
                 force_update: true
             });
-        }
-    }
-
-    onEvent (event, data) {
-        switch (event) {
-            case 'light_poly_update':
-                if (CONFIG.is_display) {
-                    this.CanvasManager.drawLight({
-                        force_update: true,
-                        polys: data
-                    });
-                }
-                break;
-
-            case 'create_one_way_wall_toggled':
-                this.CanvasManager.drawPlacements();
-                this.CanvasManager.drawWallLines();
-                break;
-
-            case 'image_loaded':
-                this.SegmentManager.updateBounds(data);
-                if (CONFIG.is_display) {
-                    fireEvent('enable_light');
-                }
-                break;
-
-            case 'enable_light':
-                this.enableLight();
-                break;
-
-            case 'disable_light':
-                this.disableLight();
-                break;
-
-            case 'switch_wall_door':
-                this.SegmentManager.switchBetweenDoorAndWall(data);
-                break;
-
-            case 'quick_place_started':
-            case 'quick_place_ended':
-                this.CanvasManager.drawPlacements();
-                break;
-
-            case 'toggle_closest_door':
-                this.SegmentManager.toggleClosestDoor(data);
-                break;
-
-            case 'add_light':
-                this.LightManager.addLight(data);
-                break;
-
-            case 'add_segment':
-                this.SegmentManager.addSegment(data);
-                CONFIG.snap.indicator.show = false;
-                this.CanvasManager.drawWallLines();
-                this.CanvasManager.drawPlacements();
-                this.updateLighting();
-                break;
-
-            case 'light_moved':
-            case 'light_added':
-                this.CanvasManager.drawLights();
-                this.CanvasManager.drawLight();
-                break;
-
-            case 'light_move':
-                this.LightManager.moveLight(data);
-                break;
-
-            case 'lights_cleared':
-                this.CanvasManager.drawLights();
-                break;
-
-            case 'select_light':
-                this.LightManager.selectLight(data);
-                break;
-            case 'deselect_light':
-                this.LightManager.deselectLight();
-                break;
-
-            case 'select_door':
-                this.SegmentManager.selectDoor(data);
-                break;
-            case 'deselect_door':
-                this.SegmentManager.deselectDoor();
-                break;
-
-            case 'door_drag':
-                this.SegmentManager.updateSelectedDoor(data);
-                this.CanvasManager.drawPlacements();
-                this.CanvasManager.drawLight({
-                    force_update: true
-                });
-
-            case 'door_activated':
-                this.CanvasManager.drawPlacements();
-                this.CanvasManager.drawLight({
-                    force_update: true
-                });
-                break;
-
-            case 'draw_walls':
-                this.CanvasManager.drawWallLines();
-                break;
-
-            case 'remove_one_way':
-                this.CanvasManager.drawWallLines();
-                break;
-
-            case 'remove_closest':
-                this.ObjectManager.removeClosest(data);
-                break;
-
-            case 'remove_light':
-                this.LightManager.removeLight(data);
-                this.CanvasManager.drawLights();
-                this.CanvasManager.drawLight();
-                break;
-            case 'remove_wall':
-                this.SegmentManager.removeWall(data);
-                this.CanvasManager.drawWallLines();
-                this.updateLighting();
-                break;
-            case 'remove_door':
-                this.SegmentManager.removeDoor(data);
-                this.CanvasManager.drawWallLines();
-                this.updateLighting();
-                break;
-
-            case 'scroll_left':
-                this.CanvasManager.scrollLeft();
-                break;
-
-            case 'scroll_right':
-                this.CanvasManager.scrollRight();
-                break;
-
-            case 'scroll_up':
-                this.CanvasManager.scrollUp();
-                break;
-
-            case 'scroll_down':
-                this.CanvasManager.scrollDown();
-                break;
-
-            case 'zoom_in':
-                this.setZoom(this.zoom + 0.025);
-                break;
-
-            case 'zoom_out':
-                this.setZoom(this.zoom - 0.025);
-                break;
-
-            default:
-                break;
         }
     }
 }

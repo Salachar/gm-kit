@@ -1,8 +1,14 @@
+const Store = require('../store');
+
 const pDistance = require('../helpers').pDistance;
 
 class ObjectManager {
     constructor (parent) {
         this.parent = parent;
+
+        Store.register({
+            'remove_closest': this.removeClosest.bind(this),
+        }, parent.name);
     }
 
     findClosest (type, point, distance_limit) {
@@ -72,11 +78,12 @@ class ObjectManager {
         };
     }
 
-    removeClosest (point) {
-        point = point || {
+    removeClosest (data) {
+        let point = {
             x: Mouse.x,
             y: Mouse.y
         };
+        if (data.point) point = data.point;
 
         var closest_light = this.findClosest('light', point);
         var closest_wall = this.findClosest('wall', point);
@@ -103,7 +110,9 @@ class ObjectManager {
         if (this.parent.lighting_enabled && item !== 'light') return;
 
         if (closest) {
-            fireEvent('remove_' + item, closest);
+            Store.fire('remove_' + item, {
+                object: closest
+            });
             return true;
         }
 

@@ -1,3 +1,5 @@
+const Store = require('../store');
+
 const pDistance = require('../helpers').pDistance;
 
 class SegmentManager {
@@ -22,54 +24,63 @@ class SegmentManager {
     		height: window.innerHeight
     	};
 
-        this.new_wall = {
-            start: {
-                x: 0,
-                y: 0
-            },
-            end: {
-                x: 0,
-                y: 0
-            }
-        };
+        this.new_wall = null;
 
         this.all_segments = null;
+
+        Store.register({
+            'switch_wall_door': this.onSwitchWallDoor.bind(this),
+            'image_loaded': this.onImageLoaded.bind(this),
+            'toggle_closest_door': this.onToggleClosestDoor.bind(this),
+            'deselect_door': this.deselectDoor.bind(this),
+        }, parent.name);
+    }
+
+    onSwitchWallDoor (data) {
+        this.switchBetweenDoorAndWall(data.point);
+    }
+
+    onImageLoaded (data) {
+        this.updateBounds(data.image_dimensions);
+        if (CONFIG.is_display) {
+            Store.fire('enable_light');
+        }
+    }
+
+    onToggleClosestDoor (data) {
+        this.toggleClosestDoor(data.point);
     }
 
     sanitize () {
-        this.walls.forEach((wall) => {
-            wall.p1x = Math.round(wall.p1x);
-            wall.p1y = Math.round(wall.p1y);
-
-            wall.p2x = Math.round(wall.p2x);
-            wall.p2y = Math.round(wall.p2y);
-
+        this.walls = this.walls.map((wall) => {
+            let new_wall = {
+                p1x: Math.round(wall.p1x),
+                p1y: Math.round(wall.p1y),
+                p2x: Math.round(wall.p2x),
+                p2y: Math.round(wall.p2y)
+            };
             if (wall.one_way) {
-                wall.one_way.open.x = Math.round(wall.one_way.open.x);
-                wall.one_way.open.y = Math.round(wall.one_way.open.y);
-
-                wall.one_way.closed.x = Math.round(wall.one_way.closed.x);
-                wall.one_way.closed.y = Math.round(wall.one_way.closed.y);
+                new_wall.one_way = {
+                    open: {
+                        x: Math.round(wall.one_way.open.x),
+                        y: Math.round(wall.one_way.open.y)
+                    },
+                    closed: {
+                        x: Math.round(wall.one_way.closed.x),
+                        y: Math.round(wall.one_way.closed.y)
+                    }
+                };
             }
-
-            delete wall.length
+            return new_wall;
         });
 
-        this.doors.forEach((door) => {
-            door.p1x = Math.round(door.p1x);
-            door.p1y = Math.round(door.p1y);
-
-            door.p2x = Math.round(door.p2x);
-            door.p2y = Math.round(door.p2y);
-
-            // Delete all the useless shit we don't need in the save data
-            // for a door.
-            delete door.temp_p1x;
-            delete door.temp_p1y;
-            delete door.temp_p2x;
-            delete door.temp_p2y;
-            delete door.length;
-            delete door.open;
+        this.doors = this.doors.map((door) => {
+            return {
+                p1x: Math.round(door.p1x),
+                p1y: Math.round(door.p1y),
+                p2x: Math.round(door.p2x),
+                p2y: Math.round(door.p2y)
+            };
         });
     }
 
@@ -115,8 +126,8 @@ class SegmentManager {
 
     getQuadrantSegments (quadrants) {
         let total_segments = [];
-        for (var i = 0; i < quadrants.length; ++i) {
-            switch (quadrants[i]) {
+        quadrants.forEach((quadrant) => {
+            switch (quadrant) {
                 case 'TL':
                     total_segments = total_segments.concat(this.quadrants.TL);
                     break;
@@ -130,7 +141,7 @@ class SegmentManager {
                     total_segments = total_segments.concat(this.quadrants.BL);
                     break;
             }
-        }
+        });
         return total_segments;
     }
 
@@ -253,50 +264,60 @@ class SegmentManager {
 		this.doors.push(door);
 	}
 
-    checkForDoors () {
-        var x1 = Mouse.x;
-        var y1 = Mouse.y;
-        var x2 = null;
-        var y2 = null;
-        var door = null;
+    moveWithMouse (wall_end) {
+        if (!wall_end) return;
+        const point = {
+            x: wall_end.segment[wall_end.point + 'x'],
+            y: wall_end.segment[wall_end.point + 'y']
+        };
+        this.findWallsWithPoint(point).forEach((wall) => {
+            if (wall.p1x === point.x && wall.p1y === point.y) {
+                wall.p1x = Mouse.x;
+                wall.p1y = Mouse.y;
+            }
+            if (wall.p2x === point.x && wall.p2y === point.y) {
+                wall.p2x = Mouse.x;
+                wall.p2y = Mouse.y;
+            }
+        });
+    }
 
-        for (var i = 0; i < this.doors.length; ++i) {
+    findWallsWithPoint (point) {
+        if (!point) return [];
+        return this.allSegments().filter((wall) => {
+            if (wall.p1x === point.x && wall.p1y === point.y) return true;
+            if (wall.p2x === point.x && wall.p2y === point.y) return true;
+            return false;
+        });
+    }
+
+    checkForDoors () {
+        let door = null;
+        for (let i = 0; i < this.doors.length; ++i) {
             door = this.doors[i];
-            if (door.open) continue;
+            if (door.open) return;
 
             door.p1_grab = false;
             door.p2_grab = false;
 
-            x2 = door.temp_p1x || door.p1x;
-            y2 = door.temp_p1y || door.p1y;
-
-            var x_sq = (x2 - x1) * (x2 - x1);
-            var y_sq = (y2 - y1) * (y2 - y1);
-            var dist = Math.sqrt(x_sq + y_sq);
-
+            let dist = this.pointDistance(Mouse.x, Mouse.y, door.temp_p1x || door.p1x, door.temp_p1y || door.p1y);
             if (dist <= CONFIG.door_grab_dist) {
-                fireEvent('select_door', {
+                this.selectDoor({
                     index: i,
                     grab_point: 'p1'
                 });
                 return true;
             }
 
-            x2 = door.temp_p2x || door.p2x;
-            y2 = door.temp_p2y || door.p2y;
-
-            x_sq = (x2 - x1) * (x2 - x1);
-            y_sq = (y2 - y1) * (y2 - y1);
-            dist = Math.sqrt(x_sq + y_sq);
-
+            dist = this.pointDistance(Mouse.x, Mouse.y, door.temp_p2x || door.p2x, door.temp_p2y || door.p2y);
             if (dist <= CONFIG.door_grab_dist) {
-                fireEvent('select_door', {
+                this.selectDoor({
                     index: i,
                     grab_point: 'p2'
                 });
                 return true;
             }
-        }
+        };
 
         return false;
     }
@@ -326,15 +347,15 @@ class SegmentManager {
     }
 
 	closeAllDoors () {
-        for (var i = 0; i < this.doors.length; ++i) {
-            this.doors[i].open = false;
-        }
+        this.doors.forEach((door) => {
+            door.open = false;
+        });
 	}
 
     toggleClosestDoor (point) {
         if (!this.doors.length) return;
 
-        var closest_door = this.parent.ObjectManager.findClosest('door', point);
+        let closest_door = this.parent.ObjectManager.findClosest('door', point);
 
         if (!closest_door) return;
         closest_door = closest_door.segment;
@@ -358,7 +379,7 @@ class SegmentManager {
                 SoundManager.play('open_door');
             }
 
-            fireEvent('door_activated');
+            Store.fire('door_activated');
         }
     }
 
@@ -390,7 +411,7 @@ class SegmentManager {
             this.walls.push(closest_door.segment);
         }
 
-        fireEvent('draw_walls');
+        Store.fire('draw_walls');
     }
 
     removeWall (closest) {
@@ -401,88 +422,76 @@ class SegmentManager {
         this.doors.splice(closest.index, 1);
     }
 
-    checkForWallEnds (opts) {
-        opts = opts || {};
-
-        if (!this.walls.length) return;
-
-        if (!CONFIG.snap.end) {
-            CONFIG.snap.indicator.show = false;
-            return;
-        }
-
-        var x1 = Mouse.x;
-        var y1 = Mouse.y;
+    checkForWallEnds (opts = {}) {
         CONFIG.snap.indicator.show = false;
-        var x2 = null;
-        var y2 = null;
+        if (!CONFIG.snap.end) return;
 
-        var segment = null;
-        var segments = this.allSegments();
-        for (var i = 0; i < segments.length; ++i) {
-            segment = segments[i];
+        const closest_end = this.findClosestWallEnd(CONFIG.snap.distance);
+        if (!closest_end) return null;
 
-            x2 = segment.p1x;
-            y2 = segment.p1y;
-            var x_sq = (x2 - x1) * (x2 - x1);
-            var y_sq = (y2 - y1) * (y2 - y1);
-            var dist = Math.sqrt(x_sq + y_sq);
-
-            if (dist < CONFIG.snap.distance) {
-                CONFIG.snap.indicator.show = opts.show_indicator;
-                CONFIG.snap.indicator.x = x2;
-                CONFIG.snap.indicator.y = y2;
-                return CONFIG.snap.indicator;
-            }
-
-            x2 = segment.p2x;
-            y2 = segment.p2y;
-            var x_sq = (x2 - x1) * (x2 - x1);
-            var y_sq = (y2 - y1) * (y2 - y1);
-            var dist = Math.sqrt(x_sq + y_sq);
-
-            if (dist < CONFIG.snap.distance) {
-                CONFIG.snap.indicator.show = opts.show_indicator;
-                CONFIG.snap.indicator.x = x2;
-                CONFIG.snap.indicator.y = y2;
-                return CONFIG.snap.indicator;
-            }
-        }
-
-        return null;
+        CONFIG.snap.indicator.show = opts.show_indicator;
+        CONFIG.snap.indicator.x = closest_end.x;
+        CONFIG.snap.indicator.y = closest_end.y;
+        return CONFIG.snap.indicator;
     }
 
-    checkForWallLines (opts) {
-        opts = opts || {};
+    findClosestWallEnd (distance = 20) {
+        let closest_end = {
+            dist: null,
+            x: null,
+            y: null,
+            segment: null,
+            point: null,
+        };
 
+        this.allSegments().forEach((segment) => {
+            const dist1 = this.pointDistance(Mouse.x, Mouse.y, segment.p1x, segment.p1y);
+            const dist2 = this.pointDistance(Mouse.x, Mouse.y, segment.p2x, segment.p2y);
+            if (dist1 < distance || dist2 < distance) {
+                if (closest_end.dist === null || dist1 < closest_end.dist) {
+                    closest_end.dist = dist1;
+                    closest_end.x = segment.p1x;
+                    closest_end.y = segment.p1y;
+                    closest_end.point = 'p1';
+                    closest_end.segment = segment;
+                }
+                if (closest_end.dist === null || dist2 < closest_end.dist) {
+                    closest_end.dist = dist2;
+                    closest_end.x = segment.p2x;
+                    closest_end.y = segment.p2y;
+                    closest_end.point = 'p2';
+                    closest_end.segment = segment;
+                }
+            }
+        });
+
+        return (closest_end.segment) ? closest_end : null;
+    }
+
+    pointDistance (x1, y1, x2, y2) {
+        const x_sq = (x2 - x1) * (x2 - x1);
+        const y_sq = (y2 - y1) * (y2 - y1);
+        return Math.sqrt(x_sq + y_sq);
+    }
+
+    checkForWallLines (opts = {}) {
         if (!this.walls.length) return;
-
-        if (!CONFIG.snap.line) {
-            CONFIG.snap.indicator.show = false;
-            return;
-        }
-
-        var x1 = Mouse.x;
-        var y1 = Mouse.y;
         CONFIG.snap.indicator.show = false;
-        var x2 = null;
-        var y2 = null;
 
-        var segment = null;
-        var segments = this.allSegments();
+        if (!CONFIG.snap.line) return;
 
-        var closest_segment = null;
-        var closest_segment_info = null;
-        var distance = null;
-        for (var i = 0; i < segments.length; ++i) {
-            segment = segments[i];
-            var segment_info = pDistance(Mouse, segment);
+        let closest_segment = null;
+        let closest_segment_info = null;
+        let distance = null;
+
+        this.allSegments().forEach((segment) => {
+            const segment_info = pDistance(Mouse, segment);
             if (!distance || segment_info.distance < distance) {
                 distance = segment_info.distance;
                 closest_segment = segment;
                 closest_segment_info = segment_info;
             }
-        }
+        });
 
         if (closest_segment_info.distance < CONFIG.snap.distance) {
             CONFIG.snap.indicator.show = opts.show_indicator;
@@ -495,6 +504,7 @@ class SegmentManager {
     }
 
 	updateBounds (opts) {
+        console.log(opts);
 		opts = opts || {};
 		this.bounds.width = opts.width || CONFIG.map_image_width || this.bounds.width || 0;
 		this.bounds.height = opts.height || CONFIG.map_image_height || this.bounds.height || 0;

@@ -2,7 +2,7 @@ TODO:
     - Wall end dragging
     - Map moving with middle or right mouse click and drag
     - Option to see light on display window
-    - Read in config is present
+    - Read in config
     - Let user specify map directory
         - Gets written to config
 
@@ -46,3 +46,9 @@ Updates (7/9/2018):
     - Whole integers for segment x/y, I can't see why rounding to the nearest whole hurts
         anything and would reduce .json file size (not important) and payload of light data
         to the secondary screen (more important)
+
+Updates (10/5/2018)
+    - Added new event/store implementation
+    - Holding CTRL now lets the user drag ends of placed walls
+    - Image auto sizing added in, new max of 3000 pixels
+    - Hide scrolling elements when at the edge of the map

@@ -4,6 +4,8 @@ const MapInstance = require('./map/map');
 const ToastMesseger = require('./toast');
 const Mouse = require('./mouse');
 
+const Store = require('./store');
+
 const getWindowDimensions = require('./helpers').getWindowDimensions;
 const createElement = require('./helpers').createElement;
 
@@ -19,25 +21,27 @@ class DisplayManager {
         this.current_map = null;
 
         this.setEvents();
+
+        Store.register({
+            'dim_down': this.onDimDown.bind(this),
+            'dim_up': this.onDimUp.bind(this),
+        });
     }
 
-    onEvent (event, data, opts) {
-        opts = opts || {};
-        let { no_propagate, map_name } = opts;
-        map_name = map_name || (this.current_map || {}).name;
+    onDimDown () {
+        this.setDim(-0.01);
+    }
 
-        if (event === 'dim_down' || event === 'dim_up') {
-            let dimmer_opacity = parseFloat(document.getElementById('dimmer').style.opacity, 10);
-            let dimmer_mod = (event === 'dim_down') ? -0.01 : 0.01;
-            let new_dimmer_opacity = dimmer_opacity + dimmer_mod;
-            if (new_dimmer_opacity < 0) new_dimmer_opacity = 0;
-            if (new_dimmer_opacity > 1) new_dimmer_opacity = 1;
-            document.getElementById('dimmer').style.opacity = new_dimmer_opacity;
-        }
+    onDimUp () {
+        this.setDim(0.01);
+    }
 
-        if (this.current_map && map_name && this.current_map.name === map_name) {
-            this.current_map.onEvent(event, data);
-        }
+    setDim (dimmer_mod) {
+        let dimmer_opacity = parseFloat(document.getElementById('dimmer').style.opacity, 10);
+        let new_dimmer_opacity = dimmer_opacity + dimmer_mod;
+        if (new_dimmer_opacity < 0) new_dimmer_opacity = 0;
+        if (new_dimmer_opacity > 1) new_dimmer_opacity = 1;
+        document.getElementById('dimmer').style.opacity = new_dimmer_opacity;
     }
 
     onMapLoad (map) {
@@ -46,6 +50,7 @@ class DisplayManager {
     }
 
     setActiveMap (map_name) {
+        Store.key = map_name;
         if (this.current_map) {
             this.current_map.active = false;
             this.current_map.hide();
@@ -82,6 +87,7 @@ class DisplayManager {
         });
 
         window.addEventListener('message', (e) => {
+            console.log(e);
             let event = e.data;
 
             if (event.event === 'display_map') {
@@ -89,15 +95,13 @@ class DisplayManager {
                 return;
             }
 
-            this.onEvent(event.event, event.data.data, {
-                map_name: event.data.map_name
-            });
+            Store.fire(event.event, event.data.data);
         });
 
         document.getElementById('map_scroll_top').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_up');
+                    Store.fire('scroll_up');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -109,7 +113,7 @@ class DisplayManager {
         document.getElementById('map_scroll_right').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_right');
+                    Store.fire('scroll_right');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -121,7 +125,7 @@ class DisplayManager {
         document.getElementById('map_scroll_bottom').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_down');
+                    Store.fire('scroll_down');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -133,7 +137,7 @@ class DisplayManager {
         document.getElementById('map_scroll_left').addEventListener('mouseover', (e) => {
             scroll_wait_timer = setTimeout(() => {
                 scroll_timer = setInterval(() => {
-                    fireEvent('scroll_left');
+                    Store.fire('scroll_left');
                 }, SCROLL_FREQUENCY);
             }, SCROLL_WAIT_TIME);
         });
@@ -153,7 +157,7 @@ class DisplayManager {
     }
 }
 
-$(document).ready(() => {
+window.onload = () => {
     CONFIG.is_display = true;
     CONFIG.window = 'display';
 
@@ -165,16 +169,12 @@ $(document).ready(() => {
 
     document.getElementById('dimmer').style.opacity = 0;
 
-    window.fireEvent = (event, data) => {
-        window.DisplayManager.onEvent(event, data);
-    }
-
     window.opener.postMessage({
         event: 'display_window_loaded'
     });
-});
+};
 
-$(window).resize(function () {
+window.onresize = () => {
     getWindowDimensions();
-});
+};
 
