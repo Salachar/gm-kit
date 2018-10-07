@@ -100,13 +100,13 @@ class MapInstance {
     }
 
     onRemoveWall (data) {
-        this.SegmentManager.removeWall(data);
+        this.SegmentManager.removeWall(data.object);
         this.CanvasManager.drawWallLines();
         this.updateLighting();
     }
 
     onRemoveDoor (data) {
-        this.SegmentManager.removeDoor(data);
+        this.SegmentManager.removeDoor(data.object);
         this.CanvasManager.drawWallLines();
         this.updateLighting();
     }
@@ -125,7 +125,6 @@ class MapInstance {
 
     get data () {
         this.SegmentManager.sanitize();
-
         return {
             name: this.name,
             json_directory: this.map.json_directory,
@@ -133,6 +132,7 @@ class MapInstance {
             lights_data: {
                 lights: this.LightManager.lights,
                 lights_added: this.LightManager.lights_added,
+                polys: this.LightManager.light_polys
             },
             json: {
                 walls: this.SegmentManager.walls,
@@ -143,16 +143,12 @@ class MapInstance {
 
     hide () {
         this.node.classList.add('hidden');
-        if (this.tab) {
-            this.tab.classList.remove('selected');
-        }
+        if (this.tab) this.tab.classList.remove('selected');
     }
 
     show () {
         this.node.classList.remove('hidden');
-        if (this.tab) {
-            this.tab.classList.add('selected');
-        }
+        if (this.tab) this.tab.classList.add('selected');
         this.CanvasManager.checkScroll();
     }
 

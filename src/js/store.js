@@ -28,17 +28,22 @@ class Store {
         return this.__key;
     }
 
-    fire (fired_event, data) {
+    fire (fired_event, data, key) {
+        // Send the current key to the display window
+        // If the display windows current key is different
+        // then the one we sent, then the display window isn't showing the current map
+        // The display window should then disregard any events
+        if (key && this.key && this.key !== key) return;
+        key = key || this.key || null;
+
         // If the display window accepts the event, send it there
         const dwe = this.display_window_events[fired_event];
         if (window.display_window && dwe) {
             if (dwe === true || (dwe === 'ALT' && KEY_DOWN[KEYS.ALT])) {
                 window.display_window.postMessage({
                     event: fired_event,
-                    data: {
-                        map_name: window.MapManager.current_map.name,
-                        data: data
-                    }
+                    data: data,
+                    key: key
                 });
             }
             // If its an ALT event, return early, since we only want the display

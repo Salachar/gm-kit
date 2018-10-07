@@ -16,7 +16,6 @@ let map_dir_exists = false;
 let LOCAL = false;
 
 // Need a reference to hang onto the first map needed to display
-let display_map = null;
 let WINDOW = null;
 
 function generateMapDir () {

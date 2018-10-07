@@ -9,7 +9,7 @@ module.exports = [{
     text: 'Hold down to allow quick placement of walls'
 }, {
     key: 'CONTROL',
-    text: 'Hold down allow movement of placed wall endpoints'
+    text: 'Hold down to allow movement of placed wall points<br>Points will change for all walls that share it'
 }, {
     key: 'A',
     text: 'Place light'
@@ -30,7 +30,10 @@ module.exports = [{
     text: 'Remove object closest to mouse'
 }, {
     key: 'S',
-    text: 'Put map on display window'
+    text: 'Put map on display window<br>This will also create the window if it doesn\'t exist'
+}, {
+    key: 'W',
+    text: 'Toggle walls on main window when lighting is on'
 }, {
     key: '[ *',
     text: 'Increase dimmer overlay on display window'

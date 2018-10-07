@@ -327,6 +327,10 @@ class MapManager {
                 case KEYS.RIGHT_BRACKET:
                     Store.fire('dim_up');
                     break;
+                case KEYS.S:
+                    if (KEY_DOWN[KEYS.ALT]) {
+                        this.showInDisplayWindow();
+                    }
                 default:
                     // console.log('APP >> Keydown: Unhandled keyCode: ' + e.keyCode);
                     break;
@@ -348,9 +352,6 @@ class MapManager {
                     break;
                 case KEYS.SHIFT:
                     CONFIG.quick_place = false;
-                    break;
-                case KEYS.S:
-                    this.showInDisplayWindow();
                     break;
                 default:
                     // console.log('APP >> Keyup: Unhandled keyCode: ' + e.keyCode);

@@ -53,7 +53,7 @@ class CanvasManager {
         if (CONFIG.is_display) {
             this.drawLight({
                 force_update: true,
-                polys: data
+                polys: data.polys
             });
         }
     }
@@ -91,7 +91,6 @@ class CanvasManager {
         });
 
         this.canvas_container.addEventListener('scroll', (e) => {
-            console.log(e);
             this.checkScroll(e);
         });
         this.checkScroll();

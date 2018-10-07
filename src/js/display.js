@@ -47,6 +47,9 @@ class DisplayManager {
     onMapLoad (map) {
         this.addMap(map);
         this.setActiveMap(map.name);
+        Store.fire('light_poly_update', {
+            polys: map.lights_data.polys
+        });
     }
 
     setActiveMap (map_name) {
@@ -67,35 +70,14 @@ class DisplayManager {
         this.maps[map.name].hide();
     }
 
-    // removeMap (map_name) {
-    //     let removing_current_map = (this.current_map.name === map_name);
-    //     this.maps[map_name].shutdown();
-    //     delete this.maps[map_name];
-
-    //     let map_keys = Object.keys(this.maps);
-    //     if (removing_current_map && map_keys.length) {
-    //         this.setActiveMap(map_keys[map_keys.length - 1]);
-    //     }
-    //     if (!map_keys.length) {
-    //         document.getElementById('no_map_screen').classList.remove('hidden');
-    //     }
-    // }
-
     setEvents () {
-        IPC.on('display_map', (e, map = {}) => {
-            this.onMapLoad(map);
-        });
-
         window.addEventListener('message', (e) => {
-            console.log(e);
-            let event = e.data;
-
-            if (event.event === 'display_map') {
-                this.onMapLoad(event.data);
+            const data = e.data;
+            if (e.data.event === 'display_map') {
+                this.onMapLoad(e.data.data);
                 return;
             }
-
-            Store.fire(event.event, event.data.data);
+            Store.fire(e.data.event, e.data.data, e.data.key);
         });
 
         document.getElementById('map_scroll_top').addEventListener('mouseover', (e) => {

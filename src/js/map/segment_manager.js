@@ -504,7 +504,6 @@ class SegmentManager {
     }
 
 	updateBounds (opts) {
-        console.log(opts);
 		opts = opts || {};
 		this.bounds.width = opts.width || CONFIG.map_image_width || this.bounds.width || 0;
 		this.bounds.height = opts.height || CONFIG.map_image_height || this.bounds.height || 0;

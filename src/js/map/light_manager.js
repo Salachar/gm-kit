@@ -142,8 +142,11 @@ class LightManager {
             polys.push(this.getLightPolygon(this.lights[l], opts.force_update));
         }
         // This event is only for the display window. When we're drawing
-        Store.fire('light_poly_update', polys);
-        return polys;
+        Store.fire('light_poly_update', {
+            polys: polys
+        });
+        this.light_polys = polys;
+        return this.light_polys;
     }
 
     checkForLights () {
