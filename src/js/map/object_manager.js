@@ -25,7 +25,6 @@ class ObjectManager {
                 search_array = this.parent.SegmentManager.walls;
                 break;
             case 'light':
-                // search_array = this.parent.LightManager.lights;
                 search_array = [];
                 for (var l in this.parent.LightManager.lights) {
                     search_array.push(this.parent.LightManager.lights[l]);
@@ -38,44 +37,23 @@ class ObjectManager {
 
         if (!search_array || !search_array.length) return;
 
-        var closest_segment = null;
-        var segment = null;
-        var segment_info = null;
-        var index = null;
-        var distance = null;
-
-        for (var i = 0; i < search_array.length; ++i) {
-            segment = search_array[i];
-            if (segment.first && segment.second) {
-                segment_info = pDistance(point, segment.first);
-                if (!distance || segment_info.distance < distance) {
-                    distance = segment_info.distance;
-                    closest_segment = segment;
-                    index = i;
-                }
-                segment_info = pDistance(point, segment.second);
-                if (!distance || segment_info.distance < distance) {
-                    distance = segment_info.distance;
-                    closest_segment = segment;
-                    index = i;
-                }
-            } else {
-                segment_info = pDistance(point, segment);
-                if (!distance || segment_info.distance < distance) {
-                    distance = segment_info.distance;
-                    closest_segment = segment;
-                    index = i;
-                }
-            }
-        }
-
-        if (distance > distance_limit) return null;
-
-        return {
-            segment: closest_segment,
-            distance: distance,
-            index: index
+        let closest = {
+            segment: null,
+            index: null,
+            distance: null
         };
+
+        search_array.forEach((segment, index) => {
+            const segment_info = pDistance(point, segment);
+            if (!closest.distance || segment_info.distance < closest.distance) {
+                closest.distance = segment_info.distance;
+                closest.segment = segment;
+                closest.index = index;
+            }
+        });
+
+        if (closest.distance > distance_limit) return null;
+        return closest;
     }
 
     removeClosest (data) {
@@ -89,7 +67,10 @@ class ObjectManager {
         var closest_wall = this.findClosest('wall', point);
         var closest_door = this.findClosest('door', point);
 
-        var closest = closest_wall || {distance: 999999999};
+        var closest = closest_wall || {
+            reject: true,
+            distance: 999999999
+        };
         var item = 'wall';
 
         if (closest_door && closest_door.distance < closest.distance) {
@@ -109,7 +90,7 @@ class ObjectManager {
 
         if (this.parent.lighting_enabled && item !== 'light') return;
 
-        if (closest) {
+        if (!closest.reject) {
             Store.fire('remove_' + item, {
                 object: closest
             });

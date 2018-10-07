@@ -303,17 +303,15 @@ class CanvasManager {
     drawAjarDoors (context) {
         const doors = this.parent.SegmentManager.doors;
         context.save();
-            var door = null;
             context.lineCap = 'square';
-            for (var i = 0; i < doors.length; ++i) {
-                door = doors[i];
-                if (!door.temp_p1x && !door.temp_p2x) continue;
+            doors.forEach((door) => {
+                if (!door.temp_p1x && !door.temp_p2x) return;
                 context.beginPath();
                 context.moveTo(door.temp_p1x || door.p1x, door.temp_p1y || door.p1y);
                 context.lineTo(door.temp_p2x || door.p2x, door.temp_p2y || door.p2y);
                 this.canvasStroke(context, '#000000', 8);
                 this.canvasStroke(context, '#FFFFFF', 4);
-            }
+            });
         context.restore();
     }
 
@@ -331,21 +329,13 @@ class CanvasManager {
     }
 
     drawWalls (context) {
-        const walls = this.parent.SegmentManager.walls;
-
-        let closest_wall = null;
-        if (CONFIG.create_one_way_wall) {
-            closest_wall = this.parent.ObjectManager.findClosest('wall');
-        }
-
-        let wall = null;
-        for (var i = 0; i < walls.length; ++i) {
-            wall = walls[i];
+        const closest_wall = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('wall') : null;
+        this.parent.SegmentManager.walls.forEach((wall, index) => {
             context.beginPath();
             context.moveTo(wall.p1x, wall.p1y);
             context.lineTo(wall.p2x, wall.p2y);
 
-            if (closest_wall && closest_wall.index === i) {
+            if (closest_wall && closest_wall.index === index) {
                 this.canvasStroke(context, CONFIG.display.wall.highlight_outer_color, CONFIG.display.wall.highlight_outer_width);
                 this.canvasStroke(context, CONFIG.display.wall.highlight_inner_color, CONFIG.display.wall.highlight_inner_width);
             } else {
@@ -369,20 +359,17 @@ class CanvasManager {
                     CONFIG.display.wall.inner_color
                 );
             }
-        }
+        });
     }
 
     drawDoors (context) {
-        const doors = this.parent.SegmentManager.doors;
-        let door = null;
-        for (var i = 0; i < doors.length; ++i) {
-            door = doors[i];
+        this.parent.SegmentManager.doors.forEach((door) => {
             context.beginPath();
             context.moveTo(door.temp_p1x || door.p1x, door.temp_p1y || door.p1y);
             context.lineTo(door.temp_p2x || door.p2x, door.temp_p2y || door.p2y);
             this.canvasStroke(context, CONFIG.display.door.outer_color, CONFIG.display.door.outer_width);
             this.canvasStroke(context, CONFIG.display.door.inner_color, CONFIG.display.door.inner_width);
-        }
+        });
     }
 
     drawWallBeingPlaced (context) {
@@ -487,14 +474,14 @@ class CanvasManager {
     drawLightPolygons (context, polys) {
         // Draw all of the light polygons
         context.beginPath();
-        for (var i = 0; i < polys.length; ++i) {
-            var points = polys[i].intersects;
+        polys.forEach((poly) => {
+            var points = poly.intersects;
             // moveTo creates a new path, so it will not be connected to the other polys
             context.moveTo(points[0].x, points[0].y);
-            for (var k = 1; k < points.length; ++k) {
-                context.lineTo(points[k].x, points[k].y);
-            }
-        }
+            points.forEach((point) => {
+                context.lineTo(point.x, point.y);
+            });
+        });
         // Draw existing content inside new content. All of the current objects only
         // inside the light polygons are shown. Everything else is transparent
         context.globalCompositeOperation = "destination-out";
