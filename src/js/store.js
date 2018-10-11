@@ -48,7 +48,7 @@ class Store {
             }
             // If its an ALT event, return early, since we only want the display
             // screen to get an ALT event
-            if (dwe === 'ALT') return;
+            if (dwe === 'ALT' && KEY_DOWN[KEYS.ALT]) return;
         }
 
         this.set(data);

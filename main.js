@@ -75,6 +75,15 @@ IPC.on('load_maps', (e) => {
     generateMapList();
 });
 
+IPC.on('remove_map', (e, map) => {
+    console.log(map.image);
+    console.log(map.json);
+    console.log(map);
+    console.log(fs.existsSync(map.image));
+
+    fs.unlinkSync(map.json);
+});
+
 IPC.on('load_map', (e, maps) => {
     let loaded_maps = {};
 
@@ -208,6 +217,7 @@ function generateMapList () {
         if (file_obj.json) {
             if (LOCAL) {
                 file_obj.json = path.join(__dirname, relative_directory + '/' + file_obj.json);
+                console.log(file_obj.json);
             } else {
                 file_obj.json = map_dir + '/' + relative_directory + '/' + file_obj.json;
             }
@@ -233,12 +243,12 @@ function generateMapList () {
     }
 
     function isImage (file) {
-        if (file.match(/png|jpg|jpeg|bmp/)) return true;
+        if (file.match(/png|jpg|jpeg|bmp|pdf/)) return true;
         return false;
     }
 
     function matchingImageExists (dir, file) {
-        let image_types = ['.png', '.jpg', '.jpeg', '.bmp'];
+        let image_types = ['.png', '.jpg', '.jpeg', '.bmp', '.pdf'];
         let file_no_extension = file.split('.')[0];
         for (let i = 0; i < image_types.length; ++i) {
             try {

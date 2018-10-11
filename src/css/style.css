@@ -258,6 +258,9 @@ html, body {
     transition: all ease 0.25s;
     cursor: crosshair;
 }
+.map_scroller.hidden {
+    display: none;
+}
 #map_scroll_top {
     top: 0;
     left: 2rem;
@@ -384,10 +387,10 @@ html, body {
 
 #map_list_modal {
     position: absolute;
-    top: 5rem;
-    left: 5rem;
-    right: 5rem;
-    bottom: 5rem;
+    top: 8rem;
+    left: 2rem;
+    right: 2rem;
+    bottom: 8rem;
     background-color: #444;
     color: white;
     box-shadow: 0px 2px 4px 1px #222;
@@ -419,6 +422,7 @@ html, body {
     font-size: 0.8rem;
 }
 
+
 #map_list_modal_close {
     position: absolute;
     right: 0;
@@ -443,7 +447,27 @@ html, body {
     left: 0;
     right: 0;
     bottom: 0;
+    overflow: hidden;
+}
+#map_list_modal_body_list {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    right: 0;
+    bottom: 0;
     overflow: scroll;
+}
+#map_list_modal_body_preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    bottom: 0;
+    overflow: scroll;
+    background-color: rgba(0,0,0,0.5);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
 }
 
 .map_list_section_title {
@@ -464,6 +488,10 @@ html, body {
     position: relative;
     padding: 0.2rem 0.2rem 0.2rem 2rem;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 2rem;
 }
 .map_list_map:hover {
     background-color: #666;
@@ -508,4 +536,28 @@ html, body {
 }
 #toast.toast-error {
     background-color: rgba(237, 67, 55, 0.75);
+}
+
+
+
+
+.map_list_remove {
+    display: none;
+    height: 1.25rem;
+    width: 1.25rem;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.map_list_remove:before {
+    content: '\00d7';
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1.5rem;
+}
+.map_list_remove:hover:before {
+    color: red;
+}
+.map_list_map:hover .map_list_remove {
+    display: block;
 }

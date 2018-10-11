@@ -18,6 +18,11 @@ class FileManager {
         this.el_modal_body = document.getElementById('map_list_modal_body');
         this.el_open_button = document.getElementById('map_list_modal_open');
 
+        this.el_map_list = document.getElementById('map_list_modal_body_list');
+        this.el_map_preview = document.getElementById('map_list_modal_body_preview');
+
+        this.current_map_hover = null;
+
         this.addInfoTitle();
         this.setEvents();
     }
@@ -29,8 +34,8 @@ class FileManager {
 
     createFileTree (map_list) {
         this.map_list = map_list;
-        this.el_modal_body.innerHTML = '';
-        this.addSection(map_list, this.el_modal_body);
+        this.el_map_list.innerHTML = '';
+        this.addSection(map_list, this.el_map_list);
         this.openModal();
     }
 
@@ -79,6 +84,27 @@ class FileManager {
                                 }
                             }
                         });
+                        createElement('div', 'map_list_remove', {
+                            addTo: map_node,
+                            events: {
+                                click: (e) => {
+                                    e.preventDefault();
+                                    IPC.send('remove_map', map);
+                                }
+                            }
+                        });
+
+                        map_node.addEventListener('mouseenter', (e) => {
+                            this.current_map_hover = map.image;
+                            ((image_source) => {
+                                let img = new Image;
+                                img.onload = () => {
+                                    if (image_source !== this.current_map_hover) return;
+                                    this.el_map_preview.style.backgroundImage = `url("${img.src}")`;
+                                }
+                                img.src = image_source;
+                            })(map.image);
+                        });
                     })(sections[s][f]);
                 }
             } else {
@@ -101,7 +127,7 @@ class FileManager {
 
     closeModal () {
         this.el_modal_wrap.classList.add('hidden');
-        this.el_modal_body.innerHTML = '';
+        this.el_map_list.innerHTML = '';
     }
 
     setEvents () {

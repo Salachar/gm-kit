@@ -23,8 +23,6 @@ class CanvasManager {
         this.map_image_height = CONFIG.window_height;
 
         Store.register({
-            'move_segment_toggled': this.onMoveSegmentToggled.bind(this),
-            'create_one_way_wall_toggled' : this.onCreateOneWayWallToggled.bind(this),
             'light_poly_update': this.onLightPolyUpdate.bind(this),
             'quick_place_started': this.onQuickPlaceToggled.bind(this),
             'quick_place_ended': this.onQuickPlaceToggled.bind(this),
@@ -35,18 +33,12 @@ class CanvasManager {
             'scroll_left': this.scrollLeft.bind(this),
             'door_activated': this.onDoorActivated.bind(this),
             'draw_walls': this.drawWallLines.bind(this),
+
+            'move_segment_toggled': this.refreshPlacements.bind(this),
+            'create_one_way_wall_toggled' : this.refreshPlacements.bind(this),
             'move_point_ended': this.refreshPlacements.bind(this),
+            'remove_point': this.refreshPlacements.bind(this),
         }, parent.name);
-    }
-
-    onMoveSegmentToggled () {
-        this.drawPlacements();
-        this.drawWallLines();
-    }
-
-    onCreateOneWayWallToggled () {
-        this.drawPlacements();
-        this.drawWallLines();
     }
 
     onLightPolyUpdate (data) {
@@ -75,6 +67,7 @@ class CanvasManager {
 
     refreshPlacements () {
         this.drawPlacements();
+        this.drawWallLines();
     }
 
     createCanvasElements (map) {
@@ -93,7 +86,6 @@ class CanvasManager {
         this.canvas_container.addEventListener('scroll', (e) => {
             this.checkScroll(e);
         });
-        this.checkScroll();
     }
 
     scrollLeft () {
@@ -189,6 +181,8 @@ class CanvasManager {
     loadImage () {
         if (!this.map.image) return;
 
+        console.log(this.map.image);
+
         let img = new Image;
         img.onload = () => {
             const natural_width = img.naturalWidth;
@@ -226,6 +220,8 @@ class CanvasManager {
 
             this.canvas_container.scrollLeft = 0;
             this.canvas_container.scrollTop = 0;
+
+            this.checkScroll();
         }
         img.src = this.map.image;
     }
@@ -408,16 +404,17 @@ class CanvasManager {
 
     drawWallEndIndicator (context) {
         if (!CONFIG.move_segment) return;
-        const wall_end = this.parent.SegmentManager.findClosestWallEnd();
-        if (!wall_end) return;
+        let point_highlight = this.parent.SegmentManager.getControlPoint();
+        if (!point_highlight) return;
+        const color = (point_highlight.end) ? '#0000FF' : CONFIG.snap.color;
         context.save();
             context.globalAlpha = 0.4;
             this.canvasCircle(
                 context,
-                wall_end.x,
-                wall_end.y,
+                point_highlight.x,
+                point_highlight.y,
                 CONFIG.move_point_dist,
-                CONFIG.snap.color
+                color
             );
         context.restore();
     }

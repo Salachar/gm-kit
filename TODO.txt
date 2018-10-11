@@ -1,10 +1,9 @@
 TODO:
-    - Wall end dragging
-    - Map moving with middle or right mouse click and drag
-    - Option to see light on display window
+    - Attempt to fetch images from a PDF
+    - Option to disable walls for a map, so everything is lit up
+    - Finish delete option in file list
+    - Load DM versions of map if available
     - Read in config
-    - Let user specify map directory
-        - Gets written to config
 
 Updates (4/23/2018):
     - Arrow Key Scrolling:

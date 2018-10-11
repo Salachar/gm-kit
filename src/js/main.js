@@ -46,11 +46,11 @@ class MapManager {
     }
 
     onHideScroller (data) {
-        this['el_map_scroll_' + data.scroller].style.display = 'none';
+        this[`el_map_scroll_${data.scroller}`].classList.add('hidden');
     }
 
     onShowScroller (data) {
-        this['el_map_scroll_' + data.scroller].style.display = 'block';
+        this[`el_map_scroll_${data.scroller}`].classList.remove('hidden');
     }
 
     onMapLoad (maps) {
@@ -186,6 +186,10 @@ class MapManager {
             'electron',
             option_param
         );
+
+        // Clear all key downs, key ups dont register properly when a new
+        // window open and the old one loses focus
+        KEY_DOWN = {};
     }
 
     addHelp () {

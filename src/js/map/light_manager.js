@@ -101,7 +101,10 @@ class LightManager {
                 // t1 is the distance, if there is no distance, something weird happened.
                 // Either way, just ignore the wall and move on.
                 if (closestPoint.t1 != null) {
-                    intersects.push(closestPoint);
+                    intersects.push({
+                        x: Math.round(closestPoint.x),
+                        y: Math.round(closestPoint.y)
+                    });
                 }
             });
         });
@@ -146,6 +149,7 @@ class LightManager {
             polys: polys
         });
         this.light_polys = polys;
+        console.log(polys);
         return this.light_polys;
     }
 

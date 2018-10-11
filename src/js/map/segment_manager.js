@@ -216,8 +216,9 @@ class SegmentManager {
 	}
 
 	addSegment (opts) {
+        // console.log(opts);
         opts = opts || {};
-        let { door, segment } = opts;
+        let { type, door, segment } = opts;
 
 		if (!segment) return;
 		var s = this.finalizeSegment(segment);
@@ -230,11 +231,13 @@ class SegmentManager {
 	        console.log('Wall/Door points are the same, not adding');
 	    } else if (((CONFIG.snap.end || CONFIG.snap.line) && !CONFIG.quick_place) && dist < CONFIG.snap.distance) {
 	        console.log('Wall/Door is too short, not adding');
-	    } else if (door) {
+	    } else if (type === 'door' || door) {
 	        this.addDoor(s);
 	    } else {
 	        this.addWall(s);
 	    }
+
+        this.clearSegments();
 	}
 
 	finalizeSegment (segment) {
@@ -414,12 +417,55 @@ class SegmentManager {
         Store.fire('draw_walls');
     }
 
+    remove (info) {
+        // console.log(info);
+        if (!info) return;
+        if (info.type === 'wall') {
+            this.removeWall(info);
+        } else if (info.type === 'door') {
+            this.removeDoor(info);
+        }
+    }
+
     removeWall (closest) {
         this.walls.splice(closest.index, 1);
     }
 
     removeDoor (closest) {
         this.doors.splice(closest.index, 1);
+    }
+
+    getSegmentInfo (segment) {
+        let i = null;
+        for (i = 0; i < this.walls.length; ++i) {
+            if (this.checkSegmentsMatch(segment, this.walls[i])) {
+                return {
+                    segment: segment,
+                    index: i,
+                    type: 'wall'
+                };
+            }
+        }
+        for (i = 0; i < this.doors.length; ++i) {
+            if (this.checkSegmentsMatch(segment, this.doors[i])) {
+                return {
+                    segment: segment,
+                    index: i,
+                    type: 'door'
+                };
+            };
+        }
+        return null;
+    }
+
+    checkSegmentsMatch (s1, s2) {
+        if (s1.p1x === s2.p1x &&
+            s1.p2x === s2.p2x &&
+            s1.p1y === s2.p1y &&
+            s1.p2y === s2.p2y) {
+            return true;
+        }
+        return false;
     }
 
     checkForWallEnds (opts = {}) {
@@ -435,7 +481,7 @@ class SegmentManager {
         return CONFIG.snap.indicator;
     }
 
-    findClosestWallEnd (distance = 20) {
+    findClosestWallEnd (distance = CONFIG.snap.distance) {
         let closest_end = {
             dist: null,
             x: null,
@@ -465,6 +511,7 @@ class SegmentManager {
             }
         });
 
+        // console.log(closest_end);
         return (closest_end.segment) ? closest_end : null;
     }
 
@@ -475,11 +522,24 @@ class SegmentManager {
     }
 
     checkForWallLines (opts = {}) {
-        if (!this.walls.length) return;
         CONFIG.snap.indicator.show = false;
-
         if (!CONFIG.snap.line) return;
 
+        const closest_point = this.getClosestPointOnSegment({
+            distance: CONFIG.snap.distance
+        });
+
+        if (closest_point) {
+            CONFIG.snap.indicator.show = opts.show_indicator;
+            CONFIG.snap.indicator.x = closest_point.x;
+            CONFIG.snap.indicator.y = closest_point.y;
+            return CONFIG.snap.indicator;
+        }
+
+        return null;
+    }
+
+    getClosestPointOnSegment (opts = {}) {
         let closest_segment = null;
         let closest_segment_info = null;
         let distance = null;
@@ -493,14 +553,104 @@ class SegmentManager {
             }
         });
 
-        if (closest_segment_info.distance < CONFIG.snap.distance) {
-            CONFIG.snap.indicator.show = opts.show_indicator;
-            CONFIG.snap.indicator.x = closest_segment_info.x;
-            CONFIG.snap.indicator.y = closest_segment_info.y;
-            return CONFIG.snap.indicator;
+        if (closest_segment_info.distance < (opts.distance || 10)) {
+            return {
+                dist: closest_segment_info.distance,
+                x: Math.round(closest_segment_info.x),
+                y: Math.round(closest_segment_info.y),
+                segment: closest_segment
+            };
         }
 
         return null;
+    }
+
+    getControlPoint () {
+        let point = this.parent.SegmentManager.findClosestWallEnd();
+        let end = true;
+        if (!point) {
+            point = this.parent.SegmentManager.getClosestPointOnSegment({
+                distance: CONFIG.move_point_dist
+            });
+            end = false;
+        }
+        if (point) point.end = end;
+        return point;
+    }
+
+    handleControlPoint (control_point = {}) {
+        if (!control_point) return;
+        if (control_point.end === true) {
+            return this.moveWithMouse(control_point);
+        } else if (control_point.end === false) {
+            return this.splitWall(control_point);
+        }
+    }
+
+    removePoint (control_point = {}) {
+        if (!control_point || control_point.end === false) return;
+
+        let points = [];
+        this.findWallsWithPoint(control_point).forEach((wall) => {
+            if (wall.p1x !== control_point.x || wall.p1y !== control_point.y) {
+                points.push({
+                    x: wall.p1x,
+                    y: wall.p1y
+                });
+            }
+            if (wall.p2x !== control_point.x || wall.p2y !== control_point.y) {
+                points.push({
+                    x: wall.p2x,
+                    y: wall.p2y
+                });
+            }
+            this.remove(this.getSegmentInfo(wall));
+        });
+        if (points.length === 2) {
+            this.addSegment({
+                segment: {
+                    p1x: points[0].x,
+                    p1y: points[0].y,
+                    p2x: points[1].x,
+                    p2y: points[1].y
+                },
+                type: 'wall'
+            });
+        }
+
+        Store.fire('remove_point', {
+            point: control_point
+        });
+    }
+
+    splitWall (control_point) {
+        const info = this.getSegmentInfo(control_point.segment);
+        this.remove(info);
+
+        const s = control_point.segment;
+        this.addSegment({
+            segment: {
+                p1x: s.p1x,
+                p1y: s.p1y,
+                p2x: Mouse.x,
+                p2y: Mouse.y
+            },
+            type: info.type
+        });
+        this.addSegment({
+            segment: {
+                p1x: s.p2x,
+                p1y: s.p2y,
+                p2x: Mouse.x,
+                p2y: Mouse.y
+            },
+            type: info.type
+        });
+
+        // console.log(this.getControlPoint());
+        Store.set({
+            control_point: this.getControlPoint()
+        });
     }
 
 	updateBounds (opts) {

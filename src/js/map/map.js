@@ -164,6 +164,16 @@ class MapInstance {
         this.node.style.zoom = this.zoom;
     }
 
+    onDelete (point) {
+        if (CONFIG.move_segment) {
+            this.SegmentManager.removePoint(Store.get('control_point'));
+            return;
+        }
+        Store.fire('remove_closest', {
+            point: point
+        });
+    }
+
     onKeyDown (key) {
         const point = {
             x: Mouse.x,
@@ -176,6 +186,9 @@ class MapInstance {
                 break;
             case KEYS.PLUS:
                 Store.fire('zoom_in');
+                break;
+            case KEYS.DELETE:
+                this.onDelete(point);
                 break;
             case KEYS.SHIFT:
                 Store.fire('quick_place_started');
@@ -196,11 +209,11 @@ class MapInstance {
                     point: point
                 });
                 break;
-            case KEYS.R:
-                Store.fire('remove_closest', {
-                    point: point
-                });
-                break;
+            // case KEYS.R:
+            //     Store.fire('remove_closest', {
+            //         point: point
+            //     });
+            //     break;
             case KEYS.T:
                 Store.fire('switch_wall_door', {
                     point: point
@@ -251,11 +264,10 @@ class MapInstance {
         }
 
         if (CONFIG.move_segment) {
-            const move_wall_end = this.SegmentManager.findClosestWallEnd();
             Store.set({
-                move_wall_end: move_wall_end
+                control_point: this.SegmentManager.getControlPoint()
             });
-            this.SegmentManager.moveWithMouse(move_wall_end);
+            this.SegmentManager.handleControlPoint(Store.get('control_point'));
             this.CanvasManager.drawPlacements();
             this.CanvasManager.drawWallLines();
             return;
@@ -320,7 +332,7 @@ class MapInstance {
         if (!Mouse.left) return;
 
         Store.set({
-            move_wall_end: null
+            control_point: null
         });
 
         if (this.LightManager.selected_light) {
@@ -367,8 +379,14 @@ class MapInstance {
     }
 
     mouseMove () {
-        if (Store.get('move_wall_end')) {
-            this.SegmentManager.moveWithMouse(Store.get('move_wall_end'));
+        if (CONFIG.move_segment) {
+            if (Mouse.down && Store.get('control_point')) {
+                this.SegmentManager.handleControlPoint(Store.get('control_point'));
+            } else {
+                Store.set({
+                    control_point: this.SegmentManager.getControlPoint()
+                });
+            }
             this.CanvasManager.drawPlacements();
             this.CanvasManager.drawWallLines();
             return;

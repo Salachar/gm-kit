@@ -1,3 +1,5 @@
 node_modules/
 maps/MyMaps/
 build/
+package-lock.json
+TODO.txt

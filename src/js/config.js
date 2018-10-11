@@ -1,11 +1,12 @@
 const electron = require('electron');
 const IPC = electron.ipcRenderer;
 
-const KEY_DOWN = {};
+let KEY_DOWN = {};
 
 const KEYS = {
     MINUS: 189,
     PLUS: 187,
+    DELETE: 8,
     SHIFT: 16,
     CONTROL: 17,
     ALT: 18,
@@ -52,7 +53,7 @@ let CONFIG = {
 
     door_grab_dist: 20,
 
-    move_point_dist: 20,
+    move_point_dist: 10,
 
     move_segment: false,
 
