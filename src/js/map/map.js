@@ -309,16 +309,18 @@ class MapInstance {
 
     mouseDownQuickPlace () {
         let new_segment = {
-            p1x: this.last_quickplace_coord.x,
-            p1y: this.last_quickplace_coord.y,
-            p2x: Math.round(Mouse.downX),
-            p2y: Math.round(Mouse.downY)
+            p1: {
+                x: this.last_quickplace_coord.x,
+                y: this.last_quickplace_coord.y
+            },
+            p2: {
+                x: Math.round(Mouse.downX),
+                y: Math.round(Mouse.downY)
+            }
         }
 
-        // this.last_quickplace_coord.x = Mouse.downX;
-        // this.last_quickplace_coord.y = Mouse.downY;
-        this.last_quickplace_coord.x = new_segment.p2x;
-        this.last_quickplace_coord.y = new_segment.p2y;
+        this.last_quickplace_coord.x = new_segment.p2.x;
+        this.last_quickplace_coord.y = new_segment.p2.y;
 
         return Store.fire('add_segment', {
             add_segment: {
@@ -351,22 +353,26 @@ class MapInstance {
 
         if (!this.SegmentManager.new_wall) return;
 
-        var new_wall = {
-            p1x: this.SegmentManager.new_wall.x,
-            p1y: this.SegmentManager.new_wall.y,
-            p2x: Mouse.upX,
-            p2y: Mouse.upY
+        let new_wall = {
+            p1: {
+                x: this.SegmentManager.new_wall.x,
+                y: this.SegmentManager.new_wall.y
+            },
+            p2: {
+                x: Mouse.upX,
+                y: Mouse.upY
+            }
         };
 
         // If the snap indicator is showing, then we dont want to put the point on the mouse
         // but where the indicator is showing instead.
         if (CONFIG.snap.indicator.show) {
-            new_wall.p2x = CONFIG.snap.indicator.x;
-            new_wall.p2y = CONFIG.snap.indicator.y;
+            new_wall.p2.x = CONFIG.snap.indicator.x;
+            new_wall.p2.y = CONFIG.snap.indicator.y;
         }
 
-        this.last_quickplace_coord.x = new_wall.p2x;
-        this.last_quickplace_coord.y = new_wall.p2y;
+        this.last_quickplace_coord.x = new_wall.p2.x;
+        this.last_quickplace_coord.y = new_wall.p2.y;
 
         Store.fire('add_segment', {
             add_segment: {
@@ -449,55 +455,51 @@ class MapInstance {
         if (!selected_door.p1_grab && !selected_door.p2_grab) return;
 
         // Determine what point was grabbed and what point is stationary
-        var point_to_move_x = null;
-        var point_to_move_y = null;
-        var still_point_x = null;
-        var still_point_y = null;
+        let point_to_move = null;
+        let still_point = null;
         if (selected_door.p1_grab) {
-            point_to_move_x = (selected_door.temp_p1x) ? 'temp_p1x' : 'p1x';
-            point_to_move_y = (selected_door.temp_p1y) ? 'temp_p1y' : 'p1y';
-            still_point_x = (selected_door.temp_p2x) ? 'temp_p2x' : 'p2x';
-            still_point_y = (selected_door.temp_p2y) ? 'temp_p2y' : 'p2y';
+            point_to_move = (selected_door.temp_p1) ? 'temp_p1' : 'p1';
+            still_point = (selected_door.temp_p2) ? 'temp_p2' : 'p2';
         }
         if (selected_door.p2_grab) {
-            point_to_move_x = (selected_door.temp_p2x) ? 'temp_p2x' : 'p2x';
-            point_to_move_y = (selected_door.temp_p2y) ? 'temp_p2y' : 'p2y';
-            still_point_x = (selected_door.temp_p1x) ? 'temp_p1x' : 'p1x';
-            still_point_y = (selected_door.temp_p1y) ? 'temp_p1y' : 'p1y';
+            point_to_move = (selected_door.temp_p2) ? 'temp_p2' : 'p2';
+            still_point = (selected_door.temp_p1) ? 'temp_p1' : 'p1';
         }
 
         // Get the vector from the mouse to the part of
         // the door not moving (the hinge). The door will be
         // along this line
-        var v1 = Mouse.x - selected_door[still_point_x];
-        var v2 = Mouse.y - selected_door[still_point_y];
+        const v1 = Mouse.x - selected_door[still_point].x;
+        const v2 = Mouse.y - selected_door[still_point].y;
 
         // Get the unit fot that vector
-        var v_mag = Math.sqrt((v1 * v1) + (v2 * v2));
-        var u1 = v1 / v_mag;
-        var u2 = v2 / v_mag;
+        const v_mag = Math.sqrt((v1 * v1) + (v2 * v2));
+        const u1 = v1 / v_mag;
+        const u2 = v2 / v_mag;
 
         // If there is no length for the door, we need to get it.
         // There will never be a length the first time a door is dragged
         selected_door.length = selected_door.length || this.SegmentManager.segmentLength(selected_door);
 
         // Unit vector * door length = new vector for door
-        var d_u1 = u1 * selected_door.length;
-        var d_u2 = u2 * selected_door.length;
+        const d_u1 = u1 * selected_door.length;
+        const d_u2 = u2 * selected_door.length;
 
         // Get the new temporary ending point for the door
-        var new_p1 = selected_door[still_point_x] + d_u1;
-        var new_p2 = selected_door[still_point_y] + d_u2;
+        const new_p1 = selected_door[still_point].x + d_u1;
+        const new_p2 = selected_door[still_point].y + d_u2;
 
         // No "temp" means this is the first time the door is being moved
         // otherwise its an update to an already opened door
         let point_info = {};
-        if (point_to_move_x.indexOf('temp') === -1) {
-            point_info['temp_' + point_to_move_x] = new_p1;
-            point_info['temp_' + point_to_move_y] = new_p2;
+        if (!point_to_move.match(/temp/)) {
+            point_info[`temp_${point_to_move}`] = {};
+            point_info[`temp_${point_to_move}`].x = new_p1;
+            point_info[`temp_${point_to_move}`].y = new_p2;
         } else {
-            point_info[point_to_move_x] = new_p1;
-            point_info[point_to_move_y] = new_p2;
+            point_info[point_to_move] = {};
+            point_info[point_to_move].x = new_p1;
+            point_info[point_to_move].y = new_p2;
         }
 
         return Store.fire('door_drag', {

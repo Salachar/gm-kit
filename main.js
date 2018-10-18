@@ -76,11 +76,10 @@ IPC.on('load_maps', (e) => {
 });
 
 IPC.on('remove_map', (e, map) => {
-    console.log(map.image);
-    console.log(map.json);
-    console.log(map);
-    console.log(fs.existsSync(map.image));
-
+    // console.log(map.image);
+    // console.log(map.json);
+    // console.log(map);
+    // console.log(fs.existsSync(map.image));
     fs.unlinkSync(map.json);
 });
 
@@ -217,7 +216,6 @@ function generateMapList () {
         if (file_obj.json) {
             if (LOCAL) {
                 file_obj.json = path.join(__dirname, relative_directory + '/' + file_obj.json);
-                console.log(file_obj.json);
             } else {
                 file_obj.json = map_dir + '/' + relative_directory + '/' + file_obj.json;
             }
@@ -258,7 +256,7 @@ function generateMapList () {
                 console.log('Issue reading file, skipping...');
             }
         }
-        console.log('No Image match found for: ' + file);
+        // console.log('No Image match found for: ' + file);
         return false;
     }
 
@@ -267,10 +265,10 @@ function generateMapList () {
         let json_file = file_no_extension + '.json';
         try {
             if (fs.existsSync(dir + '/' + json_file)) return json_file;
-            console.log('No JSON match found for: ' + file);
+            // console.log('No JSON match found for: ' + file);
             return false;
         } catch (e) {
-            console.log('Error trying to read "' + json_file + '". It must not exist.');
+            // console.log('Error trying to read "' + json_file + '". It must not exist.');
             return false;
         }
     }

@@ -1,4 +1,19 @@
 const Helpers = {
+    copy: function (object) {
+        return JSON.parse(JSON.stringify(object));
+    },
+
+    copyPoint: function (point_to_copy) {
+        return {
+            x: point_to_copy.x || null,
+            y: point_to_copy.y || null
+        };
+    },
+
+    pointMatch: function (p1, p2) {
+        return (p1.x === p2.x && p1.y === p2.y);
+    },
+
     getWindowDimensions: function () {
         CONFIG.window_width = window.innerWidth;
         CONFIG.window_height = window.innerHeight;
@@ -6,9 +21,9 @@ const Helpers = {
 
     randomRGBA: function (alpha) {
         alpha = (typeof alpha === 'number') ? alpha : 1;
-        var r = Math.floor(Math.random() * 255 + 1);
-        var g = Math.floor(Math.random() * 255 + 1);
-        var b = Math.floor(Math.random() * 255 + 1);
+        const r = Math.floor(Math.random() * 255 + 1);
+        const g = Math.floor(Math.random() * 255 + 1);
+        const b = Math.floor(Math.random() * 255 + 1);
         return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     },
 
@@ -17,8 +32,8 @@ const Helpers = {
     //         return null;
     //     }
 
-    //     var t2 = (r.dx * (s.py - r.py) + r.dy * (r.px - s.px)) / (s.dx * r.dy - s.dy * r.dx);
-    //     var t1 = (r.dx != 0) ? (s.px + s.dx * t2 - r.px) / r.dx : (s.py + s.dy * t2 - r.py) / r.dy;
+    //     let t2 = (r.dx * (s.py - r.py) + r.dy * (r.px - s.px)) / (s.dx * r.dy - s.dy * r.dx);
+    //     let t1 = (r.dx != 0) ? (s.px + s.dx * t2 - r.px) / r.dx : (s.py + s.dy * t2 - r.py) / r.dy;
 
     //     return {
     //         x: r.px + (t1 * r.dx),
@@ -43,48 +58,40 @@ const Helpers = {
 
         // The line can also be a light, which will only have an X and a Y
         // In this case, just calculate the point to point distance and return.
-        if (line.x && line.y && !line.p1x) {
-            var distance = Math.sqrt(Helpers.sqr(line.x - point.x) + Helpers.sqr(line.y - point.y));
+        if (line.x && line.y && !line.p1) {
             return {
-                distance: distance,
+                distance: Math.sqrt(Helpers.sqr(line.x - point.x) + Helpers.sqr(line.y - point.y)),
                 x: line.x,
                 y: line.y
             }
         }
 
-        var A = point.x - line.p1x;
-        var B = point.y - line.p1y;
-        var C = line.p2x - line.p1x;
-        var D = line.p2y - line.p1y;
+        const A = point.x - line.p1.x;
+        const B = point.y - line.p1.y;
+        const C = line.p2.x - line.p1.x;
+        const D = line.p2.y - line.p1.y;
 
-        var dot = (A * C) + (B * D);
-        var len_sq = (C * C) + (D * D);
-        var param = -1;
+        const dot = (A * C) + (B * D);
+        const len_sq = (C * C) + (D * D);
+        const param = (len_sq !== 0) ? (dot / len_sq) : -1;
 
-        // In case of 0 length line
-        if (len_sq != 0) {
-            param = dot / len_sq;
-        }
-
-        var xx = 0;
-        var yy = 0;
-
+        let xx = 0;
+        let yy = 0;
         if (param < 0) {
-            xx = line.p1x;
-            yy = line.p1y;
+            xx = line.p1.x;
+            yy = line.p1.y;
         } else if (param > 1) {
-            xx = line.p2x;
-            yy = line.p2y;
+            xx = line.p2.x;
+            yy = line.p2.y;
         } else {
-            xx = line.p1x + param * C;
-            yy = line.p1y + param * D;
+            xx = line.p1.x + param * C;
+            yy = line.p1.y + param * D;
         }
 
-        var dx = point.x - xx;
-        var dy = point.y - yy;
-
+        const dx = point.x - xx;
+        const dy = point.y - yy;
         return {
-            distance: Math.sqrt(dx * dx + dy * dy),
+            distance: Math.sqrt(Helpers.sqr(dx) + Helpers.sqr(dy)),
             x: xx,
             y: yy
         }
@@ -93,14 +100,6 @@ const Helpers = {
     getNormal (segment) {
         if (!segment) return;
         if (segment.segment) segment = segment.segment;
-
-        // Get a perpendicular to the segment
-        // let perp = {
-        //     p1x: segment.p1x,
-        //     p1y: segment.p1y,
-        //     p2x: segment.p2y,
-        //     p2y: segment.p2x * -1
-        // };
 
         // Get a unit vector of that perpendicular
         let unit_vector = Helpers.getUnitVector(segment);
@@ -143,16 +142,12 @@ const Helpers = {
             open: point_two,
             closed: point_one
         };
-        // return {
-        //     x: middle_point.x + (unit_vector.x * 5),
-        //     y: middle_point.y + (unit_vector.y * 5)
-        // };
     },
 
     getUnitVector (segment) {
         let vector = {
-            x: segment.p2x - segment.p1x,
-            y: segment.p2y - segment.p1y
+            x: segment.p2.x - segment.p1.x,
+            y: segment.p2.y - segment.p1.y
         };
 
         let mag = Math.sqrt(Helpers.sqr(vector.x) + Helpers.sqr(vector.y));
@@ -165,8 +160,8 @@ const Helpers = {
 
     getSegmentMiddle (segment) {
         return {
-            x: segment.p1x + ((segment.p2x - segment.p1x) * 0.5),
-            y: segment.p1y + ((segment.p2y - segment.p1y) * 0.5)
+            x: segment.p1.x + ((segment.p2.x - segment.p1.x) * 0.5),
+            y: segment.p1.y + ((segment.p2.y - segment.p1.y) * 0.5)
         };
     },
 

@@ -168,8 +168,8 @@ class CanvasManager {
         });
 
         this.control_canvas.addEventListener('mousemove', (e) => {
-            var rect = this.control_canvas.getBoundingClientRect();
-            let pos = {
+            const rect = this.control_canvas.getBoundingClientRect();
+            const pos = {
                 x: (e.clientX / this.parent.zoom) - rect.left,
                 y: (e.clientY / this.parent.zoom) - rect.top
             };
@@ -180,8 +180,6 @@ class CanvasManager {
 
     loadImage () {
         if (!this.map.image) return;
-
-        console.log(this.map.image);
 
         let img = new Image;
         img.onload = () => {
@@ -301,10 +299,17 @@ class CanvasManager {
         context.save();
             context.lineCap = 'square';
             doors.forEach((door) => {
-                if (!door.temp_p1x && !door.temp_p2x) return;
+                if (!door.temp_p1 && !door.temp_p2) return;
                 context.beginPath();
-                context.moveTo(door.temp_p1x || door.p1x, door.temp_p1y || door.p1y);
-                context.lineTo(door.temp_p2x || door.p2x, door.temp_p2y || door.p2y);
+                const x1 = door.temp_p1 ? door.temp_p1.x : door.p1.x;
+                const y1 = door.temp_p1 ? door.temp_p1.y : door.p1.y;
+                const x2 = door.temp_p2 ? door.temp_p2.x : door.p2.x;
+                const y2 = door.temp_p2 ? door.temp_p2.y : door.p2.y;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x2, y2);
+                // context.moveTo(door.temp_p1.x || door.p1.x, door.temp_p1.y || door.p1.y);
+                // context.lineTo(door.temp_p2.x || door.p2.x, door.temp_p2.y || door.p2.y);
                 this.canvasStroke(context, '#000000', 8);
                 this.canvasStroke(context, '#FFFFFF', 4);
             });
@@ -328,8 +333,8 @@ class CanvasManager {
         const closest_wall = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('wall') : null;
         this.parent.SegmentManager.walls.forEach((wall, index) => {
             context.beginPath();
-            context.moveTo(wall.p1x, wall.p1y);
-            context.lineTo(wall.p2x, wall.p2y);
+            context.moveTo(wall.p1.x, wall.p1.y);
+            context.lineTo(wall.p2.x, wall.p2.y);
 
             if (closest_wall && closest_wall.index === index) {
                 this.canvasStroke(context, CONFIG.display.wall.highlight_outer_color, CONFIG.display.wall.highlight_outer_width);
@@ -360,9 +365,13 @@ class CanvasManager {
 
     drawDoors (context) {
         this.parent.SegmentManager.doors.forEach((door) => {
+            const x1 = door.temp_p1 ? door.temp_p1.x : door.p1.x;
+            const y1 = door.temp_p1 ? door.temp_p1.y : door.p1.y;
+            const x2 = door.temp_p2 ? door.temp_p2.x : door.p2.x;
+            const y2 = door.temp_p2 ? door.temp_p2.y : door.p2.y;
             context.beginPath();
-            context.moveTo(door.temp_p1x || door.p1x, door.temp_p1y || door.p1y);
-            context.lineTo(door.temp_p2x || door.p2x, door.temp_p2y || door.p2y);
+            context.moveTo(x1, y1);
+            context.lineTo(x2, y2);
             this.canvasStroke(context, CONFIG.display.door.outer_color, CONFIG.display.door.outer_width);
             this.canvasStroke(context, CONFIG.display.door.inner_color, CONFIG.display.door.inner_width);
         });
@@ -472,7 +481,7 @@ class CanvasManager {
         // Draw all of the light polygons
         context.beginPath();
         polys.forEach((poly) => {
-            var points = poly.intersects;
+            const points = poly.intersects;
             // moveTo creates a new path, so it will not be connected to the other polys
             context.moveTo(points[0].x, points[0].y);
             points.forEach((point) => {

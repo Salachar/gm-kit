@@ -142,7 +142,7 @@ class MapManager {
     getAllMapData () {
         if (!Object.keys(this.maps).length) return;
         let map_data = {};
-        for (var m in this.maps) {
+        for (let m in this.maps) {
             map_data[this.maps[m].name] = this.maps[m].data;
         }
         return map_data;
@@ -168,8 +168,8 @@ class MapManager {
         }
 
         const window_options = {
-            // autoHideMenuBar: 1,
-            // titleBarStyle: 'hidden',
+            autoHideMenuBar: 1,
+            titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -295,15 +295,6 @@ class MapManager {
                 e.currentTarget.classList.remove('checked');
             }
             Store.fire('create_one_way_wall_toggled');
-        });
-
-        document.getElementById('create_door').addEventListener('click', (e) => {
-            CONFIG.create_door = !CONFIG.create_door;
-            if (CONFIG.create_door) {
-                e.currentTarget.classList.add('checked');
-            } else {
-                e.currentTarget.classList.remove('checked');
-            }
         });
 
         document.getElementById('help').addEventListener('click', (e) => {

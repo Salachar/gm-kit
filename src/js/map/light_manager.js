@@ -1,6 +1,9 @@
 const Store = require('../store');
 
-const pDistance = require('../helpers').pDistance;
+const Helpers = require('../helpers');
+const pDistance = Helpers.pDistance;
+const copyPoint = Helpers.copyPoint;
+const sqr = Helpers.sqr;
 
 class LightManager {
     constructor (map = {}, parent) {
@@ -70,11 +73,11 @@ class LightManager {
                     if (s.open) return;
 
                     // Get any intersection info for this light ray and wall.
-                    var info = this.getIntersection(r, {
-                        px : s.temp_p1x || s.p1x,
-                        py : s.temp_p1y || s.p1y,
-                        dx : (s.temp_p2x || s.p2x) - (s.temp_p1x || s.p1x),
-                        dy : (s.temp_p2y || s.p2y) - (s.temp_p1y || s.p1y)
+                    const info = this.getIntersection(r, {
+                        px : s.temp_p1 ? s.temp_p1.x : s.p1.x,
+                        py : s.temp_p1 ? s.temp_p1.y : s.p1.y,
+                        dx : (s.temp_p2 ? s.temp_p2.x : s.p2.x) - (s.temp_p1 ? s.temp_p1.x : s.p1.x),
+                        dy : (s.temp_p2 ? s.temp_p2.y : s.p2.y) - (s.temp_p1 ? s.temp_p1.y : s.p1.y)
                     });
 
                     // Continue to the next wall if there was no intersect info.
@@ -127,8 +130,8 @@ class LightManager {
             return null;
         }
 
-        var t2 = (r.dx * (s.py - r.py) + r.dy * (r.px - s.px)) / (s.dx * r.dy - s.dy * r.dx);
-        var t1 = (r.dx != 0) ? (s.px + s.dx * t2 - r.px) / r.dx : (s.py + s.dy * t2 - r.py) / r.dy;
+        const t2 = (r.dx * (s.py - r.py) + r.dy * (r.px - s.px)) / (s.dx * r.dy - s.dy * r.dx);
+        const t1 = (r.dx != 0) ? (s.px + s.dx * t2 - r.px) / r.dx : (s.py + s.dy * t2 - r.py) / r.dy;
 
         return {
             x: r.px + (t1 * r.dx),
@@ -149,26 +152,21 @@ class LightManager {
             polys: polys
         });
         this.light_polys = polys;
-        console.log(polys);
         return this.light_polys;
     }
 
     checkForLights () {
-        var x1 = Mouse.x;
-        var y1 = Mouse.y;
-        var x2 = null;
-        var y2 = null;
+        const p1 = copyPoint(Mouse);
+        let p2 = {
+            x: null,
+            y: null
+        };
 
-        var light = null;
+        let light = null;
         for (let l in this.lights) {
             light = this.lights[l];
-
-            x2 = light.x;
-            y2 = light.y;
-            var x_sq = (x2 - x1) * (x2 - x1);
-            var y_sq = (y2 - y1) * (y2 - y1);
-            var dist = Math.sqrt(x_sq + y_sq);
-
+            p2 = copyPoint(light);
+            const dist = Math.sqrt(sqr(p2.x - p1.x) +  sqr(p2.y - p1.y));
             if (dist < this.light_width) {
                 this.selected_light = light;
                 return true;

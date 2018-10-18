@@ -1,6 +1,8 @@
 const Store = require('../store');
 
-const pDistance = require('../helpers').pDistance;
+const Helpers = require('../helpers');
+const pDistance = Helpers.pDistance;
+const copyPoint = Helpers.copyPoint;
 
 class ObjectManager {
     constructor (parent) {
@@ -13,20 +15,17 @@ class ObjectManager {
 
     findClosest (type, point, distance_limit) {
         if (!type) return;
-        point = point || {
-            x: Mouse.x,
-            y: Mouse.y
-        };
+        point = point || copyPoint(Mouse);
         distance_limit = distance_limit || 50;
 
-        var search_array = null;
+        let search_array = null;
         switch (type) {
             case 'wall':
                 search_array = this.parent.SegmentManager.walls;
                 break;
             case 'light':
                 search_array = [];
-                for (var l in this.parent.LightManager.lights) {
+                for (let l in this.parent.LightManager.lights) {
                     search_array.push(this.parent.LightManager.lights[l]);
                 }
                 break;
@@ -57,21 +56,18 @@ class ObjectManager {
     }
 
     removeClosest (data) {
-        let point = {
-            x: Mouse.x,
-            y: Mouse.y
-        };
+        let point = copyPoint(Mouse);
         if (data.point) point = data.point;
 
-        var closest_light = this.findClosest('light', point);
-        var closest_wall = this.findClosest('wall', point);
-        var closest_door = this.findClosest('door', point);
+        const closest_light = this.findClosest('light', point);
+        const closest_wall = this.findClosest('wall', point);
+        const closest_door = this.findClosest('door', point);
 
-        var closest = closest_wall || {
+        let closest = closest_wall || {
             reject: true,
             distance: 999999999
         };
-        var item = 'wall';
+        let item = 'wall';
 
         if (closest_door && closest_door.distance < closest.distance) {
             closest = closest_door;
