@@ -4,6 +4,7 @@ const Helpers = {
     },
 
     copyPoint: function (point_to_copy) {
+        if (!point_to_copy || !point_to_copy.x || !point_to_copy.y) return null;
         return {
             x: point_to_copy.x || null,
             y: point_to_copy.y || null

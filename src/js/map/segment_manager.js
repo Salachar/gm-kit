@@ -319,9 +319,10 @@ class SegmentManager {
 		this.doors.push(door);
 	}
 
-    moveWithMouse (wall_end) {
-        if (!wall_end || !wall_end.point) return;
-        const point = wall_end.segment[wall_end.point];
+    moveWithMouse (control_point) {
+        if (!control_point) return;
+
+        const point = control_point.point;
         this.findWallsWithPoint(point).forEach((wall) => {
             if (pointMatch(wall.p1, point)) {
                 wall.p1 = copyPoint(Mouse);
@@ -329,6 +330,14 @@ class SegmentManager {
             if (pointMatch(wall.p2, point)) {
                 wall.p2 = copyPoint(Mouse);
             }
+        });
+
+        // Update and set the control point after modifying the segments.
+        control_point.point.x = Mouse.x;
+        control_point.point.y = Mouse.y;
+
+        Store.set({
+            control_point: control_point
         });
     }
 
@@ -509,24 +518,26 @@ class SegmentManager {
 
     checkForWallEnds (opts = {}) {
         CONFIG.snap.indicator.show = false;
-        if (!CONFIG.snap.end) return;
+        CONFIG.snap.indicator.point = null;
+        CONFIG.snap.indicator.segment = null;
 
         const closest_end = this.findClosestWallEnd(CONFIG.snap.distance);
         if (!closest_end) return null;
 
         CONFIG.snap.indicator.show = opts.show_indicator;
-        CONFIG.snap.indicator.x = closest_end.x;
-        CONFIG.snap.indicator.y = closest_end.y;
+        CONFIG.snap.indicator.point = copyPoint(closest_end.point);
         return CONFIG.snap.indicator;
     }
 
     findClosestWallEnd (distance = CONFIG.snap.distance) {
         let closest_end = {
             dist: null,
-            x: null,
-            y: null,
-            segment: null,
-            point: null,
+            point: {
+                x: null,
+                y: null,
+                type: null
+            },
+            segment: null
         };
 
         this.allSegments().forEach((segment) => {
@@ -535,16 +546,20 @@ class SegmentManager {
             if (dist1 < distance || dist2 < distance) {
                 if (closest_end.dist === null || dist1 < closest_end.dist) {
                     closest_end.dist = dist1;
-                    closest_end.x = segment.p1.x;
-                    closest_end.y = segment.p1.y;
-                    closest_end.point = 'p1';
+                    closest_end.point = {
+                        x: segment.p1.x,
+                        y: segment.p1.y,
+                        type: 'p1'
+                    };
                     closest_end.segment = segment;
                 }
                 if (closest_end.dist === null || dist2 < closest_end.dist) {
                     closest_end.dist = dist2;
-                    closest_end.x = segment.p2.x;
-                    closest_end.y = segment.p2.y;
-                    closest_end.point = 'p2';
+                    closest_end.point = {
+                        x: segment.p2.x,
+                        y: segment.p2.y,
+                        type: 'p2'
+                    };
                     closest_end.segment = segment;
                 }
             }
@@ -561,20 +576,18 @@ class SegmentManager {
 
     checkForWallLines (opts = {}) {
         CONFIG.snap.indicator.show = false;
-        if (!CONFIG.snap.line) return;
+        CONFIG.snap.indicator.point = null;
+        CONFIG.snap.indicator.segment = null;
 
         const closest_point = this.getClosestPointOnSegment({
             distance: CONFIG.snap.distance
         });
+        if (!closest_point) return null;
 
-        if (closest_point) {
-            CONFIG.snap.indicator.show = opts.show_indicator;
-            CONFIG.snap.indicator.x = closest_point.x;
-            CONFIG.snap.indicator.y = closest_point.y;
-            return CONFIG.snap.indicator;
-        }
-
-        return null;
+        CONFIG.snap.indicator.show = opts.show_indicator;
+        CONFIG.snap.indicator.point = copyPoint(closest_point.point);
+        CONFIG.snap.indicator.segment = closest_point.segment;
+        return CONFIG.snap.indicator;
     }
 
     getClosestPointOnSegment (opts = {}) {
@@ -593,10 +606,12 @@ class SegmentManager {
 
         if (closest_segment_info.distance < (opts.distance || 10)) {
             return {
-                dist: closest_segment_info.distance,
-                x: Math.round(closest_segment_info.x),
-                y: Math.round(closest_segment_info.y),
-                segment: closest_segment
+                point: {
+                    x: Math.round(closest_segment_info.x),
+                    y: Math.round(closest_segment_info.y)
+                },
+                segment: closest_segment,
+                dist: closest_segment_info.distance
             };
         }
 
@@ -665,11 +680,12 @@ class SegmentManager {
         });
     }
 
-    splitWall (control_point) {
-        const info = this.getSegmentInfo(control_point.segment);
+    splitWall (split_data) {
+        const info = this.getSegmentInfo(split_data.segment);
         this.remove(info);
 
-        const s = control_point.segment;
+        const split_point = split_data.point || copyPoint(Mouse);
+        const s = split_data.segment;
         this.addSegment({
             segment: {
                 p1: {
@@ -677,8 +693,8 @@ class SegmentManager {
                     y: s.p1.y
                 },
                 p2: {
-                    x: Mouse.x,
-                    y: Mouse.y
+                    x: split_point.x,
+                    y: split_point.y
                 }
             },
             type: info.type
@@ -690,8 +706,8 @@ class SegmentManager {
                     y: s.p2.y,
                 },
                 p2: {
-                    x: Mouse.x,
-                    y: Mouse.y
+                    x: split_point.x,
+                    y: split_point.y
                 }
             },
             type: info.type

@@ -5,19 +5,31 @@ class QuadrantManager {
         this.angle_increment = (Math.PI * 2) / this.angle_amount;
         this.angle_lookup = [];
 
-        this.angle_quadrants = {
-            TL: [], // TL
-            TR: [], // TR
-            BR: [], // BR
-            BL: []  // BL
-        };
+        // this.angle_quadrants = {
+        //     TL: [], // TL
+        //     TR: [], // TR
+        //     BR: [], // BR
+        //     BL: []  // BL
+        // };
 
-        this.angle_quadrants_key = {
+        this.angle_quadrants = [
+            [], // TL
+            [], // TR
+            [], // BR
+            [], // BL
+        ];
+
+        this.TL = 0;
+        this.TR = 1;
+        this.BR = 2;
+        this.BL = 3;
+
+        this.angle_quadrants_keys = {
             0: 'TL',
             1: 'TR',
             2: 'BR',
             3: 'BL'
-        }
+        };
 
         this.quadrant_opposites = {
             'TL': 'BR',
@@ -69,16 +81,16 @@ class QuadrantManager {
         for (let i = 0; i <= this.angle_lookup.length; ++i) {
             if (!this.angle_lookup[i]) continue;
             if (i >= this.angle_amount_quarter * 0 && i <= this.angle_amount_quarter * 1) {
-                this.angle_quadrants.BR.push(this.angle_lookup[i]);
+                this.angle_quadrants[this.BR].push(this.angle_lookup[i]);
             }
             if (i >= this.angle_amount_quarter * 1 && i <= this.angle_amount_quarter * 2) {
-                this.angle_quadrants.BL.push(this.angle_lookup[i]);
+                this.angle_quadrants[this.BL].push(this.angle_lookup[i]);
             }
             if (i >= this.angle_amount_quarter * 2 && i <= this.angle_amount_quarter * 3) {
-                this.angle_quadrants.TL.push(this.angle_lookup[i]);
+                this.angle_quadrants[this.TL].push(this.angle_lookup[i]);
             }
             if (i >= this.angle_amount_quarter * 3 && i <= this.angle_amount_quarter * 4) {
-                this.angle_quadrants.TR.push(this.angle_lookup[i]);
+                this.angle_quadrants[this.TR].push(this.angle_lookup[i]);
             }
         }
     }

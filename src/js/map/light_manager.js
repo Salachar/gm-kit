@@ -50,11 +50,13 @@ class LightManager {
         const light_quadrant_key = QuadrantManager.getQuadrant(this.parent, light);
 
         let intersects = [];
-        Object.keys(QuadrantManager.angle_quadrants).forEach((key) => {
-            const quadrant_array = QuadrantManager.angle_quadrants[key];
-            const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, key);
+        for (let quadrants_i = 0; quadrants_i < QuadrantManager.angle_quadrants.length; ++quadrants_i) {
+            const quadrant_key = QuadrantManager.angle_quadrants_keys[quadrants_i];
+            const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, quadrant_key);
 
-            quadrant_array.forEach((vector) => {
+            const quadrant_array = QuadrantManager.angle_quadrants[quadrants_i];
+            for (let quadrant_i = 0; quadrant_i < quadrant_array.length; ++quadrant_i) {
+                const vector = quadrant_array[quadrant_i];
                 const r = {
                     px : light.x,
                     py : light.y,
@@ -68,9 +70,10 @@ class LightManager {
                     t1 : null
                 };
 
-                segments_to_check.forEach((s) => {
+                for (let s_index = 0; s_index < segments_to_check.length; ++s_index) {
+                    const s = segments_to_check[s_index];
                     // Skip any doors that are open.
-                    if (s.open) return;
+                    if (s.open) continue;
 
                     // Get any intersection info for this light ray and wall.
                     const info = this.getIntersection(r, {
@@ -81,13 +84,13 @@ class LightManager {
                     });
 
                     // Continue to the next wall if there was no intersect info.
-                    if (!info) return;
+                    if (!info) continue;
 
                     // We intersected a one way wall
                     if (s.one_way) {
                         let dist_open = pDistance(light, s.one_way.open).distance;
                         let dist_closed = pDistance(light, s.one_way.closed).distance;
-                        if (dist_open > dist_closed) return;
+                        if (dist_open > dist_closed) continue;
                     }
 
                     // If there was intersect info, check if the intersected wall is
@@ -99,7 +102,7 @@ class LightManager {
                             closestPoint.t1 = info.t1;
                         }
                     }
-                });
+                }
 
                 // t1 is the distance, if there is no distance, something weird happened.
                 // Either way, just ignore the wall and move on.
@@ -109,8 +112,8 @@ class LightManager {
                         y: Math.round(closestPoint.y)
                     });
                 }
-            });
-        });
+            };
+        }
 
         // pos is the position of the light, and intersects are all the points it's light
         // rays hit. Connecting all those points together gives the polygon "lit area" that

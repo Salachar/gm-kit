@@ -224,12 +224,12 @@ class CanvasManager {
         img.src = this.map.image;
     }
 
-    clearFogOfWar () {
-        this.shadow_context.clearRect(0, 0, this.map_image_width, this.map_image_height);
+    clearContext (context) {
+        context.clearRect(0, 0, this.map_image_width, this.map_image_height);
     }
 
     drawFogOfWar () {
-        this.clearFogOfWar();
+        this.clearContext(this.shadow_context);
         this.shadow_context.save();
             this.shadow_context.globalAlpha = CONFIG.display.fog[CONFIG.window].seen.opacity;
             this.shadow_context.beginPath();
@@ -239,13 +239,9 @@ class CanvasManager {
         this.shadow_context.restore();
     }
 
-    clearLight () {
-        this.light_context.clearRect(0, 0, this.map_image_width, this.map_image_height);
-    }
-
     drawShadow () {
         // Fill the canvas with shadow
-        this.clearLight();
+        this.clearContext(this.light_context);
         this.light_context.save();
             this.light_context.globalAlpha = CONFIG.display.fog[CONFIG.window].hidden.opacity;
             this.light_context.beginPath();
@@ -255,10 +251,6 @@ class CanvasManager {
         this.light_context.restore();
     }
 
-    clearWallLines () {
-        this.wall_context.clearRect(0, 0, this.wall_canvas.width, this.wall_canvas.height);
-    }
-
     clearControlContext () {
         this.control_context.clearRect(0, 0, this.wall_canvas.width, this.wall_canvas.height);
     }
@@ -266,7 +258,7 @@ class CanvasManager {
     drawPlacements (point) {
         const context = this.control_context;
 
-        this.clearControlContext();
+        this.clearContext(this.control_context);
         if (this.parent.lighting_enabled) {
             this.drawAjarDoors(context);
             return;
@@ -284,7 +276,7 @@ class CanvasManager {
     drawWallLines () {
         const context = this.wall_context;
 
-        this.clearWallLines();
+        this.clearContext(this.wall_context);
         if (!this.draw_walls) return;
 
         context.save();
@@ -308,8 +300,6 @@ class CanvasManager {
                 context.beginPath();
                 context.moveTo(x1, y1);
                 context.lineTo(x2, y2);
-                // context.moveTo(door.temp_p1.x || door.p1.x, door.temp_p1.y || door.p1.y);
-                // context.lineTo(door.temp_p2.x || door.p2.x, door.temp_p2.y || door.p2.y);
                 this.canvasStroke(context, '#000000', 8);
                 this.canvasStroke(context, '#FFFFFF', 4);
             });
@@ -396,14 +386,15 @@ class CanvasManager {
     }
 
     drawSnapIndicator (context) {
+        // console.log(CONFIG.snap.indicator.show);
         if (!CONFIG.snap.indicator.show) return;
         context.save();
             context.globalAlpha = 0.4;
             if (CONFIG.snap.indicator.show) {
                 this.canvasCircle(
                     context,
-                    CONFIG.snap.indicator.x,
-                    CONFIG.snap.indicator.y,
+                    CONFIG.snap.indicator.point.x,
+                    CONFIG.snap.indicator.point.y,
                     CONFIG.snap.distance,
                     CONFIG.snap.color
                 );
@@ -413,15 +404,15 @@ class CanvasManager {
 
     drawWallEndIndicator (context) {
         if (!CONFIG.move_segment) return;
-        let point_highlight = this.parent.SegmentManager.getControlPoint();
+        const point_highlight = this.parent.SegmentManager.getControlPoint();
         if (!point_highlight) return;
         const color = (point_highlight.end) ? '#0000FF' : CONFIG.snap.color;
         context.save();
             context.globalAlpha = 0.4;
             this.canvasCircle(
                 context,
-                point_highlight.x,
-                point_highlight.y,
+                point_highlight.point.x,
+                point_highlight.point.y,
                 CONFIG.move_point_dist,
                 color
             );
@@ -480,14 +471,15 @@ class CanvasManager {
     drawLightPolygons (context, polys) {
         // Draw all of the light polygons
         context.beginPath();
-        polys.forEach((poly) => {
-            const points = poly.intersects;
+        for (let polys_i = 0; polys_i < polys.length; ++polys_i) {
+            const points = polys[polys_i].intersects;
             // moveTo creates a new path, so it will not be connected to the other polys
             context.moveTo(points[0].x, points[0].y);
-            points.forEach((point) => {
-                context.lineTo(point.x, point.y);
-            });
-        });
+            for (let points_i = 0; points_i < points.length; ++points_i) {
+                context.lineTo(points[points_i].x, points[points_i].y);
+            }
+        }
+
         // Draw existing content inside new content. All of the current objects only
         // inside the light polygons are shown. Everything else is transparent
         context.globalCompositeOperation = "destination-out";
@@ -506,8 +498,8 @@ class CanvasManager {
     }
 
     disableLight () {
-        this.clearLight();
-        this.clearFogOfWar();
+        this.clearContext(this.light_context);
+        this.clearContext(this.shadow_context);
         this.light_canvas.classList.add('hidden');
         this.shadow_canvas.classList.add('hidden');
     }
@@ -521,7 +513,7 @@ class CanvasManager {
         if (this.draw_walls) {
             this.drawWallLines();
         } else {
-            this.clearWallLines();
+            this.clearContext(this.wall_context);
         }
     }
 

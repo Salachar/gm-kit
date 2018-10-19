@@ -42,8 +42,8 @@ let CONFIG = {
         end: false,
         indicator: {
             show: false,
-            x: 0,
-            y: 0
+            point: null,
+            segment: null
         },
         distance: 10,
         color: '#FF0000'

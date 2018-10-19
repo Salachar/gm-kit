@@ -5,7 +5,9 @@ const ObjectManager = require('./object_manager');
 
 const Store = require('../store');
 
-const getNormal = require('../helpers').getNormal;
+const Helpers = require('../helpers');
+const copyPoint = Helpers.copyPoint;
+const getNormal = Helpers.getNormal;
 
 class MapInstance {
     constructor (map = {}) {
@@ -45,6 +47,7 @@ class MapInstance {
             'enable_light': this.onEnableLight.bind(this),
             'disable_light': this.onDisableLight.bind(this),
             'add_segment': this.onAddSegment.bind(this),
+            'split_segment': this.onSplitSegment.bind(this),
             'light_moved': this.onLightChange.bind(this),
             'light_added': this.onLightChange.bind(this),
             'door_drag': this.onDoorDrag.bind(this),
@@ -74,6 +77,14 @@ class MapInstance {
 
     onAddSegment (data) {
         this.SegmentManager.addSegment(data.add_segment);
+        CONFIG.snap.indicator.show = false;
+        this.CanvasManager.drawWallLines();
+        this.CanvasManager.drawPlacements();
+        this.updateLighting();
+    }
+
+    onSplitSegment (data) {
+        this.SegmentManager.splitWall(data.split_data);
         CONFIG.snap.indicator.show = false;
         this.CanvasManager.drawWallLines();
         this.CanvasManager.drawPlacements();
@@ -285,26 +296,15 @@ class MapInstance {
         }
 
         if (CONFIG.snap.end || CONFIG.snap.line) {
-            let wall_function = (CONFIG.snap.end) ? 'checkForWallEnds' : 'checkForWallLines';
-            let point = this.SegmentManager[wall_function]({
-                show_indicator: false
-            });
-
-            if (point) {
-                this.SegmentManager.new_wall = {
-                    x: point.x,
-                    y: point.y
-                };
+            if (CONFIG.snap.indicator.point) {
+                this.SegmentManager.new_wall = copyPoint(CONFIG.snap.indicator.point);
                 return;
             }
         }
 
         if (this.lighting_enabled) return;
 
-        this.SegmentManager.new_wall = {
-            x: Mouse.downX,
-            y: Mouse.downY
-        };
+        this.SegmentManager.new_wall = copyPoint(Mouse);
     }
 
     mouseDownQuickPlace () {
@@ -314,15 +314,30 @@ class MapInstance {
                 y: this.last_quickplace_coord.y
             },
             p2: {
-                x: Math.round(Mouse.downX),
-                y: Math.round(Mouse.downY)
+                x: null,
+                y: null
             }
+        };
+
+        if (CONFIG.snap.indicator.point) {
+            new_segment.p2 = copyPoint(CONFIG.snap.indicator.point);
+        } else {
+            new_segment.p2.x = Math.round(Mouse.downX);
+            new_segment.p2.y = Math.round(Mouse.downY);
         }
 
-        this.last_quickplace_coord.x = new_segment.p2.x;
-        this.last_quickplace_coord.y = new_segment.p2.y;
+        if (CONFIG.snap.indicator.segment) {
+            Store.fire('split_segment', {
+                split_data: {
+                    point: CONFIG.snap.indicator.point,
+                    segment: CONFIG.snap.indicator.segment
+                }
+            });
+        }
 
-        return Store.fire('add_segment', {
+        this.last_quickplace_coord = copyPoint(new_segment.p2);
+
+        Store.fire('add_segment', {
             add_segment: {
                 segment: new_segment,
                 door: CONFIG.create_door
@@ -367,12 +382,19 @@ class MapInstance {
         // If the snap indicator is showing, then we dont want to put the point on the mouse
         // but where the indicator is showing instead.
         if (CONFIG.snap.indicator.show) {
-            new_wall.p2.x = CONFIG.snap.indicator.x;
-            new_wall.p2.y = CONFIG.snap.indicator.y;
+            new_wall.p2 = copyPoint(CONFIG.snap.indicator.point);
+            if (CONFIG.snap.indicator.segment) {
+                Store.fire('split_segment', {
+                    split_data: {
+                        point: copyPoint(CONFIG.snap.indicator.point),
+                        segment: CONFIG.snap.indicator.segment
+                    }
+                });
+            }
+            CONFIG.snap.indicator.point = null;
         }
 
-        this.last_quickplace_coord.x = new_wall.p2.x;
-        this.last_quickplace_coord.y = new_wall.p2.y;
+        this.last_quickplace_coord = copyPoint(new_wall.p2);
 
         Store.fire('add_segment', {
             add_segment: {
@@ -431,11 +453,18 @@ class MapInstance {
             return;
         }
 
-        if (Mouse.down || CONFIG.quick_place) {
-            this.CanvasManager.drawPlacements();
+        if (CONFIG.quick_place) {
+            const point = this.SegmentManager.checkForWallLines({
+                show_indicator: true
+            });
+            if (!point) {
+                this.SegmentManager.checkForWallEnds({
+                    show_indicator: true
+                });
+            }
+        }
 
-            if (CONFIG.quick_place) return;
-
+        if (Mouse.down) {
             if (CONFIG.snap.end) {
                 this.SegmentManager.checkForWallEnds({
                     show_indicator: true
@@ -447,6 +476,8 @@ class MapInstance {
                 });
             }
         }
+
+        this.CanvasManager.drawPlacements();
     }
 
     dragDoor () {
