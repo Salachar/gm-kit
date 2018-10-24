@@ -42,6 +42,7 @@ class MapManager {
         Store.register({
             'hide_scroller': this.onHideScroller.bind(this),
             'show_scroller': this.onShowScroller.bind(this),
+            'segment_amount_updated': this.onSegmentAmountUpdated.bind(this),
         });
     }
 
@@ -51,6 +52,11 @@ class MapManager {
 
     onShowScroller (data) {
         this[`el_map_scroll_${data.scroller}`].classList.remove('hidden');
+    }
+
+    onSegmentAmountUpdated (data) {
+        if (!CONFIG.debug) return;
+        document.getElementById('debug_segment_amount').innerHTML = data.total_segments;
     }
 
     onMapLoad (maps) {
@@ -77,6 +83,8 @@ class MapManager {
         this.current_map = this.maps[map_name];
         this.current_map.active = true;
         this.current_map.show();
+
+
     }
 
     addMap (map) {

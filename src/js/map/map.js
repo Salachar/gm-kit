@@ -161,6 +161,10 @@ class MapInstance {
         this.node.classList.remove('hidden');
         if (this.tab) this.tab.classList.add('selected');
         this.CanvasManager.checkScroll();
+
+        Store.fire('segment_amount_updated', {
+            total_segments: this.SegmentManager.allSegments().length
+        });
     }
 
     shutdown () {
@@ -296,6 +300,19 @@ class MapInstance {
         }
 
         if (CONFIG.snap.end || CONFIG.snap.line) {
+            if (!CONFIG.snap.indicator.point) {
+                if (CONFIG.snap.end) {
+                    this.SegmentManager.checkForWallEnds({
+                        show_indicator: true
+                    });
+                }
+                if (CONFIG.snap.line) {
+                    this.SegmentManager.checkForWallLines({
+                        show_indicator: true
+                    });
+                }
+            }
+
             if (CONFIG.snap.indicator.point) {
                 this.SegmentManager.new_wall = copyPoint(CONFIG.snap.indicator.point);
                 return;

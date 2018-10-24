@@ -5,6 +5,21 @@ TODO:
     - Load DM versions of map if available
     - Read in config
 
+
+Variable light rays dependent on amount of walls
+
+720 rays
+500 wall
+360000 checks
+
+
+
+
+
+
+
+
+
 Updates (4/23/2018):
     - Arrow Key Scrolling:
         Selected window will now scroll with the arrow keys

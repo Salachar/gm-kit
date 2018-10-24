@@ -50,10 +50,13 @@ class LightManager {
         const light_quadrant_key = QuadrantManager.getQuadrant(this.parent, light);
 
         let intersects = [];
+        // Go through all of the angle quadrants TL, TR, BR, BL
         for (let quadrants_i = 0; quadrants_i < QuadrantManager.angle_quadrants.length; ++quadrants_i) {
+            // Get the actual key for the quadrant (TL | TR | BR | BL)
             const quadrant_key = QuadrantManager.angle_quadrants_keys[quadrants_i];
             const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, quadrant_key);
 
+            // Go through all of the angles in that quadrant (angle_amount / 4) length
             const quadrant_array = QuadrantManager.angle_quadrants[quadrants_i];
             for (let quadrant_i = 0; quadrant_i < quadrant_array.length; ++quadrant_i) {
                 const vector = quadrant_array[quadrant_i];
@@ -64,12 +67,13 @@ class LightManager {
                     dy : vector.y
                 };
 
-                const closestPoint = {
+                let closestPoint = {
                     x : null,
                     y : null,
                     t1 : null
                 };
 
+                // Go through all of the segments returned for that light/angle quadrant matchup
                 for (let s_index = 0; s_index < segments_to_check.length; ++s_index) {
                     const s = segments_to_check[s_index];
                     // Skip any doors that are open.
@@ -90,6 +94,8 @@ class LightManager {
                     if (s.one_way) {
                         let dist_open = pDistance(light, s.one_way.open).distance;
                         let dist_closed = pDistance(light, s.one_way.closed).distance;
+                        // The open side is the side that is marked, so if we are closer to the
+                        // closed side that means we can see through the wall
                         if (dist_open > dist_closed) continue;
                     }
 
@@ -106,7 +112,7 @@ class LightManager {
 
                 // t1 is the distance, if there is no distance, something weird happened.
                 // Either way, just ignore the wall and move on.
-                if (closestPoint.t1 != null) {
+                if (closestPoint.t1 !== null) {
                     intersects.push({
                         x: Math.round(closestPoint.x),
                         y: Math.round(closestPoint.y)
@@ -129,9 +135,7 @@ class LightManager {
     }
 
     getIntersection (r, s) {
-        if ((r.dx / r.dy) == (s.dx / s.dy)) {
-            return null;
-        }
+        if ((r.dx / r.dy) == (s.dx / s.dy)) return null;
 
         const t2 = (r.dx * (s.py - r.py) + r.dy * (r.px - s.px)) / (s.dx * r.dy - s.dy * r.dx);
         const t1 = (r.dx != 0) ? (s.px + s.dx * t2 - r.px) / r.dx : (s.py + s.dy * t2 - r.py) / r.dy;

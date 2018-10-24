@@ -5,13 +5,6 @@ class QuadrantManager {
         this.angle_increment = (Math.PI * 2) / this.angle_amount;
         this.angle_lookup = [];
 
-        // this.angle_quadrants = {
-        //     TL: [], // TL
-        //     TR: [], // TR
-        //     BR: [], // BR
-        //     BL: []  // BL
-        // };
-
         this.angle_quadrants = [
             [], // TL
             [], // TR
@@ -47,8 +40,8 @@ class QuadrantManager {
             return map.SegmentManager.quadrants[angle_quadrant];
         }
 
-        const is_opposide_quadrant = this.quadrant_opposites[light_quadrant] === angle_quadrant;
-        if (is_opposide_quadrant) {
+        const is_opposite_quadrant = this.quadrant_opposites[light_quadrant] === angle_quadrant;
+        if (is_opposite_quadrant) {
             return map.SegmentManager.allSegments();
         }
 

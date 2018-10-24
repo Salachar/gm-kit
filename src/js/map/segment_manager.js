@@ -38,6 +38,10 @@ class SegmentManager {
             'toggle_closest_door': this.onToggleClosestDoor.bind(this),
             'deselect_door': this.deselectDoor.bind(this),
         }, parent.name);
+
+        Store.fire('segment_amount_updated', {
+            total_segments: this.allSegments().length
+        });
     }
 
     onSwitchWallDoor (data) {
@@ -203,6 +207,10 @@ class SegmentManager {
     }
 
 	createQuadrants () {
+        // Go through and put all of the walls into their respective quadrant.
+        // Walls that cross quadrants go into both. This can result in duplicate
+        // checks for a single wall, but overall the performance increase greatly
+        // outweights this minor unoptimization
 		this.quadrants = {
 			TL: [],
 			TR: [],
@@ -289,6 +297,10 @@ class SegmentManager {
 	    }
 
         this.clearSegments();
+
+        Store.fire('segment_amount_updated', {
+            total_segments: this.allSegments().length
+        });
 	}
 
 	finalizeSegment (segment) {
