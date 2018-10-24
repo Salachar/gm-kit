@@ -267,7 +267,7 @@ class CanvasManager {
         context.save();
             context.lineCap = 'round';
             this.drawOneWayPoint (context);
-            this.drawWallBeingPlaced(context);
+            this.drawSegmentBeingPlaced(context);
             this.drawSnapIndicator(context);
             this.drawWallEndIndicator(context);
         context.restore();
@@ -281,22 +281,21 @@ class CanvasManager {
 
         context.save();
             context.lineCap = 'round';
-            this.drawWalls(context);
-            this.drawDoors(context);
+            this.drawSegments(context);
         context.restore();
     }
 
     drawAjarDoors (context) {
-        const doors = this.parent.SegmentManager.doors;
+        const segments = this.parent.SegmentManager.segments;
         context.save();
             context.lineCap = 'square';
-            doors.forEach((door) => {
-                if (!door.temp_p1 && !door.temp_p2) return;
+            segments.forEach((segments) => {
+                if (!segment.temp_p1 && !segment.temp_p2) return;
                 context.beginPath();
-                const x1 = door.temp_p1 ? door.temp_p1.x : door.p1.x;
-                const y1 = door.temp_p1 ? door.temp_p1.y : door.p1.y;
-                const x2 = door.temp_p2 ? door.temp_p2.x : door.p2.x;
-                const y2 = door.temp_p2 ? door.temp_p2.y : door.p2.y;
+                const x1 = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
+                const y1 = segment.temp_p1 ? segment.temp_p1.y : segment.p1.y;
+                const x2 = segment.temp_p2 ? segment.temp_p2.x : segment.p2.x;
+                const y2 = segment.temp_p2 ? segment.temp_p2.y : segment.p2.y;
                 context.beginPath();
                 context.moveTo(x1, y1);
                 context.lineTo(x2, y2);
@@ -319,55 +318,54 @@ class CanvasManager {
         context.restore();
     }
 
-    drawWalls (context) {
-        const closest_wall = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('wall') : null;
-        this.parent.SegmentManager.walls.forEach((wall, index) => {
-            context.beginPath();
-            context.moveTo(wall.p1.x, wall.p1.y);
-            context.lineTo(wall.p2.x, wall.p2.y);
+    drawSegments (context) {
+        const closest_segment = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('segment') : null;
+        if (closest_segment && closest_segment.type !== 'wall') closest_segment = null;
 
-            if (closest_wall && closest_wall.index === index) {
-                this.canvasStroke(context, CONFIG.display.wall.highlight_outer_color, CONFIG.display.wall.highlight_outer_width);
-                this.canvasStroke(context, CONFIG.display.wall.highlight_inner_color, CONFIG.display.wall.highlight_inner_width);
+        this.parent.SegmentManager.segments.forEach((segment, index) => {
+            context.beginPath();
+            if (segment.type === 'door') {
+                const x1 = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
+                const y1 = segment.temp_p1 ? segment.temp_p1.y : segment.p1.y;
+                const x2 = segment.temp_p2 ? segment.temp_p2.x : segment.p2.x;
+                const y2 = segment.temp_p2 ? segment.temp_p2.y : segment.p2.y;
+                context.moveTo(x1, y1);
+                context.lineTo(x2, y2);
+                this.canvasStroke(context, CONFIG.display.door.outer_color, CONFIG.display.door.outer_width);
+                this.canvasStroke(context, CONFIG.display.door.inner_color, CONFIG.display.door.inner_width);
             } else {
-                this.canvasStroke(context, CONFIG.display.wall.outer_color, CONFIG.display.wall.outer_width);
-                this.canvasStroke(context, CONFIG.display.wall.inner_color, CONFIG.display.wall.inner_width);
+                context.moveTo(segment.p1.x, segment.p1.y);
+                context.lineTo(segment.p2.x, segment.p2.y);
+                if (closest_segment && closest_segment.index === index) {
+                    this.canvasStroke(context, CONFIG.display.wall.highlight_outer_color, CONFIG.display.wall.highlight_outer_width);
+                    this.canvasStroke(context, CONFIG.display.wall.highlight_inner_color, CONFIG.display.wall.highlight_inner_width);
+                } else {
+                    this.canvasStroke(context, CONFIG.display.wall.outer_color, CONFIG.display.wall.outer_width);
+                    this.canvasStroke(context, CONFIG.display.wall.inner_color, CONFIG.display.wall.inner_width);
+                }
             }
 
-            if (wall.one_way) {
+            if (segment.one_way) {
                 this.canvasCircle(
                     context,
-                    wall.one_way.open.x,
-                    wall.one_way.open.y,
+                    segment.one_way.open.x,
+                    segment.one_way.open.y,
                     CONFIG.display.wall.outer_width,
                     CONFIG.display.wall.outer_color
                 );
                 this.canvasCircle(
                     context,
-                    wall.one_way.open.x,
-                    wall.one_way.open.y,
+                    segment.one_way.open.x,
+                    segment.one_way.open.y,
                     CONFIG.display.wall.inner_width,
                     CONFIG.display.wall.inner_color
                 );
             }
         });
+
     }
 
-    drawDoors (context) {
-        this.parent.SegmentManager.doors.forEach((door) => {
-            const x1 = door.temp_p1 ? door.temp_p1.x : door.p1.x;
-            const y1 = door.temp_p1 ? door.temp_p1.y : door.p1.y;
-            const x2 = door.temp_p2 ? door.temp_p2.x : door.p2.x;
-            const y2 = door.temp_p2 ? door.temp_p2.y : door.p2.y;
-            context.beginPath();
-            context.moveTo(x1, y1);
-            context.lineTo(x2, y2);
-            this.canvasStroke(context, CONFIG.display.door.outer_color, CONFIG.display.door.outer_width);
-            this.canvasStroke(context, CONFIG.display.door.inner_color, CONFIG.display.door.inner_width);
-        });
-    }
-
-    drawWallBeingPlaced (context) {
+    drawSegmentBeingPlaced (context) {
         if (!CONFIG.lighting_enabled && !CONFIG.create_one_way_wall && !CONFIG.move_segment) {
             if (Mouse.down && !CONFIG.quick_place && this.parent.SegmentManager.new_wall) {
                 context.beginPath();

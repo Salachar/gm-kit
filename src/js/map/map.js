@@ -54,8 +54,7 @@ class MapInstance {
             'zoom_in': this.onZoomIn.bind(this),
             'zoom_out': this.onZoomOut.bind(this),
             'remove_light': this.onRemoveLight.bind(this),
-            'remove_wall': this.onRemoveWall.bind(this),
-            'remove_door': this.onRemoveDoor.bind(this),
+            'remove_segment': this.onRemoveSegment.bind(this),
         }, this.name);
     }
 
@@ -110,14 +109,8 @@ class MapInstance {
         this.CanvasManager.drawLight();
     }
 
-    onRemoveWall (data) {
-        this.SegmentManager.removeWall(data.object);
-        this.CanvasManager.drawWallLines();
-        this.updateLighting();
-    }
-
-    onRemoveDoor (data) {
-        this.SegmentManager.removeDoor(data.object);
+    onRemoveSegment (data) {
+        this.SegmentManager.removeSegment(data.object);
         this.CanvasManager.drawWallLines();
         this.updateLighting();
     }
@@ -146,8 +139,7 @@ class MapInstance {
                 polys: this.LightManager.light_polys
             },
             json: {
-                walls: this.SegmentManager.walls,
-                doors: this.SegmentManager.doors,
+                segments: this.SegmentManager.segments
             }
         };
     }
@@ -351,10 +343,7 @@ class MapInstance {
         this.last_quickplace_coord = copyPoint(new_segment.p2);
 
         Store.fire('add_segment', {
-            add_segment: {
-                segment: new_segment,
-                door: CONFIG.create_door
-            }
+            add_segment: new_segment
         });
     }
 
@@ -410,10 +399,7 @@ class MapInstance {
         this.last_quickplace_coord = copyPoint(new_wall.p2);
 
         Store.fire('add_segment', {
-            add_segment: {
-                segment: new_wall,
-                door: CONFIG.create_door
-            }
+            add_segment: new_wall
         });
 
         this.SegmentManager.new_wall = null;
@@ -560,12 +546,10 @@ class MapInstance {
     disableLight () {
         if (CONFIG.is_display) return;
         this.lighting_enabled = false;
-        this.SegmentManager.clearSegments();
         this.CanvasManager.disableLight();
     }
 
     updateLighting () {
-        this.SegmentManager.clearSegments();
         this.SegmentManager.prepareSegments();
         if (this.lighting_enabled || window.display_window) {
             this.CanvasManager.drawLight({

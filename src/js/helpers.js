@@ -11,8 +11,9 @@ const Helpers = {
         };
     },
 
-    pointMatch: function (p1, p2) {
-        return (p1.x === p2.x && p1.y === p2.y);
+    pointMatch: function (p1, p2, tolerance) {
+        tolerance = tolerance || 0;
+        return (Math.abs(p1.x - p2.x) <= tolerance && Math.abs(p1.y - p2.y) <= tolerance);
     },
 
     getWindowDimensions: function () {

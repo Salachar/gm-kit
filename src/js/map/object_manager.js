@@ -20,17 +20,14 @@ class ObjectManager {
 
         let search_array = null;
         switch (type) {
-            case 'wall':
-                search_array = this.parent.SegmentManager.walls;
+            case 'segment':
+                search_array = this.parent.SegmentManager.segments;
                 break;
             case 'light':
                 search_array = [];
                 for (let l in this.parent.LightManager.lights) {
                     search_array.push(this.parent.LightManager.lights[l]);
                 }
-                break;
-            case 'door':
-                search_array = this.parent.SegmentManager.doors;
                 break;
         }
 
@@ -60,26 +57,20 @@ class ObjectManager {
         if (data.point) point = data.point;
 
         const closest_light = this.findClosest('light', point);
-        const closest_wall = this.findClosest('wall', point);
-        const closest_door = this.findClosest('door', point);
+        const closest_segment = this.findClosest('segment', point);
 
-        let closest = closest_wall || {
+        let closest = closest_segment || {
             reject: true,
             distance: 999999999
         };
-        let item = 'wall';
-
-        if (closest_door && closest_door.distance < closest.distance) {
-            closest = closest_door;
-            item = 'door';
-        }
+        let item = 'segment';
 
         if (closest_light && closest_light.distance < closest.distance) {
             closest = closest_light;
             item = 'light';
         }
 
-        if (item === 'wall' && closest.segment && closest.segment.one_way) {
+        if (item === 'segment' && closest.segment && closest.segment.one_way) {
             delete closest.segment.one_way;
             item = 'one_way';
         }
