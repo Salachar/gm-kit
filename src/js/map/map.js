@@ -161,10 +161,6 @@ class MapInstance {
         this.node.classList.remove('hidden');
         if (this.tab) this.tab.classList.add('selected');
         this.CanvasManager.checkScroll();
-
-        Store.fire('segment_amount_updated', {
-            total_segments: this.SegmentManager.allSegments().length
-        });
     }
 
     shutdown () {

@@ -31,8 +31,6 @@ const KEYS = {
 };
 
 let CONFIG = {
-    debug: true,
-
     window: 'control',
     is_display: false,
 

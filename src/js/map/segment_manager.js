@@ -38,10 +38,6 @@ class SegmentManager {
             'toggle_closest_door': this.onToggleClosestDoor.bind(this),
             'deselect_door': this.deselectDoor.bind(this),
         }, parent.name);
-
-        Store.fire('segment_amount_updated', {
-            total_segments: this.allSegments().length
-        });
     }
 
     onSwitchWallDoor (data) {
@@ -297,10 +293,6 @@ class SegmentManager {
 	    }
 
         this.clearSegments();
-
-        Store.fire('segment_amount_updated', {
-            total_segments: this.allSegments().length
-        });
 	}
 
 	finalizeSegment (segment) {

@@ -38,18 +38,6 @@ html, body {
 
 
 
-#debug_window {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    padding: 1rem;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: 100;
-    color: white;
-}
-/*#debug_window*/
-
-
 /**********************************************************
     CONTROLS
 **********************************************************/
