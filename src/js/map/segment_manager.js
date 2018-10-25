@@ -14,7 +14,7 @@ class SegmentManager {
     	this.walls = this.loadSegments((map.json || {}).walls || []);
     	this.doors = this.loadSegments((map.json || {}).doors || []);
 
-        this.segments = this.walls.concat(this.doors);
+        this.segments = this.joinSegments(this.walls, this.doors);
         this.segments_map = {};
 
         const loaded_segments = this.loadSegments((map.json || {}).segments || []);
@@ -115,6 +115,19 @@ class SegmentManager {
             segment.type = segment.type || 'wall';
             return segment;
         });
+    }
+
+    joinSegments (walls, doors) {
+        let segments = [];
+        walls.forEach((wall) => {
+            wall.type = 'wall';
+            segments.push(wall);
+        });
+        doors.forEach((door) => {
+            door.type = 'door';
+            segments.push(door);
+        });
+        return segments;
     }
 
     createSegmentId (segment, timestamp) {
@@ -338,8 +351,8 @@ class SegmentManager {
     checkForDoors () {
         let segment = null;
         for (let i = 0; i < this.segments.length; ++i) {
-            segment = this.segment[i];
-            if (!segment.type === 'door' || segment.open) return;
+            segment = this.segments[i];
+            if (segment.type != 'door' || segment.open) continue;
 
             segment.p1_grab = false;
             segment.p2_grab = false;
@@ -400,9 +413,8 @@ class SegmentManager {
         if (!this.segments.length) return;
 
         let closest_segment = this.parent.ObjectManager.findClosest('segment', point);
-
-        if (!closest_segment || closest_segment.type !== 'door') return;
-        door = closest_segment.segment;
+        if (!closest_segment || closest_segment.segment.type !== 'door') return;
+        const door = closest_segment.segment;
 
         if (door) {
             if (door.temp_p1 || door.temp_p2) {

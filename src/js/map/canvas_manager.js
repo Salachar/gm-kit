@@ -289,7 +289,7 @@ class CanvasManager {
         const segments = this.parent.SegmentManager.segments;
         context.save();
             context.lineCap = 'square';
-            segments.forEach((segments) => {
+            segments.forEach((segment) => {
                 if (!segment.temp_p1 && !segment.temp_p2) return;
                 context.beginPath();
                 const x1 = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
