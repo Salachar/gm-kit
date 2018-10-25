@@ -146,51 +146,29 @@ class SegmentManager {
     }
 
     prepareSegments () {
-        // this.all_segments = this.allSegments();
         this.createQuadrants();
     }
 
 	allSegments () {
+        const w = this.bounds.width;
+        const h = this.bounds.height;
+        // Add in the four bounding segments of the map
         return this.segments.concat([
             {
-                p1: {
-                    x: 0,
-                    y: 0
-                },
-                p2: {
-                    x: this.bounds.width,
-                    y : 0
-                }
+                p1: { x: 0, y: 0 },
+                p2: { x: w, y: 0 }
             },
             {
-                p1: {
-                    x: this.bounds.width,
-                    y: 0
-                },
-                p2: {
-                    x: this.bounds.width,
-                    y: this.bounds.height
-                }
+                p1: { x: w, y: 0 },
+                p2: { x: w, y: h }
             },
             {
-                p1: {
-                    x: this.bounds.width,
-                    y: this.bounds.height
-                },
-                p2: {
-                    x: 0,
-                    y: this.bounds.height
-                }
+                p1: { x: w, y: h },
+                p2: { x: 0, y: h }
             },
             {
-                p1: {
-                    x : 0,
-                    y: this.bounds.height
-                },
-                p2: {
-                    x: 0,
-                    y: 0
-                }
+                p1: { x: 0, y: h },
+                p2: { x: 0, y: 0 }
             }
         ]);
 	}
@@ -246,43 +224,40 @@ class SegmentManager {
 			}
 
 			let side = v_side + '_' + h_side;
+            let quads = [];
 			switch (side) {
 				case 'both_both':
-					this.quadrants.TL.push(s);
-					this.quadrants.TR.push(s);
-					this.quadrants.BR.push(s);
-					this.quadrants.BL.push(s);
+                    quads = ['TL', 'TR', 'BR', 'BL'];
 					break;
 				case 'top_both':
-					this.quadrants.TL.push(s);
-					this.quadrants.TR.push(s);
+                    quads = ['TL', 'TR'];
 					break;
 				case 'bottom_both':
-					this.quadrants.BR.push(s);
-					this.quadrants.BL.push(s);
+                    quads = ['BR', 'BL'];
 					break;
 				case 'both_left':
-					this.quadrants.TL.push(s);
-					this.quadrants.BL.push(s);
+                    quads = ['TL', 'BL'];
 					break;
 				case 'both_right':
-					this.quadrants.TR.push(s);
-					this.quadrants.BR.push(s);
+                    quads = ['TR', 'BR'];
 					break;
 				case 'top_left':
-					this.quadrants.TL.push(s);
+                    quads = ['TL'];
 					break;
 				case 'top_right':
-					this.quadrants.TR.push(s);
+                    quads = ['TR'];
 					break;
 				case 'bottom_right':
-					this.quadrants.BR.push(s);
+                    quads = ['BR'];
 					break;
 				case 'bottom_left':
-					this.quadrants.BL.push(s);
+                    quads = ['BL'];
 					break;
 			}
-		})
+            quads.forEach((quad) => {
+                this.quadrants[quad].push(s);
+            });
+		});
 	}
 
 	addSegment (segment) {
