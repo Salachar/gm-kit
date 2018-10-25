@@ -304,7 +304,12 @@ class SegmentManager {
         const point = control_point.point;
         this.connected_segments.forEach((segment_id) => {
             const segment = this.segments_map[segment_id];
-            segment[point.type] = copyPoint(Mouse);
+            if (pointMatch(point, segment.p1, 1)) {
+                segment.p1 = copyPoint(Mouse);
+            }
+            if (pointMatch(point, segment.p2, 1)) {
+                segment.p2 = copyPoint(Mouse);
+            }
         });
 
         // Update and set the control point after modifying the segments.

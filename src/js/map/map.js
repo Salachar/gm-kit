@@ -110,7 +110,7 @@ class MapInstance {
     }
 
     onRemoveSegment (data) {
-        this.SegmentManager.removeSegment(data.object);
+        this.SegmentManager.removeSegment(data.object.segment);
         this.CanvasManager.drawWallLines();
         this.updateLighting();
     }
@@ -212,11 +212,6 @@ class MapInstance {
                     point: point
                 });
                 break;
-            // case KEYS.R:
-            //     Store.fire('remove_closest', {
-            //         point: point
-            //     });
-            //     break;
             case KEYS.T:
                 Store.fire('switch_wall_door', {
                     point: point
