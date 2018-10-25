@@ -442,13 +442,13 @@ class SegmentManager {
         let closest_segment = this.parent.ObjectManager.findClosest('segment', point);
         if (!closest_segment) return;
 
-        const type = closest_segment.type;
+        const type = closest_segment.segment.type;
         // wall to door or opposide will never need existing open data
-        delete closest_segment.open;
+        delete closest_segment.segment.open;
         if (!type || type === 'wall') {
-            closest_segment.type = 'door';
+            closest_segment.segment.type = 'door';
         } else {
-            closest_segment.type = 'wall';
+            closest_segment.segment.type = 'wall';
         }
 
         Store.fire('draw_walls');

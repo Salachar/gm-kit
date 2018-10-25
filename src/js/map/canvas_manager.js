@@ -259,7 +259,7 @@ class CanvasManager {
         const context = this.control_context;
 
         this.clearContext(this.control_context);
-        if (this.parent.lighting_enabled) {
+        if (this.parent.lighting_enabled || CONFIG.is_display) {
             this.drawAjarDoors(context);
             return;
         }
@@ -384,7 +384,6 @@ class CanvasManager {
     }
 
     drawSnapIndicator (context) {
-        // console.log(CONFIG.snap.indicator.show);
         if (!CONFIG.snap.indicator.show) return;
         context.save();
             context.globalAlpha = 0.4;
