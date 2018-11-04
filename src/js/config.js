@@ -38,8 +38,6 @@ let CONFIG = {
     window_height: null,
 
     snap: {
-        line: false,
-        end: false,
         indicator: {
             show: false,
             point: null,

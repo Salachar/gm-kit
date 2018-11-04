@@ -271,24 +271,6 @@ class MapManager {
             clearTimeout(scroll_wait_timer);
         });
 
-        document.getElementById('wall_snap_end').addEventListener('click', (e) => {
-            CONFIG.snap.line = false;
-            CONFIG.snap.end = true;
-            this.setRadioState(e.currentTarget);
-        });
-
-        document.getElementById('wall_snap_line').addEventListener('click', (e) => {
-            CONFIG.snap.line = true;
-            CONFIG.snap.end = false;
-            this.setRadioState(e.currentTarget);
-        });
-
-        document.getElementById('wall_snap_none').addEventListener('click', (e) => {
-            CONFIG.snap.line = false;
-            CONFIG.snap.end = false;
-            this.setRadioState(e.currentTarget);
-        });
-
         document.getElementById('create_one_way_wall').addEventListener('click', (e) => {
             CONFIG.create_one_way_wall = !CONFIG.create_one_way_wall;
             if (CONFIG.create_one_way_wall) {

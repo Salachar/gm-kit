@@ -75,7 +75,9 @@ class MapInstance {
     }
 
     onAddSegment (data) {
-        this.SegmentManager.addSegment(data.add_segment);
+        this.SegmentManager.addSegment({
+            segment: data.add_segment
+        });
         CONFIG.snap.indicator.show = false;
         this.CanvasManager.drawWallLines();
         this.CanvasManager.drawPlacements();
@@ -251,6 +253,17 @@ class MapInstance {
         }
     }
 
+    checkForSnapPoint () {
+        const snap_point = this.SegmentManager.checkForWallLines({
+            show_indicator: true
+        });
+        if (!snap_point) {
+            this.SegmentManager.checkForWallEnds({
+                show_indicator: true
+            });
+        }
+    }
+
     mouseDown () {
         if (!Mouse.left) return;
 
@@ -282,29 +295,14 @@ class MapInstance {
             return this.mouseDownQuickPlace();
         }
 
-        if (CONFIG.snap.end || CONFIG.snap.line) {
-            if (!CONFIG.snap.indicator.point) {
-                if (CONFIG.snap.end) {
-                    this.SegmentManager.checkForWallEnds({
-                        show_indicator: true
-                    });
-                }
-                if (CONFIG.snap.line) {
-                    this.SegmentManager.checkForWallLines({
-                        show_indicator: true
-                    });
-                }
-            }
-
-            if (CONFIG.snap.indicator.point) {
-                this.SegmentManager.new_wall = copyPoint(CONFIG.snap.indicator.point);
-                return;
-            }
-        }
-
         if (this.lighting_enabled) return;
 
+        this.checkForSnapPoint();
+
         this.SegmentManager.new_wall = copyPoint(Mouse);
+        if (CONFIG.snap.indicator.point) {
+            this.SegmentManager.new_wall = copyPoint(CONFIG.snap.indicator.point);
+        }
     }
 
     mouseDownQuickPlace () {
@@ -447,28 +445,8 @@ class MapInstance {
             return;
         }
 
-        if (CONFIG.quick_place) {
-            const point = this.SegmentManager.checkForWallLines({
-                show_indicator: true
-            });
-            if (!point) {
-                this.SegmentManager.checkForWallEnds({
-                    show_indicator: true
-                });
-            }
-        }
-
-        if (Mouse.down) {
-            if (CONFIG.snap.end) {
-                this.SegmentManager.checkForWallEnds({
-                    show_indicator: true
-                });
-            }
-            if (CONFIG.snap.line) {
-                this.SegmentManager.checkForWallLines({
-                    show_indicator: true
-                });
-            }
+        if (Mouse.down || CONFIG.quick_place) {
+            this.checkForSnapPoint();
         }
 
         this.CanvasManager.drawPlacements();

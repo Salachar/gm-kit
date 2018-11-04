@@ -260,7 +260,8 @@ class SegmentManager {
 		});
 	}
 
-	addSegment (segment) {
+	addSegment (opts = {}) {
+        const { segment, ignore_dist_check } = opts;
 		if (!segment) return;
 		const s = this.finalizeSegment(segment);
 
@@ -270,7 +271,7 @@ class SegmentManager {
 
         if (pointMatch(s.p1, s.p2)) {
             console.log('Wall/Door points are the same, not adding');
-        } else if (((CONFIG.snap.end || CONFIG.snap.line) && !CONFIG.quick_place) && dist < CONFIG.snap.distance) {
+        } else if (!ignore_dist_check && dist < CONFIG.snap.distance) {
             console.log('Wall/Door is too short, not adding');
         } else {
             this.segments.push(s);
@@ -623,15 +624,17 @@ class SegmentManager {
         if (points.length === 2) {
             // Always make the new segment a wall
             this.addSegment({
-                p1: {
-                    x: points[0].x,
-                    y: points[0].y
-                },
-                p2: {
-                    x: points[1].x,
-                    y: points[1].y
-                },
-                type: 'wall'
+                segment: {
+                    p1: {
+                        x: points[0].x,
+                        y: points[0].y
+                    },
+                    p2: {
+                        x: points[1].x,
+                        y: points[1].y
+                    },
+                    type: 'wall'
+                }
             });
         }
 
@@ -647,26 +650,32 @@ class SegmentManager {
         const split_point = split_data.point || copyPoint(Mouse);
         const s = split_data.segment;
         this.addSegment({
-            p1: {
-                x: s.p1.x,
-                y: s.p1.y
+            segment: {
+                p1: {
+                    x: s.p1.x,
+                    y: s.p1.y
+                },
+                p2: {
+                    x: split_point.x,
+                    y: split_point.y
+                },
+                type: info.type
             },
-            p2: {
-                x: split_point.x,
-                y: split_point.y
-            },
-            type: info.type
+            ignore_dist_check: true
         });
         this.addSegment({
-            p1: {
-                x: s.p2.x,
-                y: s.p2.y,
+            segment: {
+                p1: {
+                    x: s.p2.x,
+                    y: s.p2.y,
+                },
+                p2: {
+                    x: split_point.x,
+                    y: split_point.y
+                },
+                type: info.type
             },
-            p2: {
-                x: split_point.x,
-                y: split_point.y
-            },
-            type: info.type
+            ignore_dist_check: true
         });
 
         Store.set({
