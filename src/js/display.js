@@ -70,11 +70,26 @@ class DisplayManager {
         this.maps[map.name].hide();
     }
 
+    removeMap (map_name) {
+        Store.remove(map_name);
+        this.maps[map_name].shutdown();
+        delete this.maps[map_name];
+        let map_keys = Object.keys(this.maps);
+        if (!map_keys.length) {
+            Store.key = null;
+            Store.clear();
+        }
+    }
+
     setEvents () {
         window.addEventListener('message', (e) => {
             const data = e.data;
-            if (e.data.event === 'display_map') {
-                this.onMapLoad(e.data.data);
+            if (data.event === 'display_map') {
+                this.onMapLoad(data.data);
+                return;
+            }
+            if (data.event === 'remove_map') {
+                this.removeMap(data.data);
                 return;
             }
             Store.fire(e.data.event, e.data.data, e.data.key);

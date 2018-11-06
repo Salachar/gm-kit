@@ -65,8 +65,8 @@ class SegmentManager {
         this.toggleClosestDoor(data.point);
     }
 
-    sanitize () {
-        this.segments = this.segments.map((segment) => {
+    sanitizedSegments () {
+        return this.segments.map((segment) => {
             let clean_segment = {
                 p1: {
                     x: Math.round(segment.p1.x),
@@ -436,6 +436,10 @@ class SegmentManager {
     }
 
     removeSegment (segment) {
+        if (!segment || !segment.id) {
+            console.error('Segment does not exist or has no ID');
+            return;
+        }
         const seg_id = segment.id;
         // Remove the segment from the map
         delete this.segments_map[seg_id];
@@ -443,16 +447,6 @@ class SegmentManager {
         this.segments = this.segments.filter((segment) => {
             return segment.id !== seg_id;
         });
-    }
-
-    getSegmentInfo (segment) {
-        let i = null;
-        for (i = 0; i < this.segments.length; ++i) {
-            if (this.checkSegmentsMatch(segment, this.segments[i])) {
-                return segment
-            }
-        }
-        return null;
     }
 
     checkSegmentsMatch (s1, s2) {
@@ -566,7 +560,7 @@ class SegmentManager {
             }
         });
 
-        if (closest_segment_info.distance < (opts.distance || 10)) {
+        if (closest_segment_info && closest_segment_info.distance < (opts.distance || 10)) {
             return {
                 point: {
                     x: Math.round(closest_segment_info.x),
@@ -606,21 +600,22 @@ class SegmentManager {
         if (!control_point || control_point.end === false) return;
 
         let points = [];
-        this.findSegmentsWithPoint(control_point).forEach((wall) => {
-            if (wall.p1.x !== control_point.x || wall.p1.y !== control_point.y) {
+        this.findSegmentsWithPoint(control_point.point).forEach((wall) => {
+            if (wall.p1.x !== control_point.point.x || wall.p1.y !== control_point.point.y) {
                 points.push({
                     x: wall.p1.x,
                     y: wall.p1.y
                 });
             }
-            if (wall.p2.x !== control_point.x || wall.p2.y !== control_point.y) {
+            if (wall.p2.x !== control_point.point.x || wall.p2.y !== control_point.point.y) {
                 points.push({
                     x: wall.p2.x,
                     y: wall.p2.y
                 });
             }
-            this.removeSegment(this.getSegmentInfo(wall));
+            this.removeSegment(wall);
         });
+
         if (points.length === 2) {
             // Always make the new segment a wall
             this.addSegment({
@@ -644,8 +639,8 @@ class SegmentManager {
     }
 
     splitWall (split_data) {
-        const info = this.getSegmentInfo(split_data.segment);
-        this.removeSegment(info);
+        if (!split_data.segment.id) return;
+        this.removeSegment(split_data.segment);
 
         const split_point = split_data.point || copyPoint(Mouse);
         const s = split_data.segment;
@@ -659,7 +654,7 @@ class SegmentManager {
                     x: split_point.x,
                     y: split_point.y
                 },
-                type: info.type
+                type: split_data.segment.type
             },
             ignore_dist_check: true
         });
@@ -673,7 +668,7 @@ class SegmentManager {
                     x: split_point.x,
                     y: split_point.y
                 },
-                type: info.type
+                type: split_data.segment.type
             },
             ignore_dist_check: true
         });

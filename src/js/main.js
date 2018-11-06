@@ -1,4 +1,5 @@
 const Store = require('./store');
+window.Store = Store;
 
 const FileManager = require('./file_manager');
 const SoundManager = require('./sound_manager');
@@ -69,7 +70,7 @@ class MapManager {
 
     setActiveMap (map_name) {
         Store.key = map_name;
-        Store.clear();
+        Store.clearData();
         if (this.current_map) {
             this.current_map.active = false;
             this.current_map.hide();
@@ -77,8 +78,7 @@ class MapManager {
         this.current_map = this.maps[map_name];
         this.current_map.active = true;
         this.current_map.show();
-
-
+        window.MAP = this.current_map;
     }
 
     addMap (map) {
@@ -93,6 +93,18 @@ class MapManager {
 
     removeMap (map_name) {
         let removing_current_map = (this.current_map.name === map_name);
+        Store.remove(map_name);
+        CONFIG.snap.indicator.show = false;
+        CONFIG.snap.indicator.point = null;
+        CONFIG.snap.indicator.segment = null;
+
+        if (window.display_window && !window.display_window.closed) {
+            window.display_window.postMessage({
+                event: 'remove_map',
+                data: map_name
+            });
+        }
+
         this.maps[map_name].shutdown();
         delete this.maps[map_name];
 

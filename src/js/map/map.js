@@ -130,7 +130,6 @@ class MapInstance {
     }
 
     get data () {
-        this.SegmentManager.sanitize();
         return {
             name: this.name,
             json_directory: this.map.json_directory,
@@ -141,7 +140,7 @@ class MapInstance {
                 polys: this.LightManager.light_polys
             },
             json: {
-                segments: this.SegmentManager.segments
+                segments: this.SegmentManager.sanitizedSegments()
             }
         };
     }
@@ -170,6 +169,8 @@ class MapInstance {
     }
 
     onDelete (point) {
+        console.log(point);
+        // debugger;
         if (CONFIG.move_segment) {
             this.SegmentManager.removePoint(Store.get('control_point'));
             return;
@@ -254,11 +255,11 @@ class MapInstance {
     }
 
     checkForSnapPoint () {
-        const snap_point = this.SegmentManager.checkForWallLines({
+        const snap_point = this.SegmentManager.checkForWallEnds({
             show_indicator: true
         });
         if (!snap_point) {
-            this.SegmentManager.checkForWallEnds({
+            this.SegmentManager.checkForWallLines({
                 show_indicator: true
             });
         }

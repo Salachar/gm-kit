@@ -91,8 +91,23 @@ class Store {
         }
     }
 
+    remove (key) {
+        if (this.__key === key) {
+            this.__key = null;
+        }
+        delete this.__key_events[key];
+        delete this.__store[key];
+    }
+
+    clearData () {
+        this.__store = {};
+    }
+
     clear () {
         this.__store = {};
+        this.__events = {};
+        this.__key_events = {};
+        this.__key = null;
     }
 }
 module.exports = new Store();

@@ -5,6 +5,10 @@ TODO:
     - Load DM versions of map if available
     - Read in config
 
+MAPS:
+    - Figure out who made Tavern1
+        - It has a very nice clean aesthetic
+
 Updates (4/23/2018):
     - Arrow Key Scrolling:
         Selected window will now scroll with the arrow keys
