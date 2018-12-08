@@ -1,14 +1,15 @@
+const Store = require('../store');
+
 const createElement = require('../helpers').createElement;
 const rgba = require('../helpers').rgba;
 const getNormal = require('../helpers').getNormal;
-
-const Store = require('../store');
 
 const MAX_MAP_SIZE = 3000;
 
 class CanvasManager {
     constructor (map = {}, parent) {
         this.map = map;
+        console.log(this.map);
         this.parent = parent;
 
         // Initialize to false for display window, true otherwise
@@ -111,43 +112,27 @@ class CanvasManager {
         const height = this.canvas_container.clientHeight;
 
         if (left <= 0) {
-            Store.fire('hide_scroller', {
-                scroller: 'left'
-            });
+            Store.fire('hide_scroller', { scroller: 'left' });
         } else {
-            Store.fire('show_scroller' ,{
-                scroller: 'left'
-            });
+            Store.fire('show_scroller', { scroller: 'left' });
         }
 
         if (left + width >= this.map_image_width) {
-            Store.fire('hide_scroller', {
-                scroller: 'right'
-            });
+            Store.fire('hide_scroller', { scroller: 'right' });
         } else {
-            Store.fire('show_scroller' ,{
-                scroller: 'right'
-            });
+            Store.fire('show_scroller', { scroller: 'right' });
         }
 
         if (top <= 0) {
-            Store.fire('hide_scroller', {
-                scroller: 'top'
-            });
+            Store.fire('hide_scroller', { scroller: 'top' });
         } else {
-            Store.fire('show_scroller' ,{
-                scroller: 'top'
-            });
+            Store.fire('show_scroller', { scroller: 'top' });
         }
 
         if (top + height >= this.map_image_height) {
-            Store.fire('hide_scroller', {
-                scroller: 'bottom'
-            });
+            Store.fire('hide_scroller', { scroller: 'bottom' });
         } else {
-            Store.fire('show_scroller' ,{
-                scroller: 'bottom'
-            });
+            Store.fire('show_scroller', { scroller: 'bottom' });
         }
     }
 
@@ -155,13 +140,11 @@ class CanvasManager {
         if (CONFIG.is_display) return;
 
         this.control_canvas.addEventListener('mousedown', (e) => {
-            // if (e.which == 3) return;
             Mouse.downEvent(e);
             this.parent.mouseDown();
         });
 
         this.control_canvas.addEventListener('mouseup', (e) => {
-            // if (e.which == 3) return;
             Mouse.upEvent(e);
             this.parent.mouseUp();
             Mouse.clearMouse(e);
@@ -221,14 +204,18 @@ class CanvasManager {
 
             this.checkScroll();
         }
-        img.src = this.map.image;
+        if (CONFIG.window === 'control') {
+            img.src = this.map.dm_image || this.map.image;
+        } else {
+            img.src = this.map.image || this.map.dm_image;
+        }
     }
 
     clearContext (context) {
         context.clearRect(0, 0, this.map_image_width, this.map_image_height);
     }
 
-    drawFogOfWar () {
+    drawFogOfWar () { // The shadowed area that has been seen by the players
         this.clearContext(this.shadow_context);
         this.shadow_context.save();
             this.shadow_context.globalAlpha = CONFIG.display.fog[CONFIG.window].seen.opacity;
@@ -239,8 +226,7 @@ class CanvasManager {
         this.shadow_context.restore();
     }
 
-    drawShadow () {
-        // Fill the canvas with shadow
+    drawShadow () { // The shadow drawn on the light layer, what the players haven't seen
         this.clearContext(this.light_context);
         this.light_context.save();
             this.light_context.globalAlpha = CONFIG.display.fog[CONFIG.window].hidden.opacity;
@@ -319,31 +305,39 @@ class CanvasManager {
     }
 
     drawSegments (context) {
-        const closest_segment = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('segment') : null;
-        if (closest_segment && closest_segment.type !== 'wall') closest_segment = null;
+        let closest_segment = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('segment') : null;
 
         this.parent.SegmentManager.segments.forEach((segment, index) => {
-            context.beginPath();
+            let p1 = {
+                x: segment.p1.x,
+                y: segment.p1.y
+            };
+            let p2 = {
+                x: segment.p2.x,
+                y: segment.p2.y
+            };
+            let inner_color = CONFIG.display[segment.type || 'wall'].inner_color;
+            let outer_color = CONFIG.display[segment.type || 'wall'].outer_color;
+            let inner_width = CONFIG.display[segment.type || 'wall'].inner_width;
+            let outer_width = CONFIG.display[segment.type || 'wall'].outer_width;
+
             if (segment.type === 'door') {
-                const x1 = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
-                const y1 = segment.temp_p1 ? segment.temp_p1.y : segment.p1.y;
-                const x2 = segment.temp_p2 ? segment.temp_p2.x : segment.p2.x;
-                const y2 = segment.temp_p2 ? segment.temp_p2.y : segment.p2.y;
-                context.moveTo(x1, y1);
-                context.lineTo(x2, y2);
-                this.canvasStroke(context, CONFIG.display.door.outer_color, CONFIG.display.door.outer_width);
-                this.canvasStroke(context, CONFIG.display.door.inner_color, CONFIG.display.door.inner_width);
-            } else {
-                context.moveTo(segment.p1.x, segment.p1.y);
-                context.lineTo(segment.p2.x, segment.p2.y);
-                if (closest_segment && closest_segment.index === index) {
-                    this.canvasStroke(context, CONFIG.display.wall.highlight_outer_color, CONFIG.display.wall.highlight_outer_width);
-                    this.canvasStroke(context, CONFIG.display.wall.highlight_inner_color, CONFIG.display.wall.highlight_inner_width);
-                } else {
-                    this.canvasStroke(context, CONFIG.display.wall.outer_color, CONFIG.display.wall.outer_width);
-                    this.canvasStroke(context, CONFIG.display.wall.inner_color, CONFIG.display.wall.inner_width);
-                }
+                p1.x = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
+                p1.y = segment.temp_p1 ? segment.temp_p1.y : segment.p1.y;
+                p2.x = segment.temp_p2 ? segment.temp_p2.x : segment.p2.x;
+                p2.y = segment.temp_p2 ? segment.temp_p2.y : segment.p2.y;
+            } else if (closest_segment && closest_segment.index === index) {
+                inner_color = CONFIG.display.wall.highlight_inner_color;
+                outer_color = CONFIG.display.wall.highlight_outer_color;
+                inner_width = CONFIG.display.wall.highlight_inner_width;
+                outer_width = CONFIG.display.wall.highlight_outer_width;
             }
+
+            context.beginPath();
+            context.moveTo(p1.x, p1.y);
+            context.lineTo(p2.x, p2.y);
+            this.canvasStroke(context, outer_color, outer_width);
+            this.canvasStroke(context, inner_color, inner_width);
 
             if (segment.one_way) {
                 this.canvasCircle(

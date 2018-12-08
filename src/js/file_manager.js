@@ -2,26 +2,24 @@ const createElement = require('./helpers').createElement;
 
 class FileManager {
     constructor (opts = {}) {
-        // Default file name, kinda moot now, only used when saving and no image was loaded
-        // There is really no point in saving just json with no image at the moment
-        this.file_name = 'mapthing';
-        // Reference to the map list created by reading the file system
-        this.map_list = {};
-
-        this.selected_maps = {};
-
-        this.base_node = null;
-
         this.onMapLoad = opts.onMapLoad;
 
         this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
         this.el_modal_body = document.getElementById('map_list_modal_body');
+
+        // Buttons
         this.el_open_button = document.getElementById('map_list_modal_open');
+        this.el_folder_button = document.getElementById('map_list_modal_folder');
+        this.el_close_button = document.getElementById('map_list_modal_close');
 
         this.el_map_list = document.getElementById('map_list_modal_body_list');
         this.el_map_preview = document.getElementById('map_list_modal_body_preview');
 
+        // Reference to the current map hovered over for preview images
         this.current_map_hover = null;
+
+        // List of maps that have been checked for mass open
+        this.selected_maps = {};
 
         this.addInfoTitle();
         this.setEvents();
@@ -33,7 +31,7 @@ class FileManager {
     }
 
     createFileTree (map_list) {
-        this.map_list = map_list;
+        console.log(map_list);
         this.el_map_list.innerHTML = '';
         this.addSection(map_list, this.el_map_list);
         this.openModal();
@@ -84,15 +82,6 @@ class FileManager {
                                 }
                             }
                         });
-                        createElement('div', 'map_list_remove', {
-                            addTo: map_node,
-                            events: {
-                                click: (e) => {
-                                    e.preventDefault();
-                                    IPC.send('remove_map', map);
-                                }
-                            }
-                        });
 
                         map_node.addEventListener('mouseenter', (e) => {
                             this.current_map_hover = map.image;
@@ -139,12 +128,16 @@ class FileManager {
             IPC.send('load_maps');
         });
 
-        document.getElementById('map_list_modal_open').addEventListener('click', (e) => {
+        this.el_open_button.addEventListener('click', (e) => {
             IPC.send('load_map', this.selected_maps);
         });
 
-        document.getElementById('map_list_modal_close').addEventListener('click', (e) => {
+        this.el_close_button.addEventListener('click', (e) => {
             this.closeModal();
+        });
+
+        this.el_folder_button.addEventListener('click', (e) => {
+            IPC.send('open_dialog_modal');
         });
 
         document.getElementById('save_map').addEventListener('click', (e) => {

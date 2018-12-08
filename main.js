@@ -4,45 +4,44 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 const IPC = electron.ipcMain;
+const dialog = electron.dialog;
 
 const fs = require('fs');;
 const path = require('path');
 const url = require('url');
 
-const base_dir = 'maps';
-let map_dir = '';
-let map_dir_exists = false;
-
-let LOCAL = false;
+const FileHelpers = require('./lib/file_helpers');
+let CONFIG = null;
 
 // Need a reference to hang onto the first map needed to display
 let WINDOW = null;
 
-function generateMapDir () {
-    let app_path = app.getPath('exe');
-    if (app_path.indexOf('node_modules') !== -1) {
-        LOCAL = true;
-        map_dir = path.join(__dirname, base_dir);
-    } else {
-        LOCAL = false;
-        let app_split = (process.platform === 'darwin') ? ".app" : ".exe";
-        let dir_split = (process.platform === 'darwin') ? "/" : "\\";
-        let app_path_split = app_path.split(app_split)[0].split(dir_split);
-        app_path_split.pop();
-        app_path_split.push(base_dir);
-        map_dir = app_path_split.join(dir_split);
+let file_info = {
+    config: {
+        base: __dirname,
+        name:'config',
+        type: 'json',
+        init_content: '{}',
+        directory: ''
     }
+};
 
-    if (fs.existsSync(map_dir)) {
-        map_dir_exists = true;
-    } else {
-        map_dir_exists = false;
-        fs.mkdirSync(map_dir);
+function loadConfig () {
+    let output_dir = FileHelpers.generate(file_info.config);
+    console.log(output_dir);
+    file_info.config.directory = output_dir;
+    let config_data = FileHelpers.read(output_dir);
+    try {
+        config_data = JSON.parse(config_data);
+        CONFIG = config_data;
+    } catch (e) {
+        console.log(e);
+        CONFIG = {};
     }
 }
 
 function createWindow () {
-    generateMapDir();
+    loadConfig();
 
     WINDOW = new BrowserWindow({
         width: 1200,
@@ -57,10 +56,10 @@ function createWindow () {
         protocol: 'file:',
         slashes: true
     });
-    window_url += `?map_dir=${map_dir}`;
+    window_url += `?map_dir=${CONFIG.map_directory}`;
 
     WINDOW.loadURL(window_url);
-    WINDOW.webContents.openDevTools();
+    // WINDOW.webContents.openDevTools();
     WINDOW.on('closed', function () {
         app.quit();
     });
@@ -71,16 +70,32 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
-IPC.on('load_maps', (e) => {
-    generateMapList();
+function chooseMapDirectory () {
+    dialog.showOpenDialog(WINDOW, {
+        properties: ['openDirectory']
+    }, (folders) => {
+        if (!folders || !folders.length) {
+            console.log('User must have canceled folder selection');
+            return;
+        }
+        const folder_path = folders[0];
+        // console.log(folder_path);
+        CONFIG.map_directory = folder_path;
+        fs.writeFileSync(file_info.config.directory, JSON.stringify(CONFIG, null, 4), 'utf-8');
+        generateMapList();
+    });
+}
+
+IPC.on('open_dialog_modal', (e) => {
+    chooseMapDirectory();
 });
 
-IPC.on('remove_map', (e, map) => {
-    // console.log(map.image);
-    // console.log(map.json);
-    // console.log(map);
-    // console.log(fs.existsSync(map.image));
-    fs.unlinkSync(map.json);
+IPC.on('load_maps', (e) => {
+    if (!CONFIG.map_directory) {
+        chooseMapDirectory();
+    } else {
+        generateMapList();
+    }
 });
 
 IPC.on('load_map', (e, maps) => {
@@ -92,10 +107,12 @@ IPC.on('load_map', (e, maps) => {
         let map_data = {
             type: map.type,
             name: map.name,
+            image: map.image,
+            dm_image: map.dm_image
         };
-        if (map.image) {
-            map_data.image = map.image;
-        }
+        // if (map.image) {
+        //     map_data.image = map.image;
+        // }
         if (map.json) {
             try {
                 let json = fs.readFileSync(map.json, {
@@ -137,47 +154,72 @@ IPC.on('save_map', (e, maps) => {
 
 function generateMapList () {
     let map_list = {};
-    let cur_path = map_dir;
+    let cur_path = CONFIG.map_directory;
 
     readDir(cur_path);
     WINDOW.webContents.send('maps_loaded', map_list);
 
     function readDir (dir) {
         fs.readdirSync(dir).forEach((file) => {
-            let full_path = dir + '/' + file;
+            const full_path = dir + '/' + file;
             if (fs.lstatSync(full_path).isDirectory()) {
                 readDir(full_path);
             } else {
-                let file_name = file.split('.')[0];
-                if (isImage(file)) {
-                    let json_exists = matchingJSONExists(dir, file);
-                    if (json_exists) {
-                        addToComplete(dir, {
-                            name: file_name,
-                            image: file,
-                            json: json_exists
-                        });
-                    } else {
-                        addToImageOnly(dir, {
-                            name: file_name,
-                            image: file
+                const file_name = file.split('.')[0];
+                const file_type = file.split('.')[1];
+
+                if (file_name.match(/DM_|_DM/)) return;
+
+                if (FileHelpers.isImage(file)) {
+                    const json_exists = FileHelpers.getMatchingFile({
+                        dir: dir,
+                        file: file,
+                        type: 'json'
+                    });
+
+                    let dm_image = FileHelpers.getFile({
+                        dir: dir,
+                        file: `DM_${file_name}.${file_type}`
+                    });
+                    if (!dm_image) {
+                        dm_image = FileHelpers.getFile({
+                            dir: dir,
+                            file: `${file_name}_DM.${file_type}`
                         });
                     }
-                } else if (isJSON(file)) {
-                    let image_exists = matchingImageExists(dir, file);
-                    if (image_exists) {
-                        addToComplete(dir, {
-                            name: file_name,
-                            image: image_exists,
-                            json: file
-                        });
+                    if (dm_image) console.log(dm_image);
+
+                    let file_obj = {
+                        name: file_name,
+                        image: file,
+                        dm_image: dm_image
+                    };
+                    if (json_exists) {
+                        file_obj.json = json_exists;
+                        addToComplete(dir, file_obj);
                     } else {
-                        addToJSONOnly(dir, {
-                            name: file_name,
-                            json: file
-                        });
+                        addToImageOnly(dir, file_obj);
                     }
                 }
+                // else if (FileHelpers.isJSON(file)) {
+                //     const image_exists = FileHelpers.getMatchingFile({
+                //         dir: dir,
+                //         file: file,
+                //         type: 'image'
+                //     });
+                //     if (image_exists) {
+                //         addToComplete(dir, {
+                //             name: file_name,
+                //             image: image_exists,
+                //             json: file
+                //         });
+                //     } else {
+                //         addToJSONOnly(dir, {
+                //             name: file_name,
+                //             json: file
+                //         });
+                //     }
+                // }
             }
         });
     }
@@ -192,33 +234,28 @@ function generateMapList () {
         addToMapList(dir + '/image_only', file_obj);
     }
 
-    function addToJSONOnly (dir, file_obj) {
-        file_obj.type = 'json_only';
-        addToMapList(dir + '/json_only', file_obj);
-    }
+    // function addToJSONOnly (dir, file_obj) {
+    //     file_obj.type = 'json_only';
+    //     addToMapList(dir + '/json_only', file_obj);
+    // }
 
     function addToMapList (dir, file_obj) {
-        let relative_directory = dir.split(base_dir)[1];
+        let relative_directory = dir.replace(CONFIG.map_directory, "");
         let map_directory = relative_directory.replace('/', '');
-
-        relative_directory = base_dir + relative_directory;
         relative_directory = relative_directory.replace(/\/complete|\/image_only|\/json_only/, '');
 
-        if (!LOCAL) relative_directory = relative_directory.replace(base_dir, '');
-
         if (file_obj.image) {
-            if (LOCAL) {
-                file_obj.image = path.join(__dirname, relative_directory + '/' + file_obj.image);
-            } else {
-                file_obj.image = map_dir + '/' + relative_directory + '/' + file_obj.image;
-            }
+            // C:\Projects\dnd_map_app\maps\Examples\Hideout.jpg
+            file_obj.image = path.join(CONFIG.map_directory, relative_directory, file_obj.image);
+        }
+        if (file_obj.dm_image) {
+
+            // C:\Projects\dnd_map_app\maps\Examples\Hideout.jpg
+            file_obj.dm_image = path.join(CONFIG.map_directory, relative_directory, file_obj.dm_image);
+            console.log(file_obj.dm_image);
         }
         if (file_obj.json) {
-            if (LOCAL) {
-                file_obj.json = path.join(__dirname, relative_directory + '/' + file_obj.json);
-            } else {
-                file_obj.json = map_dir + '/' + relative_directory + '/' + file_obj.json;
-            }
+            file_obj.json = path.join(CONFIG.map_directory, relative_directory, file_obj.json);
         }
 
         let dir_split = map_directory.split('/');
@@ -233,43 +270,6 @@ function generateMapList () {
                 curr[dir_split[i]] = curr[dir_split[i]] || {};
                 curr = curr[dir_split[i]];
             }
-        }
-    }
-
-    function isJSON (file) {
-        return file.match(/json/);
-    }
-
-    function isImage (file) {
-        if (file.match(/png|jpg|jpeg|bmp|pdf/)) return true;
-        return false;
-    }
-
-    function matchingImageExists (dir, file) {
-        let image_types = ['.png', '.jpg', '.jpeg', '.bmp', '.pdf'];
-        let file_no_extension = file.split('.')[0];
-        for (let i = 0; i < image_types.length; ++i) {
-            try {
-                let image_file = file_no_extension + image_types[i]
-                if (fs.existsSync(dir + '/' + image_file)) return image_file;
-            } catch (e) {
-                console.log('Issue reading file, skipping...');
-            }
-        }
-        // console.log('No Image match found for: ' + file);
-        return false;
-    }
-
-    function matchingJSONExists (dir, file) {
-        let file_no_extension = file.split('.')[0];
-        let json_file = file_no_extension + '.json';
-        try {
-            if (fs.existsSync(dir + '/' + json_file)) return json_file;
-            // console.log('No JSON match found for: ' + file);
-            return false;
-        } catch (e) {
-            // console.log('Error trying to read "' + json_file + '". It must not exist.');
-            return false;
         }
     }
 }

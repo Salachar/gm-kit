@@ -431,7 +431,7 @@ class MapInstance {
         if (this.lighting_enabled) return;
 
         if (CONFIG.create_one_way_wall) {
-            let closest_wall = this.ObjectManager.findClosest('wall')
+            let closest_wall = this.ObjectManager.findClosest('segment');
             let one_way_info = getNormal(closest_wall);
             if (one_way_info) {
                 this.one_way_wall.segment = closest_wall.segment;
