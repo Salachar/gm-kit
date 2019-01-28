@@ -10,8 +10,9 @@ const Mouse = require('./mouse');
 
 const {
     getWindowDimensions,
-    createElement
-} = require('./helpers')
+    createElement,
+    resetSnap
+} = require('./helpers');
 
 const controls = require('./controls');
 
@@ -93,9 +94,7 @@ class MapManager {
     removeMap (map_name) {
         let removing_current_map = (this.current_map.name === map_name);
         Store.remove(map_name);
-        CONFIG.snap.indicator.show = false;
-        CONFIG.snap.indicator.point = null;
-        CONFIG.snap.indicator.segment = null;
+        resetSnap();
 
         if (window.display_window && !window.display_window.closed) {
             window.display_window.postMessage({
@@ -274,7 +273,7 @@ class MapManager {
         });
 
         document.body.addEventListener('keydown', (e) => {
-            e.preventDefault();
+            // e.preventDefault();
 
             KEY_DOWN[e.keyCode] = true;
 

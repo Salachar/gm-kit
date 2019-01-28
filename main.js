@@ -59,7 +59,7 @@ function createWindow () {
     window_url += `?map_dir=${CONFIG.map_directory}`;
 
     WINDOW.loadURL(window_url);
-    WINDOW.webContents.openDevTools();
+    // WINDOW.webContents.openDevTools();
     WINDOW.on('closed', function () {
         app.quit();
     });
@@ -155,73 +155,83 @@ IPC.on('save_map', (e, maps) => {
 function generateMapList () {
     let map_list = {};
     let cur_path = CONFIG.map_directory;
+    let file_error = false;
 
     readDir(cur_path);
-    WINDOW.webContents.send('maps_loaded', map_list);
+    if (!file_error) {
+        WINDOW.webContents.send('maps_loaded', map_list);
+    }
 
     function readDir (dir) {
-        fs.readdirSync(dir).forEach((file) => {
-            const full_path = dir + '/' + file;
-            if (fs.lstatSync(full_path).isDirectory()) {
-                readDir(full_path);
-            } else {
-                const file_name = file.split('.')[0];
-                const file_type = file.split('.')[1];
+        try {
+            fs.readdirSync(dir).forEach((file) => {
+                const full_path = dir + '/' + file;
+                if (fs.lstatSync(full_path).isDirectory()) {
+                    readDir(full_path);
+                } else {
+                    const file_name = file.split('.')[0];
+                    const file_type = file.split('.')[1];
 
-                if (file_name.match(/DM_|_DM/)) return;
+                    if (file_name.match(/DM_|_DM/)) return;
 
-                if (FileHelpers.isImage(file)) {
-                    const json_exists = FileHelpers.getMatchingFile({
-                        dir: dir,
-                        file: file,
-                        type: 'json'
-                    });
-
-                    let dm_image = FileHelpers.getFile({
-                        dir: dir,
-                        file: `DM_${file_name}.${file_type}`
-                    });
-                    if (!dm_image) {
-                        dm_image = FileHelpers.getFile({
+                    if (FileHelpers.isImage(file)) {
+                        const json_exists = FileHelpers.getMatchingFile({
                             dir: dir,
-                            file: `${file_name}_DM.${file_type}`
+                            file: file,
+                            type: 'json'
                         });
-                    }
-                    if (dm_image) console.log(dm_image);
 
-                    let file_obj = {
-                        name: file_name,
-                        image: file,
-                        dm_image: dm_image
-                    };
-                    if (json_exists) {
-                        file_obj.json = json_exists;
-                        addToComplete(dir, file_obj);
-                    } else {
-                        addToImageOnly(dir, file_obj);
+                        let dm_image = FileHelpers.getFile({
+                            dir: dir,
+                            file: `DM_${file_name}.${file_type}`
+                        });
+                        if (!dm_image) {
+                            dm_image = FileHelpers.getFile({
+                                dir: dir,
+                                file: `${file_name}_DM.${file_type}`
+                            });
+                        }
+                        if (dm_image) console.log(dm_image);
+
+                        let file_obj = {
+                            name: file_name,
+                            image: file,
+                            dm_image: dm_image
+                        };
+                        if (json_exists) {
+                            file_obj.json = json_exists;
+                            addToComplete(dir, file_obj);
+                        } else {
+                            addToImageOnly(dir, file_obj);
+                        }
                     }
+                    // else if (FileHelpers.isJSON(file)) {
+                    //     const image_exists = FileHelpers.getMatchingFile({
+                    //         dir: dir,
+                    //         file: file,
+                    //         type: 'image'
+                    //     });
+                    //     if (image_exists) {
+                    //         addToComplete(dir, {
+                    //             name: file_name,
+                    //             image: image_exists,
+                    //             json: file
+                    //         });
+                    //     } else {
+                    //         addToJSONOnly(dir, {
+                    //             name: file_name,
+                    //             json: file
+                    //         });
+                    //     }
+                    // }
                 }
-                // else if (FileHelpers.isJSON(file)) {
-                //     const image_exists = FileHelpers.getMatchingFile({
-                //         dir: dir,
-                //         file: file,
-                //         type: 'image'
-                //     });
-                //     if (image_exists) {
-                //         addToComplete(dir, {
-                //             name: file_name,
-                //             image: image_exists,
-                //             json: file
-                //         });
-                //     } else {
-                //         addToJSONOnly(dir, {
-                //             name: file_name,
-                //             json: file
-                //         });
-                //     }
-                // }
-            }
-        });
+            });
+        } catch (e) {
+            console.log(e);
+            console.log('There was an error reading from the map directory');
+            file_error = true;
+            chooseMapDirectory();
+        }
     }
 
     function addToComplete (dir, file_obj) {

@@ -4,7 +4,8 @@ const {
     pDistance,
     copyPoint,
     pointMatch,
-    sqr
+    sqr,
+    resetSnap
 } = require('../helpers');
 
 class SegmentManager {
@@ -461,10 +462,7 @@ class SegmentManager {
     }
 
     checkForWallEnds (opts = {}) {
-        CONFIG.snap.indicator.show = false;
-        CONFIG.snap.indicator.point = null;
-        CONFIG.snap.indicator.segment = null;
-
+        resetSnap();
         const closest_end = this.findClosestWallEnd(CONFIG.snap.distance);
         if (!closest_end) return null;
 
@@ -531,9 +529,7 @@ class SegmentManager {
     }
 
     checkForWallLines (opts = {}) {
-        CONFIG.snap.indicator.show = false;
-        CONFIG.snap.indicator.point = null;
-        CONFIG.snap.indicator.segment = null;
+        resetSnap();
 
         const closest_point = this.getClosestPointOnSegment({
             distance: CONFIG.snap.distance

@@ -429,6 +429,15 @@ html, body {
     float: right;
 }
 
+#map_list_search {
+    float: right;
+    margin: 0.2rem 0 0 0.2rem;
+    height: 1.6rem;
+    padding: 0 0 0 0.5rem;
+    border: 0;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+}
 
 #map_list_modal_close {
     position: absolute;

@@ -4,6 +4,8 @@ const {
 
 class FileManager {
     constructor (opts = {}) {
+        this.map_list = null;
+
         this.onMapLoad = opts.onMapLoad;
 
         this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
@@ -103,6 +105,33 @@ class FileManager {
         }
     }
 
+    searchMaps (sections, search_string) {
+        let sections_copy = JSON.parse(JSON.stringify(sections));
+        search(sections_copy);
+        function search (sections) {
+            for (let s in sections) {
+                if (s.match(/complete|image_only|json_only/)) {
+                    for (let f in sections[s]) {
+                        let map = sections[s][f];
+                        let name = map.name.toLowerCase();
+                        if (name.indexOf(search_string) === -1) {
+                            delete sections[s][f];
+                        }
+                    }
+
+                } else if (s.toLowerCase().indexOf(search_string) === -1) {
+                    search(sections[s]);
+                }
+                // If everything has been removed from the section, delete it
+                if (!Object.keys(sections[s]).length) {
+                    delete sections[s];
+                }
+            }
+        }
+
+        this.createFileTree(sections_copy);
+    }
+
     addMap (map) {
         this.selected_maps[map.name] = map;
     }
@@ -118,6 +147,7 @@ class FileManager {
     closeModal () {
         this.el_modal_wrap.classList.add('hidden');
         this.el_map_list.innerHTML = '';
+        document.getElementById('map_list_search').value = '';
     }
 
     setEvents () {
@@ -139,6 +169,12 @@ class FileManager {
 
         this.el_folder_button.addEventListener('click', (e) => {
             IPC.send('open_dialog_modal');
+        });
+
+        document.getElementById('map_list_search').addEventListener('keyup', (e) => {
+            const search_string = e.currentTarget.value;
+            console.log(search_string);
+            this.searchMaps(this.map_list, search_string);
         });
 
         document.getElementById('save_map').addEventListener('click', (e) => {
@@ -167,8 +203,10 @@ class FileManager {
             IPC.send('save_map', map_data);
         });
 
-        IPC.on('maps_loaded', (e, maps) => {
-            this.createFileTree(maps);
+        IPC.on('maps_loaded', (e, map_list) => {
+            this.map_list = map_list;
+            console.log(map_list);
+            this.createFileTree(map_list);
         });
 
         IPC.on('map_loaded', (e, maps) => {

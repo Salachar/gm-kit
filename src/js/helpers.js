@@ -1,4 +1,11 @@
+
 const Helpers = {
+    resetSnap: function () {
+        CONFIG.snap.indicator.show = false;
+        CONFIG.snap.indicator.point = null;
+        CONFIG.snap.indicator.segment = null;
+    },
+
     copy: function (object) {
         return JSON.parse(JSON.stringify(object));
     },

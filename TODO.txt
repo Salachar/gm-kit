@@ -75,6 +75,11 @@ Updates (11/5/2018)
     - Fixed multiple events firing after closing and reopening map
     - Fixed opening display window clearing important segment data due to segment sanitization
 
+Updates (1/27/2018)
+    - Add state saving (light and lights saving) to app
+        - You can now save one state per map
+    - Added map list searching
+
 
 Electron Builder build stuff, if I ever switch back
 "build": {
