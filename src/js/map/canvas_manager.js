@@ -128,15 +128,15 @@ class CanvasManager {
         }
 
         if (top <= 0) {
-            Store.fire('hide_scroller', { scroller: 'top' });
+            Store.fire('hide_scroller', { scroller: 'up' });
         } else {
-            Store.fire('show_scroller', { scroller: 'top' });
+            Store.fire('show_scroller', { scroller: 'up' });
         }
 
         if (top + height >= this.map_image_height) {
-            Store.fire('hide_scroller', { scroller: 'bottom' });
+            Store.fire('hide_scroller', { scroller: 'down' });
         } else {
-            Store.fire('show_scroller', { scroller: 'bottom' });
+            Store.fire('show_scroller', { scroller: 'down' });
         }
     }
 

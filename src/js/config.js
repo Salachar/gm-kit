@@ -59,6 +59,8 @@ let CONFIG = {
 
     params: {},
 
+    scroll_frequency: 50,
+    scroll_wait_time: 1000,
     scroll_speed: 25,
 
     display: {

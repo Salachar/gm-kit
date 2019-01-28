@@ -18,9 +18,6 @@ const controls = require('./controls');
 let scroll_timer = null;
 let scroll_wait_timer = null;
 
-const SCROLL_FREQUENCY = 50;
-const SCROLL_WAIT_TIME = 1000;
-
 class MapManager {
     constructor () {
         this.FileManager = new FileManager({
@@ -33,9 +30,9 @@ class MapManager {
         this.el_tabs = document.getElementById('map_tabs');
         this.el_help_table = document.getElementById('help_table');
 
-        this.el_map_scroll_top = document.getElementById('map_scroll_top');
+        this.el_map_scroll_up = document.getElementById('map_scroll_up');
         this.el_map_scroll_right = document.getElementById('map_scroll_right');
-        this.el_map_scroll_bottom = document.getElementById('map_scroll_bottom');
+        this.el_map_scroll_down = document.getElementById('map_scroll_down');
         this.el_map_scroll_left = document.getElementById('map_scroll_left');
 
         getWindowDimensions();
@@ -243,52 +240,18 @@ class MapManager {
             }
         });
 
-        document.getElementById('map_scroll_top').addEventListener('mouseover', (e) => {
-            scroll_wait_timer = setTimeout(() => {
-                scroll_timer = setInterval(() => {
-                    Store.fire('scroll_up');
-                }, SCROLL_FREQUENCY);
-            }, SCROLL_WAIT_TIME);
-        });
-        document.getElementById('map_scroll_top').addEventListener('mouseleave', (e) => {
-            clearInterval(scroll_timer);
-            clearTimeout(scroll_wait_timer);
-        });
-
-        document.getElementById('map_scroll_right').addEventListener('mouseover', (e) => {
-            scroll_wait_timer = setTimeout(() => {
-                scroll_timer = setInterval(() => {
-                    Store.fire('scroll_right');
-                }, SCROLL_FREQUENCY);
-            }, SCROLL_WAIT_TIME);
-        });
-        document.getElementById('map_scroll_right').addEventListener('mouseleave', (e) => {
-            clearInterval(scroll_timer);
-            clearTimeout(scroll_wait_timer);
-        });
-
-        document.getElementById('map_scroll_bottom').addEventListener('mouseover', (e) => {
-            scroll_wait_timer = setTimeout(() => {
-                scroll_timer = setInterval(() => {
-                    Store.fire('scroll_down');
-                }, SCROLL_FREQUENCY);
-            }, SCROLL_WAIT_TIME);
-        });
-        document.getElementById('map_scroll_bottom').addEventListener('mouseleave', (e) => {
-            clearInterval(scroll_timer);
-            clearTimeout(scroll_wait_timer);
-        });
-
-        document.getElementById('map_scroll_left').addEventListener('mouseover', (e) => {
-            scroll_wait_timer = setTimeout(() => {
-                scroll_timer = setInterval(() => {
-                    Store.fire('scroll_left');
-                }, SCROLL_FREQUENCY);
-            }, SCROLL_WAIT_TIME);
-        });
-        document.getElementById('map_scroll_left').addEventListener('mouseleave', (e) => {
-            clearInterval(scroll_timer);
-            clearTimeout(scroll_wait_timer);
+        ['up', 'down', 'left', 'right'].forEach((scroll_direction) => {
+            document.getElementById(`map_scroll_${scroll_direction}`).addEventListener('mouseover', (e) => {
+                scroll_wait_timer = setTimeout(() => {
+                    scroll_timer = setInterval(() => {
+                        Store.fire(`scroll_${scroll_direction}`);
+                    }, CONFIG.scroll_frequency);
+                }, CONFIG.scroll_wait_time);
+            });
+            document.getElementById(`map_scroll_${scroll_direction}`).addEventListener('mouseleave', (e) => {
+                clearInterval(scroll_timer);
+                clearTimeout(scroll_wait_timer);
+            });
         });
 
         document.getElementById('load_state').addEventListener('click', (e) => {

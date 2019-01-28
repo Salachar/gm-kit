@@ -262,7 +262,7 @@ html, body {
 .map_scroller.hidden {
     display: none;
 }
-#map_scroll_top {
+#map_scroll_up {
     top: 0;
     left: 2rem;
     right: 2rem;
@@ -278,7 +278,7 @@ html, body {
     border-top-left-radius: 2rem;
     border-bottom-left-radius: 2rem;
 }
-#map_scroll_bottom {
+#map_scroll_down {
     bottom: 0;
     left: 2rem;
     right: 2rem;
