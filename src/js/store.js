@@ -9,6 +9,7 @@ class Store {
         this.display_window_events = {
             'image_loaded': true,
             'light_poly_update': true,
+            'load_fog': true,
             'scroll_left': 'ALT',
             'scroll_right': 'ALT',
             'scroll_up': 'ALT',

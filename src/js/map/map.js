@@ -5,12 +5,13 @@ const ObjectManager = require('./object_manager');
 
 const Store = require('../store');
 
-const Helpers = require('../helpers');
-const copyPoint = Helpers.copyPoint;
-const getNormal = Helpers.getNormal;
+const {
+    copyPoint,
+    getNormal
+} = require('../helpers');
 
 class MapInstance {
-    constructor (map = {}) {
+    constructor (map = {}, options = {}) {
         this.map = map;
 
         this.image = map.image || null;
@@ -21,9 +22,9 @@ class MapInstance {
         // Whether light is enabled or not for this map
         this.lighting_enabled = CONFIG.is_display;
 
-        this.SegmentManager = new SegmentManager(map, this);
-        this.CanvasManager = new CanvasManager(map, this);
-        this.LightManager = new LightManager(map, this);
+        this.SegmentManager = new SegmentManager(map, this, options);
+        this.CanvasManager = new CanvasManager(map, this, options);
+        this.LightManager = new LightManager(map, this, options);
         this.ObjectManager = new ObjectManager(this);
 
         this.last_quickplace_coord = {
@@ -135,6 +136,7 @@ class MapInstance {
             json_directory: this.map.json_directory,
             image: this.image,
             lights_data: {
+                enabled: this.lighting_enabled,
                 lights: this.LightManager.lights,
                 lights_added: this.LightManager.lights_added,
                 polys: this.LightManager.light_polys
@@ -143,6 +145,40 @@ class MapInstance {
                 segments: this.SegmentManager.sanitizedSegments()
             }
         };
+    }
+
+    get state () {
+        const state_light_data = Object.keys(this.LightManager.lights).map((key) => {
+            return {
+                x: this.LightManager.lights[key].x,
+                y: this.LightManager.lights[key].y
+            };
+        });
+
+        return {
+            lights: state_light_data,
+            fog: this.CanvasManager.getFog()
+        };
+    }
+
+    get full_data () {
+        let data = this.data;
+        data.json.state = this.state;
+        return data;
+    }
+
+    loadState () {
+        const state = ((this.map || {}).json || {}).state || {};
+        if (state.fog) {
+            Store.fire('load_fog', {
+                fog: state.fog
+            });
+        }
+        if (state.lights) {
+            Store.fire('load_lights', {
+                lights: state.lights
+            });
+        }
     }
 
     hide () {
@@ -169,8 +205,6 @@ class MapInstance {
     }
 
     onDelete (point) {
-        console.log(point);
-        // debugger;
         if (CONFIG.move_segment) {
             this.SegmentManager.removePoint(Store.get('control_point'));
             return;

@@ -1,9 +1,10 @@
 const Store = require('../store');
 
-const Helpers = require('../helpers');
-const pDistance = Helpers.pDistance;
-const copyPoint = Helpers.copyPoint;
-const sqr = Helpers.sqr;
+const {
+    pDistance,
+    copyPoint,
+    sqr
+} = require('../helpers');
 
 class LightManager {
     constructor (map = {}, parent) {
@@ -20,6 +21,7 @@ class LightManager {
         Store.register({
             'add_light': this.onAddLight.bind(this),
             'light_move': this.onLightMove.bind(this),
+            'load_lights': this.loadLights.bind(this),
             'deselect_light': this.deselectLight.bind(this),
         }, parent.name);
     }
@@ -185,6 +187,12 @@ class LightManager {
 
     deselectLight () {
         this.selected_light = null;
+    }
+
+    loadLights (data) {
+        data.lights.forEach((light) => {
+            this.addLight(light);
+        });
     }
 
     addLight (opts) {

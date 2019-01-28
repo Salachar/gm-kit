@@ -1,10 +1,11 @@
 const Store = require('../store');
 
-const Helpers = require('../helpers');
-const pDistance = Helpers.pDistance;
-const copyPoint = Helpers.copyPoint;
-const pointMatch = Helpers.pointMatch;
-const sqr = Helpers.sqr;
+const {
+    pDistance,
+    copyPoint,
+    pointMatch,
+    sqr
+} = require('../helpers');
 
 class SegmentManager {
     constructor (map = {}, parent) {

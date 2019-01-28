@@ -8,8 +8,10 @@ const MapInstance = require('./map/map');
 const ToastMesseger = require('./toast');
 const Mouse = require('./mouse');
 
-const getWindowDimensions = require('./helpers').getWindowDimensions;
-const createElement = require('./helpers').createElement;
+const {
+    getWindowDimensions,
+    createElement
+} = require('./helpers')
 
 const controls = require('./controls');
 
@@ -153,6 +155,12 @@ class MapManager {
         return map_data;
     }
 
+    getMapStateData () {
+        if (!this.current_map) return;
+        let state_data = this.current_map.state;
+        return state_data;
+    }
+
     getAllMapData () {
         if (!Object.keys(this.maps).length) return;
         let map_data = {};
@@ -171,7 +179,7 @@ class MapManager {
     }
 
     showInDisplayWindow () {
-        let current_map_data =  (this.current_map || {}).data || {};
+        let current_map_data =  (this.current_map || {}).full_data || {};
 
         if (window.display_window && !window.display_window.closed) {
             window.display_window.postMessage({
@@ -195,7 +203,7 @@ class MapManager {
             option_param += x + '=' + window_options[x] + ','
         }
 
-        window.display_window =  window.open(
+        window.display_window = window.open(
             '../html/display.html',
             'electron',
             option_param
@@ -281,6 +289,11 @@ class MapManager {
         document.getElementById('map_scroll_left').addEventListener('mouseleave', (e) => {
             clearInterval(scroll_timer);
             clearTimeout(scroll_wait_timer);
+        });
+
+        document.getElementById('load_state').addEventListener('click', (e) => {
+            if (!this.current_map) return;
+            this.current_map.loadState();
         });
 
         document.getElementById('create_one_way_wall').addEventListener('click', (e) => {

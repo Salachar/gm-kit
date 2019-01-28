@@ -1,4 +1,6 @@
-const createElement = require('./helpers').createElement;
+const {
+    createElement
+} = require('./helpers')
 
 class FileManager {
     constructor (opts = {}) {
@@ -31,7 +33,6 @@ class FileManager {
     }
 
     createFileTree (map_list) {
-        console.log(map_list);
         this.el_map_list.innerHTML = '';
         this.addSection(map_list, this.el_map_list);
         this.openModal();
@@ -155,6 +156,14 @@ class FileManager {
                 Toast.error('There are no maps to save');
                 return;
             }
+            IPC.send('save_map', map_data);
+        });
+
+        document.getElementById('save_state').addEventListener('click', (e) => {
+            const map = window.MapManager.current_map;
+            const map_data = window.MapManager.getMapData();
+            const state_data = window.MapManager.getMapStateData();
+            map_data[map.name].json.state = state_data;
             IPC.send('save_map', map_data);
         });
 

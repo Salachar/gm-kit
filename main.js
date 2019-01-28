@@ -140,7 +140,7 @@ IPC.on('save_map', (e, maps) => {
     for (var m in maps) {
         try {
             map = maps[m];
-            const file_json = JSON.stringify(map.json);
+            const file_json = JSON.stringify(map.json, null, 4);
             fs.writeFileSync(map.json_directory, file_json, 'utf-8');
         } catch (e) {
             console.log('Unable to save map: ' + map.name);

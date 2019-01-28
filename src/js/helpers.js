@@ -21,6 +21,12 @@ const Helpers = {
         CONFIG.window_height = window.innerHeight;
     },
 
+    isBlankPixel: function (pixel) {
+        if (pixel.a === 0) return true;
+        if (!pixel.r && !pixel.g && !pixel.b) return true;
+        return false;
+    },
+
     randomRGBA: function (alpha) {
         alpha = (typeof alpha === 'number') ? alpha : 1;
         const r = Math.floor(Math.random() * 255 + 1);
