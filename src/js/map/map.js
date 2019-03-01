@@ -1,11 +1,13 @@
 const CanvasManager = require('./canvas_manager');
 const SegmentManager = require('./segment_manager');
 const LightManager = require('./light_manager');
+const TextManager = require('./text_manager');
 const ObjectManager = require('./object_manager');
 
 const Store = require('../store');
 
 const {
+    createElement,
     copyPoint,
     getNormal
 } = require('../helpers');
@@ -22,11 +24,6 @@ class MapInstance {
         // Whether light is enabled or not for this map
         this.lighting_enabled = CONFIG.is_display;
 
-        this.SegmentManager = new SegmentManager(map, this, options);
-        this.CanvasManager = new CanvasManager(map, this, options);
-        this.LightManager = new LightManager(map, this, options);
-        this.ObjectManager = new ObjectManager(this);
-
         this.last_quickplace_coord = {
             x: null,
             y: null
@@ -39,10 +36,17 @@ class MapInstance {
 
         this.move_segment = null;
 
-        // Stuff
-        this.node = this.CanvasManager.canvas_container;
-
         this.el_tab = null;
+
+        this.node = createElement('div', map.name + '_map', {
+            addTo: document.getElementById('map_container')
+        });
+
+        this.SegmentManager = new SegmentManager(map, this, options);
+        this.CanvasManager = new CanvasManager(map, this, options);
+        this.LightManager = new LightManager(map, this, options);
+        this.TextManager = new TextManager(map, this, options);
+        this.ObjectManager = new ObjectManager(this);
 
         Store.register({
             'enable_light': this.onEnableLight.bind(this),
@@ -56,6 +60,7 @@ class MapInstance {
             'zoom_out': this.onZoomOut.bind(this),
             'remove_light': this.onRemoveLight.bind(this),
             'remove_segment': this.onRemoveSegment.bind(this),
+            'add_text_block': this.onAddTextBlock.bind(this),
         }, this.name);
     }
 
@@ -73,6 +78,12 @@ class MapInstance {
 
     onDisableLight () {
         this.disableLight();
+    }
+
+    onAddTextBlock () {
+        console.log('onAddTextBlock');
+        console.log(Mouse.point);
+        this.TextManager.generateTextBlockField();
     }
 
     onAddSegment (data) {
@@ -142,7 +153,8 @@ class MapInstance {
                 polys: this.LightManager.light_polys
             },
             json: {
-                segments: this.SegmentManager.sanitizedSegments()
+                segments: this.SegmentManager.sanitizedSegments(),
+                text: this.TextManager.data
             }
         };
     }
@@ -215,61 +227,39 @@ class MapInstance {
     }
 
     onKeyDown (key) {
-        const point = {
-            x: Mouse.x,
-            y: Mouse.y
-        };
+        if (this.TextManager.open) return;
 
         switch (key) {
+            case KEYS.QUESTION:
+                Store.fire('add_text_block'); break;
             case KEYS.MINUS:
-                Store.fire('zoom_out');
-                break;
+                Store.fire('zoom_out'); break;
             case KEYS.PLUS:
-                Store.fire('zoom_in');
-                break;
+                Store.fire('zoom_in'); break;
             case KEYS.DELETE:
-                this.onDelete(point);
-                break;
+                this.onDelete(Mouse.point); break;
             case KEYS.SHIFT:
-                Store.fire('quick_place_started');
-                break;
+                Store.fire('quick_place_started'); break;
             case KEYS.A:
-                Store.fire('add_light', {
-                    point: point
-                });
-                break;
+                Store.fire('add_light', { point: Mouse.point }); break;
             case KEYS.D:
-                Store.fire('disable_light');
-                break;
+                Store.fire('disable_light'); break;
             case KEYS.E:
-                Store.fire('enable_light');
-                break;
+                Store.fire('enable_light'); break;
             case KEYS.O:
-                Store.fire('toggle_closest_door', {
-                    point: point
-                });
-                break;
+                Store.fire('toggle_closest_door', { point: Mouse.point }); break;
             case KEYS.T:
-                Store.fire('switch_wall_door', {
-                    point: point
-                });
-                break;
+                Store.fire('switch_wall_door', { point: Mouse.point }); break;
             case KEYS.W:
-                // Doesn't apply to display canvas (yet)
-                this.CanvasManager.toggleWalls();
-                break;
+                this.CanvasManager.toggleWalls(); break;
             case KEYS.LEFT:
-                Store.fire('scroll_left');
-                break;
+                Store.fire('scroll_left'); break;
             case KEYS.RIGHT:
-                Store.fire('scroll_right');
-                break;
+                Store.fire('scroll_right'); break;
             case KEYS.UP:
-                Store.fire('scroll_up');
-                break;
+                Store.fire('scroll_up'); break;
             case KEYS.DOWN:
-                Store.fire('scroll_down');
-                break;
+                Store.fire('scroll_down'); break;
             default:
                 break;
         }
@@ -301,6 +291,11 @@ class MapInstance {
 
     mouseDown () {
         if (!Mouse.left) return;
+
+        if (this.TextManager.open) {
+            this.TextManager.close();
+            return;
+        }
 
         let is_light_selected = this.LightManager.checkForLights();
         if (is_light_selected) return;

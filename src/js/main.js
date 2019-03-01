@@ -186,8 +186,8 @@ class MapManager {
         }
 
         const window_options = {
-            autoHideMenuBar: 1,
-            titleBarStyle: 'hidden',
+            // autoHideMenuBar: 1,
+            // titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -298,7 +298,7 @@ class MapManager {
                         this.showInDisplayWindow();
                     }
                 default:
-                    // console.log('APP >> Keydown: Unhandled keyCode: ' + e.keyCode);
+                    console.log('APP >> Keydown: Unhandled keyCode: ' + e.keyCode);
                     break;
             }
 

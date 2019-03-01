@@ -1,12 +1,25 @@
 TODO: (Ordered by priority)
+    BUGS:
+        - Adding new walls by connecting two middle walls does not split the first one
+    - Change file saving (shoulnd't be all or nothing)
+    - Add ability to add text to locations
+        - Question Mark icon
+        - Click to Open, Click outside to close
+        - Should be able to save individually
+            - Or at least would be nice to
+    - Build Process
+        - Get building for both windows and mac, no installation required
+        - Look into how the updates work (does it require a proper installer or not)
+        - Look into hosting builds
+            - Probably will be from my main site
+        - Look into switching to Github
+            - Can use a .io page for the main page easily
+            - Can probably host from this page as well
     - Option to disable walls for a map, so everything is lit up
-    - Load DM versions of map on the DM screen if available
     - Create a campaign (basically a folder with links)
         - Somehow add maps to a campaign
-    - Finish delete option in file list
     - Read in config
     - Attempt to fetch images from a PDF
-
     - Add map sources link:
         https://www.patreon.com/venatusmaps
         https://www.patreon.com/blueswordgames
@@ -76,9 +89,11 @@ Updates (11/5/2018)
     - Fixed opening display window clearing important segment data due to segment sanitization
 
 Updates (1/27/2018)
+    - Load DM versions of map on the DM screen if available
     - Add state saving (light and lights saving) to app
         - You can now save one state per map
     - Added map list searching
+
 
 
 Electron Builder build stuff, if I ever switch back

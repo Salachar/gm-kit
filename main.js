@@ -44,7 +44,7 @@ function createWindow () {
     loadConfig();
 
     WINDOW = new BrowserWindow({
-        width: 1200,
+        width: 1400,
         height: 800,
         icon: __dirname + '/map.png'
     });
@@ -59,7 +59,7 @@ function createWindow () {
     window_url += `?map_dir=${CONFIG.map_directory}`;
 
     WINDOW.loadURL(window_url);
-    // WINDOW.webContents.openDevTools();
+    WINDOW.webContents.openDevTools();
     WINDOW.on('closed', function () {
         app.quit();
     });
@@ -79,7 +79,7 @@ function chooseMapDirectory () {
             return;
         }
         const folder_path = folders[0];
-        // console.log(folder_path);
+        console.log(folder_path);
         CONFIG.map_directory = folder_path;
         fs.writeFileSync(file_info.config.directory, JSON.stringify(CONFIG, null, 4), 'utf-8');
         generateMapList();
@@ -172,58 +172,39 @@ function generateMapList () {
                     const file_name = file.split('.')[0];
                     const file_type = file.split('.')[1];
 
-                    if (file_name.match(/DM_|_DM/)) return;
+                    // If the file is not an image or is a DM images, skip it
+                    if (!FileHelpers.isImage(file) || file_name.match(/DM_|_DM/)) return;
 
-                    if (FileHelpers.isImage(file)) {
-                        const json_exists = FileHelpers.getMatchingFile({
-                            dir: dir,
-                            file: file,
-                            type: 'json'
-                        });
+                    // Search for the DM version of the map
+                    // DM_map.ext or map_DM.ext
+                    let dm_image = FileHelpers.getFile({
+                        dir: dir,
+                        file: `DM_${file_name}.${file_type}`
+                    }) || FileHelpers.getFile({
+                        dir: dir,
+                        file: `${file_name}_DM.${file_type}`
+                    });
 
-                        let dm_image = FileHelpers.getFile({
-                            dir: dir,
-                            file: `DM_${file_name}.${file_type}`
-                        });
-                        if (!dm_image) {
-                            dm_image = FileHelpers.getFile({
-                                dir: dir,
-                                file: `${file_name}_DM.${file_type}`
-                            });
-                        }
-                        if (dm_image) console.log(dm_image);
+                    // Create the file object
+                    let file_obj = {
+                        name: file_name,
+                        image: file,
+                        dm_image: dm_image
+                    };
 
-                        let file_obj = {
-                            name: file_name,
-                            image: file,
-                            dm_image: dm_image
-                        };
-                        if (json_exists) {
-                            file_obj.json = json_exists;
-                            addToComplete(dir, file_obj);
-                        } else {
-                            addToImageOnly(dir, file_obj);
-                        }
+                    // Check to see if there a JSON file for the map image
+                    const json_exists = FileHelpers.getMatchingFile({
+                        dir: dir,
+                        file: file,
+                        type: 'json'
+                    });
+                    if (json_exists) {
+                        file_obj.json = json_exists;
+                        addToComplete(dir, file_obj);
+                    } else {
+                        addToImageOnly(dir, file_obj);
                     }
-                    // else if (FileHelpers.isJSON(file)) {
-                    //     const image_exists = FileHelpers.getMatchingFile({
-                    //         dir: dir,
-                    //         file: file,
-                    //         type: 'image'
-                    //     });
-                    //     if (image_exists) {
-                    //         addToComplete(dir, {
-                    //             name: file_name,
-                    //             image: image_exists,
-                    //             json: file
-                    //         });
-                    //     } else {
-                    //         addToJSONOnly(dir, {
-                    //             name: file_name,
-                    //             json: file
-                    //         });
-                    //     }
-                    // }
+
                 }
             });
         } catch (e) {
@@ -243,11 +224,6 @@ function generateMapList () {
         file_obj.type = 'image_only';
         addToMapList(dir + '/image_only', file_obj);
     }
-
-    // function addToJSONOnly (dir, file_obj) {
-    //     file_obj.type = 'json_only';
-    //     addToMapList(dir + '/json_only', file_obj);
-    // }
 
     function addToMapList (dir, file_obj) {
         let relative_directory = dir.replace(CONFIG.map_directory, "");

@@ -3,9 +3,9 @@
 }
 
 * {
-  -webkit-touch-callout: none;
+    -webkit-touch-callout: none;
     -webkit-user-select: none;
-            user-select: none;
+    user-select: none;
 }
 
 html {
@@ -70,6 +70,7 @@ html, body {
     line-height: 1.6rem;
     color: #EEE;
     border: 1px solid #EEE;
+    font-size: 0.7rem;
 }
 .button:hover {
     background-color: #666;
@@ -195,7 +196,6 @@ html, body {
     box-sizing: border-box;
     border-bottom: 0;
     margin-top: 0.4rem;
-    /*float: left;*/
     display: inline-block;
     cursor: pointer;
 }
@@ -224,13 +224,11 @@ html, body {
 }
 .map_tab_close:before {
     content: '\00d7';
-    /*color: orange;*/
     color: rgba(255, 255, 255, 0.3);
     font-size: 1.5rem;
 }
 .map_tab_close:hover:before {
     color: red;
-    /*background-color: rgba(255, 255, 255, 0.3);*/
 }
 
 
@@ -246,6 +244,7 @@ html, body {
     bottom: 0;
     transition: 0.3s top ease;
     background-color: #666;
+    overflow: scroll;
 }
 #map_container.display {
     top: 0;
@@ -398,17 +397,7 @@ html, body {
     overflow: hidden;
 }
 
-#map_list_modal_title {
-    height: 2rem;
-    font-size: 1rem;
-    line-height: 2rem;
-    padding-left: 0.5rem;
-    background-color: #888;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    box-shadow: 0px 1px 2px 2px #444;
+#map_list_modal_header {
     z-index: 101;
 }
 
@@ -417,9 +406,6 @@ html, body {
 }
 
 #map_list_modal_open {
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*right: 3rem;*/
     font-size: 0.8rem;
     float: right;
     margin-right: 2.5rem;
@@ -491,7 +477,6 @@ html, body {
     line-height: 1.25rem;
     padding: 0.3rem 0.5rem;
     background-color: #555;
-    /*cursor: pointer;*/
     text-transform: capitalize;
 }
 

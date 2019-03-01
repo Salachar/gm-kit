@@ -25,6 +25,13 @@ class Mouse {
         this.middle = false;
     }
 
+    get point () {
+        return {
+            x: this.x,
+            y: this.y
+        };
+    }
+
     upEvent (e) {
         this.down = false;
         this.up = true;

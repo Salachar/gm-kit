@@ -18,6 +18,8 @@ class CanvasManager {
         // Initialize to false for display window, true otherwise
         this.draw_walls = !CONFIG.is_display;
 
+        this.canvas_container = parent.node;
+
         this.createCanvasElements(map);
         this.setCanvasMouseEvents();
         this.loadImage(options);
@@ -76,10 +78,6 @@ class CanvasManager {
     }
 
     createCanvasElements (map) {
-        this.canvas_container = createElement('div', map.name + '_map canvas_container', {
-            addTo: document.getElementById('map_container')
-        });
-
         ['control', 'image', 'wall', 'light', 'lights', 'shadow'].forEach((canvas_type) => {
             let canvas_name = canvas_type + '_canvas';
             this[canvas_name] = createElement('canvas', `${canvas_name} map_canvas`, {

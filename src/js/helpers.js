@@ -212,6 +212,11 @@ const Helpers = {
         if (opts.addTo) {
             opts.addTo.appendChild(node);
         }
+        if (opts.css) {
+            for (let style in opts.css) {
+                node.style[style] = opts.css[style];
+            }
+        }
         return node;
     }
 };
