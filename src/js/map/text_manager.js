@@ -27,7 +27,7 @@ class TextManager {
     }
 
     loadTextBlocks () {
-        this.text_blocks = this.map.json.text || {};
+        this.text_blocks = (this.map.json || {}).text || {};
         for (let key in this.text_blocks) {
             this.addIcon(this.text_blocks[key].position, key);
         }

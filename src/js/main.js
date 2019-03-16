@@ -16,9 +16,6 @@ const {
 
 const controls = require('./controls');
 
-let scroll_timer = null;
-let scroll_wait_timer = null;
-
 class MapManager {
     constructor () {
         this.FileManager = new FileManager({
@@ -31,27 +28,9 @@ class MapManager {
         this.el_tabs = document.getElementById('map_tabs');
         this.el_help_table = document.getElementById('help_table');
 
-        this.el_map_scroll_up = document.getElementById('map_scroll_up');
-        this.el_map_scroll_right = document.getElementById('map_scroll_right');
-        this.el_map_scroll_down = document.getElementById('map_scroll_down');
-        this.el_map_scroll_left = document.getElementById('map_scroll_left');
-
         getWindowDimensions();
         this.setEvents();
         this.addHelp();
-
-        Store.register({
-            'hide_scroller': this.onHideScroller.bind(this),
-            'show_scroller': this.onShowScroller.bind(this)
-        });
-    }
-
-    onHideScroller (data) {
-        this[`el_map_scroll_${data.scroller}`].classList.add('hidden');
-    }
-
-    onShowScroller (data) {
-        this[`el_map_scroll_${data.scroller}`].classList.remove('hidden');
     }
 
     onMapLoad (maps) {
@@ -237,20 +216,6 @@ class MapManager {
                 this.showInDisplayWindow();
                 return;
             }
-        });
-
-        ['up', 'down', 'left', 'right'].forEach((scroll_direction) => {
-            document.getElementById(`map_scroll_${scroll_direction}`).addEventListener('mouseover', (e) => {
-                scroll_wait_timer = setTimeout(() => {
-                    scroll_timer = setInterval(() => {
-                        Store.fire(`scroll_${scroll_direction}`);
-                    }, CONFIG.scroll_frequency);
-                }, CONFIG.scroll_wait_time);
-            });
-            document.getElementById(`map_scroll_${scroll_direction}`).addEventListener('mouseleave', (e) => {
-                clearInterval(scroll_timer);
-                clearTimeout(scroll_wait_timer);
-            });
         });
 
         document.getElementById('load_state').addEventListener('click', (e) => {

@@ -7,6 +7,7 @@ TODO: (Ordered by priority)
         - Click to Open, Click outside to close
         - Should be able to save individually
             - Or at least would be nice to
+
     - Build Process
         - Get building for both windows and mac, no installation required
         - Look into how the updates work (does it require a proper installer or not)

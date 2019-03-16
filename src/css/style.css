@@ -80,6 +80,15 @@ html, body {
     color: #444;
 }
 
+.button_spacer {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 1px;
+    height: 1.6rem;
+    background-color: white;
+    margin: 0.2rem 1rem;
+    opacity: 0.5;
+}
 
 .radio, .checkbox {
     position: relative;
@@ -248,53 +257,6 @@ html, body {
 }
 #map_container.display {
     top: 0;
-}
-
-.map_scroller {
-    position: absolute;
-    z-index: 101;
-    background-color: white;
-    opacity: 0;
-    transition: all ease 0.25s;
-    cursor: crosshair;
-}
-.map_scroller.hidden {
-    display: none;
-}
-#map_scroll_up {
-    top: 0;
-    left: 2rem;
-    right: 2rem;
-    height: 2rem;
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
-}
-#map_scroll_right {
-    top: 2rem;
-    right: 0;
-    bottom: 2rem;
-    width: 2rem;
-    border-top-left-radius: 2rem;
-    border-bottom-left-radius: 2rem;
-}
-#map_scroll_down {
-    bottom: 0;
-    left: 2rem;
-    right: 2rem;
-    height: 2rem;
-    border-top-left-radius: 2rem;
-    border-top-right-radius: 2rem;
-}
-#map_scroll_left {
-    top: 2rem;
-    left: 0;
-    bottom: 2rem;
-    width: 2rem;
-    border-top-right-radius: 2rem;
-    border-bottom-right-radius: 2rem;
-}
-.map_scroller:hover {
-    opacity: 0.3;
 }
 
 .canvas_container {

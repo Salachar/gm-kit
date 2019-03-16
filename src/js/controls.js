@@ -26,14 +26,14 @@ module.exports = [{
     key: 'T',
     text: 'Switch closest door to wall or vice versa'
 }, {
-    key: 'R',
-    text: 'Remove object closest to mouse'
-}, {
-    key: 'S',
-    text: 'Put map on display window<br>This will also create the window if it doesn\'t exist'
+    key: 'DELETE',
+    text: 'Remove light|wall|door closest to mouse'
 }, {
     key: 'W',
     text: 'Toggle walls on main window when lighting is on'
+}, {
+    key: 'S *',
+    text: 'Put map on display window<br>This will also create the window if it doesn\'t exist'
 }, {
     key: '[ *',
     text: 'Increase dimmer overlay on display window'

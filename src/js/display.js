@@ -11,9 +11,6 @@ const {
     createElement
 } = require('./helpers');
 
-let scroll_timer = null;
-let scroll_wait_timer = null;
-
 class DisplayManager {
     constructor () {
         this.maps = {};
@@ -97,20 +94,6 @@ class DisplayManager {
                 return;
             }
             Store.fire(e.data.event, e.data.data, e.data.key);
-        });
-
-        ['up', 'down', 'left', 'right'].forEach((scroll_direction) => {
-            document.getElementById(`map_scroll_${scroll_direction}`).addEventListener('mouseover', (e) => {
-                scroll_wait_timer = setTimeout(() => {
-                    scroll_timer = setInterval(() => {
-                        Store.fire(`scroll_${scroll_direction}`);
-                    }, CONFIG.scroll_frequency);
-                }, CONFIG.scroll_wait_time);
-            });
-            document.getElementById(`map_scroll_${scroll_direction}`).addEventListener('mouseleave', (e) => {
-                clearInterval(scroll_timer);
-                clearTimeout(scroll_wait_timer);
-            });
         });
 
         document.body.addEventListener('keydown', (e) => {
