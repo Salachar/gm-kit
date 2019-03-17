@@ -59,7 +59,7 @@ function createWindow () {
     window_url += `?map_dir=${CONFIG.map_directory}`;
 
     WINDOW.loadURL(window_url);
-    WINDOW.webContents.openDevTools();
+    // WINDOW.webContents.openDevTools();
     WINDOW.on('closed', function () {
         app.quit();
     });
