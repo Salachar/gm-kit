@@ -326,8 +326,10 @@ class SegmentManager {
 
     findSegmentsWithPoint (point) {
         if (!point) return [];
+
         return this.segments.filter((segment) => {
-            return pointMatch(segment.p1, point) || pointMatch(segment.p2, point);
+            // return pointMatch(segment.p1, point, 1) || pointMatch(segment.p2, point, 1);
+            return (pDistance(point, segment).distance < 1);
         });
     }
 
@@ -636,38 +638,64 @@ class SegmentManager {
     }
 
     splitWall (split_data) {
+        if (split_data.new_segment) {
+            return this.splitWalls(split_data.new_segment);
+        }
+
         if (!split_data.segment.id) return;
-        this.removeSegment(split_data.segment);
+
 
         const split_point = split_data.point || copyPoint(Mouse);
         const s = split_data.segment;
+
+        this.splitSegment(s, split_point);
+
+        Store.set({
+            control_point: this.getControlPoint()
+        });
+    }
+
+    splitSegment (segment, point) {
+        // Split a segment at a given point
+        this.removeSegment(segment);
         this.addSegment({
             segment: {
                 p1: {
-                    x: s.p1.x,
-                    y: s.p1.y
+                    x: segment.p1.x,
+                    y: segment.p1.y
                 },
                 p2: {
-                    x: split_point.x,
-                    y: split_point.y
+                    x: point.x,
+                    y: point.y
                 },
-                type: split_data.segment.type
+                type: segment.type
             },
             ignore_dist_check: true
         });
         this.addSegment({
             segment: {
                 p1: {
-                    x: s.p2.x,
-                    y: s.p2.y,
+                    x: segment.p2.x,
+                    y: segment.p2.y,
                 },
                 p2: {
-                    x: split_point.x,
-                    y: split_point.y
+                    x: point.x,
+                    y: point.y
                 },
-                type: split_data.segment.type
+                type: segment.type
             },
             ignore_dist_check: true
+        });
+    }
+
+    splitWalls (new_wall) {
+        // Split any walls the wall has endpoints on
+        this.findSegmentsWithPoint(new_wall.p1).forEach((segment) => {
+            this.splitSegment(segment, new_wall.p1);
+        });
+
+        this.findSegmentsWithPoint(new_wall.p2).forEach((segment) => {
+            this.splitSegment(segment, new_wall.p2);
         });
 
         Store.set({

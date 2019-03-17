@@ -412,7 +412,8 @@ class MapInstance {
                 Store.fire('split_segment', {
                     split_data: {
                         point: copyPoint(CONFIG.snap.indicator.point),
-                        segment: CONFIG.snap.indicator.segment
+                        segment: CONFIG.snap.indicator.segment,
+                        new_segment: new_wall
                     }
                 });
             }

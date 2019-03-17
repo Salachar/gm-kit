@@ -20,6 +20,7 @@ const Helpers = {
 
     pointMatch: function (p1, p2, tolerance) {
         tolerance = tolerance || 0;
+        // console.log(Math.abs(p1.x - p2.x),  Math.abs(p1.y - p2.y) );
         return (Math.abs(p1.x - p2.x) <= tolerance && Math.abs(p1.y - p2.y) <= tolerance);
     },
 
