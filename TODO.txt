@@ -1,6 +1,10 @@
 TODO: (Ordered by priority)
     BUGS:
-        - Adding new walls by connecting two middle walls does not split the first one
+    - Add Grid
+    - When connecting between two existing segments, there should be no length check
+        - Maybe disbale for shift clicking in general
+        - Or even altogether at this point
+    - Adding new walls by connecting two middle walls does not split the first one
     - Change file saving (shoulnd't be all or nothing)
     - Add ability to add text to locations
         - Question Mark icon
