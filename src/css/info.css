@@ -1,0 +1,75 @@
+#info_buttons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 40%;
+}
+.info_button {
+    text-transform: capitalize;
+    cursor: pointer;
+    width: 50%;
+    box-sizing: border-box;
+    float: left;
+    font-size: 12px;
+    height: 28px;
+    color: white;
+    border-top: 2px solid #666;
+    border-left: 2px solid #666;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+    padding: 5px;
+    padding-left: 1rem;
+}
+.info_button:active {
+    outline: 0;
+}
+.info_button:focus {
+    outline: 0;
+}
+
+.amount_button.selected {
+    background-color: rgba(0,0,0,0.1);
+    border: 0;
+}
+.info_button:hover {
+    background-color: rgba(0,0,0,0.2);
+    border: 0;
+}
+
+#info_results {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 60%;
+    background-color: #CCC;
+    overflow-y: scroll;
+    color: #222;
+    font-family: arial;
+    font-size: 12px;
+}
+.result {
+    cursor: pointer;
+    overflow: hidden;
+    padding: 5px;
+    box-sizing: border-box;
+}
+.result.saved {
+    background-color: rgba(0,255,0,0.075);
+}
+.result:nth-child(even) {
+    background-color: rgba(0,0,0,0.075);
+}
+.result.saved:nth-child(even) {
+    background-color: rgba(0,255,0,0.2);
+}
+
+.result_key {
+    float: left;
+    width: 20%;
+}
+.result_value {
+    float: right;
+    width: 78%;
+}

@@ -1,3 +1,11 @@
+@import "variables.css";
+@import "structure.css";
+@import "inputs.css";
+@import "map_list.css";
+@import "map.css";
+@import "audio/audio.css";
+@import "info.css";
+
 *::-webkit-scrollbar {
     display: none;
 }
@@ -9,16 +17,29 @@
 }
 
 html {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 html, body {
-    margin: 0;
+    /* margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
     font-family: Helvetica;
+    overflow: hidden; */
+
+    margin: 0;
+    padding: 0;
+    /* font-size: 14px; */
     overflow: hidden;
+    font-family: arial;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: var(--main-bg-color);
 }
 
 #dimmer {
@@ -57,96 +78,6 @@ html, body {
     overflow: hidden;
 }
 
-.button {
-    display: inline-block;
-    vertical-align: top;
-    box-sizing: border-box;
-    margin: 0.2rem 0 0 0.2rem;
-    padding: 0 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    text-transform: uppercase;
-    height: 1.6rem;
-    line-height: 1.6rem;
-    color: #EEE;
-    border: 1px solid #EEE;
-    font-size: 0.7rem;
-}
-.button:hover {
-    background-color: #666;
-}
-.button:active {
-    background-color: #EEE;
-    color: #444;
-}
-
-.button_spacer {
-    display: inline-block;
-    box-sizing: border-box;
-    width: 1px;
-    height: 1.6rem;
-    background-color: white;
-    margin: 0.2rem 1rem;
-    opacity: 0.5;
-}
-
-.radio, .checkbox {
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    height: 1rem;
-    width: 1rem;
-    margin: 0.5rem 0 0 0.5rem;
-    box-sizing: border-box;
-    border: 1px solid #EEE;
-    cursor: pointer;
-}
-.radio {
-    border-radius: 50%;
-}
-.checkbox {
-    color: white;
-    font-size: 1.5rem;
-    line-height: 1rem;
-    text-align: center;
-}
-.radio:hover, .checkbox:hover {
-    background-color: #666;
-}
-.radio:active, .checkbox:active {
-    background-color: #EEE;
-    color: #444;
-}
-.radio_label, .checkbox_label {
-    display: inline-block;
-    vertical-align: top;
-    height: 2rem;
-    line-height: 2rem;
-    margin-left: 0.2rem;
-    color: #EEE;
-}
-.radio.checked:before {
-    content: "";
-    height: 0.5rem;
-    width: 0.5rem;
-    background-color: #EEE;
-    transform: translateX(-50%) translateY(-50%);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    border-radius: 50%;
-}
-.checkbox.checked:before {
-    content: "";
-    height: 0.5rem;
-    width: 0.5rem;
-    background-color: #EEE;
-    transform: translateX(-50%) translateY(-50%);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-}
-
 #help {
     float: right;
     margin-right: 0.2rem;
@@ -161,316 +92,23 @@ html, body {
     color: #EEE;
     transition: 0.3s all ease;
 }
+
 #help_box.hide {
     transform: translateY(-100%);
 }
+
 #help_table td {
     padding: 0.25rem 0.4rem;
 }
+
 .help_key {
     font-weight: bold;
     text-align: right;
     vertical-align: top;
 }
+
 .help_desc {
     max-width: 40rem;
-}
-
-
-
-/**********************************************************
-    MAP TABS
-**********************************************************/
-
-#map_tabs {
-    position: absolute;
-    top: 2rem;
-    left: 0;
-    right: 0;
-    height: 2rem;
-    background-color: #444;
-    z-index: 20;
-    overflow-y: hidden;
-    overflow-x: scroll;
-    white-space: nowrap;
-}
-
-.map_tab {
-    position: relative;
-    color: #EEE;
-    height: 1.6rem;
-    line-height: 1.6rem;
-    padding: 0 2rem 0 1rem;
-    border: 1px solid #EEE;
-    box-sizing: border-box;
-    border-bottom: 0;
-    margin-top: 0.4rem;
-    display: inline-block;
-    cursor: pointer;
-}
-.map_tab.selected {
-    background-color: #666;
-    height: 1.8rem;
-    line-height: 1.8rem;
-    margin-top: 0.2rem;
-}
-.map_tab:hover {
-    background-color: #666;
-}
-.map_tab:Active {
-    background-color: #eee;
-    color: #444
-}
-
-
-.map_tab_close {
-    height: 1.6rem;
-    width: 1.6rem;
-    text-align: center;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-.map_tab_close:before {
-    content: '\00d7';
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 1.5rem;
-}
-.map_tab_close:hover:before {
-    color: red;
-}
-
-
-/**********************************************************
-    CANVASES
-**********************************************************/
-
-#map_container {
-    position: absolute;
-    top: 4rem;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: 0.3s top ease;
-    background-color: #666;
-    overflow: scroll;
-}
-#map_container.display {
-    top: 0;
-}
-
-.canvas_container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: scroll;
-}
-
-.map_canvas {
-    transform: translateZ(0);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-.image_canvas {
-    z-index: 1;
-}
-.shadow_canvas {
-    z-index: 2;
-}
-.light_canvas {
-    z-index: 3;
-}
-.lights_canvas {
-    z-index: 4;
-}
-.wall_canvas {
-    z-index: 5;
-}
-.control_canvas {
-    z-index: 6;
-    cursor: crosshair;
-}
-
-
-
-/**********************************************************
-    NO MAP SCREEN
-**********************************************************/
-
-#no_map_screen {
-    position: absolute;
-    top: 4rem;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: 0.3s top ease;
-    overflow: scroll;
-    z-index: 9;
-    background-color: #666;
-}
-
-#no_map_screen_load {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    border-radius: 3rem;
-    border: 0.4rem dashed #EEE;
-    color: #EEE;
-    font-size: 3rem;
-    font-style: italic;
-    padding: 3rem;
-    cursor: pointer;
-    text-align: center;
-}
-#no_map_screen_load:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-
-/**********************************************************
-    MAP LIST MODAL
-**********************************************************/
-
-#map_list_modal_wrap {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 200;
-}
-
-#map_list_modal {
-    position: absolute;
-    top: 8rem;
-    left: 2rem;
-    right: 2rem;
-    bottom: 8rem;
-    background-color: #444;
-    color: white;
-    box-shadow: 0px 2px 4px 1px #222;
-    overflow: hidden;
-}
-
-#map_list_modal_header {
-    z-index: 101;
-}
-
-#map_dir_location {
-    cursor: pointer;
-}
-
-#map_list_modal_open {
-    font-size: 0.8rem;
-    float: right;
-    margin-right: 2.5rem;
-}
-#map_list_modal_folder {
-    font-size: 0.8rem;
-    float: right;
-}
-
-#map_list_search {
-    float: right;
-    margin: 0.2rem 0 0 0.2rem;
-    height: 1.6rem;
-    padding: 0 0 0 0.5rem;
-    border: 0;
-    background-color: rgba(0,0,0,0.3);
-    color: white;
-}
-
-#map_list_modal_close {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-    text-align: center;
-    line-height: 2rem;
-}
-#map_list_modal_close:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-}
-#map_list_modal_close:before {
-    font-size: 1.5rem;
-    content: '\00d7';
-}
-
-#map_list_modal_body {
-    position: absolute;
-    top: 2rem;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-}
-#map_list_modal_body_list {
-    position: absolute;
-    top: 0;
-    left: 30%;
-    right: 0;
-    bottom: 0;
-    overflow: scroll;
-}
-#map_list_modal_body_preview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30%;
-    bottom: 0;
-    overflow: scroll;
-    background-color: rgba(0,0,0,0.5);
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-}
-
-.map_list_section_title {
-    height: 1.25rem;
-    line-height: 1.25rem;
-    padding: 0.3rem 0.5rem;
-    background-color: #555;
-    text-transform: capitalize;
-}
-
-.map_list_section_container {
-    margin: 0.25rem 0;
-    padding-left: 2rem;
-}
-
-.map_list_map {
-    position: relative;
-    padding: 0.2rem 0.2rem 0.2rem 2rem;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 2rem;
-}
-.map_list_map:hover {
-    background-color: #666;
-}
-.map_list_map:active {
-    background-color: #EEE;
-    color: #444;
-}
-.map_list_map .checkbox {
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    margin: 0;
-    margin-left: 0.3rem;
 }
 
 
@@ -492,12 +130,15 @@ html, body {
     height: 2rem;
     line-height: 2rem;
 }
+
 #toast.show-toast {
     top: 4rem;
 }
+
 #toast.toast-success {
     background-color: rgba(192, 216, 144, 0.75);
 }
+
 #toast.toast-error {
     background-color: rgba(237, 67, 55, 0.75);
 }

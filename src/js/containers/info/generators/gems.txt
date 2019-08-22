@@ -1,0 +1,492 @@
+gem: 'Agni mani',
+An opaque black gem made of meteoric glass, worth around 10 gp.
+
+gem: 'Alamandine',
+A gem worth around 125 gp per carat.
+
+gem: 'Alestone',
+An opaque brown or yellowish-brown semi-precious stone common in Faerûn. It is sacred to the deity Gorm Gulthyn. Also known as clinzoisite. It is worth around 50 gp.
+
+gem: 'Alexandrite',
+A transparent dark green gemstone worth around 500gp. In folk belief, Alexandrite is reputed to give good omens.
+
+gem: 'Algae',
+A type of opaque quartz with dark brown wavy patterns, worth around 10 gp.
+
+gem: 'Amarantha',
+A valuable soft green gemstone unique to Faerûn, where it also called "shield-stone". It is sacred to the deity Gorm Gulthyn. It is noted for the magical property to absorb electricity. It is worth around 4,000 gp.
+
+gem: 'Amber',
+A transparent golden gemstone formed in ancient times by solidified tree sap. Now worth around 100 gp. It is reputed to ward off disease. Followers of the drow goddess Lolth believe that finding spiders encased in amber is a sign of her favor.
+
+gem: 'Amethyst',
+A transparent deep purple gemstone worth around 100 gp. The psionic amethyst dragon is named for this stone. Amethyst is reputed to prevent drunkenness. Followers of the deity Ghaunadaur believe that finding amethysts and other purple gemstones is a sign of his favor.
+
+gem: 'Andar',
+A translucent semi-precious stone found in small sizes, also known as andalusite. Flashes greenish-red or brownish-red if faceted correctly. Worth around 50 gp.
+
+gem: 'Aquamarine',
+A transparent pale blue-green gemstone worth around 500 gp.
+
+gem: 'Aradite',
+A gem worth around 125 gp per carat.
+
+gem: 'Augelite',
+A soft, clear crystal worth around 10 gp.
+
+gem: 'Aventurine',
+A variety of sparkling quartz found in shades of gold, green or blue. Also called love stone, except in the Forgotten Realms, where it that name is refers to saganite. Worth around 50 gp.
+
+gem: 'Azurite',
+An opaque mottled deep blue stone worth around 10 gp. It is sacred to the dwarven deity Gorm Gulthyn.
+
+gem: 'Banded agate',
+A translucent striped gemstone. It may be brown, blue, white or red. Worth around 10 gp. Agate is reputed to provide safe and resful sleep.
+
+gem: 'Beljuril',
+A smooth, spherical and extremely hard opaque sea-green gem found in huge fist-sized chunks worth 5,000 gp. Unique to the Forgotten Realms, and noted for its property to periodically emit light.
+
+gem: 'Beryl',
+According to a folk belief, beryl wards off enemies. "Heliodor", a golden beryl, is worth around 400 gp.
+
+gem: 'Black opal',
+A translucent dark green gemstone, with black mottling and golden flecks. Worth around 1,000 gp. It is sacred to the drow deity Vhaeraun.
+
+gem: 'Black pearl',
+A rare pure black pearl worth around 500 gp. It is sacred to the drow deity Vhaeraun.
+
+gem: 'Black sapphire',
+A rare translucent lustrous black gem, with glowing highlights. More valuable than a standard sapphire, and worth around 5,000 gp. Followers of the drow deities Lolth and Vhearaun believe that finding this gemstone is a sign of their favor.
+
+gem: 'Bloodstone',
+An opaque dark gray gemstone with red flecks. Worth around 50 gp. A folk belief claims bloodstone allows one to control the weather.
+
+gem: 'Blue quartz',
+A transparent pale blue gemstone worth around 10 gp.
+
+gem: 'Blue sapphire',
+A transparent blue or bluish-white gemstone worth around 1,000 gp. It is reputed to aid understanding of problems, kill spiders, and boost magical abilities. Sapphire is sacred to the duergar deity Deep Duerra.
+
+gem: 'Blue spinel',
+A rare transparent deep blue spinel worth around 500 gp.
+
+gem: 'Bluestone',
+A soft opaque blue gemstone, often with veins of pink, white, cream and yellow. Also called sodalite or ditroite by the technically-minded. Found in great blocks in the mountains of Faerûn.
+
+gem: 'Boakhar',
+A transparent, fragile semi-precious red or orange stone, worth around 50 gp. Known in some worlds as wulfenite.
+
+gem: 'Brandeen',
+A rare, translucent mineral also called stibiotantalite, worth around 100 gp.
+
+gem: 'Carbuncle',
+A folk belief holds that this gemstone gives the wearer the powers of a dragon's sight.
+
+gem: 'Carnelian',
+An opaque gemstone ranging from orange to red-brown. Worth around 50 gp.
+
+gem: 'Chalcedony',
+An opaque white gemstone worth around 50 gp. It is reputed to ward off undead. Also known as sard, a folk belief claims that it improves wisdom. Followers of the drow goddess Kiaransalee believe that finding chalcedony is a sign of her favor, while black chalcedony holds that significance for Vhaeraun.
+
+gem: 'Chrysoberyl',
+A transparent yellowish-green or pale green gemstone worth around 100 gp. A folk belief holds that it wards off possession. Followers of the drow goddess Kiaransalee believe that finding this gem is a sign of her favor.
+
+gem: 'Chrysocolla',
+A translucent green or blue-green variant of chalcedony, worth 10 gp and often cut into small pieces for use in earrings and the like. Worth around 50 to 75 gp per carat.
+
+gem: 'Chrysolite',
+This gemstone is reputed to ward off spells.
+
+gem: 'Chrysoprase',
+A translucent green gemstone worth around 50 gp. It is reputed to grant invisibility, and may in fact be a component to potions of invisibility.
+
+gem: 'Citrine',
+A transparent pale yellowish-brown gemstone worth around 50 gp.
+
+gem: 'Cleiophane',
+A soft, transparent pale green semi-precious stone worth around 50 gp. Technically a form of sphalerite, which is also found in yellow, orange, red, and dull brown.
+
+gem: 'Coral',
+An opaque crimson gemstone formed by the deposits of certain aquatic creatures. Worth around 100 gp. A folk belief holds that coral can calm weather, provide a safe river crossing, cure madness, and stop bleeding. A fine pink variety found in the tropical seas of Faerûn is called "Angel's Skin", and worth around 200 gp. Black horn coral is worth around 300 gp, and is sacred to the drow deity Vhaeraun.
+
+gem: 'Corstal',
+A rare translucent pink or colorless gemstone native to Faerûn. Worth around 10 gp. Known in some other worlds as petalite.
+
+gem: 'Corundum',
+A gemstone found in fiery yellow or rich purple, and worth around 1,000 gp.
+
+gem: 'Crown of silver',
+An opaque gemstone of black bands, also called psilomelane chalcedony. Worth around 10 gp.
+
+gem: 'Cymophane',
+A gem worth around 200 gp per carat.
+
+gem: 'Datcha',
+A translucent pale yellowish-green gem, worth around 50 gp. Also known as datolite, and can be found in pink, where miners of Faerûn call it "sugar stone".
+
+gem: 'Demontoid',
+A gem worth around 125 gp per carat.
+
+gem: 'Diamond',
+A valuable transparent white gemstone worth upwards of 5,000 gp.
+
+gem: 'Diopside',
+A hard, dark gem worth around 100 gp per carat. Purple diopside is known as violane. The most valuable form of that mineral is star diopside, with green star diopside worth 100 gp or more.
+
+gem: 'Dioptase',
+A soft, emerald-green gemstone, rarely found in large sizes. As a result, it is only worth around 50 gp. In the Forgotten Realms, larger specimens are valued as highly as emeralds due to their beauty and rarity.
+
+gem: 'Disthene',
+A translucent dark blue or green gemstone, commonly found in many worlds including Faerûn. Worth around 10 gp. Also known as kyanite.
+
+gem: 'Emerald',
+A valuablue transparent deep bright green gemstone, worth around 1,000 gp. The clearest bright green emeralds can reach in the range of 5,000 gp. The emerald dragon is named for this gemstone.
+
+gem: 'Epidote',
+A common clear or red gemstone worth around 10 gp. Also found in a deep rose variety called piedmontite.
+
+gem: 'Essonite',
+A gem worth between 50 and 75 gp per carat.
+
+gem: 'Euclase',
+A rare translucent gemstone which is colorless, yellow, or green, and worth around 500 gp. It is rarely found in blue, which is even more valuable.
+
+gem: 'Eye agate',
+A translucent gemstone with a circle pattern of gray, white, brown, blue or green. Worth around 10 gp. Cat's eye agate is reputed to protect the bearer from spirits.
+
+gem: 'Fire agate',
+A variety of opaque agate, formed of chalcedony with thin lines of iridescent goethite in colors of red, brown, gold and green. Usually opaque, and worth around 10 gp. It is sacred to the dwarven deity Gorm Gulthyn.
+
+gem: 'Fire opal',
+A translucent pale blue gem, with green and golden mottling. Worth around 1,000 gp. It is sacred to the dwarven deity Gorm Gulthyn.
+
+gem: 'Flamedance',
+An extremely rare gemstone native to Faerûn, and worth around 500 gp. It is sacred to the deity Gorm Gulthyn. In other worlds, it is known as rhodizite.
+
+gem: 'Fluorite',
+A soft opaque gemstone occurring a great range of colors. Also known as fluorspar. Typically worth 10 gp, or around 50 to 75 gp per carat.
+
+gem: 'Frost agate',
+An opaque agate with white markings resembling frost. Skilled gemcutters cut it into a twenty-sided polyhedral shape, giving it the appearance of a snowflake.
+
+gem: 'Garnet',
+A transparent gem in colors of red, brown-green, or violet. Worth around 100 gp, although the violet variety can reach 500 gp or more.
+
+gem: 'Goldline',
+A translucent gemstone, typically citrine, amethyst, or smoky quartz, with parallel lines of golden goethite in it. Despite its wondrous appearance, large chunks of it are commonly found, and it is worth only around 10 gp. Also called cacoxenite.
+
+gem: 'Greenstone',
+An opaque greyish-green form of pumpellyite native to Faerûn. Can be found in solidified lava flows. Also called chlorastrolite, or chlorastras. It is sacred to the duergar deity Deep Duerra.
+
+gem: 'Hambergyle',
+A rare, transparent, colorless gemstone, worth about 50 gp. The mineral is also called hambergite.
+
+gem: 'Hematite',
+An opaque gray-black gemstone worth around 10 gp. It is reputed to aid warriors and heal wounds. It is sacred to the drow deity Vhaeraun.
+
+gem: 'Hyacinth',
+A gem worth between 50 and 75 gp per carat.
+
+gem: 'Hyaline',
+Milky or white quartz caused by trapped water or gas bubbles, worth around 10 gp. Occasionally contains grains of gold.
+
+gem: 'Hyalite',
+A completely colorless, transparent opal worth around 10 gp.
+
+gem: 'Hydrophane',
+An opaque white opal which becomes transparent and iridescent in water. Worth around 50 gp.
+
+gem: 'Hypersthene',
+A brown opaque semi-precious stone, sometimes tinted red or green, and having silvery spangles. It is rarely found in large crystals, and as such is only worth around 50 gp per stone.
+
+gem: 'Idicolite',
+A gem worth around 125 gp per carat.
+
+Iolite',
+A gemstone worth around 50 gp. Often gray or bluish-violet. In the Forgotten Realms it is called "iol" or "violet stone". It changes its color depending on the direction of sunlight. Also called cordierite in some worlds.
+
+Irtios',
+A hard, transparent semi-precious stone which is sometimes tinted yellow. Worth around 50 gp. Called danburite in some worlds.
+
+Jacinth',
+A transparent fiery orange gemstone worth around 5,000 gp. It is reputed to give luck in travelling and protect the bearer from plague and fire. It is sacred to the dwarven deity Gorm Gulthyn.
+
+Jade',
+A translucent green or white gem often used to craft artworks. Worth around 100 gp. It is reputed to give the bearer skill at music.
+
+Jade buried for a long time can ruen red or brown, where it is known as tomb jade, and worth around 1,000 gp.
+
+Jargoon',
+A rare, red zircon prized in the Forgotten Realms, and worth around 100 gp.
+
+Jasmal',
+A very hard transparent gemstone native to the world of Faerûn. Worth around 3,000 gp.
+
+Jasper',
+An opaque gemstone in colors of blue, black or brown. Worth around 50 gp. It is reputed to make the bearer immune to poison. Black jasper is sacred to the drow deity Vhaeraun.
+
+Jet',
+An opaque deep black gemstone worth around 100 gp. It is sacred to the drow deity Vhaeraun.
+
+King's tears',
+A rare, transparent and extremely had gemstone native to the world of Faerûn, where they are also known as "frozen tears". Legend has it that they are the crystallized tears of necromancer-kings, and visions of the past can be seen in them. They are is sacred to the dwarven deity Dugmaren Brightmantle. They are worth around 5,000 gp.
+
+Kornerupine',
+A hard, translucent green or brown gemstone worth around 100 gp.
+
+Kunzite',
+A hard, durable, transparent pink or purple gemstone worth around 50 gp, or between 50 and 75 gp per carat. A variety of spodumene, also called hiddenite in its emerald green form. The colors of these gems fade with time.
+
+Laeral's Tears',
+A large transparent gemstone native to the Forgotten Realms, called beryllonite some worlds. It is worth around 100 gp.
+
+Lapis lazuli',
+An opaque blue stone with yellow flecks. It is reputed to grant courage.
+
+Luriyl',
+A soft, translucent green or yellow stone, also known as apatite. Worth around 50 gp. Rarely found in blue and purple, and large stones of that color command a high price.
+
+Lynx eye',
+An opaque dark grey gemstone with patches of green flash. Technically a variety of labradorite, which in turn is formed of feldspar. Worth around 10 gp.
+
+Malachite',
+An opaque green mineral with light and dark bands, worth about 10 gp. Considered sacred to the god Hextor. The Malachite Throne of the Great Kingdom was carved from a single huge cursed block of this mineral. It is reputed to protect against falling and ward of spells, evil spirits, and poison.
+
+Malacon',
+A transparent brown variety of zircon worth around 50 gp.
+
+Mellochrysos',
+A bright yellow variety of zircon worth around 50 gp.
+
+Microcline',
+A translucent green or blue-green gemstone which shimmers when polished. Also known as amazonstone.
+
+Moonbar',
+A pearly white opaque gem, often found in rectancular bars one foot long or more. Worth 1,000 gp.
+
+Moonstone',
+A translucent white gemstone with a pale blue glow. Worth around 50 gp. A folk belief claims that moonstone causes lycanthropy. Followers of the drow goddess Elistraee believe that finding moonstone is a sign of her favor.
+
+Morganite',
+A gem worth around 100 gp per carat.
+
+Moss agate',
+A translucent pink or yellowish-white stone, with mossy gray or green markings. Worth around 10 gp.
+
+Mykaro',
+A large semi-precious stone found in many colors, worth around 50 gp. Also called smithsonite.
+
+Mynteer',
+A hard, transparent gemstone found in small crystals worth around 50 gp. Also called phenakite.
+
+Nelvine',
+A soft white, cream, fawn or brownish-pink iridescent gemstone related to moonstone, native to the Forgotten Realms. It is also known as albite or pigeon stone.
+
+Nephrite',
+A gem worth around 125 gp per carat.
+
+Nune',
+A translucent brown or almost clear gemstone, also called "cross stone" or "fairy stone" in the Forgotten Realms, where it is frequently worn as jewelry. Also known as staurolite on other worlds. Worth around 10 gp.
+
+Obsidian',
+A piece of opaque black volcanic glass, worth around 10 gp. It is hard, but relatively brittle.
+
+The archmage Mordenkainen's Obsidian Citadel is named for this mineral, as is the rare obsidian dragon. Obsidian is sacred to the drow deity Vhaeraun.
+
+In the Forgotten Realms, obsidian with numerous minute inclusions is known as "sheen". Obsidian with golden inclusions is called "gold sheen", and worth as much as 50 gp. Obsidian with many colors is called "rainbow obsidian", and worth 50gp.
+
+Another variety, snowflake obsidian, has flower-like radial patches. Webstone, also called spiderweb obsidian, has lines running through it.
+
+Octel',
+A soft, translucent yellow or orange gem native to Faerûn. It is sacred to the dwarven mother goddess Berronar Truesilver, whose followers believe them to be her solidified tears. It is worth around 100 gp. In other lands, it is known as scheelite.
+
+Olivine',
+A gemstone reputed to protect people from spells.
+
+Ooline',
+A brown quartz worth which occurs in tiny spheres worth around 10 gp.
+
+Onyx',
+An opaque black or white gemstone, or with bands of black and white. Worth around 50 gp. Onyx is used as a component of the spell animate dead. A folk belief claims that it causes discord between enemies. Black onyx is sacred to the drow deity Vhaeraun.
+
+Ophealine',
+A hard, translucent brown gemstone native to the Forgotten Realms, where it was traditionally mounted on rings and gained the name "knuckle stones". Worth around 10 gp. Also known as axinite, or glass stone. Its violet variety is known as yanolite.
+
+Orbaline',
+A softer translucent blue gem found in small sizes, worth around 500 gp. Also called benitoite.
+
+Orblen',
+A rare golden gem also called "honeystone", worth around 1,000 gp.
+
+Orl',
+A red or orange gemstone native to the Forgotten Realms, worth around 1,000 gp.
+
+Orprase',
+A brittle, transparent gemstone worth around 50 gp. Also called pollucite.
+
+Pearl',
+An opaque lustrous white sphere formed by aquatic creatures. Sometimes yellow or pink, sometimes gold or silver. Worth around 100 gp. Irregular freshwater pearls are worth only around 10 gp. It is sacred to the dwarven deity Dugmaren Brightmantle.
+
+Peridot',
+A transparent rich olive green gemstone worth around 500 gp. It is reputed to ward off enchantments.
+
+Pyrope',
+A gem worth around 125 gp per carat.
+
+Quartz',
+A transparent white, gray or yellow gemstone. More valuable than its common blue counterpart, it is worth around 50 gp. It is also known as rock crystal. Clear quartz naturally smoothed by running wateris sacred to the dwarven mother goddess Berronar Truesilver, whose followers believe them to be her solidified tears.
+
+Raindrop',
+A hard, flawless, colorless transparent form of cassiterite. Worth around 400 gp, although the brown form of the gemstone is less valuable. In Faerûn, it is typically fashioned into polished teardrop shapes used to adorn cloaks.
+
+Red Tears',
+A red bright-red teardrop-shaped gemstone unique to Faerûn, worth around 1,000 gp.
+
+Rhodochrosite',
+An opaque light pink stone worth around 10 gp.
+
+Rhodolite',
+A gem worth around 125 gp per carat.
+
+Rhodonite',
+A translucent pink gem worth around 50 to 75 gp per carat. Called phenalope in Faerûn, where it is typically worth 50 gp.
+
+Rosaline',
+A translucent pink gemstone traded in large quantities in the Forgotten Realms, where it is typically worth around 10 gp. Also known as unionite, thulite, or pink zoisite. When found in purple, it is known as purple rosaline. The color shifts on the angle of light, appearing purple, red, and blue or green.
+
+Rubellite',
+A gem worth around 100 gp per carat.
+
+Ruby',
+A transparent clear red gemstone worth around 5,000 gp. It is reputed to bring good luck. It is sacred to the dwarven deity Gorm Gulthyn.
+
+Rusteen',
+A durable reddish-brown or pale brown gemstone also known as microlite. Small stones are worth 400 gp and often used to adorn weapons.
+
+Saganite',
+An opaque form of chalcedony, often found in ivory or yellow, with inclusions of brown or greenish-black, often arranged in a star pattern. Worth around 10 gp. In the Forgotten Realms, where fist-sized chunks are commonly traded, the gem is also called needle stone, love stone, or hairstone.
+
+Samarskite',
+A hard, heavy black gem native to Faerûn. It is worth around 50 gp. It is sacred to the drow deity Vhaeraun.
+
+Sanidine',
+An opaque pale yellow gemstone found in deserts, worth around 10 gp.
+
+Sarbossa',
+A translucent greyish-green gem of volcanic origin, worth around 10 gp. Also called thomsonite, lintonite, comptonite, ozakite, eye stone, or fire rock.
+
+Sardonyx',
+An opaque red-and-white banded gemstone. Worth around 50 gp.
+
+Satin spar',
+Soft, sparkling gypsum, called feather gypsum, in white or pale colors like pink, orange or brown. Easy to work, and often used in crafting. Worth around 10 gp.
+
+Scapra',
+A soft yellow gemstone native to Faerûn, where is sacred to the deity Gorm Gulthyn. Scapras are worth around 100 gp.
+
+Serpentine',
+A translucent semi-precious stone, often found in vivid green, and worth around 50 gp. It is reputed to improve the bearer's cunning.
+
+Shandon',
+A tiny transparent gem native to Faerûn. It is sacred to the dwarven mother goddess Berronar Truesilver, whose followers believe them to be her solidified tears. Worth around 100 gp.
+
+Sharpstone',
+Colored quartz found in Toril, worth around 10 gp. Also called novaculite.
+
+Silkstone',
+Sparkling quartz worth 10 gp.
+
+Sinhalite',
+A rare yellow stone. Gems around in inch across are worth 100 gp.
+
+Skydrop',
+A translucent meteoric glass worth around 50 gp.
+
+Spessartite',
+A gem worth around 125 gp per carat.
+
+Sphene',
+A soft, transparent yellow or green gem native to Faerûn. It is sacred to the dwarven mother goddess Berronar Truesilver, whose followers believe them to be her solidified tears. Worth around 500 gp, with the emerald-like green gems most highly valued.
+
+Spinel',
+A transparent red, red-brown, or deep green gem worth around 100 gp.
+
+Star rose quarts',
+A translucent rosy stone with a white, star-shaped center. Worth around 50 gp, about the same as transparent quartz.
+
+Star ruby',
+A translucent red gem with a white star-shaped center. Worth around 1,000 gp, less valuable than a pure ruby.
+
+Star sapphire',
+A translucent blue gem with a white star-shaped center. Worth around 1,000 gp, although a single star sapphire the size of a fist exists in the hoard of the dracolich Dragotha with a value of 12,000 gp. Black star sapphire is worth around the same as the blue variety. It is reputed to protect the bearer from magic.
+
+Sunstone',
+A soft, opaque gemstone with bright red or orange sparkles, worth around 10 gp. Related to the moonstone. Technically a type of oligoclase.
+
+Tabasheer',
+A semi-precious stone worth around 50 gp.
+
+Tanzanite',
+A gem worth around 150 gp. Rarer blue tanzanite is worth slightly more than the more common variety, around 175 gp per carat.
+
+Tchazar',
+Argonite, a soft, translucent yellow gemstone. Worth around 10 gp unless cut into a faceted gem, which is difficult due to its fragility and softness, but worth 50 gp.
+
+Thupartial',
+A hard, transparent green, greenish-yellow or brown gemstone of volcanic origin, also known as prehnite. Worth around 10 gp.
+
+Tiger eye',
+A translucent brown gemstone with golden center. Worth around 10 gp. Also known as binghamite.
+
+Topaz',
+A transparent golden yellow gemstone worth around 500 gp. The topaz dragon is named for this gemstone. It is reputed to ward off evil spells.
+
+Tourmaline',
+A transparent pale green, blue, brown or red gem worth around 100 gp. Red tourmaline is worth slightly more than other colors, averaging 125 gp per carat.
+
+Ravenar is a rare black variety of tourmaline native to Faerûn, where it is worth around 1,000 gp and often inlaid in daggers and the like. It is sacred to the drow deity Vhaeraun.
+
+Tremair',
+A very small translucent pink gem worth around 100 gp. Also called hexagonite, and technically a variety of trmolite.
+
+Turquoise',
+An opaque turquoise gemstone worth around 10 gp. It is reputed to aid horses.
+
+Ulvaen',
+A soft translucent yellow gem highly prized in the Forgotten Realms, where it is worth around 100 gp. Easy to work, it is also known as amblygonite.
+
+Variscite',
+A translucent pale green stone which occasionally has rings or bands when cut. Worth around 10 gp. Also called lucinite or peganite in some worlds.
+
+Water opal',
+A transparent opal with a play of color, worth around 1,000 gp.
+
+Waterstar',
+A rare sparkling transparent gemstone worth 200 gp when free of inclusions.
+
+White opal',
+A white gemstone worth around 1,000 gp.
+
+gem: 'Witherite',
+A translucent yellow or white semi-precious stone worth around 50 gp.
+
+gem: 'Wonderstone',
+An opaque form of rhyolite with red, brown, tan, or purple bands, worth around 10 gp.
+
+gem: 'Woodtine',
+An opaque brownish of casserite, worth around 10 gp.
+
+gem: 'Yellow sapphire',
+A transparent yellow-green of fiery yellow gemstone worth around 1,000 gp.
+
+gem: 'Zarbrina',
+An extremely soft, brilliant, transparent gemstone. Worth only 10 gp due to its extreme softness, which makes it impractical for most jewelry.
+
+gem: 'Zendalure',
+An opaque mottled blue-white gemstone found in large egg-shaped crystals in solidified lava flows. Worth around 2,000 gp.
+
+gem: 'Ziose',
+A rare high-grade translucent zoisite which flashes in three different colors depending on the angle of the light: purple, red, and blue or green. Worth 300 gp.
+
+gem: 'Zircon',
+A transparent pale bluish-green gemstone worth around 50 gp.

@@ -1,0 +1,140 @@
+
+/**********************************************************
+    MAP LIST MODAL
+**********************************************************/
+
+#map_list_modal_wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+}
+
+#map_list_modal {
+    position: absolute;
+    top: 8rem;
+    left: 2rem;
+    right: 2rem;
+    bottom: 8rem;
+    background-color: #444;
+    color: white;
+    box-shadow: 0px 2px 4px 1px #222;
+    overflow: hidden;
+}
+
+#map_list_modal_header {
+    z-index: 101;
+}
+
+#map_dir_location {
+    cursor: pointer;
+}
+
+#map_list_modal_open {
+    font-size: 0.8rem;
+    float: right;
+    margin-right: 2.5rem;
+}
+#map_list_modal_folder {
+    font-size: 0.8rem;
+    float: right;
+}
+
+#map_list_search {
+    float: right;
+    margin: 0.2rem 0 0 0.2rem;
+    height: 1.6rem;
+    padding: 0 0 0 0.5rem;
+    border: 0;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+}
+
+#map_list_modal_close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    text-align: center;
+    line-height: 2rem;
+}
+#map_list_modal_close:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+#map_list_modal_close:before {
+    font-size: 1.5rem;
+    content: '\00d7';
+}
+
+#map_list_modal_body {
+    position: absolute;
+    top: 2rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+#map_list_modal_body_list {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    right: 0;
+    bottom: 0;
+    overflow: scroll;
+}
+#map_list_modal_body_preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    bottom: 0;
+    overflow: scroll;
+    background-color: rgba(0,0,0,0.5);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.map_list_section_title {
+    height: 1.25rem;
+    line-height: 1.25rem;
+    padding: 0.3rem 0.5rem;
+    background-color: #555;
+    text-transform: capitalize;
+}
+
+.map_list_section_container {
+    margin: 0.25rem 0;
+    padding-left: 2rem;
+}
+
+.map_list_map {
+    position: relative;
+    padding: 0.2rem 0.2rem 0.2rem 2rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 2rem;
+}
+.map_list_map:hover {
+    background-color: #666;
+}
+.map_list_map:active {
+    background-color: #EEE;
+    color: #444;
+}
+.map_list_map .checkbox {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    margin: 0;
+    margin-left: 0.3rem;
+}

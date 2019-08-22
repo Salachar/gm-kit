@@ -5,21 +5,30 @@ class Mouse {
 
         this.key_x = null;
         this.key_y = null;
+
         this.prevX = null;
         this.prevY = null;
+
         this.prevDownX= null;
         this.prevDownY= null;
+
         this.prevUpX= null;
         this.prevUpY= null;
+
         this.downX = null;
         this.downY = null;
+
         this.upX = null;
         this.upY = null;
+
         this.down = false;
         this.up = true;
+
         this.key = null;
+
         this.x_offset = 0;
         this.y_offset = 0;
+
         this.left = false;
         this.right = false;
         this.middle = false;

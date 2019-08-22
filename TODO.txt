@@ -1,11 +1,14 @@
 TODO: (Ordered by priority)
-    BUGS:
+    - Add menu controls, there should be a button for everything
+        - Menu should be hidable
+        - Readd scrolling from DM window
+    - Leaving focus of app can at times cause it to become stuck in point moving modeS
     - Add Grid
     - When connecting between two existing segments, there should be no length check
         - Maybe disbale for shift clicking in general
         - Or even altogether at this point
     - Adding new walls by connecting two middle walls does not split the first one
-    - Change file saving (shoulnd't be all or nothing)
+    - Change file saving (shouldn't be all or nothing)
     - Add ability to add text to locations
         - Question Mark icon
         - Click to Open, Click outside to close

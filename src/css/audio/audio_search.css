@@ -1,0 +1,26 @@
+#search_section {
+    top: var(--standard-padding);
+    right: var(--standard-padding);
+    width: var(--side-section-width);
+    bottom: calc(50% + (var(--standard-padding) / 2));
+}
+
+#search_body {
+     top: calc(var(--section-title-height) + 3rem);
+}
+
+#search_input_wrap {
+    box-sizing: border-box;
+    padding: 0.5rem;
+}
+
+#search_input {
+    border: none;
+    padding: 0 0.5rem;
+    background-color: #444;
+    color: white;
+    height: 2rem;
+    font-size: 1.25rem;
+    box-sizing: border-box;
+    width: 100%;
+}

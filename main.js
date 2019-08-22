@@ -4,39 +4,41 @@ const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 const IPC = electron.ipcMain;
-const dialog = electron.dialog;
+// const dialog = electron.dialog;
 
 const fs = require('fs');;
 const path = require('path');
 const url = require('url');
 
 const FileHelpers = require('./lib/file_helpers');
-let CONFIG = null;
+const MapHelpers = require('./lib/map_helpers');
+const AudioHelpers = require('./lib/audio_helpers');
 
-// Need a reference to hang onto the first map needed to display
-let WINDOW = null;
-
-let file_info = {
-    config: {
+global.shared = {
+    CONFIG: null,
+    CONFIG_DATA: {
         base: __dirname,
         name:'config',
         type: 'json',
         init_content: '{}',
         directory: ''
-    }
-};
+    },
+    WINDOW: null
+}
+
+// Need a reference to hang onto the first map needed to display
+let WINDOW = null;
 
 function loadConfig () {
-    let output_dir = FileHelpers.generate(file_info.config);
-    console.log(output_dir);
-    file_info.config.directory = output_dir;
+    let output_dir = FileHelpers.generate(global.shared.CONFIG_DATA);
+    global.shared.CONFIG_DATA.directory = output_dir;
     let config_data = FileHelpers.read(output_dir);
     try {
         config_data = JSON.parse(config_data);
-        CONFIG = config_data;
+        global.shared.CONFIG = config_data;
     } catch (e) {
         console.log(e);
-        CONFIG = {};
+        global.shared.CONFIG = {};
     }
 }
 
@@ -51,18 +53,30 @@ function createWindow () {
     WINDOW.setMenu(null);
     WINDOW.setPosition(10, 100);
 
+    global.shared.WINDOW = WINDOW;
+
     let window_url = url.format({
         pathname: path.join(__dirname, `./src/html/main.html`),
         protocol: 'file:',
         slashes: true
     });
-    window_url += `?map_dir=${CONFIG.map_directory}`;
+    window_url += `?map_dir=${global.shared.CONFIG.map_directory}`;
 
     WINDOW.loadURL(window_url);
-    // WINDOW.webContents.openDevTools();
+    WINDOW.webContents.openDevTools();
     WINDOW.on('closed', function () {
         app.quit();
     });
+}
+
+function sendMaps () {
+    const list = MapHelpers.generateList();
+    WINDOW.webContents.send('maps_loaded', list);
+}
+
+function sendAudio () {
+    const list = AudioHelpers.generateList();
+    WINDOW.webContents.send('files_loaded', list);
 }
 
 // This method will be called when Electron has finished
@@ -71,18 +85,14 @@ function createWindow () {
 app.on('ready', createWindow);
 
 function chooseMapDirectory () {
-    dialog.showOpenDialog(WINDOW, {
-        properties: ['openDirectory']
-    }, (folders) => {
-        if (!folders || !folders.length) {
-            console.log('User must have canceled folder selection');
-            return;
-        }
-        const folder_path = folders[0];
-        console.log(folder_path);
-        CONFIG.map_directory = folder_path;
-        fs.writeFileSync(file_info.config.directory, JSON.stringify(CONFIG, null, 4), 'utf-8');
-        generateMapList();
+    FileHelpers.chooseDirectory(function (folder_path) {
+        global.shared.CONFIG.map_directory = folder_path;
+        fs.writeFileSync(
+            global.shared.CONFIG_DATA.directory,
+            JSON.stringify(global.shared.CONFIG, null, 4),
+            'utf-8'
+        );
+        sendMaps();
     });
 }
 
@@ -91,16 +101,15 @@ IPC.on('open_dialog_modal', (e) => {
 });
 
 IPC.on('load_maps', (e) => {
-    if (!CONFIG.map_directory) {
+    if (!global.shared.CONFIG.map_directory) {
         chooseMapDirectory();
     } else {
-        generateMapList();
+        sendMaps();
     }
 });
 
 IPC.on('load_map', (e, maps) => {
     let loaded_maps = {};
-
     let map = null;
     for (let m in maps) {
         map = maps[m];
@@ -110,9 +119,6 @@ IPC.on('load_map', (e, maps) => {
             image: map.image,
             dm_image: map.dm_image
         };
-        // if (map.image) {
-        //     map_data.image = map.image;
-        // }
         if (map.json) {
             try {
                 let json = fs.readFileSync(map.json, {
@@ -152,110 +158,30 @@ IPC.on('save_map', (e, maps) => {
     });
 });
 
-function generateMapList () {
-    let map_list = {};
-    let cur_path = CONFIG.map_directory;
-    let file_error = false;
+IPC.on('audio_loaded', (e) => {
+    loadAudioData();
+    sendAudio();
+});
 
-    readDir(cur_path);
-    if (!file_error) {
-        WINDOW.webContents.send('maps_loaded', map_list);
+IPC.on('save_audio_data', (e, audio_data) => {
+    try {
+        const audio_path = path.join(global.shared.CONFIG.audio_directory, 'audio_data.json');
+        fs.writeFileSync(audio_path, JSON.stringify(audio_data, null, 4), 'utf-8');
+    } catch (e) {
+        console.log('Failed to save the file !');
     }
+});
 
-    function readDir (dir) {
-        try {
-            fs.readdirSync(dir).forEach((file) => {
-                const full_path = dir + '/' + file;
-                if (fs.lstatSync(full_path).isDirectory()) {
-                    readDir(full_path);
-                } else {
-                    const file_name = file.split('.')[0];
-                    const file_type = file.split('.')[1];
-
-                    // If the file is not an image or is a DM images, skip it
-                    if (!FileHelpers.isImage(file) || file_name.match(/DM_|_DM/)) return;
-
-                    // Search for the DM version of the map
-                    // DM_map.ext or map_DM.ext
-                    let dm_image = FileHelpers.getFile({
-                        dir: dir,
-                        file: `DM_${file_name}.${file_type}`
-                    }) || FileHelpers.getFile({
-                        dir: dir,
-                        file: `${file_name}_DM.${file_type}`
-                    });
-
-                    // Create the file object
-                    let file_obj = {
-                        name: file_name,
-                        image: file,
-                        dm_image: dm_image
-                    };
-
-                    // Check to see if there a JSON file for the map image
-                    const json_exists = FileHelpers.getMatchingFile({
-                        dir: dir,
-                        file: file,
-                        type: 'json'
-                    });
-                    if (json_exists) {
-                        file_obj.json = json_exists;
-                        addToComplete(dir, file_obj);
-                    } else {
-                        addToImageOnly(dir, file_obj);
-                    }
-
-                }
-            });
-        } catch (e) {
-            console.log(e);
-            console.log('There was an error reading from the map directory');
-            file_error = true;
-            chooseMapDirectory();
-        }
-    }
-
-    function addToComplete (dir, file_obj) {
-        file_obj.type = 'complete';
-        addToMapList(dir + '/complete', file_obj);
-    }
-
-    function addToImageOnly (dir, file_obj) {
-        file_obj.type = 'image_only';
-        addToMapList(dir + '/image_only', file_obj);
-    }
-
-    function addToMapList (dir, file_obj) {
-        let relative_directory = dir.replace(CONFIG.map_directory, "");
-        let map_directory = relative_directory.replace('/', '');
-        relative_directory = relative_directory.replace(/\/complete|\/image_only|\/json_only/, '');
-
-        if (file_obj.image) {
-            // C:\Projects\dnd_map_app\maps\Examples\Hideout.jpg
-            file_obj.image = path.join(CONFIG.map_directory, relative_directory, file_obj.image);
-        }
-        if (file_obj.dm_image) {
-
-            // C:\Projects\dnd_map_app\maps\Examples\Hideout.jpg
-            file_obj.dm_image = path.join(CONFIG.map_directory, relative_directory, file_obj.dm_image);
-            console.log(file_obj.dm_image);
-        }
-        if (file_obj.json) {
-            file_obj.json = path.join(CONFIG.map_directory, relative_directory, file_obj.json);
-        }
-
-        let dir_split = map_directory.split('/');
-        let curr = map_list;
-        for (let i = 0; i <= dir_split.length; ++i) {
-            if (i === dir_split.length) {
-                // We've created the full path in the map_list, now
-                // add the file under the file name
-                curr[file_obj.name] = file_obj;
-            } else {
-                // Keep moving through map_list and create objects when needed
-                curr[dir_split[i]] = curr[dir_split[i]] || {};
-                curr = curr[dir_split[i]];
-            }
-        }
+function loadAudioData () {
+    try {
+        const audio_path = path.join(global.shared.CONFIG.audio_directory, 'audio_data.json');
+        let audio_data = fs.readFileSync(audio_path, {
+            encoding: 'utf-8'
+        });
+        WINDOW.webContents.send('data_loaded', JSON.stringify(audio_data));
+    } catch (e) {
+        console.log(e);
+        console.log('No audio_data.json file found');
     }
 }
+

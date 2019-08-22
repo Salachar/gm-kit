@@ -1,0 +1,30 @@
+.audio_button {
+    position: absolute;
+    line-height: 3rem;
+    width: 8rem;
+    height: 3rem;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    position: absolute;
+    background-color: var(--section-bg-color);
+}
+
+.audio_button:hover {
+    background-color: var(--hover-bg-color);
+}
+
+.audio_button:active {
+    background-color: var(--active-bg-color);
+}
+
+#audio_player_play_pause {
+    left: var(--standard-padding);
+    bottom: calc(var(--standard-padding) * 2);
+}
+
+#audio_player_loop {
+    left: calc((var(--standard-padding) * 2) + 8rem);
+    bottom: calc(var(--standard-padding) * 2);
+}

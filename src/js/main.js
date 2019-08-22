@@ -8,6 +8,10 @@ const MapInstance = require('./map/map');
 const ToastMesseger = require('./toast');
 const Mouse = require('./mouse');
 
+const MapContainer = require('./containers/map/main');
+const InfoContainer = require('./containers/info/main');
+const AudioContainer = require('./containers/audio/main');
+
 const {
     getWindowDimensions,
     createElement,
@@ -16,8 +20,14 @@ const {
 
 const controls = require('./controls');
 
-class MapManager {
+class AppManager {
     constructor () {
+        this.containers = {
+            map: new MapContainer({render: true}),
+            info: new InfoContainer({render: true}),
+            audio: new AudioContainer({render: true})
+        };
+
         this.FileManager = new FileManager({
             onMapLoad: this.onMapLoad.bind(this)
         });
@@ -29,6 +39,7 @@ class MapManager {
         this.el_help_table = document.getElementById('help_table');
 
         getWindowDimensions();
+
         this.setEvents();
         this.addHelp();
     }
@@ -190,10 +201,6 @@ class MapManager {
     }
 
     addHelp () {
-        // <tr class="help_section">
-        //     <td class="help_key">SHIFT</td>
-        //     <td class="help_desc">Hold down to allow quick placement of walls</td>
-        // </tr>
         controls.forEach((control) => {
             let help_control = createElement('tr', 'help_section', {
                 addTo: this.el_help_table
@@ -202,7 +209,7 @@ class MapManager {
                 html: control.key,
                 addTo: help_control
             });
-            createElement('td', 'help_key', {
+            createElement('td', 'help_desc', {
                 html: control.text,
                 addTo: help_control
             });
@@ -314,8 +321,9 @@ window.onload = () => {
     window.SoundManager = new SoundManager();
     window.QuadrantManager = new QuadrantManager();
     window.Toast = new ToastMesseger();
-    window.MapManager = new MapManager();
     window.Mouse = new Mouse();
+
+    window.AppManager = new AppManager();
 };
 
 window.onresize = () => {

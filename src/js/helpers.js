@@ -181,6 +181,12 @@ const Helpers = {
         };
     },
 
+    cacheElements (obj, cache_list) {
+        cache_list.forEach((id) => {
+            obj['el_' + id] = document.getElementById(id);
+        });
+    },
+
     createElement: function (type, classes, opts) {
         opts = opts || {};
         let node = document.createElement(type);
@@ -211,7 +217,10 @@ const Helpers = {
             node.innerHTML = opts.html;
         }
         if (opts.addTo) {
-            opts.addTo.appendChild(node);
+            if (!opts.addTo.length) opts.addTo = [opts.addTo];
+            opts.addTo.forEach((container) => {
+                container.appendChild(node);
+            });
         }
         if (opts.css) {
             for (let style in opts.css) {
@@ -221,4 +230,5 @@ const Helpers = {
         return node;
     }
 };
+
 module.exports = Helpers;

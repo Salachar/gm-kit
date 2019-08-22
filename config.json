@@ -40,5 +40,7 @@
             }
         }
     },
+    "map_directory_backup": "C:\\DnD\\app_maps",
+    "audio_directory": "C:\\DnD\\audio_tracks",
     "map_directory": "C:\\DnD\\app_maps"
 }

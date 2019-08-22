@@ -1,0 +1,39 @@
+#tracks_section {
+    top: var(--standard-padding);
+    left: var(--standard-padding);
+    bottom: var(--standard-padding);
+    right: calc(var(--side-section-width) + (var(--standard-padding) * 2));
+}
+
+.audio_file_section {
+    font-size: 1rem;
+}
+
+.audio_file_section_title {
+    font-size: 1.25rem;
+    padding: 0.4rem 0 0.4rem 1rem;
+    font-weight: bold;
+    background-color: #444;
+    margin: 0.4rem 0;
+    cursor: pointer;
+}
+
+.audio_file_section_title:hover {
+    background-color: var(--hover-bg-color);
+}
+
+.audio_file_section_title:active {
+    background-color: var(--active-bg-color);
+}
+
+.audio_file_section_body {
+    padding-left: 1.5rem;
+}
+
+.audio_file_section_body.collapse {
+    display: none;
+}
+
+.audio_file_section:first-child .audio_file_section_title {
+    margin-top: 0;
+}

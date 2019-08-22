@@ -1,0 +1,14 @@
+:root {
+    --main-bg-color: #222;
+    --standard-padding: 1.5rem;
+    --section-bg-color: #333;
+    --section-text-color: rgba(255,255,255,0.8);
+    --side-section-width: 35rem;
+    --section-title-height: 2rem;
+
+    --faded-text-color: rgba(255,255,255,0.5);
+
+    --selected-bg-color: rgba(100, 149, 237, 0.3);
+    --hover-bg-color: rgba(100, 149, 237, 0.5);
+    --active-bg-color: rgba(100, 149, 237, 1);
+}
