@@ -1,3 +1,6 @@
+const Container = require('../base');
+const ContainerTemplate = require('../../templates/info');
+
 const generators = {
     deva_generator: require('./generators/deva'),
     dragonborn_generator: require('./generators/dragonborn'),
@@ -14,39 +17,13 @@ const generators = {
     // treasure_generator: require('./generators/treasure'),
 };
 
-const {
-    createElement
-} = require('../../helpers');
-
-const InfoTemplate = require('../../templates/info');
-
-class InfoContainer {
+class InfoContainer extends Container {
     constructor (opts = {}) {
-        this.node = createElement('div', 'info_container container active', {
-            addTo: document.getElementById('containers')
+        super({
+            ...opts,
+            type: 'info',
+            template: ContainerTemplate
         });
-        this.tab = createElement('div', 'tab active', {
-            html: 'Info',
-            addTo: document.getElementById('tabs'),
-            events: {
-                click: (e) => {
-                    [...document.getElementsByClassName('tab')].forEach((tab) => {
-                        tab.classList.remove('active');
-                    });
-                    this.tab.classList.add('active');
-                    [...document.getElementsByClassName('container')].forEach((container) => {
-                        container.classList.remove('active');
-                    });
-                    this.node.classList.add('active');
-                }
-            }
-        });
-
-        this.template = new InfoTemplate();
-
-        if (opts.render) {
-            this.render();
-        }
 
         this.amount_per_click = 1;
 
@@ -89,10 +66,6 @@ class InfoContainer {
         // $('body').on('click', '.result', function () {
         //     $(this).toggleClass('saved');
         // });
-    }
-
-    render () {
-        this.node.innerHTML = this.template.generate();
     }
 }
 

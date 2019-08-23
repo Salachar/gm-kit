@@ -23,9 +23,9 @@ const controls = require('./controls');
 class AppManager {
     constructor () {
         this.containers = {
-            map: new MapContainer({render: true}),
-            info: new InfoContainer({render: true}),
-            audio: new AudioContainer({render: true})
+            map: new MapContainer({active: true}),
+            info: new InfoContainer(),
+            audio: new AudioContainer()
         };
 
         this.FileManager = new FileManager({
