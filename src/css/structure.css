@@ -33,6 +33,7 @@
     right: 0;
     height: 2rem;
     background-color: #111;
+    z-index: 20;
 }
 .tab {
     float: left;
@@ -43,8 +44,10 @@
     color: white;
     opacity: 0.3;
     line-height: 2rem;
-    font-size: 1.25rem;
+    font-size: 1rem;
     cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
 .tab.active {

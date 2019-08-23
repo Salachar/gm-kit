@@ -25,7 +25,7 @@ const quest_generator = {
         this.quests.forEach((quest) => {
             let label = quest.label;
             if (!label) {
-                console.warn('Quest found without label');
+                // console.warn('Quest found without label');
                 this.quests_by_type.general.push(quest.quest);
                 return;
             }
@@ -48,8 +48,8 @@ const quest_generator = {
                 html: quest_type,
                 events: {
                     click: (e) => {
-                        for (var i = 0; i < window.APP.info_manager.amount_per_click; ++i) {
-                            addResult({
+                        for (var i = 0; i < container.amount_per_click; ++i) {
+                            addResult(container, {
                                 type: '(' + this.title + ') ' + quest_type,
                                 value: this.generate(quest_type)
                             });

@@ -18,8 +18,8 @@ const store_generator = {
                 html: store_type.title,
                 events: {
                     click: (e) => {
-                        for (var i = 0; i < window.APP.info_manager.amount_per_click; ++i) {
-                            addResult({
+                        for (var i = 0; i < container.amount_per_click; ++i) {
+                            addResult(container, {
                                 type: store_type.title,
                                 value: this.generate(store_type)
                             });
