@@ -11,6 +11,7 @@ const Mouse = require('./mouse');
 const MapContainer = require('./containers/map/main');
 const InfoContainer = require('./containers/info/main');
 const AudioContainer = require('./containers/audio/main');
+const LightsContainer = require('./containers/lights/main');
 
 const {
     getWindowDimensions,
@@ -25,7 +26,8 @@ class AppManager {
         this.containers = {
             map: new MapContainer({active: true}),
             info: new InfoContainer(),
-            audio: new AudioContainer()
+            audio: new AudioContainer(),
+            lights: new LightsContainer()
         };
 
         this.FileManager = new FileManager({
