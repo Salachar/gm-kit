@@ -2,6 +2,9 @@ class ToastMesseger {
     constructor () {
         this.time_shown = 3000;
         this.node = document.getElementById('toast');
+        this.hidden = true;
+
+        this.setEvents();
     }
 
     success (message) {
@@ -23,6 +26,7 @@ class ToastMesseger {
     }
 
     hide () {
+        this.hidden = true;
         this.node.classList.remove('show-toast');
         this.node.classList.remove('toast-success');
         this.node.classList.remove('toast-error');
@@ -30,14 +34,17 @@ class ToastMesseger {
     }
 
     show (type) {
+        this.hidden = false;
         this.node.classList.add('show-toast');
-        if (type === 'success') {
-            this.node.classList.add('toast-success');
-        }
-        if (type === 'error') {
-            this.node.classList.add('toast-error');
-        }
+        this.node.classList.add(`toast-${type}`);
         return this;
+    }
+
+    setEvents () {
+        this.node.addEventListener('click', (e) => {
+            if (this.hidden) return true;
+            this.hide();
+        });
     }
 }
 module.exports = ToastMesseger;

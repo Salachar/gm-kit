@@ -179,7 +179,7 @@ class FileManager {
         });
 
         document.getElementById('save_map').addEventListener('click', (e) => {
-            const map_data = window.MapManager.getMapData();
+            const map_data = window.AppManager.containers.map.getMapData();
             if (!map_data) {
                 Toast.error('There is no map to save');
                 return;
@@ -188,7 +188,7 @@ class FileManager {
         });
 
         document.getElementById('save_all_maps').addEventListener('click', (e) => {
-            const map_data = window.MapManager.getAllMapData();
+            const map_data = window.AppManager.containers.map.getAllMapData();
             if (!map_data) {
                 Toast.error('There are no maps to save');
                 return;
@@ -197,9 +197,9 @@ class FileManager {
         });
 
         document.getElementById('save_state').addEventListener('click', (e) => {
-            const map = window.MapManager.current_map;
-            const map_data = window.MapManager.getMapData();
-            const state_data = window.MapManager.getMapStateData();
+            const map = window.AppManager.containers.map.current_map;
+            const map_data = window.AppManager.containers.map.getMapData();
+            const state_data = window.AppManager.containers.map.getMapStateData();
             map_data[map.name].json.state = state_data;
             IPC.send('save_map', map_data);
         });

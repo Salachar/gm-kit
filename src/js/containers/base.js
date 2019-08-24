@@ -8,15 +8,36 @@ class Container {
         this.node = null;
         this.tab = null;
 
+        this.parent = opts.parent;
         this.type = opts.type;
+        this.active = false;
 
         this.createNode(this.type);
         this.createTab(this.type);
         this.createTemplate(opts);
 
         if (opts.active === true) {
-            this.setActive(opts.active);
+            // this.setActive(opts.active);
+            this.parent.setActiveContainer(this);
         }
+    }
+
+    keyDown (key_code) {
+        if (!this.active) return;
+        this.onKeyDown(key_code);
+    }
+
+    keyUp (key_code) {
+        if (!this.active) return;
+        this.onKeyUp(key_code);
+    }
+
+    onKeyDown () {
+
+    }
+
+    onKeyUp () {
+
     }
 
     createNode (class_name) {
@@ -31,7 +52,8 @@ class Container {
             addTo: document.getElementById('tabs'),
             events: {
                 click: (e) => {
-                    this.setActive();
+                    // this.setActive();
+                    this.parent.setActiveContainer(this);
                 }
             }
         });
@@ -44,14 +66,15 @@ class Container {
     }
 
     setActive () {
-        [...document.getElementsByClassName('tab')].forEach((tab) => {
-            tab.classList.remove('active');
-        });
+        this.active = true;
         this.tab.classList.add('active');
-        [...document.getElementsByClassName('container')].forEach((container) => {
-            container.classList.remove('active');
-        });
         this.node.classList.add('active');
+    }
+
+    setDisabled () {
+        this.active = false;
+        this.tab.classList.remove('active');
+        this.node.classList.remove('active');
     }
 
     render () {
