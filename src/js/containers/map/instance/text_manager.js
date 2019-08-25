@@ -1,8 +1,8 @@
-const Store = require('../store');
+const Store = require('../../../store');
 
 const {
     createElement
-} = require('../helpers');
+} = require('../../../helpers');
 
 class TextManager {
     constructor (map = {}, parent, options = {}) {

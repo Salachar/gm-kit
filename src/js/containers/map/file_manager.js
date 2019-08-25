@@ -1,6 +1,6 @@
 const {
     createElement
-} = require('./helpers');
+} = require('../../helpers');
 
 class FileManager {
     constructor (opts = {}) {

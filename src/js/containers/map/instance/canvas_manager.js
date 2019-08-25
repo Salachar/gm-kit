@@ -1,11 +1,11 @@
-const Store = require('../store');
+const Store = require('../../../store');
 
 const {
     createElement,
     rgba,
     getNormal,
     isBlankPixel
-} = require('../helpers');
+} = require('../../../helpers');
 
 const MAX_MAP_SIZE = 3000;
 

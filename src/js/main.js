@@ -1,10 +1,8 @@
 const Store = require('./store');
 window.Store = Store;
 
-const FileManager = require('./file_manager');
 const SoundManager = require('./sound_manager');
 const QuadrantManager = require('./quadrant_manager');
-const MapInstance = require('./map/map');
 const ToastMesseger = require('./toast');
 const Mouse = require('./mouse');
 
@@ -36,10 +34,6 @@ class AppManager {
                 parent: this
             })
         };
-
-        this.FileManager = new FileManager({
-            onMapLoad: this.containers.map.onMapLoad.bind(this.containers.map)
-        });
 
         getWindowDimensions();
 

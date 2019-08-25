@@ -1,10 +1,10 @@
-const Store = require('../store');
+const Store = require('../../../store');
 
 const {
     pDistance,
     copyPoint,
     sqr
-} = require('../helpers');
+} = require('../../../helpers');
 
 class LightManager {
     constructor (map = {}, parent) {

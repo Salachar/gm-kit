@@ -1,4 +1,4 @@
-const Store = require('../store');
+const Store = require('../../../store');
 
 const {
     pDistance,
@@ -6,7 +6,7 @@ const {
     pointMatch,
     sqr,
     resetSnap
-} = require('../helpers');
+} = require('../../../helpers');
 
 class SegmentManager {
     constructor (map = {}, parent) {
@@ -473,55 +473,36 @@ class SegmentManager {
         return CONFIG.snap.indicator;
     }
 
-    findClosestWallEnd (distance = CONFIG.snap.distance) {
+    findClosestWallEnd (snap_distance = CONFIG.snap.distance) {
         this.connected_segments = [];
-        let closest_end = {
-            dist: null,
-            point: {
-                x: null,
-                y: null,
-                type: null
-            },
-            segment: null
-        };
+        let closest_end = null;
 
-        for (let i = 0; i < this.segments.length; ++i) {
-            const segment = this.segments[i];
-            const dist1 = this.pointDistance(Mouse, segment.p1);
-            const dist2 = this.pointDistance(Mouse, segment.p2);
-            if (dist1 < distance || dist2 < distance) {
-                if (closest_end.dist === null || dist1 < closest_end.dist) {
-                    closest_end.dist = dist1;
-                    closest_end.point = {
-                        x: segment.p1.x,
-                        y: segment.p1.y,
-                        type: 'p1'
+        this.segments.forEach((segment) => {
+            ['p1', 'p2'].forEach((point) => {
+                const dist = this.pointDistance(Mouse, segment[point]);
+                if (dist < snap_distance && (!closest_end || dist < closest_end.dist)) {
+                    closest_end = {
+                        dist: dist,
+                        point: {
+                            x: segment[point].x,
+                            y: segment[point].y,
+                            type: point
+                        },
+                        segment: segment
                     };
-                    closest_end.segment = segment;
                 }
-                if (closest_end.dist === null || dist2 < closest_end.dist) {
-                    closest_end.dist = dist2;
-                    closest_end.point = {
-                        x: segment.p2.x,
-                        y: segment.p2.y,
-                        type: 'p2'
-                    };
-                    closest_end.segment = segment;
-                }
-            }
-        };
+            });
+        });
 
-        if (closest_end.point) {
-            // Get the IDs of all the segments that share the closest point found
-            for (let i = 0; i < this.segments.length; ++i) {
-                const segment = this.segments[i];
-                if (pointMatch(segment.p1, closest_end.point, 1) || pointMatch(segment.p2, closest_end.point, 1)) {
-                    this.connected_segments.push(segment.id);
-                }
-            }
-        }
+        if (!closest_end) return null;
 
-        return (closest_end.segment) ? closest_end : null;
+        this.segments.forEach((segment) => {
+            if (pointMatch(segment.p1, closest_end.point, 1) || pointMatch(segment.p2, closest_end.point, 1)) {
+                this.connected_segments.push(segment.id);
+            }
+        })
+
+        return closest_end;
     }
 
     pointDistance (p1, p2) {
@@ -549,7 +530,6 @@ class SegmentManager {
         let closest_segment_info = null;
         let distance = null;
 
-        // this.allSegments().forEach((segment) => {
         this.segments.forEach((segment) => {
             const segment_info = pDistance(Mouse, segment);
             if (!distance || segment_info.distance < distance) {
@@ -561,12 +541,12 @@ class SegmentManager {
 
         if (closest_segment_info && closest_segment_info.distance < (opts.distance || 10)) {
             return {
+                dist: closest_segment_info.distance,
                 point: {
                     x: Math.round(closest_segment_info.x),
                     y: Math.round(closest_segment_info.y)
                 },
-                segment: closest_segment,
-                dist: closest_segment_info.distance
+                segment: closest_segment
             };
         }
 

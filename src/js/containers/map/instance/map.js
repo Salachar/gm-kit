@@ -4,13 +4,13 @@ const LightManager = require('./light_manager');
 const TextManager = require('./text_manager');
 const ObjectManager = require('./object_manager');
 
-const Store = require('../store');
+const Store = require('../../../store');
 
 const {
     createElement,
     copyPoint,
     getNormal
-} = require('../helpers');
+} = require('../../../helpers');
 
 class MapInstance {
     constructor (map = {}, options = {}) {
@@ -228,53 +228,44 @@ class MapInstance {
 
     onKeyDown (key) {
         if (this.TextManager.open) return;
+        const event_data = { point: Mouse.point };
 
-        switch (key) {
-            case KEYS.QUESTION:
-                Store.fire('add_text_block'); break;
-            case KEYS.MINUS:
-                Store.fire('zoom_out'); break;
-            case KEYS.PLUS:
-                Store.fire('zoom_in'); break;
-            case KEYS.DELETE:
-                this.onDelete(Mouse.point); break;
-            case KEYS.SHIFT:
-                Store.fire('quick_place_started'); break;
-            case KEYS.A:
-                Store.fire('add_light', { point: Mouse.point }); break;
-            case KEYS.D:
-                Store.fire('disable_light'); break;
-            case KEYS.E:
-                Store.fire('enable_light'); break;
-            case KEYS.O:
-                Store.fire('toggle_closest_door', { point: Mouse.point }); break;
-            case KEYS.T:
-                Store.fire('switch_wall_door', { point: Mouse.point }); break;
-            case KEYS.W:
-                this.CanvasManager.toggleWalls(); break;
-            case KEYS.LEFT:
-                Store.fire('scroll_left'); break;
-            case KEYS.RIGHT:
-                Store.fire('scroll_right'); break;
-            case KEYS.UP:
-                Store.fire('scroll_up'); break;
-            case KEYS.DOWN:
-                Store.fire('scroll_down'); break;
-            default:
-                break;
+        const events = {
+            [KEYS.QUESTION]: 'add_text_block',
+            [KEYS.MINUS]: 'zoom_out',
+            [KEYS.PLUS]: 'zoom_in',
+            [KEYS.SHIFT]: 'quick_place_started',
+            [KEYS.A]: 'add_light',
+            [KEYS.D]: 'disable_light',
+            [KEYS.E]: 'enable_light',
+            [KEYS.O]: 'toggle_closest_door',
+            [KEYS.T]: 'switch_wall_door',
+            [KEYS.LEFT]: 'scroll_left',
+            [KEYS.RIGHT]: 'scroll_right',
+            [KEYS.UP]: 'scroll_up',
+            [KEYS.DOWN]: 'scroll_down'
+        }
+
+        if (events[key]) {
+            Store.fire(events[key], event_data);
+        } else if (key === KEYS.DELETE) {
+            this.onDelete(Mouse.point);
+        } else if (key === KEYS.W) {
+            this.CanvasManager.toggleWalls();
         }
     }
 
     onKeyUp (key) {
-        switch (key) {
-            case KEYS.CONTROL:
-                Store.fire('move_point_ended');
-                break;
-            case KEYS.SHIFT:
-                Store.fire('quick_place_ended');
-                break;
-            default:
-                break;
+        // if (this.TextManager.open) return;
+        const event_data = { point: Mouse.point };
+
+        const events = {
+            [KEYS.CONTROL]: 'move_point_ended',
+            [KEYS.SHIFT]: 'quick_place_ended'
+        };
+
+        if (events[key]) {
+            Store.fire(events[key], event_data);
         }
     }
 

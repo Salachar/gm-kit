@@ -1,7 +1,8 @@
 const Container = require('../base');
 const ContainerTemplate = require('../../templates/map');
 
-const MapInstance = require('../../map/map');
+const FileManager = require('./file_manager');
+const MapInstance = require('./instance/map');
 
 const controls = require('./controls');
 
@@ -24,13 +25,15 @@ class MapContainer extends Container {
         this.el_tabs = document.getElementById('map_tabs');
         this.el_help_table = document.getElementById('help_table');
 
+        this.FileManager = new FileManager({
+            onMapLoad: this.onMapLoad.bind(this)
+        });
+
         this.setEvents();
         this.addHelp();
     }
 
     onKeyDown (keyCode) {
-        // if (!this.active) return;
-
         switch (keyCode) {
             case KEYS.CONTROL:
                 CONFIG.move_segment = true;
@@ -62,8 +65,6 @@ class MapContainer extends Container {
     }
 
     onKeyUp (keyCode) {
-        // if (!this.active) return;
-
         switch (keyCode) {
             case KEYS.CONTROL:
                 CONFIG.move_segment = false;
