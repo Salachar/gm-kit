@@ -1,4 +1,3 @@
-
 const Helpers = {
     resetSnap: function () {
         CONFIG.snap.indicator.show = false;

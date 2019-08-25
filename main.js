@@ -1,10 +1,7 @@
 const electron = require('electron');
-// Module to control application life.
 const app = electron.app;
-// Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 const IPC = electron.ipcMain;
-// const dialog = electron.dialog;
 
 const fs = require('fs');;
 const path = require('path');
@@ -13,6 +10,8 @@ const url = require('url');
 const FileHelpers = require('./lib/file_helpers');
 const MapHelpers = require('./lib/map_helpers');
 const AudioHelpers = require('./lib/audio_helpers');
+
+const { log } = require('./lib/helpers');
 
 global.shared = {
     CONFIG: null,
@@ -24,7 +23,7 @@ global.shared = {
         directory: ''
     },
     WINDOW: null
-}
+};
 
 // Need a reference to hang onto the first map needed to display
 let WINDOW = null;
@@ -60,6 +59,7 @@ function createWindow () {
         protocol: 'file:',
         slashes: true
     });
+
     window_url += `?map_dir=${global.shared.CONFIG.map_directory}`;
 
     WINDOW.loadURL(window_url);
@@ -108,41 +108,39 @@ IPC.on('load_maps', (e) => {
     }
 });
 
-IPC.on('load_map', (e, maps) => {
+IPC.on('load_map', (e, maps = {}) => {
     let loaded_maps = {};
-    let map = null;
+    log('load_map', maps);
+
     for (let m in maps) {
-        map = maps[m];
-        let map_data = {
-            type: map.type,
-            name: map.name,
-            image: map.image,
-            dm_image: map.dm_image
-        };
+        let map = JSON.parse(JSON.stringify(maps[m]));
+
         if (map.json) {
             try {
-                let json = fs.readFileSync(map.json, {
+                const json = JSON.parse(fs.readFileSync(map.json, {
                     encoding: 'utf-8'
-                });
-
-                json = JSON.parse(json);
-                map_data.json = json;
-                map_data.json_directory = map.json;
+                }));
+                map.json_directory = map.json;
+                map.json = json;
             } catch (e) {
-                console.log('ERROR');
+                console.log(e);
+                console.log('Error loading map');
             }
-        } else {
-            map_data.json_directory = map.image.replace(/png|jpg|jpeg|bmp/, 'json')
         }
-        loaded_maps[map.name] = map_data;
+
+        if (!map.json_directory) {
+            map.json_directory = map.image.replace(/png|jpg|jpeg|bmp/, 'json');
+        }
+
+        loaded_maps[map.name] = map;
     }
 
     WINDOW.webContents.send('map_loaded', loaded_maps);
 });
 
-IPC.on('save_map', (e, maps) => {
-    maps = maps || {};
+IPC.on('save_map', (e, maps = {}) => {
     let map = null;
+
     for (var m in maps) {
         try {
             map = maps[m];
@@ -152,6 +150,7 @@ IPC.on('save_map', (e, maps) => {
             console.log('Unable to save map: ' + map.name);
         }
     }
+
     WINDOW.webContents.send('message', {
         type: 'success',
         text: 'Map(s) successfully saved'
