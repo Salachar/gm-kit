@@ -10,6 +10,7 @@ const MapContainer = require('./containers/map/main');
 const InfoContainer = require('./containers/info/main');
 const AudioContainer = require('./containers/audio/main');
 const LightsContainer = require('./containers/lights/main');
+const TriggersContainer = require('./containers/triggers/main');
 
 const {
     getWindowDimensions
@@ -31,6 +32,9 @@ class AppManager {
                 parent: this
             }),
             lights: new LightsContainer({
+                parent: this
+            }),
+            triggers: new TriggersContainer({
                 parent: this
             })
         };

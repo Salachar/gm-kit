@@ -16,6 +16,9 @@ class MapInstance {
     constructor (map = {}, options = {}) {
         this.map = map;
 
+        // Link back to the main map manager if its needed
+        this.manager = options.manager;
+        // The path to the image for the map
         this.image = map.image || null;
         // Is this the currently active map or not
         this.active = false;
@@ -60,6 +63,7 @@ class MapInstance {
             'zoom_out': this.onZoomOut.bind(this),
             'remove_light': this.onRemoveLight.bind(this),
             'remove_segment': this.onRemoveSegment.bind(this),
+            'remove_text_block': this.onRemoveTextBlock.bind(this),
             'add_text_block': this.onAddTextBlock.bind(this),
         }, this.name);
     }
@@ -81,9 +85,10 @@ class MapInstance {
     }
 
     onAddTextBlock () {
-        console.log('onAddTextBlock');
-        console.log(Mouse.point);
-        this.TextManager.generateTextBlockField();
+        // console.log('onAddTextBlock');
+        // console.log(Mouse.point);
+        // this.TextManager.generateTextBlockField();
+        this.TextManager.showTextInput();
     }
 
     onAddSegment (data) {
@@ -127,6 +132,10 @@ class MapInstance {
         this.SegmentManager.removeSegment(data.object.segment);
         this.CanvasManager.drawWallLines();
         this.updateLighting();
+    }
+
+    onRemoveTextBlock (data) {
+        this.TextManager.removeText(data.object.segment);
     }
 
     set tab (tab) {
@@ -229,6 +238,8 @@ class MapInstance {
     onKeyDown (key) {
         if (this.TextManager.open) return;
         const event_data = { point: Mouse.point };
+
+        // console.log(key, KEYS.QUESTION);
 
         const events = {
             [KEYS.QUESTION]: 'add_text_block',

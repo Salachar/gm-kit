@@ -79,6 +79,11 @@ class Container {
 
     render () {
         this.node.innerHTML = this.template.generate();
+        // console.log(this.node.innerHTML);
+        this.container_header = this.node.getElementsByClassName('container_header')[0];
+        // console.log(this.container_header);
+        this.container_body = this.node.getElementsByClassName('container_body')[0];
+
     }
 }
 

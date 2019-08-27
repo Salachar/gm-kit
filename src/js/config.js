@@ -44,9 +44,11 @@ let CONFIG = {
             point: null,
             segment: null
         },
-        distance: 10,
+        distance: 5,
         color: '#FF0000'
     },
+
+    // min_wall_length: 10,
 
     create_door: false,
 

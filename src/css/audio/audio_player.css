@@ -44,7 +44,7 @@
     left: 0;
     bottom: 0;
     width: 0%;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--hover-color);
     z-index: 6;
 }
 

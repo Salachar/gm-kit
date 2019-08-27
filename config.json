@@ -42,5 +42,6 @@
     },
     "map_directory_backup": "C:\\DnD\\app_maps",
     "audio_directory": "C:\\DnD\\audio_tracks",
-    "map_directory": "C:\\DnD\\app_maps"
+    "map_directory": "C:\\DnD\\app_maps",
+    "lifx": "ca5b1f77e93fb039ffcc69b8c181d1f21d2890f8a80af42996e50f55cc153d78"
 }

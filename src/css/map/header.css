@@ -1,0 +1,116 @@
+/**********************************************************
+    CONTROLS
+**********************************************************/
+
+#controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    right: 0;
+    height: var(--map-controls-height);
+    font-size: 0.7rem;
+    background-color: #444;
+    box-sizing: border-box;
+    transition: 0.3s all ease;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#help {
+    float: right;
+    margin-right: 0.2rem;
+}
+
+#help_box {
+    position: absolute;
+    top: 4rem;
+    right: 0;
+    z-index: 15;
+    background-color: #444;
+    color: #EEE;
+    transition: 0.3s all ease;
+}
+
+#help_box.hide {
+    transform: translateY(-100%);
+}
+
+#help_table td {
+    padding: 0.25rem 0.4rem;
+}
+
+.help_key {
+    font-weight: bold;
+    text-align: right;
+    vertical-align: top;
+}
+
+.help_desc {
+    max-width: 40rem;
+}
+
+
+
+/**********************************************************
+    MAP TABS
+**********************************************************/
+
+#map_tabs {
+    position: absolute;
+    top: var(--map-controls-height);;
+    left: 0;
+    right: 0;
+    height: var(--map-tabs-height);;
+    background-color: #444;
+    z-index: 20;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+.map_tab {
+    position: relative;
+    height: 2rem;
+    line-height: 2rem;
+    margin-top: 1rem;
+    /* Extra right padding to make room for the close button */
+    padding: 0 2rem 0 1rem;
+    box-sizing: border-box;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.map_tab.selected {
+    background-color: #666;
+    height: 3rem;
+    margin-top: 0;
+    line-height: 3rem;
+}
+
+.map_tab:hover {
+    background-color: var(--hover-color);
+}
+
+.map_tab:active {
+    background-color: var(--active-color);
+}
+
+.map_tab_close {
+    height: 1.6rem;
+    width: 1.6rem;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.map_tab_close:before {
+    content: '\00d7';
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1.5rem;
+}
+
+.map_tab_close:hover:before {
+    color: red;
+}

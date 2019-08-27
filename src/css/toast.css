@@ -1,0 +1,26 @@
+#toast {
+    position: fixed;
+    z-index: var(--toast-z);
+    font-size: 1.25rem;
+    text-align: center;
+    top: calc(-1 * var(--main-header-height));
+    left: 0;
+    right: 0;
+    transition: 0.3s all ease;
+    background-color: rgba(197, 224, 220, 0.75);
+    height: var(--main-header-height);
+    line-height: var(--main-header-height);;
+    cursor: pointer;
+}
+
+#toast.show-toast {
+    top: 0rem;
+}
+
+#toast.toast-success {
+    background-color: rgba(192, 216, 144, 0.75);
+}
+
+#toast.toast-error {
+    background-color: rgba(237, 67, 55, 0.75);
+}

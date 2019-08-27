@@ -3,6 +3,7 @@ const ContainerTemplate = require('../../templates/map');
 
 const FileManager = require('./file_manager');
 const MapInstance = require('./instance/map');
+const TextManager = require('./text_manager');
 
 const controls = require('./controls');
 
@@ -28,6 +29,8 @@ class MapContainer extends Container {
         this.FileManager = new FileManager({
             onMapLoad: this.onMapLoad.bind(this)
         });
+
+        this.TextManager = new TextManager();
 
         this.setEvents();
         this.addHelp();
@@ -150,7 +153,9 @@ class MapContainer extends Container {
             Toast.message(`Map "${map.name}" is already loaded`);
             return;
         }
-        this.maps[map.name] = new MapInstance(map);
+        this.maps[map.name] = new MapInstance(map, {
+            manager: this
+        });
         this.addMapTab(map);
         this.maps[map.name].hide();
     }
@@ -249,6 +254,8 @@ class MapContainer extends Container {
         document.getElementById('help').addEventListener('click', (e) => {
             document.getElementById('help_box').classList.toggle('hide');
         });
+
+        // document.getElementById('help').add
     }
 
     addHelp () {

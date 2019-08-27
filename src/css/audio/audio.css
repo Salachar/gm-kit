@@ -5,18 +5,11 @@
 @import "audio_search.css";
 @import "audio_previous.css";
 
+
+
 /**********************************************************
     SECTIONS
 **********************************************************/
-
-#main_container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 6rem;
-    overflow: hidden;
-}
 
 .section {
     position: absolute;
@@ -24,8 +17,8 @@
     z-index: 10;
     white-space: nowrap;
     color: var(--section-text-color);
-    background-color: var(--section-bg-color);
 }
+
 .section_title {
     color: var(--section-text-color);
     text-transform: uppercase;
@@ -33,7 +26,6 @@
     padding-bottom: calc(var(--section-title-height) * 0.25);
     font-size: calc(var(--section-title-height) * 0.60);
     height: calc(var(--section-title-height) * 0.75);
-    background-color: var(--main-bg-color);
 }
 
 .section_body {
@@ -44,4 +36,5 @@
     bottom: 0;
     overflow-x: hidden;
     overflow-y: scroll;
+    background-color: var(--section-bg-color);
 }

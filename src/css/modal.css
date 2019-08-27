@@ -23,7 +23,6 @@
 
 .modal_header_buttons {
     display: inline-block;
-    float: right;
 }
 
 .modal_close {
@@ -37,9 +36,11 @@
     line-height: 2rem;
     color: white;
 }
+
 .modal_close:hover {
     background-color: rgba(255, 255, 255, 0.5);
 }
+
 .modal_close:before {
     font-size: 1.5rem;
     content: '\00d7';
@@ -52,56 +53,5 @@
     left: 0;
     bottom: 0;
     overflow: hidden;
-    background-color: #444;
-}
-
-
-
-/**********************************************************
-    TEXT AREA MODAL
-**********************************************************/
-
-.text_block_modal {
-    z-index: 50;
-    position: absolute;
-    width: 20rem;
-    height: 15rem;
-}
-
-.text_block_textarea {
-    position: absolute;
-    top: .5rem;
-    left: .5rem;
-    right: .5rem;
-    bottom: .5rem;
-}
-
-.text_area {
-    margin: 0;
-    border: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    background-color: #444;
-    color: white;
-}
-
-.text_marker {
-    cursor: pointer;
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 49;
-    font-size: 2rem;
-    color: white;
-    height: 3rem;
-    width: 3rem;
-    border: 0.25rem solid white;
-    border-radius: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    text-align: center;
-    line-height: 2.5rem;
     background-color: #444;
 }

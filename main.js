@@ -45,12 +45,12 @@ function createWindow () {
     loadConfig();
 
     WINDOW = new BrowserWindow({
-        width: 1400,
-        height: 800,
+        width: 2400,
+        height: 1300,
         icon: __dirname + '/map.png'
     });
     WINDOW.setMenu(null);
-    WINDOW.setPosition(10, 100);
+    WINDOW.setPosition(100, 100);
 
     global.shared.WINDOW = WINDOW;
 

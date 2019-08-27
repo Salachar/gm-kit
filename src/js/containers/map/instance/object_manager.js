@@ -30,6 +30,12 @@ class ObjectManager {
                     search_array.push(this.parent.LightManager.lights[l]);
                 }
                 break;
+            case 'text_block':
+                search_array = [];
+                for (let t in this.parent.TextManager.text_blocks) {
+                    search_array.push(this.parent.TextManager.text_blocks[t]);
+                }
+                break;
         }
 
         if (!search_array || !search_array.length) return;
@@ -59,6 +65,7 @@ class ObjectManager {
 
         const closest_light = this.findClosest('light', point);
         const closest_segment = this.findClosest('segment', point);
+        const closest_text = this.findClosest('text_block', point);
 
         let closest = closest_segment || {
             reject: true,
@@ -71,12 +78,17 @@ class ObjectManager {
             item = 'light';
         }
 
+        if (closest_text && closest_text.distance < closest.distance) {
+            closest = closest_text;
+            item = 'text_block';
+        }
+
         if (item === 'segment' && closest.segment && closest.segment.one_way) {
             delete closest.segment.one_way;
             item = 'one_way';
         }
 
-        if (this.parent.lighting_enabled && item !== 'light') return;
+        if (this.parent.lighting_enabled && (item !== 'light' || item !== 'text_block')) return;
 
         if (!closest.reject) {
             Store.fire('remove_' + item, {

@@ -81,6 +81,14 @@ const Helpers = {
             }
         }
 
+        if (line.position) {
+            return {
+                distance: Math.sqrt(Helpers.sqr(line.position.x - point.x) + Helpers.sqr(line.position.y - point.y)),
+                x: line.position.x,
+                y: line.position.y
+            }
+        }
+
         const A = point.x - line.p1.x;
         const B = point.y - line.p1.y;
         const C = line.p2.x - line.p1.x;

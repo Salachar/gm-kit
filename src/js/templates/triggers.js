@@ -1,4 +1,4 @@
-class LightsTemplate {
+class TriggersTemplate {
     constructor (data = {}) {
         this.__data = data;
     }
@@ -6,7 +6,6 @@ class LightsTemplate {
     generate () {
         return `
             <div class="container_header">
-                <div id="lifx_refresh" class="button">refresh</div>
             </div>
 
             <div class="container_body">
@@ -15,4 +14,4 @@ class LightsTemplate {
     }
 }
 
-module.exports = LightsTemplate;
+module.exports = TriggersTemplate;

@@ -1,0 +1,53 @@
+.lifx_lights {
+    margin-bottom: 1rem;
+}
+
+.lifx_scene {
+    margin-bottom: 0.5rem;
+    transition: 0.5s all ease;
+}
+
+.lifx_scene.active {
+    background-color: rgba(255,255,255,0.15);
+}
+
+.lifx_lights_title,
+.lifx_scenes_title {
+    padding-bottom: 0.25rem;
+    margin: 0.5rem;
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+
+.lifx_scene_title {
+    padding: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.lifx_light_container {
+    display: inline-block;
+    width: 4rem;
+    vertical-align: top;
+    margin: 0 0.5rem 0.5rem 0.5rem;
+}
+
+.lifx_light {
+    box-sizing: border-box;
+    height: 4rem;
+    width: 4rem;
+    line-height: 3rem;
+    border-radius: 100%;
+    border: 0.5rem solid transparent;
+    transition: all 0.5s ease;
+    color: white;
+    text-align: center;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.lifx_light_title {
+    color: white;
+    font-size: var(--font-small);
+    text-align: center;
+    padding-top: 0.25rem;
+}
