@@ -103,4 +103,6 @@
     border: 0;
     background-color: rgba(0,0,0,0.3);
     color: white;
+    box-sizing: border-box;
+    font-size: var(--font-medium);
 }
