@@ -22,11 +22,15 @@
     --hover-bg-color: rgba(100, 149, 237, 0.5);
     --active-bg-color: rgba(100, 149, 237, 1);
 
-
+    /* Inputs  */
+    --input-height: 2rem;
     --button-bg-color: #333;
     --button-hover-color: rgba(100, 149, 237, 0.5);
     --button-active-color: rgba(100, 149, 237, 1);
     --button-standard-height: 2rem;
+
+    /* Modal */
+    --modal-header-height: 3rem;
 
     /* Main header */
     --main-header-height: 3rem;

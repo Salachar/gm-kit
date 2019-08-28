@@ -1,7 +1,7 @@
 const Container = require('../base');
 const ContainerTemplate = require('../../templates/map');
 
-const FileManager = require('./file_manager');
+const MapListManager = require('./map_list_manager');
 const MapInstance = require('./instance/map');
 const TextManager = require('./text_manager');
 
@@ -26,7 +26,7 @@ class MapContainer extends Container {
         this.el_tabs = document.getElementById('map_tabs');
         this.el_help_table = document.getElementById('help_table');
 
-        this.FileManager = new FileManager({
+        this.MapListManager = new MapListManager({
             onMapLoad: this.onMapLoad.bind(this)
         });
 

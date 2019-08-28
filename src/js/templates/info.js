@@ -6,12 +6,12 @@ class InfoTemplate {
     generate () {
         return `
             <div class="container_header">
-                <div id="clear_results_all" class="info_button">Clear All Results</div>
-                <div id="clear_results" class="info_button">Clear Unsaved Results</div>
-                <div class="info_button amount_button selected" data-amount="1">1 Per Click</div>
-                <div class="info_button amount_button" data-amount="3">3 Per Click</div>
-                <div class="info_button amount_button" data-amount="5">5 Per Click</div>
-                <div class="info_button amount_button" data-amount="10">10 Per Click</div>
+                <div id="clear_results_all" class="button">Clear All Results</div>
+                <div id="clear_results" class="button">Clear Unsaved Results</div>
+                <div class="button selected" data-amount="1">1 Per Click</div>
+                <div class="button" data-amount="3">3 Per Click</div>
+                <div class="button" data-amount="5">5 Per Click</div>
+                <div class="button" data-amount="10">10 Per Click</div>
             </div>
 
             <div class="container_body">

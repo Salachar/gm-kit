@@ -2,12 +2,13 @@ const {
     createElement
 } = require('../../helpers');
 
-class FileManager {
+class MapListManager {
     constructor (opts = {}) {
         this.map_list = null;
 
         this.onMapLoad = opts.onMapLoad;
 
+        this.node = document.getElementById('map_list_modal');
         this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
         this.el_modal_body = document.getElementById('map_list_modal_body');
 
@@ -31,7 +32,9 @@ class FileManager {
 
     addInfoTitle () {
         if (!CONFIG.params.map_dir) return;
-        document.getElementById('map_dir_location').setAttribute('title', CONFIG.params.map_dir);
+        const modal_title = this.node.getElementsByClassName('modal_title')[0];
+        if (!modal_title) return;
+        modal_title.setAttribute('title', CONFIG.params.map_dir);
     }
 
     createFileTree (map_list) {
@@ -216,4 +219,4 @@ class FileManager {
         });
     }
 }
-module.exports = FileManager;
+module.exports = MapListManager;

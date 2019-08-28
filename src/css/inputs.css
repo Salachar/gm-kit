@@ -10,21 +10,16 @@
     height: var(--button-standard-height);
     line-height: var(--button-standard-height);
     color: #EEE;
-    /* border: 1px solid #EEE; */
-    /* font-size: 0.7rem; */
     font-size: var(--font-small);
     background-color: var(--button-bg-color);
 }
 
 .button:hover {
-    /* background-color: #666; */
     background-color: var(--button-hover-color);
 }
 
 .button:active {
-    /* background-color: #EEE; */
     background-color: var(--button-active-color);
-    /* color: #444; */
 }
 
 .button_spacer {
@@ -99,4 +94,13 @@
     position: absolute;
     top: 50%;
     left: 50%;
+}
+
+.text_input {
+    margin: 0.5rem 0 0 0.5rem;
+    height: var(--input-height);
+    padding: 0 0 0 0.5rem;
+    border: 0;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
 }
