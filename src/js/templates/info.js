@@ -7,11 +7,8 @@ class InfoTemplate {
         return `
             <div class="container_header">
                 <div id="clear_results_all" class="button">Clear All Results</div>
-                <div id="clear_results" class="button">Clear Unsaved Results</div>
-                <div class="button selected" data-amount="1">1 Per Click</div>
-                <div class="button" data-amount="3">3 Per Click</div>
-                <div class="button" data-amount="5">5 Per Click</div>
-                <div class="button" data-amount="10">10 Per Click</div>
+                <div id="clear_results" class="button">Clear Unmarked Results</div>
+                <input id="generate_amount" type="text" class="text_input" placeholder="AMOUNT PER CLICK"></input>
             </div>
 
             <div class="container_body">

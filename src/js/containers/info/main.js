@@ -1,6 +1,10 @@
 const Container = require('../base');
 const ContainerTemplate = require('../../templates/info');
 
+const {
+    createElement
+} = require('../../helpers');
+
 const generators = {
     deva_generator: require('./generators/deva'),
     dragonborn_generator: require('./generators/dragonborn'),
@@ -27,6 +31,8 @@ class InfoContainer extends Container {
 
         this.amount_per_click = 1;
 
+        this.results = [];
+
         this.el_buttons = document.getElementById('info_buttons');
         this.el_results = document.getElementById('info_results');
 
@@ -40,32 +46,54 @@ class InfoContainer extends Container {
         }
     }
 
-    setEvents () {
-        [...document.getElementsByClassName('amount_button')].forEach((amount_button) => {
-            amount_button.addEventListener('click', (e) => {
-                this.amount_per_click = parseInt(e.currentTarget.getAttribute('data-amount'), 10);
-                [...document.getElementsByClassName('amount_button')].forEach((amount_button) => {
-                    amount_button.classList.remove('selected');
-                });
-                e.currentTarget.classList.add('selected');
-            });
+    addResult (result) {
+        const node = createElement('div', 'result', {
+            prependTo: this.el_results,
+            events: {
+                click: (e) => {
+                    e.currentTarget.classList.add('marked');
+                }
+            }
         });
 
+        createElement('span', 'result_key', {
+            html: result.type,
+            addTo: node
+        });
+
+        createElement('span', 'result_value', {
+            html: result.value,
+            addTo: node
+        });
+
+        this.results.push({
+            type: result.type,
+            value: result.value,
+            node: node
+        });
+    }
+
+    setEvents () {
         document.getElementById('clear_results_all').addEventListener('click', (e) => {
-            document.getElementById('info_results').innerHTML = '';
+            this.el_results.innerHTML = '';
+            this.results = [];
         });
 
         document.getElementById('clear_results').addEventListener('click', () => {
-            [...document.getElementsByClassName('result')].forEach((result) => {
-                if (!result.classList.contains('saved')) {
-                    result.remove();
+            this.results = this.results.filter((result) => {
+                if (!result.node.classList.contains('marked')) {
+                    result.node.remove();
+                } else {
+                    return result;
                 }
             });
         });
 
-        // $('body').on('click', '.result', function () {
-        //     $(this).toggleClass('saved');
-        // });
+        document.getElementById('generate_amount').addEventListener('keyup', (e) => {
+            const value = e.currentTarget.value;
+            if (isNaN(value)) value = 1;
+            this.amount_per_click = value;
+        });
     }
 }
 

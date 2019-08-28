@@ -3,8 +3,7 @@ const {
 } = require('../../../helpers');
 
 const {
-    randomFromList,
-    addResult
+    randomFromList
 } = require('../helpers');
 
 const store_generator = {
@@ -14,12 +13,12 @@ const store_generator = {
     init: function (container) {
         Object.keys(this.stores).forEach((store) => {
             const store_type = this.stores[store];
-            let el_button = createElement('div', 'info_button', {
+            createElement('div', 'info_button button', {
                 html: store_type.title,
                 events: {
                     click: (e) => {
                         for (var i = 0; i < container.amount_per_click; ++i) {
-                            addResult(container, {
+                            container.addResult({
                                 type: store_type.title,
                                 value: this.generate(store_type)
                             });

@@ -197,10 +197,12 @@ const Helpers = {
     createElement: function (type, classes, opts) {
         opts = opts || {};
         let node = document.createElement(type);
+
         let classes_split = classes.split(' ');
         for (let i = 0; i < classes_split.length; ++i) {
             node.classList.add(classes_split[i]);
         }
+
         if (opts.attributes) {
             for (let attr in opts.attributes) {
                 if (opts.attributes[attr]) {
@@ -208,6 +210,7 @@ const Helpers = {
                 }
             }
         }
+
         if (opts.dataset) {
             for (let data in opts.dataset) {
                 if (opts.dataset[data]) {
@@ -215,20 +218,31 @@ const Helpers = {
                 }
             }
         }
+
         if (opts.events) {
             for (let event in opts.events) {
                 node.addEventListener(event, opts.events[event]);
             }
         }
+
         if (opts.html) {
             node.innerHTML = opts.html;
         }
+
+        if (opts.prependTo) {
+            if (!opts.prependTo.length) opts.prependTo = [opts.prependTo];
+            opts.prependTo.forEach((container) => {
+                container.insertBefore(node, container.firstChild);
+            });
+        }
+
         if (opts.addTo) {
             if (!opts.addTo.length) opts.addTo = [opts.addTo];
             opts.addTo.forEach((container) => {
                 container.appendChild(node);
             });
         }
+
         if (opts.css) {
             for (let style in opts.css) {
                 node.style[style] = opts.css[style];

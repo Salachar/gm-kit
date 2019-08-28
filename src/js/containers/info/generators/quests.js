@@ -13,7 +13,6 @@ const {
 } = require('../../../helpers');
 
 const {
-    addResult,
     randomFromList
 } = require('../helpers');
 
@@ -44,12 +43,12 @@ const quest_generator = {
         });
 
         Object.keys(this.quests_by_type).forEach((quest_type) => {
-            createElement('div', 'info_button', {
+            createElement('div', 'info_button button', {
                 html: quest_type,
                 events: {
                     click: (e) => {
                         for (var i = 0; i < container.amount_per_click; ++i) {
-                            addResult(container, {
+                            container.addResult({
                                 type: '(' + this.title + ') ' + quest_type,
                                 value: this.generate(quest_type)
                             });

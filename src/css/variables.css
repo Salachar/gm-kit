@@ -9,6 +9,9 @@
     --hover-color: rgba(100, 149, 237, 0.5);
     --active-color: rgba(100, 149, 237, 1);
 
+    --info-even: rgba(100, 149, 237, 0.2);
+    --info-odd: rgba(100, 149, 237, 0.4);
+
     --main-bg-color: #222;
     --standard-padding: 1.5rem;
     --section-bg-color: #333;
