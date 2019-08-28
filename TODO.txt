@@ -1,15 +1,116 @@
-TODO: (Ordered by priority)
+What I was working on:
+    - Cleaning up the text input modals
+
+    - Changing the info amount buttons into an input
+
+    - Changing the volume slider to something less ugly
+
+    - Readd/fix being able to delete tags
+        - Initial tags are missing the remove button
+
+    - Fix up checkboxes to match standard 3rem header/input size
+        - Fix up the checkboxes in the map list modal, they are too easy to click outside of
+
+    - Fix the positions of the help and text_block nodes
+
+    - Change the style of the info buttons
+
+    - Re-enable saving of info results
+        - Change the verbage, "marked" sounds better and people won't think it saves like the map does
+
+    - Lights need to update after changing
+        - Perhaps add an interval to update the lights
+
+    - Lights need a way to display power status
+
+    - Lights need a color picker in order to change them
+        - Scenes will not be changable
+
+    - Add basic trigger functionality
+        - Will require being able to get all data from both the Audio and Lights containers/managers
+
+    - Fix the UI for the Text Blocks so that it meshes more with the container header
+        - Currently it looks too much like a modal that you can't move, which is misleading
+
+    - variables.css could probably use a little bit of cleanup
+
+    - HTTP helper should be added to generic helpers and have hardcoded bullshit removed
+
+
+TODO:
+    - Add small mirrored map/image display for players on the other side of the table
+        - Optional, not always shown
+        - I can make it a checkbox or some stupid shit
+
+    - Add "Enemy Markers" to the board
+        - Just a name and number
+        - Movable as enemies move as well
+        - Small input for entering damage/health
+        - Plus/Minus toggle
+
+    - Add super basic dice rolling capabilities
+
+    - Shape/Marker creation for items on the map
+        - Try to make it easy to use for spells and shit
+
+    - Update the info generator buttons to not look like shit
+
+    - Fix one way wall indicator to better show which side is see through
+        - A big arrow going through the wall showing direction of light passage should work
+
+    - Look at the help text again, I don't think it's very good
+
+    - Load state should show a Toast error if there is no map loaded
+
+    - Load state might not even work in general
+
+    - Take another look at the store and see if it works for general use
+        - It might be the best way that I can share the Audio and Lights data
+
+    - map display.js file needs to be moved into the map container folder
+
+    - Sound and Quadrant managers should be moved off the AppManager
+        - SoundManager is misleading given that the audio app has been added
+        - QuadrantManager is specific only to maps and nothing else needs it
+
+    - Move everything over to github
+        - Had support for Electron updating
+        - Owned by Microsoft and just kinda better in general from what I can tell
+
+    - I need a better name for this stupid app
+
+    - Add functionaliy similar to map folder picking for audio
+
+    - Lights needs input in the header to enter your LIFX code
+        - Currently hardcoded in the http helper
+        - lifxaccess file does nothing at all
+        - LIFX code should display in the header and save to the main config
+        - Remove specific file for LIFX access code
+        - Add a small info bit saying the code is not sent anywhere and only saved to a
+            file on the machine
+        - Link to github and files for people who want to verify it for themselves
+
+    - Look into adding better touch support
+        - Touch works pretty for maps but there are some bad quirks with it that prevent touch
+            only use for wall placement
+
+    - Re-add arrow key scrolling
+        - Sometimes it just seems better
+        - The scrollers were complete garbage though
+
     - Add menu controls, there should be a button for everything
         - Menu should be hidable
         - Readd scrolling from DM window
+
     - Leaving focus of app can at times cause it to become stuck in point moving mode
+
     - Add Grid
+
     - When connecting between two existing segments, there should be no length check
         - Maybe disbale for shift clicking in general
         - Or even altogether at this point
         - Dont allow snapping to origin point
-    - Adding new walls by connecting two middle walls does not split the first one
-    - Change file saving (shouldn't be all or nothing)
+
     - Add ability to add text to locations
         - Question Mark icon
         - Click to Open, Click outside to close
@@ -24,12 +125,19 @@ TODO: (Ordered by priority)
         - Look into switching to Github
             - Can use a .io page for the main page easily
             - Can probably host from this page as well
+
     - Option to disable walls for a map, so everything is lit up
+
     - Create a campaign (basically a folder with links)
         - Somehow add maps to a campaign
+
     - Read in config
+
     - Attempt to fetch images from a PDF
+
     - Add map sources link:
+        - This can just be a stupid little like the help node
+        - I can a button like "Community Maps" or something
         https://www.patreon.com/venatusmaps
         https://www.patreon.com/blueswordgames
         https://2minutetabletop.com/
@@ -38,85 +146,19 @@ TODO: (Ordered by priority)
         https://jaredblando.com/cartography/
         https://www.patreon.com/neutralparty
 
-MAPS:
-    - Figure out who made Tavern1
-        - It has a very nice clean aesthetic
 
-Updates (4/23/2018):
-    - Arrow Key Scrolling:
-        Selected window will now scroll with the arrow keys
-    - Edge Hover Scrolling:
-        Hover over the edge of the map to scroll in that direction
-    - Secondary Window scrolling using Main Window:
-        Holding 'ALT' and doing one of the above scrolling methods
-        on the Main Window will scroll the Secondary Window
-    - One second delay to edge hovering
-        To prevent unwanted edge hovering when moving out of the map area
-        the user must stay on the hover location for one second before scrolling
-        will start
-    - Map Dir Creation:
-        If the maps directory location doesn't exist, which should be
-        located next to the executable, one will now be created
-    - Map Dir Location Info:
-        On the map selection modal, there is no an info icon, hovering over
-        this will tell you where the maps directory is located on your
-        machine
-    - Improved Lighting Performance on Secondary Display
-    - Improved section titles on the map select modal
-
-Updates (5/1/2018):
-    - Added One Way Walls for elevation purposes
-    - Added example map
-
-Updates (5/3/2018):
-    - Added a README to help showcase the application
-
-Updates (7/9/2018):
-    - Sanitize map data on save
-        - Remove length for segments *not needed
-            - only needed for door dragging, computed on runtime now
-        - Round all segments to whole integer *floats not needed
-        - Remove light links, not needed in dual map setup
-    - Remove Light Links
-        - They are not needed for the dual window application and are legacy
-    - Whole integers for segment x/y, I can't see why rounding to the nearest whole hurts
-        anything and would reduce .json file size (not important) and payload of light data
-        to the secondary screen (more important)
-
-Updates (10/5/2018)
-    - Added new event/store implementation
-    - Holding CTRL now lets the user drag ends of placed walls
-    - Image auto sizing added in, new max of 3000 pixels
-    - Hide scrolling elements when at the edge of the map
-
-Updates (11/5/2018)
-    - Fixed store events not being cleared after a map tab is closed
-    - Fixed store not being cleared completely when all maps are gone
-    - Remove walls/doors there are now only segments with types
-    - Fixed CTRL point deletion after refactor to more general segments
-    - Fixed multiple events firing after closing and reopening map
-    - Fixed opening display window clearing important segment data due to segment sanitization
-
-Updates (1/27/2018)
-    - Load DM versions of map on the DM screen if available
-    - Add state saving (light and lights saving) to app
-        - You can now save one state per map
-    - Added map list searching
-
-
-
-Electron Builder build stuff, if I ever switch back
+Old Electron Builder code, for when I decide to try that bullshit again
 "build": {
-"appId": "dndmapapp",
-"files": [
-  "**/*",
-  "!maps",
-  "!node_modules"
-],
-"win": {
-  "target": "zip"
-},
-"mac": {
-  "target": "tar.gz"
-}
+    "appId": "dndmapapp",
+    "files": [
+        "**/*",
+        "!maps",
+        "!node_modules"
+    ],
+    "win": {
+        "target": "zip"
+    },
+    "mac": {
+        "target": "tar.gz"
+    }
 }
