@@ -50,7 +50,8 @@ Update (8/29/2019):
     - Take another look at the store and see if it works for general use
         - It might be the best way that I can share the Audio and Lights data
         - This shit appears to just simply work, just set the data
-
+    - Fix one way wall indicator to better show which side is see through
+        - A big arrow going through the wall showing direction of light passage should work
 
 Update (8/28/2019):
     - Cleaning up the text input modals

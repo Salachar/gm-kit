@@ -5,9 +5,6 @@ What I was working on:
     - Lights need a color picker in order to change them
         - Scenes will not be changable
 
-    - Fix one way wall indicator to better show which side is see through
-        - A big arrow going through the wall showing direction of light passage should work
-
 
 PRIORITY: Either cause it's important or I just want to
 
