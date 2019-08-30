@@ -1,3 +1,6 @@
+/**********************************************************
+    BUTTON
+**********************************************************/
 .button {
     display: inline-block;
     vertical-align: top;
@@ -32,13 +35,77 @@
     opacity: 0.5;
 }
 
-.radio, .checkbox {
+
+
+/**********************************************************
+    CHECKBOX
+**********************************************************/
+
+.checkbox_container {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    height: var(--checkbox-height);
+    font-size: var(--font-medium);
+    line-height:  var(--checkbox-height);
+}
+
+.checkbox {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    height: var(--checkbox-height);
+    width:  var(--checkbox-height);
+    color: white;
+    box-sizing: border-box;
+    border: 1px solid #EEE;
+    cursor: pointer;
+    font-size: var(--font-large);
+    line-height:  var(--checkbox-height);
+    text-align: center;
+}
+
+.checkbox:hover {
+    background-color: #666;
+}
+
+.checkbox:active {
+    background-color: #EEE;
+    color: #444;
+}
+
+.checkbox_label {
+    display: inline-block;
+    vertical-align: top;
+    height: var(--checkbox-height);;
+    line-height: var(--checkbox-height);
+    margin-left: 0.5rem;
+    color: #EEE;
+}
+
+.checkbox.checked:before {
+    content: "";
+    height: 0.5rem;
+    width: 0.5rem;
+    background-color: #EEEEEE;
+    transform: translateX(-50%) translateY(-50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+
+
+/**********************************************************
+    RADIO
+**********************************************************/
+
+.radio {
     position: relative;
     display: inline-block;
     vertical-align: top;
     height: 1rem;
     width: 1rem;
-    margin: 0.5rem 0 0 0.5rem;
     box-sizing: border-box;
     border: 1px solid #EEE;
     cursor: pointer;
@@ -48,23 +115,16 @@
     border-radius: 50%;
 }
 
-.checkbox {
-    color: white;
-    font-size: 1.5rem;
-    line-height: 1rem;
-    text-align: center;
-}
-
-.radio:hover, .checkbox:hover {
+.radio:hover {
     background-color: #666;
 }
 
-.radio:active, .checkbox:active {
+.radio:active {
     background-color: #EEE;
     color: #444;
 }
 
-.radio_label, .checkbox_label {
+.radio_label {
     display: inline-block;
     vertical-align: top;
     height: 2rem;
@@ -85,16 +145,11 @@
     border-radius: 50%;
 }
 
-.checkbox.checked:before {
-    content: "";
-    height: 0.5rem;
-    width: 0.5rem;
-    background-color: #EEE;
-    transform: translateX(-50%) translateY(-50%);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-}
+
+
+/**********************************************************
+    TEXT INPUT
+**********************************************************/
 
 .text_input {
     margin: 0.5rem 0 0 0.5rem;

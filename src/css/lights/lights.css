@@ -1,5 +1,33 @@
-.lifx_lights {
-    margin-bottom: 1rem;
+#lifx_access_code_input {
+    width: 40rem;
+}
+
+
+
+/**********************************************************
+    Light and Scenes are both sections
+**********************************************************/
+
+.lifx_section {
+    margin: 1rem
+}
+
+.lifx_section_title {
+    padding-bottom: 0.5rem;
+    margin: 0.5rem 0.5rem 1rem 0.5rem;
+    font-size: var(--font-huge);
+    border-bottom: 2px solid rgba(255,255,255,0.5);
+}
+
+
+
+/**********************************************************
+    Individual scene within the scenes section
+**********************************************************/
+
+.lifx_scene_title {
+    padding: 0.5rem;
+    font-size: 1.25rem;
 }
 
 .lifx_scene {
@@ -11,24 +39,17 @@
     background-color: rgba(255,255,255,0.15);
 }
 
-.lifx_lights_title,
-.lifx_scenes_title {
-    padding-bottom: 0.25rem;
-    margin: 0.5rem;
-    font-size: 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.5);
-}
 
-.lifx_scene_title {
-    padding: 0.5rem;
-    font-size: 1.25rem;
-}
+
+/**********************************************************
+    Represents a single light (for both Lights and Scenes)
+**********************************************************/
 
 .lifx_light_container {
     display: inline-block;
     width: 4rem;
     vertical-align: top;
-    margin: 0 0.5rem 0.5rem 0.5rem;
+    margin: 0 0.75rem 0.75rem 0.75rem;
 }
 
 .lifx_light {

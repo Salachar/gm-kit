@@ -1,3 +1,9 @@
+const {
+    createElement,
+    configureElement,
+    cacheElements
+} = require('./dom');
+
 const Helpers = {
     resetSnap: function () {
         CONFIG.snap.indicator.show = false;
@@ -19,7 +25,6 @@ const Helpers = {
 
     pointMatch: function (p1, p2, tolerance) {
         tolerance = tolerance || 0;
-        // console.log(Math.abs(p1.x - p2.x),  Math.abs(p1.y - p2.y) );
         return (Math.abs(p1.x - p2.x) <= tolerance && Math.abs(p1.y - p2.y) <= tolerance);
     },
 
@@ -120,7 +125,7 @@ const Helpers = {
         }
     },
 
-    getNormal (segment) {
+    getNormal: function (segment) {
         if (!segment) return;
         if (segment.segment) segment = segment.segment;
 
@@ -167,89 +172,157 @@ const Helpers = {
         };
     },
 
-    getUnitVector (segment) {
+    getUnitVector: function (segment) {
         let vector = {
             x: segment.p2.x - segment.p1.x,
             y: segment.p2.y - segment.p1.y
         };
-
         let mag = Math.sqrt(Helpers.sqr(vector.x) + Helpers.sqr(vector.y));
-
         return {
             x: vector.x / mag,
             y: vector.y / mag
         };
     },
 
-    getSegmentMiddle (segment) {
+    getPerpendicularUnitVector: function (segment) {
+        let unit_vector = Helpers.getUnitVector(segment);
+        let perp = {
+            x: unit_vector.y,
+            y: unit_vector.x * -1
+        }
+        return perp;
+    },
+
+    getSegmentMiddle: function (segment) {
         return {
             x: segment.p1.x + ((segment.p2.x - segment.p1.x) * 0.5),
             y: segment.p1.y + ((segment.p2.y - segment.p1.y) * 0.5)
         };
     },
 
-    cacheElements (obj, cache_list) {
-        cache_list.forEach((id) => {
-            obj['el_' + id] = document.getElementById(id);
-        });
+    cacheElements: function (obj, cache_list) {
+        cacheElements(obj, cache_list)
     },
 
-    createElement: function (type, classes, opts) {
-        opts = opts || {};
-        let node = document.createElement(type);
+    createElement: function (type, classes, opts = {}) {
+        return createElement(type, classes, opts);
+    },
 
-        let classes_split = classes.split(' ');
-        for (let i = 0; i < classes_split.length; ++i) {
-            node.classList.add(classes_split[i]);
+    configureElement: function (node, opts = {}) {
+        return configureElement(node, opts);
+    },
+
+    HSVtoRGB: function (hsv) {
+        let h = hsv.h;
+        let s = hsv.s;
+        let v = hsv.v;
+
+        let r, g, b, i, f, p, q, t;
+
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+
+        switch (i % 6) {
+            case 0:
+                r = v, g = t, b = p;
+                break;
+
+            case 1:
+                r = q, g = v, b = p;
+                break;
+
+            case 2:
+                r = p, g = v, b = t;
+                break;
+
+            case 3:
+                r = p, g = q, b = v;
+                break;
+
+            case 4:
+                r = t, g = p, b = v;
+                break;
+
+            case 5:
+                r = v, g = p, b = q;
+                break;
         }
 
-        if (opts.attributes) {
-            for (let attr in opts.attributes) {
-                if (opts.attributes[attr]) {
-                    node.setAttribute(attr, opts.attributes[attr]);
-                }
-            }
-        }
+        r = Math.floor(r * 255);
+        g = Math.floor(g * 255);
+        b = Math.floor(b * 255);
 
-        if (opts.dataset) {
-            for (let data in opts.dataset) {
-                if (opts.dataset[data]) {
-                    node.dataset[data] = opts.dataset[data];
-                }
-            }
-        }
+        return {
+            r: r,
+            g: g,
+            b: b,
+            string: `rgb(${r}, ${g}, ${b})`
+        };
+    },
 
-        if (opts.events) {
-            for (let event in opts.events) {
-                node.addEventListener(event, opts.events[event]);
-            }
-        }
+    // HSVtoRGB: function ($iH, $iS, $iV) {
+    // HSVtoRGB: function (hsv) {
+    //     let $iH = hsv.h;
+    //     let $iS = hsv.s;
+    //     let $iV = hsv.v;
 
-        if (opts.html) {
-            node.innerHTML = opts.html;
-        }
+    //     if($iH < 0)   $iH = 0;   // Hue:
+    //     if($iH > 360) $iH = 360; //   0-360
+    //     if($iS < 0)   $iS = 0;   // Saturation:
+    //     if($iS > 100) $iS = 100; //   0-100
+    //     if($iV < 0)   $iV = 0;   // Lightness:
+    //     if($iV > 100) $iV = 100; //   0-100
 
-        if (opts.prependTo) {
-            if (!opts.prependTo.length) opts.prependTo = [opts.prependTo];
-            opts.prependTo.forEach((container) => {
-                container.insertBefore(node, container.firstChild);
-            });
-        }
+    //     let $dS = $iS/100.0; // Saturation: 0.0-1.0
+    //     let $dV = $iV/100.0; // Lightness:  0.0-1.0
+    //     let $dC = $dV*$dS;   // Chroma:     0.0-1.0
+    //     let $dH = $iH/60.0;  // H-Prime:    0.0-6.0
+    //     let $dT = $dH;       // Temp variable
 
-        if (opts.addTo) {
-            if (!opts.addTo.length) opts.addTo = [opts.addTo];
-            opts.addTo.forEach((container) => {
-                container.appendChild(node);
-            });
-        }
+    //     while($dT >= 2.0) $dT -= 2.0;
+    //     let $dX = $dC*(1-Math.abs($dT-1));
 
-        if (opts.css) {
-            for (let style in opts.css) {
-                node.style[style] = opts.css[style];
-            }
-        }
-        return node;
-    }
+    //       let $dR, $dG, $dB;
+
+    //     switch(Math.floor($dH)) {
+    //         case 0:
+    //             $dR = $dC; $dG = $dX; $dB = 0.0; break;
+    //         case 1:
+    //             $dR = $dX; $dG = $dC; $dB = 0.0; break;
+    //         case 2:
+    //             $dR = 0.0; $dG = $dC; $dB = $dX; break;
+    //         case 3:
+    //             $dR = 0.0; $dG = $dX; $dB = $dC; break;
+    //         case 4:
+    //             $dR = $dX; $dG = 0.0; $dB = $dC; break;
+    //         case 5:
+    //             $dR = $dC; $dG = 0.0; $dB = $dX; break;
+    //         default:
+    //             $dR = 0.0; $dG = 0.0; $dB = 0.0; break;
+    //     }
+
+    //     let $dM  = $dV - $dC;
+    //     $dR += $dM; $dG += $dM; $dB += $dM;
+    //     $dR *= 255; $dG *= 255; $dB *= 255;
+
+    //     // This would return RGB
+    //     // return Math.round($dR)+","+Math.round($dG)+","+Math.round($dB);
+
+    //     return {
+    //         r: $dR,
+    //         g: $dG,
+    //         b: $dB,
+    //         string: Math.round($dR) + "," + Math.round($dG) + "," + Math.round($dB)
+    //     };
+
+    //     // This would return html HEX
+    //     //$color = dechex( ($dR << 16) + ($dG << 8) + $dB );
+    //     //return '#' . str_repeat('0', 6 - strlen($color)) . $color;
+
+    // }
 };
 
 module.exports = Helpers;

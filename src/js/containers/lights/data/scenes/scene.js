@@ -1,4 +1,4 @@
-const http = require('../../lib/http');
+const http = require('../../../../lib/http');
 
 class Scene {
     constructor (opts = {}) {
@@ -43,19 +43,22 @@ class Scene {
     }
 
     activate () {
-        http(`https://api.lifx.com/v1/scenes/scene_id:${this.uuid}/activate`, {
-            type: 'PUT',
-            data: JSON.stringify(this.props),
-            success: (response) => {
-                this.onActivate();
-                console.log(response);
-            },
-            error: (response) => {
-                console.log(response);
-                setTimeout(() => {
+        return new Promise((resolve, reject) => {
+            http(`https://api.lifx.com/v1/scenes/scene_id:${this.uuid}/activate`, {
+                type: 'PUT',
+                data: JSON.stringify(this.props),
+                headers: {
+                    "Authorization": `Bearer ${CONFIG.lifx_access_code}`,
+                    "Content-Type": "application/json"
+                },
+                success: (response) => {
                     this.onActivate();
-                }, (this.props.duration + 1) * 1000);
-            }
+                    resolve(response);
+                },
+                error: (response) => {
+                    reject(response);
+                }
+            });
         });
     }
 }

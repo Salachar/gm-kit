@@ -1,4 +1,4 @@
-const http = require('../../lib/http');
+const http = require('../../../../lib/http');
 
 const Scene = require('./scene');
 
@@ -31,16 +31,20 @@ class Scenes {
     }
 
     fetch (Lights) {
+        //
         return new Promise((resolve, reject) => {
             this.clearScenes();
             http("https://api.lifx.com/v1/scenes", {
+                headers: {
+                    "Authorization": `Bearer ${CONFIG.lifx_access_code}`,
+                    "Content-Type": "application/json"
+                },
                 success: (response) => {
                     this.parse(response, Lights);
                     resolve();
                 },
                 error: (response) => {
-                    console.log(response);
-                    resolve();
+                    reject(response);
                 }
             });
         });

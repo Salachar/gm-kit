@@ -1,10 +1,10 @@
 #text_block_container {
     z-index: var(--text-block-container-z);
     position: absolute;
-    top: 4rem;
+    top: var(--container-header-height);;
     right: 0;
     width: 50%;
-    height: 15rem;
+    height: 30rem;
     transform: translateY(-100%);
     transition: all .2s ease;
 }
@@ -15,9 +15,9 @@
 }
 
 .text_block_header {
-    height: 2rem;
-    font-size: 1rem;
-    line-height: 2rem;
+    height: var(--modal-header-height);
+    font-size: var(--font-medium);
+    line-height: var(--modal-header-height);;
     padding-left: 0.5rem;
     padding-right: 2.2rem;
     background-color: #888;
@@ -33,23 +33,15 @@
 
 .text_block_body {
     position: absolute;
-    top: 2rem;
+    top: var(--modal-header-height);
     right: 0;
     left: 0;
     bottom: 0;
     overflow: hidden;
-    background-color: #444;
-}
-
-.text_block_textarea_wrap {
-    position: absolute;
-    top: .5rem;
-    left: .5rem;
-    right: .5rem;
-    bottom: .5rem;
 }
 
 #text_block_textarea {
+    resize: none;
     margin: 0;
     border: 0;
     position: absolute;
@@ -58,10 +50,34 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    background-color: #444;
+    padding: 0.5rem;
+    background-color: rgba(80, 80, 80, 0.75);
+    color: white;
+    font-size: var(--font-medium);
+}
+
+#text_block_close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: var(--modal-header-height);;
+    height: var(--modal-header-height);;
+    cursor: pointer;
+    text-align: center;
+    line-height: var(--modal-header-height);;
     color: white;
 }
 
+#text_block_close:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#text_block_close:before {
+    font-size: 1.5rem;
+    content: '\00d7';
+}
+
+/* This is the little ? icon that shows on the map */
 .text_marker {
     cursor: pointer;
     box-sizing: border-box;
@@ -77,25 +93,4 @@
     text-align: center;
     line-height: 2.5rem;
     background-color: #444;
-}
-
-#text_block_close {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 2rem;
-    height: 2rem;
-    cursor: pointer;
-    text-align: center;
-    line-height: 2rem;
-    color: white;
-}
-
-#text_block_close:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-#text_block_close:before {
-    font-size: 1.5rem;
-    content: '\00d7';
 }

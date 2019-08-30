@@ -1,15 +1,14 @@
-const SoundManager = require('./sound_manager');
-const QuadrantManager = require('./quadrant_manager');
-const MapInstance = require('./map/map');
-const ToastMesseger = require('./toast');
-const Mouse = require('./mouse');
+const Store = require('../../lib/store');
+window.Store = Store;
 
-const Store = require('./store');
+const Mouse = require('../../lib/mouse');
+const SoundManager = require('../../sound_manager');
+const QuadrantManager = require('../../quadrant_manager');
+const MapInstance = require('./instance/map');
 
 const {
-    getWindowDimensions,
-    createElement
-} = require('./helpers');
+    getWindowDimensions
+} = require('../../lib/helpers');
 
 class DisplayManager {
     constructor () {
@@ -33,6 +32,7 @@ class DisplayManager {
     }
 
     setDim (dimmer_mod) {
+        console.log('setdim');
         let dimmer_opacity = parseFloat(document.getElementById('dimmer').style.opacity, 10);
         let new_dimmer_opacity = dimmer_opacity + dimmer_mod;
         if (new_dimmer_opacity < 0) new_dimmer_opacity = 0;
@@ -84,6 +84,7 @@ class DisplayManager {
 
     setEvents () {
         window.addEventListener('message', (e) => {
+            console.log(e);
             const data = e.data;
             if (data.event === 'display_map') {
                 this.onMapLoad(data.data);
@@ -108,12 +109,11 @@ class DisplayManager {
 }
 
 window.onload = () => {
-    CONFIG.is_display = true;
-    CONFIG.window = 'display';
+    CONFIG.is_player_screen = true;
+    CONFIG.window = 'player_screen';
 
     window.SoundManager = new SoundManager();
     window.QuadrantManager = new QuadrantManager();
-    window.Toast = new ToastMesseger();
     window.DisplayManager = new DisplayManager();
     window.Mouse = new Mouse();
 

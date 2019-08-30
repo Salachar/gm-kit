@@ -32,7 +32,7 @@ class AudioTemplate {
                 <div id="search_section" class="section">
                     <div class="section_title">search</div>
                     <div id="search_input_wrap">
-                        <input id="search_input" class="text_input" type="text" placeholder="ENTER TRACK OR TAG HERE"></input>
+                        <input id="search_input" class="text_input" type="text" placeholder="ENTER TRACK/TAG/FOLDER (tracks under matching folder included)"></input>
                     </div>
                     <div id="search_body" class="section_body"></div>
                 </div>

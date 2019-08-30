@@ -1,12 +1,10 @@
-const Store = require('../../../store');
-
 const {
     pDistance,
     copyPoint,
     pointMatch,
     sqr,
     resetSnap
-} = require('../../../helpers');
+} = require('../../../lib/helpers');
 
 class SegmentManager {
     constructor (map = {}, parent) {
@@ -58,7 +56,7 @@ class SegmentManager {
 
     onImageLoaded (data) {
         this.updateBounds(data.image_dimensions);
-        if (CONFIG.is_display) {
+        if (CONFIG.is_player_screen) {
             Store.fire('enable_light');
         }
     }

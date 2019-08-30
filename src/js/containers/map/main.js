@@ -10,7 +10,7 @@ const controls = require('./controls');
 const {
     createElement,
     resetSnap
-} = require('../../helpers');
+} = require('../../lib/helpers');
 
 class MapContainer extends Container {
     constructor (opts = {}) {
@@ -34,18 +34,26 @@ class MapContainer extends Container {
 
         this.setEvents();
         this.addHelp();
+
+        Store.register({
+            'mouse_leave': this.onMouseLeave.bind(this)
+        });
+    }
+
+    onMouseLeave () {
+        // Currently these do the same, probably will always remain redundant
+        this.disableSegmentMove();
+        this.disableSegmentQuickPlace();
     }
 
     onKeyDown (keyCode) {
         switch (keyCode) {
             case KEYS.CONTROL:
-                CONFIG.move_segment = true;
-                CONFIG.quick_place = false;
+                this.enableSegmentMove();
                 Store.fire('move_segment_toggled');
                 break;
             case KEYS.SHIFT:
-                CONFIG.move_segment = false;
-                CONFIG.quick_place = true;
+                this.enableSegmentQuickPlace();
                 break;
             case KEYS.LEFT_BRACKET:
                 Store.fire('dim_down');
@@ -70,10 +78,10 @@ class MapContainer extends Container {
     onKeyUp (keyCode) {
         switch (keyCode) {
             case KEYS.CONTROL:
-                CONFIG.move_segment = false;
+                this.disableSegmentMove();
                 break;
             case KEYS.SHIFT:
-                CONFIG.quick_place = false;
+                this.disableSegmentQuickPlace();
                 break;
             default:
                 // console.log('APP >> Keyup: Unhandled keyCode: ' + e.keyCode);
@@ -85,20 +93,41 @@ class MapContainer extends Container {
         }
     }
 
+    enableSegmentMove () {
+        CONFIG.move_segment = true;
+        CONFIG.quick_place = false;
+    }
+
+    disableSegmentMove () {
+        CONFIG.move_segment = false;
+        CONFIG.quick_place = false;
+    }
+
+    enableSegmentQuickPlace () {
+        CONFIG.move_segment = false;
+        CONFIG.quick_place = true;
+    }
+
+    disableSegmentQuickPlace () {
+        CONFIG.move_segment = false;
+        CONFIG.quick_place = false;
+    }
+
     showInDisplayWindow () {
         let current_map_data =  (this.current_map || {}).full_data || {};
 
         if (window.display_window && !window.display_window.closed) {
             window.display_window.postMessage({
                 event: 'display_map',
-                data: current_map_data
+                data: current_map_data,
+                config: CONFIG
             });
             return;
         }
 
         const window_options = {
-            autoHideMenuBar: 1,
-            titleBarStyle: 'hidden',
+            // autoHideMenuBar: 1,
+            // titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -111,7 +140,7 @@ class MapContainer extends Container {
         }
 
         window.display_window = window.open(
-            '../html/display.html',
+            '../html/player_screen.html',
             'electron',
             option_param
         );
@@ -192,16 +221,20 @@ class MapContainer extends Container {
             let new_tab = createElement('div', 'map_tab', {
                 html: map_name,
                 events: {
-                    click: (e) => {
+                    click: (e) => { // Left click
                         if (e.defaultPrevented) return;
                         this.setActiveMap(map_name);
+                    },
+                    contextmenu: (e) => { // Right click
+                        if (e.defaultPrevented) return;
+                        this.removeMap(map_name);
                     }
                 },
                 addTo: this.el_tabs
             });
             this.maps[map_name].tab = new_tab;
 
-            let new_tab_close = createElement('div', 'map_tab_close', {
+            createElement('div', 'map_tab_close', {
                 events: {
                     click: (e) => {
                         e.preventDefault();

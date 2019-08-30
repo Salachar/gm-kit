@@ -79,13 +79,10 @@ class AudioData {
             this.collapse = data.collapse;
             this.volume =  data.volume || 0.1;
 
-            console.log(this.volume);
             this.parent.player.volume = this.volume;
         } catch (e) {
             console.log(e.message);
         }
-
-        console.log(this);
     }
 }
 

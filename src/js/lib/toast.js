@@ -16,7 +16,7 @@ class ToastMesseger {
     }
 
     message (message, type) {
-        if (CONFIG.is_display) return;
+        if (CONFIG.is_player_screen) return;
         this.node.innerHTML = message;
         this.show(type);
         setTimeout(() => {

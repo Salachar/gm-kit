@@ -18,8 +18,10 @@ class MapTemplate {
 
                     <div class="button_spacer"></div>
 
-                    <div id="create_one_way_wall" class="checkbox"></div>
-                    <div class="checkbox_label">One-Way</div>
+                    <div class="checkbox_container">
+                        <div id="create_one_way_wall" class="checkbox"></div>
+                        <div class="checkbox_label">One-Way</div>
+                    </div>
 
                     <div id="help" class="button">Help</div>
                 </div>
@@ -42,9 +44,7 @@ class MapTemplate {
                         <div id="text_block_close"></div>
                     </div>
                     <div class="text_block_body">
-                        <div class="text_block_textarea_wrap">
-                            <textarea id="text_block_textarea"></textarea>
-                        </div>
+                        <textarea id="text_block_textarea"></textarea>
                     </div>
                 </div>
 

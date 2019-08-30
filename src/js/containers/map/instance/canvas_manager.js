@@ -1,11 +1,10 @@
-const Store = require('../../../store');
-
 const {
     createElement,
     rgba,
-    getNormal,
-    isBlankPixel
-} = require('../../../helpers');
+    isBlankPixel,
+    getUnitVector,
+    getPerpendicularUnitVector
+} = require('../../../lib/helpers');
 
 const MAX_MAP_SIZE = 3000;
 
@@ -16,7 +15,7 @@ class CanvasManager {
         this.parent = parent;
 
         // Initialize to false for display window, true otherwise
-        this.draw_walls = !CONFIG.is_display;
+        this.draw_walls = !CONFIG.is_player_screen;
 
         this.canvas_container = parent.node;
 
@@ -49,7 +48,7 @@ class CanvasManager {
     }
 
     onLightPolyUpdate (data) {
-        if (CONFIG.is_display) {
+        if (CONFIG.is_player_screen) {
             this.drawLight({
                 force_update: true,
                 polys: data.polys
@@ -86,9 +85,9 @@ class CanvasManager {
             this[canvas_type + '_context'] = this[canvas_name].getContext('2d');
         });
 
-        this.canvas_container.addEventListener('scroll', (e) => {
-            this.checkScroll(e);
-        });
+        // this.canvas_container.addEventListener('scroll', (e) => {
+        //     this.checkScroll(e);
+        // });
     }
 
     scrollLeft () {
@@ -107,39 +106,39 @@ class CanvasManager {
         this.canvas_container.scrollTop = this.canvas_container.scrollTop + CONFIG.scroll_speed;
     }
 
-    checkScroll (e) {
-        const left = Math.ceil(this.canvas_container.scrollLeft);
-        const top = Math.ceil(this.canvas_container.scrollTop);
-        const width = this.canvas_container.clientWidth;
-        const height = this.canvas_container.clientHeight;
+    // checkScroll (e) {
+    //     const left = Math.ceil(this.canvas_container.scrollLeft);
+    //     const top = Math.ceil(this.canvas_container.scrollTop);
+    //     const width = this.canvas_container.clientWidth;
+    //     const height = this.canvas_container.clientHeight;
 
-        if (left <= 0) {
-            Store.fire('hide_scroller', { scroller: 'left' });
-        } else {
-            Store.fire('show_scroller', { scroller: 'left' });
-        }
+    //     if (left <= 0) {
+    //         Store.fire('hide_scroller', { scroller: 'left' });
+    //     } else {
+    //         Store.fire('show_scroller', { scroller: 'left' });
+    //     }
 
-        if (left + width >= this.map_image_width) {
-            Store.fire('hide_scroller', { scroller: 'right' });
-        } else {
-            Store.fire('show_scroller', { scroller: 'right' });
-        }
+    //     if (left + width >= this.map_image_width) {
+    //         Store.fire('hide_scroller', { scroller: 'right' });
+    //     } else {
+    //         Store.fire('show_scroller', { scroller: 'right' });
+    //     }
 
-        if (top <= 0) {
-            Store.fire('hide_scroller', { scroller: 'up' });
-        } else {
-            Store.fire('show_scroller', { scroller: 'up' });
-        }
+    //     if (top <= 0) {
+    //         Store.fire('hide_scroller', { scroller: 'up' });
+    //     } else {
+    //         Store.fire('show_scroller', { scroller: 'up' });
+    //     }
 
-        if (top + height >= this.map_image_height) {
-            Store.fire('hide_scroller', { scroller: 'down' });
-        } else {
-            Store.fire('show_scroller', { scroller: 'down' });
-        }
-    }
+    //     if (top + height >= this.map_image_height) {
+    //         Store.fire('hide_scroller', { scroller: 'down' });
+    //     } else {
+    //         Store.fire('show_scroller', { scroller: 'down' });
+    //     }
+    // }
 
     setCanvasMouseEvents () {
-        if (CONFIG.is_display) return;
+        if (CONFIG.is_player_screen) return;
 
         this.control_canvas.addEventListener('mousedown', (e) => {
             Mouse.downEvent(e);
@@ -160,6 +159,11 @@ class CanvasManager {
             };
             Mouse.moveEvent(e, pos);
             this.parent.mouseMove();
+        });
+
+        this.control_canvas.addEventListener('mouseleave', (e) => {
+            // console.log('mouseleave');
+            Store.fire('mouse_leave');
         });
     }
 
@@ -204,7 +208,7 @@ class CanvasManager {
             this.canvas_container.scrollLeft = 0;
             this.canvas_container.scrollTop = 0;
 
-            this.checkScroll();
+            // this.checkScroll();
 
             if (options.load_fog) {
                 Store.fire('load_fog', {
@@ -212,7 +216,7 @@ class CanvasManager {
                 });
             }
         }
-        if (CONFIG.window === 'control') {
+        if (!CONFIG.is_player_screen) {
             img.src = this.map.dm_image || this.map.image;
         } else {
             img.src = this.map.image || this.map.dm_image;
@@ -224,7 +228,7 @@ class CanvasManager {
         // fog data will be nested in one level if sent by Store event
         if (fog.fog) fog = fog.fog;
 
-        if (!CONFIG.is_display) {
+        if (!CONFIG.is_player_screen) {
             Store.fire('enable_light');
         }
 
@@ -343,7 +347,7 @@ class CanvasManager {
         const context = this.control_context;
 
         this.clearContext(this.control_context);
-        if (this.parent.lighting_enabled || CONFIG.is_display) {
+        if (this.parent.lighting_enabled || CONFIG.is_player_screen) {
             this.drawAjarDoors(context);
             return;
         }
@@ -438,20 +442,51 @@ class CanvasManager {
             this.canvasStroke(context, inner_color, inner_width);
 
             if (segment.one_way) {
-                this.canvasCircle(
-                    context,
-                    segment.one_way.open.x,
-                    segment.one_way.open.y,
-                    CONFIG.display.wall.outer_width,
-                    CONFIG.display.wall.outer_color
-                );
-                this.canvasCircle(
-                    context,
-                    segment.one_way.open.x,
-                    segment.one_way.open.y,
-                    CONFIG.display.wall.inner_width,
-                    CONFIG.display.wall.inner_color
-                );
+                const uv = getUnitVector({
+                    p1: segment.one_way.open,
+                    p2: segment.one_way.closed
+                });
+
+                const puv = getPerpendicularUnitVector({
+                    p1: segment.one_way.open,
+                    p2: segment.one_way.closed
+                });
+
+                const arrow_start = {
+                    x: segment.one_way.open.x + (uv.x * 10),
+                    y: segment.one_way.open.y + (uv.y * 10)
+                }
+
+                context.beginPath();
+                context.moveTo(segment.one_way.closed.x, segment.one_way.closed.y);
+                context.lineTo(arrow_start.x, arrow_start.y);
+
+                this.canvasStroke(context, outer_color, outer_width);
+                this.canvasStroke(context, inner_color, inner_width);
+
+                const side_one = {
+                    x: arrow_start.x + (puv.x * 5),
+                    y: arrow_start.y + (puv.y * 5)
+                };
+
+                const side_two = {
+                    x: arrow_start.x - (puv.x * 5),
+                    y: arrow_start.y - (puv.y * 5)
+                };
+
+                const arrow_tip = {
+                    x: segment.one_way.open.x,
+                    y: segment.one_way.open.y
+                }
+
+                context.beginPath();
+                context.moveTo(side_one.x, side_one.y);
+                context.lineTo(side_two.x, side_two.y);
+                context.lineTo(arrow_tip.x, arrow_tip.y);
+                context.lineTo(side_one.x, side_one.y);
+
+                this.canvasStroke(context, outer_color, outer_width);
+                this.canvasStroke(context, inner_color, inner_width);
             }
         });
 
@@ -533,7 +568,7 @@ class CanvasManager {
     }
 
     drawLights () {
-        if (CONFIG.is_display) return;
+        if (CONFIG.is_player_screen) return;
         const context = this.lights_context;
         const lights = this.parent.LightManager.lights;
 

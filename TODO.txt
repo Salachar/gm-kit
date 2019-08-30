@@ -1,43 +1,41 @@
 What I was working on:
-    - Cleaning up the text input modals
-
-    - Changing the info amount buttons into an input
 
     - Changing the volume slider to something less ugly
-
-    - Readd/fix being able to delete tags
-        - Initial tags are missing the remove button
-
-    - Fix up checkboxes to match standard 3rem header/input size
-        - Fix up the checkboxes in the map list modal, they are too easy to click outside of
-
-    - Fix the positions of the help and text_block nodes
-
-    - Change the style of the info buttons
-
-    - Re-enable saving of info results
-        - Change the verbage, "marked" sounds better and people won't think it saves like the map does
-
-    - Lights need to update after changing
-        - Perhaps add an interval to update the lights
-
-    - Lights need a way to display power status
 
     - Lights need a color picker in order to change them
         - Scenes will not be changable
 
-    - Add basic trigger functionality
-        - Will require being able to get all data from both the Audio and Lights containers/managers
+    - Fix one way wall indicator to better show which side is see through
+        - A big arrow going through the wall showing direction of light passage should work
 
-    - Fix the UI for the Text Blocks so that it meshes more with the container header
-        - Currently it looks too much like a modal that you can't move, which is misleading
 
-    - variables.css could probably use a little bit of cleanup
+PRIORITY: Either cause it's important or I just want to
 
-    - HTTP helper should be added to generic helpers and have hardcoded bullshit removed
+    - Load state should show a Toast error if there is no map loaded
+
+    - Load state might not even work in general
+
+    - Add functionaliy similar to map folder picking for audio
+
+    - Add Grid
+
+    - Option to disable walls for a map, so everything is lit up
 
 
 TODO:
+    - Add basic trigger functionality
+        - Will require being able to get all data from both the Audio and Lights containers/managers
+
+    - PDF reading for map and room information
+        - DC checks and shit like that
+
+    - Add "Triggers"
+        - A trigger is a selection of lights, color, and music
+        - When activated, the selected lights (or scenes) will change color to the selected color and the music will play
+        - Multiple colors per trigger are not allowed
+            - Complex light effects should be put into a scene beforehand in the LIFX app (public APIs dont allow scene creation right now)
+            - The color option is mandatory
+
     - Add small mirrored map/image display for players on the other side of the table
         - Optional, not always shown
         - I can make it a checkbox or some stupid shit
@@ -53,39 +51,11 @@ TODO:
     - Shape/Marker creation for items on the map
         - Try to make it easy to use for spells and shit
 
-    - Update the info generator buttons to not look like shit
-
-    - Fix one way wall indicator to better show which side is see through
-        - A big arrow going through the wall showing direction of light passage should work
-
-    - Look at the help text again, I don't think it's very good
-
-    - Load state should show a Toast error if there is no map loaded
-
-    - Load state might not even work in general
-
-    - Take another look at the store and see if it works for general use
-        - It might be the best way that I can share the Audio and Lights data
-
-    - map display.js file needs to be moved into the map container folder
-
     - Sound and Quadrant managers should be moved off the AppManager
         - SoundManager is misleading given that the audio app has been added
         - QuadrantManager is specific only to maps and nothing else needs it
 
-    - Move everything over to github
-        - Had support for Electron updating
-        - Owned by Microsoft and just kinda better in general from what I can tell
-
-    - I need a better name for this stupid app
-
-    - Add functionaliy similar to map folder picking for audio
-
-    - Lights needs input in the header to enter your LIFX code
-        - Currently hardcoded in the http helper
-        - lifxaccess file does nothing at all
-        - LIFX code should display in the header and save to the main config
-        - Remove specific file for LIFX access code
+    - Lights helpful info
         - Add a small info bit saying the code is not sent anywhere and only saved to a
             file on the machine
         - Link to github and files for people who want to verify it for themselves
@@ -94,28 +64,16 @@ TODO:
         - Touch works pretty for maps but there are some bad quirks with it that prevent touch
             only use for wall placement
 
-    - Re-add arrow key scrolling
-        - Sometimes it just seems better
-        - The scrollers were complete garbage though
-
     - Add menu controls, there should be a button for everything
         - Menu should be hidable
-        - Readd scrolling from DM window
-
-    - Leaving focus of app can at times cause it to become stuck in point moving mode
-
-    - Add Grid
+        - Re-add arrow key scrolling
+            - Sometimes it just seems better
+            - The scrollers were complete garbage though
 
     - When connecting between two existing segments, there should be no length check
         - Maybe disbale for shift clicking in general
         - Or even altogether at this point
         - Dont allow snapping to origin point
-
-    - Add ability to add text to locations
-        - Question Mark icon
-        - Click to Open, Click outside to close
-        - Should be able to save individually
-            - Or at least would be nice to
 
     - Build Process
         - Get building for both windows and mac, no installation required
@@ -126,12 +84,8 @@ TODO:
             - Can use a .io page for the main page easily
             - Can probably host from this page as well
 
-    - Option to disable walls for a map, so everything is lit up
-
     - Create a campaign (basically a folder with links)
         - Somehow add maps to a campaign
-
-    - Read in config
 
     - Attempt to fetch images from a PDF
 
@@ -145,6 +99,7 @@ TODO:
         https://mikeschley.com/
         https://jaredblando.com/cartography/
         https://www.patreon.com/neutralparty
+
 
 
 Old Electron Builder code, for when I decide to try that bullshit again

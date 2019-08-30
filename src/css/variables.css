@@ -2,6 +2,7 @@
 
     --main-font-color: #ffffff;
 
+    --font-huge: 1.5rem;
     --font-large: 1.25rem;
     --font-medium: 1rem;
     --font-small: 0.85rem;
@@ -20,6 +21,8 @@
     --section-title-height: 2rem;
 
     --faded-text-color: rgba(255,255,255,0.5);
+
+    --checkbox-height: 1.5rem;
 
     --selected-bg-color: rgba(100, 149, 237, 0.3);
     --hover-bg-color: rgba(100, 149, 237, 0.5);
@@ -53,7 +56,7 @@
     --containers-z: 20;
 
     /* Map header */
-    --text-block-container-z: 6;
+    --text-block-container-z: 10;
     --map-controls-height: 3rem;
     --map-tabs-height: 3rem;
 

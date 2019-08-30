@@ -1,6 +1,6 @@
 const {
     cacheElements
-} = require('../../helpers');
+} = require('../../lib/helpers');
 
 class TextManager {
     constructor (opts = {}) {
@@ -41,6 +41,7 @@ class TextManager {
                 key: this.current_text_data.key
             });
             this.close();
+            Store.fire('save_map');
         });
 
         this.el_text_block_delete.addEventListener('click', (e) => {

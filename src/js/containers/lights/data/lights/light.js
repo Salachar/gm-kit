@@ -1,29 +1,41 @@
-const http = require('../../lib/http');
+const http = require('../../../../lib/http');
+const {
+    HSVtoRGB
+} = require('../../../../lib/helpers');
 
 class Light {
     constructor (light_data) {
-        this.id = light_data.id;
-        this.label = light_data.label;
+        this.original = this.parse(light_data);
 
-        this.data = light_data;
-
-        this.props = {
-            power: light_data.power,
-            color: "blue saturation:0.5",
-            brightness: light_data.brightness,
-            duration: 1
-        };
-
-        this.color = light_data.color;
-
-        this.rgb = this.HSVtoRGB({
-            h: this.color.hue / 360,
-            s: this.color.saturation,
-            v: 1
-        });
+        this.updateProps(light_data);
 
         // Scenes that this light belongs to.
         this.scenes = {};
+    }
+
+    parse (light_data) {
+        // selector, power, and duration are all in the same spot
+        let obj = {
+            selector: light_data.id,
+            power: light_data.power,
+            duration: 1
+        };
+
+        // Depending on the type of light, there are zones instead of a single color
+        // When updating the light though, you don't have to use zones and can pass in
+        // a single color at the top level, setting the whole thing. We're probably
+        // never going to worry about zone setting in this app
+        if (light_data.zones && light_data.zones.length) {
+            let state = light_data.zones[0].state;
+            obj.color = state.color;
+            obj.brightness = state.brightness;
+        } else {
+            obj.color = light_data.color;
+            obj.brightness = light_data.brightness;
+        }
+
+        // Verify a completely seperate instance if needed
+        return JSON.parse(JSON.stringify(obj));
     }
 
     set power (power) {
@@ -58,78 +70,58 @@ class Light {
         return this.props.duration;
     }
 
+    updateProps (light_data) {
+        this.id = light_data.id;
+        this.label = light_data.label;
+        this.data = light_data;
+
+        this.props = this.parse(light_data);
+
+        this.rgb = HSVtoRGB({
+            h: this.color.hue / 360,
+            s: this.color.saturation,
+            v: 1
+        });
+    }
+
     addScene (opts = {}) {
         let { scene, data } = opts;
-        data.rgb = this.HSVtoRGB({
-            h: data.color.hue / 360,
-            s: data.color.saturation,
+        let color = data.color;
+        if (data.zones && data.zones.length) {
+            color = data.zones[0].state.color;
+        }
+
+        data.rgb = HSVtoRGB({
+            h: color.hue / 360,
+            s: color.saturation,
             v: 1
         });
         this.scenes[scene.uuid] = data;
     }
 
-    update () {
-        http(`https://api.lifx.com/v1/lights/id:${this.id}/state`, {
-            type: 'PUT',
-            data: JSON.stringify(this.props),
-            success: (response) => {
-                console.log(response);
-            },
-            error: (response) => {
-                console.log(response);
-            }
+    update (data) {
+        // {
+        //     "power": "on",
+        //     "color": "blue saturation:0.5",
+        //     "brightness": 0.5,
+        //     "duration": 5,
+        // }
+        return new Promise((resolve, reject) => {
+            http(`https://api.lifx.com/v1/lights/id:${this.id}/state`, {
+                type: 'PUT',
+                data: JSON.stringify(data || this.props),
+                headers: {
+                    "Authorization": `Bearer ${CONFIG.lifx_access_code}`,
+                    "Content-Type": "application/json"
+                },
+                success: (response) => {
+                    resolve(response);
+                },
+                error: (response) => {
+                    reject(response);
+                }
+            });
         });
-    }
-
-    HSVtoRGB (hsv) {
-        let h = hsv.h;
-        let s = hsv.s;
-        let v = hsv.v;
-
-        let r, g, b, i, f, p, q, t;
-
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-
-        switch (i % 6) {
-            case 0:
-                r = v, g = t, b = p;
-                break;
-
-            case 1:
-                r = q, g = v, b = p;
-                break;
-
-            case 2:
-                r = p, g = v, b = t;
-                break;
-
-            case 3:
-                r = p, g = q, b = v;
-                break;
-
-            case 4:
-                r = t, g = p, b = v;
-                break;
-
-            case 5:
-                r = v, g = p, b = q;
-                break;
-        }
-
-        r = Math.floor(r * 255);
-        g = Math.floor(g * 255);
-        b = Math.floor(b * 255);
-
-        return {
-            r: r,
-            g: g,
-            b: b,
-            string: `rgb(${r}, ${g}, ${b})`
-        };
     }
 }
 

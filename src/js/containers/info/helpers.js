@@ -1,6 +1,6 @@
 const {
     createElement
-} = require('../../helpers');
+} = require('../../lib/helpers');
 
 function percentage () {
     return Math.floor(Math.random() * (100 - 1) + 1);

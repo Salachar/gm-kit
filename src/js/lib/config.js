@@ -32,8 +32,8 @@ const KEYS = {
 };
 
 let CONFIG = {
-    window: 'control',
-    is_display: false,
+    window: 'gm_screen',
+    is_player_screen: false,
 
     window_width: null,
     window_height: null,
@@ -47,8 +47,6 @@ let CONFIG = {
         distance: 5,
         color: '#FF0000'
     },
-
-    // min_wall_length: 10,
 
     create_door: false,
 
@@ -85,7 +83,7 @@ let CONFIG = {
             highlight_inner_width: 2,
         },
         fog: {
-            control: {
+            gm_screen: {
                 seen: {
                     color: 'rgba(40, 40, 40, 1)',
                     opacity: 0.5
@@ -95,7 +93,7 @@ let CONFIG = {
                     opacity: 0.7
                 }
             },
-            display: {
+            player_screen: {
                 seen: {
                     color: 'rgba(40, 40, 40, 1)',
                     opacity: 0.9

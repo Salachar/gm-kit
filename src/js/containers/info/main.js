@@ -3,7 +3,7 @@ const ContainerTemplate = require('../../templates/info');
 
 const {
     createElement
-} = require('../../helpers');
+} = require('../../lib/helpers');
 
 const generators = {
     deva_generator: require('./generators/deva'),

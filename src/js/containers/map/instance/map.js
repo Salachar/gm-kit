@@ -4,13 +4,11 @@ const LightManager = require('./light_manager');
 const TextManager = require('./text_manager');
 const ObjectManager = require('./object_manager');
 
-const Store = require('../../../store');
-
 const {
     createElement,
     copyPoint,
     getNormal
-} = require('../../../helpers');
+} = require('../../../lib/helpers');
 
 class MapInstance {
     constructor (map = {}, options = {}) {
@@ -25,7 +23,7 @@ class MapInstance {
         // Zoom is now map specific
         this.zoom = 1;
         // Whether light is enabled or not for this map
-        this.lighting_enabled = CONFIG.is_display;
+        this.lighting_enabled = CONFIG.is_player_screen;
 
         this.last_quickplace_coord = {
             x: null,
@@ -48,8 +46,8 @@ class MapInstance {
         this.SegmentManager = new SegmentManager(map, this, options);
         this.CanvasManager = new CanvasManager(map, this, options);
         this.LightManager = new LightManager(map, this, options);
-        this.TextManager = new TextManager(map, this, options);
         this.ObjectManager = new ObjectManager(this);
+        this.TextManager = new TextManager(map, this, options);
 
         Store.register({
             'enable_light': this.onEnableLight.bind(this),
@@ -85,9 +83,6 @@ class MapInstance {
     }
 
     onAddTextBlock () {
-        // console.log('onAddTextBlock');
-        // console.log(Mouse.point);
-        // this.TextManager.generateTextBlockField();
         this.TextManager.showTextInput();
     }
 
@@ -210,7 +205,7 @@ class MapInstance {
     show () {
         this.node.classList.remove('hidden');
         if (this.tab) this.tab.classList.add('selected');
-        this.CanvasManager.checkScroll();
+        // this.CanvasManager.checkScroll();
     }
 
     shutdown () {
@@ -238,8 +233,6 @@ class MapInstance {
     onKeyDown (key) {
         if (this.TextManager.open) return;
         const event_data = { point: Mouse.point };
-
-        // console.log(key, KEYS.QUESTION);
 
         const events = {
             [KEYS.QUESTION]: 'add_text_block',
@@ -550,7 +543,7 @@ class MapInstance {
     }
 
     disableLight () {
-        if (CONFIG.is_display) return;
+        if (CONFIG.is_player_screen) return;
         this.lighting_enabled = false;
         this.CanvasManager.disableLight();
     }

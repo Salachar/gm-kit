@@ -1,4 +1,4 @@
-const http = require('../../lib/http');
+const http = require('../../../../lib/http');
 const Light = require('./light');
 
 class Lights {
@@ -7,6 +7,17 @@ class Lights {
         this.by_id = {};
         this.by_label = {};
         this.by_selector = {};
+    }
+
+    reset () {
+        return this.update({
+            states: this.all.map((light) => {
+                return light.original;
+            }),
+            defaults: {
+                duration: 1
+            }
+        });
     }
 
     clearLights () {
@@ -25,15 +36,56 @@ class Lights {
 
     fetch () {
         return new Promise((resolve, reject) => {
-            this.clearLights();
             http("https://api.lifx.com/v1/lights/all", {
+                headers: {
+                    "Authorization": `Bearer ${CONFIG.lifx_access_code}`,
+                    "Content-Type": "application/json"
+                },
                 success: (response) => {
                     this.parse(response);
                     resolve();
                 },
                 error: (response) => {
-                    console.log(response);
-                    resolve();
+                    reject(response);
+                }
+            });
+        });
+    }
+
+    update (states_data) {
+        // {
+        //     "states": [
+        //       {
+        //         "selector": "[selector 1]",
+        //         "power": "on"
+        //       },
+        //       {
+        //         "selector": "[selector N]",
+        //         "brightness": 0.5
+        //       }
+        //     ],
+        //     "defaults": {
+        //       "duration": 5.0 // all states will be applied over 5 seconds
+        //     }
+        // }
+        return new Promise((resolve, reject) => {
+            if (!states_data) {
+                console.error('No explicit lights data was passed');
+                return reject();
+            }
+
+            http(`https://api.lifx.com/v1/lights/states`, {
+                type: 'PUT',
+                data: JSON.stringify(states_data),
+                headers: {
+                    "Authorization": `Bearer ${CONFIG.lifx_access_code}`,
+                    "Content-Type": "application/json"
+                },
+                success: (response) => {
+                    resolve(response);
+                },
+                error: (response) => {
+                    reject(response);
                 }
             });
         });
@@ -41,7 +93,12 @@ class Lights {
 
     parse (lights_data) {
         lights_data.forEach((light_data) => {
-            this.addLight(new Light(light_data));
+            const id = light_data.id;
+            if (this.by_id[id]) {
+                this.by_id[id].updateProps(light_data);
+            } else {
+                this.addLight(new Light(light_data));
+            }
         });
     }
 }

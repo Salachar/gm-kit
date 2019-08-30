@@ -1,10 +1,11 @@
-const Store = require('./store');
+const Store = require('./lib/store');
 window.Store = Store;
+
+const ToastMesseger = require('./lib/toast');
+const Mouse = require('./lib/mouse');
 
 const SoundManager = require('./sound_manager');
 const QuadrantManager = require('./quadrant_manager');
-const ToastMesseger = require('./toast');
-const Mouse = require('./mouse');
 
 const MapContainer = require('./containers/map/main');
 const InfoContainer = require('./containers/info/main');
@@ -14,7 +15,7 @@ const TriggersContainer = require('./containers/triggers/main');
 
 const {
     getWindowDimensions
-} = require('./helpers');
+} = require('./lib/helpers');
 
 class AppManager {
     constructor () {
@@ -42,6 +43,10 @@ class AppManager {
         getWindowDimensions();
 
         this.setEvents();
+
+        Store.register({
+            'save_map': this.saveMap.bind(this),
+        });
     }
 
     setActiveContainer (container) {
@@ -52,19 +57,20 @@ class AppManager {
         this.active_container = container;
     }
 
-    setRadioState (selected_radio) {
-        let radio_inputs =  document.getElementsByClassName('radio_snap');
-        for (let i = 0; i < radio_inputs.length; ++i) {
-            radio_inputs[i].classList.remove('checked');
+    saveMap () {
+        const map_data = this.containers.map.getMapData();
+        if (!map_data) {
+            Toast.error('There is no map to save');
+            return;
         }
-        selected_radio.classList.add('checked');
+        IPC.send('save_map', map_data);
     }
 
     setEvents () {
         window.addEventListener('message', (e) => {
             let event = e.data;
             if (event.event === 'display_window_loaded') {
-                this.showInDisplayWindow();
+                this.containers.map.showInDisplayWindow();
                 return;
             }
         });
@@ -79,6 +85,27 @@ class AppManager {
             e.preventDefault();
             KEY_DOWN[e.keyCode] = false;
             this.active_container.keyUp(e.keyCode);
+        });
+
+        document.getElementById('save_map').addEventListener('click', (e) => {
+            this.saveMap();
+        });
+
+        document.getElementById('save_all_maps').addEventListener('click', (e) => {
+            const map_data = this.containers.map.getAllMapData();
+            if (!map_data) {
+                Toast.error('There are no maps to save');
+                return;
+            }
+            IPC.send('save_map', map_data);
+        });
+
+        document.getElementById('save_state').addEventListener('click', (e) => {
+            const map = this.containers.map.current_map;
+            const map_data = this.containers.map.getMapData();
+            const state_data = this.containers.map.getMapStateData();
+            map_data[map.name].json.state = state_data;
+            IPC.send('save_map', map_data);
         });
 
         IPC.on('message', (e, message = {}) => {
@@ -98,11 +125,21 @@ class AppManager {
 }
 
 window.onload = () => {
-    window.SoundManager = new SoundManager();
-    window.QuadrantManager = new QuadrantManager();
-    window.Toast = new ToastMesseger();
-    window.Mouse = new Mouse();
-    window.AppManager = new AppManager();
+    IPC.send('app_loaded');
+
+    IPC.on('config', (e, config_json) => {
+        // TODO: More than a flat level copy over for CONFIG
+        // Object assign or some shit
+        for (let c in config_json) {
+            CONFIG[c] = config_json[c];
+        }
+
+        window.SoundManager = new SoundManager();
+        window.QuadrantManager = new QuadrantManager();
+        window.Toast = new ToastMesseger();
+        window.Mouse = new Mouse();
+        window.AppManager = new AppManager();
+    });
 };
 
 window.onresize = () => {

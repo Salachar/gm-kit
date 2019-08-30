@@ -1,10 +1,11 @@
-const Base = require('../../base');
+const {
+    createElement
+} = require('../../../../lib/dom');
+
 const SceneView = require('./scene');
 
-class ScenesView extends Base {
+class ScenesView {
     constructor (parent) {
-        super();
-
         this.parent = parent;
         this.node = null;
 
@@ -18,11 +19,11 @@ class ScenesView extends Base {
     }
 
     render (scenes) {
-        this.node = this.createElement('div', 'lifx_scenes', {
+        this.node = createElement('div', 'lifx_section', {
             addTo: this.parent.node
         });
 
-        this.createElement('div', 'lifx_scenes_title', {
+        createElement('div', 'lifx_section_title', {
             html: 'Scenes',
             addTo: this.node
         });

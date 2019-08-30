@@ -1,9 +1,7 @@
-const Store = require('../../../store');
-
 const {
     pDistance,
     copyPoint
-} = require('../../../helpers');
+} = require('../../../lib/helpers');
 
 class ObjectManager {
     constructor (parent) {

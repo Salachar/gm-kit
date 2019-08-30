@@ -48,13 +48,18 @@
 }
 
 .map_list_map {
+    height: 1.5rem;
+    line-height: 1.5rem;
+    font-size: var(--font-medium);
     position: relative;
-    padding: 0.2rem 0.2rem 0.2rem 2rem;
+    /* padding: 0.2rem 0.2rem 0.2rem 2rem; */
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 2rem;
+
+    padding-left: 2rem;
 }
 
 .map_list_map:hover {
@@ -67,11 +72,15 @@
 }
 
 .map_list_map .checkbox {
+    /* height: 1.5rem;
+    width: 1.5rem; */
+
     display: block;
     position: absolute;
     top: 50%;
     left: 0;
     transform: translateY(-50%);
-    margin: 0;
-    margin-left: 0.3rem;
+
+    /* margin: 0; */
+    /* margin-left: 0.3rem; */
 }

@@ -1,6 +1,6 @@
 const {
     cacheElements
-} = require('../../helpers');
+} = require('../../lib/helpers');
 
 class AudioPlayer {
     constructor (opts = {}) {
@@ -89,9 +89,7 @@ class AudioPlayer {
             this.el_audio_player_progress_played.style.width = width + '%';
         }
 
-        this.player.onended = () => {
-            console.log('onended');
-        }
+        this.player.onended = () => {}
     }
 
     set volume (new_volume) {

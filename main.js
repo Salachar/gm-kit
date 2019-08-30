@@ -55,7 +55,7 @@ function createWindow () {
     global.shared.WINDOW = WINDOW;
 
     let window_url = url.format({
-        pathname: path.join(__dirname, `./src/html/main.html`),
+        pathname: path.join(__dirname, `./src/html/gm_screen.html`),
         protocol: 'file:',
         slashes: true
     });
@@ -87,14 +87,19 @@ app.on('ready', createWindow);
 function chooseMapDirectory () {
     FileHelpers.chooseDirectory(function (folder_path) {
         global.shared.CONFIG.map_directory = folder_path;
-        fs.writeFileSync(
-            global.shared.CONFIG_DATA.directory,
-            JSON.stringify(global.shared.CONFIG, null, 4),
-            'utf-8'
-        );
+        FileHelpers.writeConfig();
         sendMaps();
     });
 }
+
+IPC.on('app_loaded', (e) => {
+    WINDOW.webContents.send('config', global.shared.CONFIG);
+});
+
+IPC.on('lifx_access_code', (e, lifx_access_code) => {
+    global.shared.CONFIG.lifx_access_code = lifx_access_code;
+    FileHelpers.writeConfig();
+});
 
 IPC.on('open_dialog_modal', (e) => {
     chooseMapDirectory();
@@ -110,8 +115,6 @@ IPC.on('load_maps', (e) => {
 
 IPC.on('load_map', (e, maps = {}) => {
     let loaded_maps = {};
-    log('load_map', maps);
-
     for (let m in maps) {
         let map = JSON.parse(JSON.stringify(maps[m]));
 
@@ -139,21 +142,25 @@ IPC.on('load_map', (e, maps = {}) => {
 });
 
 IPC.on('save_map', (e, maps = {}) => {
-    let map = null;
-
-    for (var m in maps) {
+    const map_keys = Object.keys(maps);
+    map_keys.forEach((map_key) => {
+        const map = maps[map_key];
         try {
-            map = maps[m];
             const file_json = JSON.stringify(map.json, null, 4);
             fs.writeFileSync(map.json_directory, file_json, 'utf-8');
         } catch (e) {
             console.log('Unable to save map: ' + map.name);
         }
+    });
+
+    let message = `${map_keys.length} maps`;
+    if (map_keys.length === 1) {
+        message = `Map:${maps[map_keys[0]].name}`;
     }
 
     WINDOW.webContents.send('message', {
         type: 'success',
-        text: 'Map(s) successfully saved'
+        text: `${message} sucessfully saved`
     });
 });
 

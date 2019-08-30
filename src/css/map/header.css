@@ -17,6 +17,10 @@
     overflow: hidden;
 }
 
+#controls > .checkbox_container {
+    margin-top: 0.75rem;
+}
+
 #help {
     float: right;
     margin-right: 0.2rem;
@@ -24,7 +28,7 @@
 
 #help_box {
     position: absolute;
-    top: 4rem;
+    top: var(--container-header-height);
     right: 0;
     z-index: 15;
     background-color: #444;
@@ -78,21 +82,30 @@
     padding: 0 2rem 0 1rem;
     box-sizing: border-box;
     display: inline-block;
+    vertical-align: top;
     cursor: pointer;
+    transition: 0.25s all ease;
+    background-color: rgba(255,255,255,0.1);
 }
-
-.map_tab.selected {
-    background-color: #666;
-    height: 3rem;
-    margin-top: 0;
-    line-height: 3rem;
+.map_tab:nth-child(odd) {
+    background-color: rgba(255,255,255,0.2);
 }
-
 .map_tab:hover {
     background-color: var(--hover-color);
 }
 
 .map_tab:active {
+    background-color: var(--active-color);
+}
+.map_tab.selected {
+    background-color: var(--active-color);
+    height: 3rem;
+    margin-top: 0;
+    line-height: 3rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+.map_tab.selected:hover {
     background-color: var(--active-color);
 }
 

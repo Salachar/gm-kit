@@ -7,7 +7,7 @@ const AudioData = require('./data');
 const {
     createElement,
     cacheElements
-} = require('../../helpers');
+} = require('../../lib/helpers');
 
 class AudioManager {
     constructor () {
@@ -102,6 +102,10 @@ class AudioManager {
 
         let el_new_audio_file = createElement('div', 'audio_file', {
             html: opts.track.name,
+            dataset: {
+                tag: opts.tag,
+                key: opts.track.key
+            },
             events: {
                 click: (e) => {
                     if (e.defaultPrevented) return;
@@ -117,12 +121,14 @@ class AudioManager {
             addTo: opts.parent
         });
 
+        // All tags created during the initial building of the list
+        // are removable
         this.data.tracks[opts.track.key].tags.forEach((tag) => {
             this.addTag({
                 tag: tag,
                 parent_node: el_new_audio_file,
                 save: false,
-                removable: false
+                removable: opts.initial
             });
         });
 
@@ -133,6 +139,7 @@ class AudioManager {
         let parent_node = this.el_tracks_body;
         Object.keys(audio_files).forEach((key) => {
             this.createTrackSection({
+                initial: true,
                 section: audio_files[key],
                 parent_node: parent_node
             });
@@ -173,15 +180,20 @@ class AudioManager {
             addTo: el_new_section
         });
 
+        // If there are section files I need to add nodes to represent
+        // the tracks that can be played
         if (opts.section.files) {
             Object.keys(opts.section.files).forEach((key) => {
                 this.createTrack({
+                    initial: opts.initial || false,
                     track: opts.section.files[key],
                     parent_node: el_new_section_body
                 });
             });
         }
 
+        // Check for any sub-sections and repeat the above until
+        // the end of the list
         Object.keys(opts.section).forEach((key) => {
             if (typeof opts.section[key] === 'object' && key !== 'files') {
                 this.createTrackSection({
@@ -200,6 +212,7 @@ class AudioManager {
         this.data.add(track);
 
         let el_new_audio_file = this.createAudioTrackNode({
+            initial: opts.initial || false,
             parent: opts.parent_node,
             track: this.data.tracks[track.key]
         });
@@ -235,6 +248,7 @@ class AudioManager {
             html: opts.tag,
             addTo: opts.parent_node
         });
+
         if (opts.removable) {
             createElement('div', 'audio_file_tag_remove', {
                 addTo: new_tag,
@@ -246,6 +260,10 @@ class AudioManager {
                     click: (e) => {
                         e.preventDefault();
                         const key = e.currentTarget.dataset.key;
+                        if (!key) {
+                            console.error('There was no parent key found for this tag');
+                            return;
+                        }
                         const new_tags = this.data.tracks[key].tags.filter((curr_tag) => {
                             return curr_tag !== e.currentTarget.dataset.tag;
                         });

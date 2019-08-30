@@ -1,9 +1,85 @@
+Update (8/29/2019):
+    - Added clarification to audio search that tracks under a matching folder are included
+        - Added to search input placeholder text
+    - Fix the positions of the help and text_block nodes
+    - Fix the UI for the Text Blocks so that it meshes more with the container header
+        - Currently it looks too much like a modal that you can't move, which is misleading
+    - Saving a text block should also save the map
+        - This also removed all window.AppManager references from the MapListManager
+    - [WONT DO] Perhaps add an interval to update the lights
+    - [WONT DO] LIFX
+        - Read limit values from headers
+        - Being able to mash everything into one call (/states) will make it highly unlikely that I will
+            run intil limit problems
+    - LIFX/Lights: Have reset button to take lights back to what they were on app open
+        - Batch lights together into /states call
+    - Fix up checkboxes to match standard 3rem header/input size
+        - Fix up the checkboxes in the map list modal, they are too easy to click outside of
+        - Checkboxes are a lot better now, but not perfect.
+    - Right clicking on a map tab will also remove it
+    - Fix for Lights regarding lights that have zones (like the strips)
+    - Map tabs need to be finished
+        - Need to look more tab-ish
+    - Show the map name in the save Toast when only one map is saved
+    - Toast should show the actual map name if only one is being saved
+        - and the number of maps saved if it was more than one
+    - Leaving focus of app can at times cause it to become stuck in point moving mode
+        - Hooked into mouseleave for the control canvas to shut down quick place and segment moving
+        - This seems to work just fine and I havent seen anything frustrating/breaking out of it
+    - Read in config
+        - Master config is now passed into the app and some values are copied over
+        - I can expand this if I need to, but I'm not sure I want to do the display settings anymore
+    - Lights needs input in the header to enter your LIFX code
+        - Currently hardcoded in the http helper
+        - lifxaccess file does nothing at all
+        - LIFX code should display in the header and save to the main config
+        - Remove specific file for LIFX access code
+    - Move everything over to github
+        - Had support for Electron updating
+        - Owned by Microsoft and just kinda better in general from what I can tell
+    - I fucking broke the Player Screen
+        - Just a bunch of broken referense in the now player_screen.js file
+    - Hide Text Blocks on Player Screen
+    - Look at the help text again, I don't think it's very good
+    - Dimming is broken
+        - It just kinda started working again, the entire flow looks good
+    - Rename all instances of "display window" to "player_screen"
+        - and control with "gm_screen"
+    - map display.js file needs to be moved into the map container folder
+        - is now "player_screen.js" along with all "display" references
+    - Take another look at the store and see if it works for general use
+        - It might be the best way that I can share the Audio and Lights data
+        - This shit appears to just simply work, just set the data
+
+
+Update (8/28/2019):
+    - Cleaning up the text input modals
+    - Changing the info amount buttons into an input
+    - Change the style of the info buttons
+    - Re-enable saving of info results
+        - Change the verbage, "marked" sounds better and people won't think it saves like the map does
+    - Add ability to add text to locations
+        - Question Mark icon
+        - Click to Open, Click outside to close
+        - Should be able to save individually
+            - Or at least would be nice to
+    - I need a better name for this stupid app
+        - GM Kit
+    - Re-add/fix being able to delete tags
+        - Initial tags are missing the remove button
+        - Removing tags is just fucked in general
+    - Lights need a way to display power status
+    - HTTP helper should be added to generic helpers and have hardcoded bullshit removed
+    - Lights need to update after changing
+
+
 Update (8/27/2019):
     - [DONE] Figure out who made Tavern1
         - It has a very nice clean aesthetic
         - venatusmaps, marked in the map sources above
     - [NO REPRO] Adding new walls by connecting two middle walls does not split the first one
     - [WONT DO] Change file saving (shouldn't be all or nothing)
+
 
 Updates (4/23/2018):
     - Arrow Key Scrolling:
@@ -27,12 +103,15 @@ Updates (4/23/2018):
     - Improved Lighting Performance on Secondary Display
     - Improved section titles on the map select modal
 
+
 Updates (5/1/2018):
     - Added One Way Walls for elevation purposes
     - Added example map
 
+
 Updates (5/3/2018):
     - Added a README to help showcase the application
+
 
 Updates (7/9/2018):
     - Sanitize map data on save
@@ -46,11 +125,13 @@ Updates (7/9/2018):
         anything and would reduce .json file size (not important) and payload of light data
         to the secondary screen (more important)
 
+
 Updates (10/5/2018)
     - Added new event/store implementation
     - Holding CTRL now lets the user drag ends of placed walls
     - Image auto sizing added in, new max of 3000 pixels
     - Hide scrolling elements when at the edge of the map
+
 
 Updates (11/5/2018)
     - Fixed store events not being cleared after a map tab is closed
@@ -59,6 +140,7 @@ Updates (11/5/2018)
     - Fixed CTRL point deletion after refactor to more general segments
     - Fixed multiple events firing after closing and reopening map
     - Fixed opening display window clearing important segment data due to segment sanitization
+
 
 Updates (1/27/2018)
     - Load DM versions of map on the DM screen if available

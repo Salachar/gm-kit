@@ -10,7 +10,7 @@
 
 const {
     createElement
-} = require('../../../helpers');
+} = require('../../../lib/helpers');
 
 const {
     randomFromList

@@ -19,12 +19,10 @@ class AudioContainer extends Container {
     setIPCEvents () {
         // Audio Data is loaded first, then the files
         IPC.on('data_loaded', (e, data_json) => {
-            // console.log('Data has loaded');
             this.audio_manager.data.set(JSON.parse(data_json));
         });
         // Files are loaded second
         IPC.on('files_loaded', (e, files_json) => {
-            // console.log(e, files_json);
             this.audio_manager.buildAudioList(files_json);
         });
     }

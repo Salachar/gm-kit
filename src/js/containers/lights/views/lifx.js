@@ -1,12 +1,8 @@
 const LightsView = require('./lights/lights');
 const ScenesView = require('./scenes/scenes');
 
-const Base = require('../base');
-
-class LIFXView extends Base {
+class LIFXView {
     constructor (opts = {}) {
-        super(opts);
-
         this.container = opts.container;
         this.node = this.container.container_body;
 

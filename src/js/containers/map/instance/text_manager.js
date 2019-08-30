@@ -1,8 +1,6 @@
-const Store = require('../../../store');
-
 const {
     createElement
-} = require('../../../helpers');
+} = require('../../../lib/helpers');
 
 class TextManager {
     constructor (map = {}, parent, options = {}) {
@@ -18,8 +16,9 @@ class TextManager {
 
         this.el_text_block = null;
 
-        this.render();
+        if (CONFIG.is_player_screen) return;
 
+        this.render();
         this.loadTextBlocks();
     }
 

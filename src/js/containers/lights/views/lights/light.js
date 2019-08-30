@@ -1,9 +1,10 @@
-const Base = require('../../base');
+const {
+    createElement,
+    configureElement
+} = require('../../../../lib/dom');
 
-class LightView extends Base {
+class LightView {
     constructor (el_parent, light, scene) {
-        super();
-
         this.el_parent = el_parent;
 
         this.light = light;
@@ -32,39 +33,49 @@ class LightView extends Base {
             return;
         }
 
-        if (this.light.props.power === 'on') {
-            this.light.props.power = 'off';
-        } else {
-            this.light.props.power = 'on';
-        }
-        this.light.update();
+        const power = this.light.power;
+        this.light.power = (power === 'on') ? 'off' : 'on';
+
+        this.light.update().then((response) => {
+            this.update();
+        }).catch((response) => {
+            console.error('Light has failed to update');
+        });
     }
 
     update (light) {
-        this.light = light;
-        this.updateElement(this.el_light, {
-            styles: {
-                borderColor: this.color
+        this.light = light || this.light;
+
+        configureElement(this.el_light, {
+            css: {
+                borderColor: this.color,
+                opacity: (this.light.power === 'on') ? 1 : 0.2
             },
             html: this.brightness_text
         });
+
+        configureElement(this.el_title, {
+            css: {
+                opacity: (this.light.power === 'on') ? 1 : 0.5
+            }
+        })
     }
 
     render () {
-        this.el_base = this.createElement('div', 'lifx_light_container', {
+        this.el_base = createElement('div', 'lifx_light_container', {
             addTo: this.el_parent
         });
 
-        this.el_light = this.createElement('div', 'lifx_light', {
+        this.el_light = createElement('div', 'lifx_light', {
             attributes: {
                 title: this.light.label,
             },
-            handlers: {
+            events: {
                 click: (e) => {
                     this.onClick(e);
                 }
             },
-            styles: {
+            css: {
                 borderColor: this.color,
                 opacity: (this.light.power === 'on') ? 1 : 0.2
             },
@@ -72,7 +83,7 @@ class LightView extends Base {
             addTo: this.el_base
         });
 
-        this.el_title = this.createElement('div', 'lifx_light_title', {
+        this.el_title = createElement('div', 'lifx_light_title', {
             html: this.light.label,
             addTo: this.el_base
         });
