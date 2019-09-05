@@ -1,9 +1,12 @@
 const {
+    copy,
     pDistance,
     copyPoint,
     pointMatch,
     sqr,
-    resetSnap
+    resetSnap,
+    getNormal,
+    getSlope
 } = require('../../../lib/helpers');
 
 class SegmentManager {
@@ -260,25 +263,6 @@ class SegmentManager {
 		});
 	}
 
-	addSegment (opts = {}) {
-        const { segment, ignore_dist_check } = opts;
-		if (!segment) return;
-		const s = this.finalizeSegment(segment);
-
-		const x_sq = (s.p2.x - s.p1.x) * (s.p2.x - s.p1.x);
-	    const y_sq = (s.p2.y - s.p1.y) * (s.p2.y - s.p1.y);
-	    const dist = Math.sqrt(x_sq + y_sq);
-
-        if (pointMatch(s.p1, s.p2)) {
-            console.log('Wall/Door points are the same, not adding');
-        } else if (!ignore_dist_check && dist < CONFIG.snap.distance) {
-            console.log('Wall/Door is too short, not adding');
-        } else {
-            this.segments.push(s);
-            this.segments_map[s.id] = s;
-        }
-	}
-
 	finalizeSegment (segment) {
         // There is no reason to need floating point precicsion for pixel placement
         // All wall points will round the same up or down and will still "connect"
@@ -310,6 +294,9 @@ class SegmentManager {
             }
             if (pointMatch(point, segment.p2, 1)) {
                 segment.p2 = copyPoint(Mouse);
+            }
+            if (segment.one_way) {
+                segment.one_way = getNormal(segment, segment.one_way.open);
             }
         });
 
@@ -636,35 +623,60 @@ class SegmentManager {
     splitSegment (segment, point) {
         // Split a segment at a given point
         this.removeSegment(segment);
-        this.addSegment({
-            segment: {
-                p1: {
-                    x: segment.p1.x,
-                    y: segment.p1.y
-                },
-                p2: {
-                    x: point.x,
-                    y: point.y
-                },
-                type: segment.type
+
+        const new_segment_base = {
+            p2: {
+                x: point.x,
+                y: point.y
             },
+            type: segment.type
+        };
+
+        let new_seg_one = copy(new_segment_base);
+        let new_seg_two = copy(new_segment_base);
+
+        new_seg_one.p1 = {
+            x: segment.p1.x,
+            y: segment.p1.y
+        };
+        new_seg_two.p1 = {
+            x: segment.p2.x,
+            y: segment.p2.y,
+        };
+
+        if (segment.one_way) {
+            new_seg_one.one_way = getNormal(new_seg_one, segment.one_way.open);
+            new_seg_two.one_way = getNormal(new_seg_two, segment.one_way.open);
+        }
+
+        this.addSegment({
+            segment: new_seg_one,
             ignore_dist_check: true
         });
         this.addSegment({
-            segment: {
-                p1: {
-                    x: segment.p2.x,
-                    y: segment.p2.y,
-                },
-                p2: {
-                    x: point.x,
-                    y: point.y
-                },
-                type: segment.type
-            },
+            segment: new_seg_two,
             ignore_dist_check: true
         });
     }
+
+    addSegment (opts = {}) {
+        const { segment, ignore_dist_check } = opts;
+		if (!segment) return;
+		const s = this.finalizeSegment(segment);
+
+		const x_sq = (s.p2.x - s.p1.x) * (s.p2.x - s.p1.x);
+	    const y_sq = (s.p2.y - s.p1.y) * (s.p2.y - s.p1.y);
+	    const dist = Math.sqrt(x_sq + y_sq);
+
+        if (pointMatch(s.p1, s.p2)) {
+            console.log('Wall/Door points are the same, not adding');
+        } else if (!ignore_dist_check && dist < CONFIG.snap.distance) {
+            console.log('Wall/Door is too short, not adding');
+        } else {
+            this.segments.push(s);
+            this.segments_map[s.id] = s;
+        }
+	}
 
     splitWalls (new_wall) {
         // Split any walls the wall has endpoints on

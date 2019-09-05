@@ -1,10 +1,18 @@
 const {
+    copy,
     createElement,
     rgba,
     isBlankPixel,
     getUnitVector,
-    getPerpendicularUnitVector
+    getPerpendicularUnitVector,
+    copyPoint
 } = require('../../../lib/helpers');
+
+const {
+    clear,
+    line,
+    circle
+} = require('../../../lib/canvas');
 
 const MAX_MAP_SIZE = 3000;
 
@@ -45,15 +53,16 @@ class CanvasManager {
             'move_point_ended': this.refreshPlacements.bind(this),
             'remove_point': this.refreshPlacements.bind(this),
         }, parent.name);
+
+        window.light_context = this.light_context;
     }
 
     onLightPolyUpdate (data) {
-        if (CONFIG.is_player_screen) {
-            this.drawLight({
-                force_update: true,
-                polys: data.polys
-            });
-        }
+        if (!CONFIG.is_player_screen) return;
+        this.drawLight({
+            force_update: true,
+            polys: data.polys
+        });
     }
 
     onQuickPlaceToggled () {
@@ -84,10 +93,6 @@ class CanvasManager {
             });
             this[canvas_type + '_context'] = this[canvas_name].getContext('2d');
         });
-
-        // this.canvas_container.addEventListener('scroll', (e) => {
-        //     this.checkScroll(e);
-        // });
     }
 
     scrollLeft () {
@@ -105,37 +110,6 @@ class CanvasManager {
     scrollDown () {
         this.canvas_container.scrollTop = this.canvas_container.scrollTop + CONFIG.scroll_speed;
     }
-
-    // checkScroll (e) {
-    //     const left = Math.ceil(this.canvas_container.scrollLeft);
-    //     const top = Math.ceil(this.canvas_container.scrollTop);
-    //     const width = this.canvas_container.clientWidth;
-    //     const height = this.canvas_container.clientHeight;
-
-    //     if (left <= 0) {
-    //         Store.fire('hide_scroller', { scroller: 'left' });
-    //     } else {
-    //         Store.fire('show_scroller', { scroller: 'left' });
-    //     }
-
-    //     if (left + width >= this.map_image_width) {
-    //         Store.fire('hide_scroller', { scroller: 'right' });
-    //     } else {
-    //         Store.fire('show_scroller', { scroller: 'right' });
-    //     }
-
-    //     if (top <= 0) {
-    //         Store.fire('hide_scroller', { scroller: 'up' });
-    //     } else {
-    //         Store.fire('show_scroller', { scroller: 'up' });
-    //     }
-
-    //     if (top + height >= this.map_image_height) {
-    //         Store.fire('hide_scroller', { scroller: 'down' });
-    //     } else {
-    //         Store.fire('show_scroller', { scroller: 'down' });
-    //     }
-    // }
 
     setCanvasMouseEvents () {
         if (CONFIG.is_player_screen) return;
@@ -162,7 +136,6 @@ class CanvasManager {
         });
 
         this.control_canvas.addEventListener('mouseleave', (e) => {
-            // console.log('mouseleave');
             Store.fire('mouse_leave');
         });
     }
@@ -172,12 +145,10 @@ class CanvasManager {
 
         let img = new Image;
         img.onload = () => {
-            const natural_width = img.naturalWidth;
-            const natural_height = img.naturalHeight;
-            this.map_image_width = natural_width;
-            this.map_image_height = natural_height;
-            if (natural_width > MAX_MAP_SIZE || natural_height > MAX_MAP_SIZE) {
-                const ratio = img.naturalWidth / img.naturalHeight;
+            this.map_image_width = img.naturalWidth;
+            this.map_image_height = img.naturalHeight;
+            if (this.map_image_width > MAX_MAP_SIZE || this.map_image_height > MAX_MAP_SIZE) {
+                const ratio = this.map_image_width / this.map_image_height;
                 if (ratio > 1) {
                     // Image is wider than it is taller
                     this.map_image_width = MAX_MAP_SIZE;
@@ -207,8 +178,6 @@ class CanvasManager {
 
             this.canvas_container.scrollLeft = 0;
             this.canvas_container.scrollTop = 0;
-
-            // this.checkScroll();
 
             if (options.load_fog) {
                 Store.fire('load_fog', {
@@ -313,40 +282,26 @@ class CanvasManager {
         return state_pixel_data;
     }
 
-    clearContext (context) {
-        context.clearRect(0, 0, this.map_image_width, this.map_image_height);
+    drawFogOfWar () {
+        // The shadowed area that has been seen by the players
+        clear(this.shadow_context).rect(this.shadow_context, {
+            alpha: CONFIG.display.fog[CONFIG.window].seen.opacity,
+            color: CONFIG.display.fog[CONFIG.window].seen.color
+        });
     }
 
-    drawFogOfWar () { // The shadowed area that has been seen by the players
-        this.clearContext(this.shadow_context);
-        this.shadow_context.save();
-            this.shadow_context.globalAlpha = CONFIG.display.fog[CONFIG.window].seen.opacity;
-            this.shadow_context.beginPath();
-            this.shadow_context.rect(0, 0, this.map_image_width, this.map_image_height);
-            this.shadow_context.fillStyle = CONFIG.display.fog[CONFIG.window].seen.color;
-            this.shadow_context.fill();
-        this.shadow_context.restore();
-    }
-
-    drawShadow () { // The shadow drawn on the light layer, what the players haven't seen
-        this.clearContext(this.light_context);
-        this.light_context.save();
-            this.light_context.globalAlpha = CONFIG.display.fog[CONFIG.window].hidden.opacity;
-            this.light_context.beginPath();
-            this.light_context.rect(0, 0, this.map_image_width, this.map_image_height);
-            this.light_context.fillStyle = CONFIG.display.fog[CONFIG.window].hidden.color;
-            this.light_context.fill();
-        this.light_context.restore();
-    }
-
-    clearControlContext () {
-        this.control_context.clearRect(0, 0, this.wall_canvas.width, this.wall_canvas.height);
+    drawShadow () {
+        // The shadow drawn on the light layer, what the players haven't seen
+        clear(this.light_context).rect(this.light_context, {
+            alpha: CONFIG.display.fog[CONFIG.window].hidden.opacity,
+            color: CONFIG.display.fog[CONFIG.window].hidden.color
+        });
     }
 
     drawPlacements (point) {
         const context = this.control_context;
 
-        this.clearContext(this.control_context);
+        clear(this.control_context);
         if (this.parent.lighting_enabled || CONFIG.is_player_screen) {
             this.drawAjarDoors(context);
             return;
@@ -354,7 +309,8 @@ class CanvasManager {
 
         context.save();
             context.lineCap = 'round';
-            this.drawOneWayPoint (context);
+            // this.drawOneWayPoint (context);
+            this.drawOneWayArrow(context, this.parent.one_way_wall, true);
             this.drawSegmentBeingPlaced(context);
             this.drawSnapIndicator(context);
             this.drawWallEndIndicator(context);
@@ -362,185 +318,147 @@ class CanvasManager {
     }
 
     drawWallLines () {
-        const context = this.wall_context;
-
-        this.clearContext(this.wall_context);
+        clear(this.wall_context);
         if (!this.draw_walls) return;
-
-        context.save();
-            context.lineCap = 'round';
-            this.drawSegments(context);
-        context.restore();
+        this.drawSegments(this.wall_context);
     }
 
     drawAjarDoors (context) {
-        const segments = this.parent.SegmentManager.segments;
-        context.save();
-            context.lineCap = 'square';
-            segments.forEach((segment) => {
-                if (!segment.temp_p1 && !segment.temp_p2) return;
-                context.beginPath();
-                const x1 = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
-                const y1 = segment.temp_p1 ? segment.temp_p1.y : segment.p1.y;
-                const x2 = segment.temp_p2 ? segment.temp_p2.x : segment.p2.x;
-                const y2 = segment.temp_p2 ? segment.temp_p2.y : segment.p2.y;
-                context.beginPath();
-                context.moveTo(x1, y1);
-                context.lineTo(x2, y2);
-                this.canvasStroke(context, '#000000', 8);
-                this.canvasStroke(context, '#FFFFFF', 4);
+        this.parent.SegmentManager.segments.forEach((segment) => {
+            if (!segment.temp_p1 && !segment.temp_p2) return;
+            line(context, {
+                points: [
+                    segment.temp_p1 ? segment.temp_p1 : segment.p1,
+                    segment.temp_p2 ? segment.temp_p2 : segment.p2
+                ],
+                strokes: [{
+                    color: '#000000',
+                    width: 8
+                }, {
+                    color: '#FFFFFF',
+                    width: 4
+                }],
+                lineCap: 'square',
             });
-        context.restore();
-    }
-
-    drawOneWayPoint (context) {
-        if (!CONFIG.create_one_way_wall || !this.parent.one_way_wall.points) return;
-        context.save();
-            this.canvasCircle(
-                context,
-                this.parent.one_way_wall.points.open.x,
-                this.parent.one_way_wall.points.open.y,
-                CONFIG.display.wall.highlight_outer_width,
-                CONFIG.display.wall.highlight_outer_color
-            );
-        context.restore();
+        });
     }
 
     drawSegments (context) {
-        let closest_segment = (CONFIG.create_one_way_wall) ? this.parent.ObjectManager.findClosest('segment') : null;
+        this.parent.SegmentManager.segments.forEach((segment) => {
+            const conf = CONFIG.display[segment.type || 'wall'];
+            // Doors that are ajar will have temp points
+            line(context, {
+                points: [
+                    (segment.temp_p1) ? copyPoint(segment.temp_p1) : copyPoint(segment.p1),
+                    (segment.temp_p2) ? copyPoint(segment.temp_p2) : copyPoint(segment.p2)
+                ],
+                strokes: [{
+                    color: conf.inner_color,
+                    width: conf.inner_width
+                }, {
+                    color: conf.outer_color,
+                    width: conf.outer_width
+                }],
+                lineCap: 'round'
+            });
 
-        this.parent.SegmentManager.segments.forEach((segment, index) => {
-            let p1 = {
-                x: segment.p1.x,
-                y: segment.p1.y
-            };
-            let p2 = {
-                x: segment.p2.x,
-                y: segment.p2.y
-            };
-            let inner_color = CONFIG.display[segment.type || 'wall'].inner_color;
-            let outer_color = CONFIG.display[segment.type || 'wall'].outer_color;
-            let inner_width = CONFIG.display[segment.type || 'wall'].inner_width;
-            let outer_width = CONFIG.display[segment.type || 'wall'].outer_width;
-
-            if (segment.type === 'door') {
-                p1.x = segment.temp_p1 ? segment.temp_p1.x : segment.p1.x;
-                p1.y = segment.temp_p1 ? segment.temp_p1.y : segment.p1.y;
-                p2.x = segment.temp_p2 ? segment.temp_p2.x : segment.p2.x;
-                p2.y = segment.temp_p2 ? segment.temp_p2.y : segment.p2.y;
-            } else if (closest_segment && closest_segment.index === index) {
-                inner_color = CONFIG.display.wall.highlight_inner_color;
-                outer_color = CONFIG.display.wall.highlight_outer_color;
-                inner_width = CONFIG.display.wall.highlight_inner_width;
-                outer_width = CONFIG.display.wall.highlight_outer_width;
-            }
-
-            context.beginPath();
-            context.moveTo(p1.x, p1.y);
-            context.lineTo(p2.x, p2.y);
-            this.canvasStroke(context, outer_color, outer_width);
-            this.canvasStroke(context, inner_color, inner_width);
-
-            if (segment.one_way) {
-                const uv = getUnitVector({
-                    p1: segment.one_way.open,
-                    p2: segment.one_way.closed
-                });
-
-                const puv = getPerpendicularUnitVector({
-                    p1: segment.one_way.open,
-                    p2: segment.one_way.closed
-                });
-
-                const arrow_start = {
-                    x: segment.one_way.open.x + (uv.x * 10),
-                    y: segment.one_way.open.y + (uv.y * 10)
-                }
-
-                context.beginPath();
-                context.moveTo(segment.one_way.closed.x, segment.one_way.closed.y);
-                context.lineTo(arrow_start.x, arrow_start.y);
-
-                this.canvasStroke(context, outer_color, outer_width);
-                this.canvasStroke(context, inner_color, inner_width);
-
-                const side_one = {
-                    x: arrow_start.x + (puv.x * 5),
-                    y: arrow_start.y + (puv.y * 5)
-                };
-
-                const side_two = {
-                    x: arrow_start.x - (puv.x * 5),
-                    y: arrow_start.y - (puv.y * 5)
-                };
-
-                const arrow_tip = {
-                    x: segment.one_way.open.x,
-                    y: segment.one_way.open.y
-                }
-
-                context.beginPath();
-                context.moveTo(side_one.x, side_one.y);
-                context.lineTo(side_two.x, side_two.y);
-                context.lineTo(arrow_tip.x, arrow_tip.y);
-                context.lineTo(side_one.x, side_one.y);
-
-                this.canvasStroke(context, outer_color, outer_width);
-                this.canvasStroke(context, inner_color, inner_width);
-            }
+            this.drawOneWayArrow(context, segment);
         });
+    }
 
+    drawOneWayArrow (context, segment, placing) {
+        // placing determines whether we're drawing a placed one way wall
+        // or one in preview, yet to be placed, which requires a little data handling
+        if (placing && segment.segment) {
+            const segment_copy = copy(segment);
+            segment = copy(segment.segment);
+            segment.one_way = segment_copy.points;
+        }
+
+        if (!segment || !segment.one_way) return;
+
+        const uv = getUnitVector({
+            p1: segment.one_way.open,
+            p2: segment.one_way.closed
+        });
+        const puv = getPerpendicularUnitVector({
+            p1: segment.one_way.open,
+            p2: segment.one_way.closed
+        });
+        const arrow_start = {
+            x: segment.one_way.open.x + (uv.x * 10),
+            y: segment.one_way.open.y + (uv.y * 10)
+        }
+        const side_one = {
+            x: arrow_start.x + (puv.x * 5),
+            y: arrow_start.y + (puv.y * 5)
+        };
+        const side_two = {
+            x: arrow_start.x - (puv.x * 5),
+            y: arrow_start.y - (puv.y * 5)
+        };
+
+        const conf = CONFIG.display[segment.type || 'wall'];
+        const conf_key_prepend = (placing) ? 'highlight_' : '';
+
+        line(context, {
+            points: [
+                segment.one_way.closed, // The tail of the arrow
+                arrow_start,
+                side_one,
+                segment.one_way.open, // The tip of the arrow
+                side_two,
+                arrow_start
+            ],
+            strokes: [{
+                color: conf[conf_key_prepend + 'inner_color'],
+                width: conf[conf_key_prepend + 'inner_width']
+            }, {
+                color: conf[conf_key_prepend + 'outer_color'],
+                width: conf[conf_key_prepend + 'outer_width']
+            }]
+        });
     }
 
     drawSegmentBeingPlaced (context) {
-        if (!CONFIG.lighting_enabled && !CONFIG.create_one_way_wall && !CONFIG.move_segment) {
-            if (Mouse.down && !CONFIG.quick_place && this.parent.SegmentManager.new_wall) {
-                context.beginPath();
-                context.moveTo(this.parent.SegmentManager.new_wall.x, this.parent.SegmentManager.new_wall.y);
-                context.lineTo(Mouse.x, Mouse.y);
-                this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
-            }
-            if (CONFIG.quick_place) {
-                if (!this.parent.last_quickplace_coord.x) return;
-                context.beginPath();
-                context.moveTo(this.parent.last_quickplace_coord.x, this.parent.last_quickplace_coord.y);
-                context.lineTo(Mouse.x, Mouse.y);
-                this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
-            }
+        // Exit early for non-applicable modes
+        if (CONFIG.lighting_enabled || CONFIG.create_one_way_wall || CONFIG.move_segment) return;
+        // Normal wall placement
+        if (Mouse.down && !CONFIG.quick_place && this.parent.SegmentManager.new_wall) {
+            context.beginPath();
+            context.moveTo(this.parent.SegmentManager.new_wall.x, this.parent.SegmentManager.new_wall.y);
+            context.lineTo(Mouse.x, Mouse.y);
+            this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
+        }
+        // Quick place and there is a legit prev point to connect to
+        if (CONFIG.quick_place && this.parent.last_quickplace_coord.x) {
+            context.beginPath();
+            context.moveTo(this.parent.last_quickplace_coord.x, this.parent.last_quickplace_coord.y);
+            context.lineTo(Mouse.x, Mouse.y);
+            this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
         }
     }
 
     drawSnapIndicator (context) {
         if (!CONFIG.snap.indicator.show) return;
-        context.save();
-            context.globalAlpha = 0.4;
-            if (CONFIG.snap.indicator.show) {
-                this.canvasCircle(
-                    context,
-                    CONFIG.snap.indicator.point.x,
-                    CONFIG.snap.indicator.point.y,
-                    CONFIG.snap.distance,
-                    CONFIG.snap.color
-                );
-            }
-        context.restore();
+        circle(context, {
+            point:  CONFIG.snap.indicator.point,
+            radius: CONFIG.snap.distance,
+            color: CONFIG.snap.color,
+            alpha: 0.4
+        });
     }
 
     drawWallEndIndicator (context) {
         if (!CONFIG.move_segment) return;
         const point_highlight = this.parent.SegmentManager.getControlPoint();
         if (!point_highlight) return;
-        const color = (point_highlight.end) ? '#0000FF' : CONFIG.snap.color;
-        context.save();
-            context.globalAlpha = 0.4;
-            this.canvasCircle(
-                context,
-                point_highlight.point.x,
-                point_highlight.point.y,
-                CONFIG.move_point_dist,
-                color
-            );
-        context.restore();
+        circle(context, {
+            point:  point_highlight.point,
+            radius: CONFIG.move_point_dist,
+            color: (point_highlight.end) ? '#0000FF' : CONFIG.snap.color,
+            alpha: 0.4
+        });
     }
 
     drawMap (img) {
@@ -571,25 +489,14 @@ class CanvasManager {
         if (CONFIG.is_player_screen) return;
         const context = this.lights_context;
         const lights = this.parent.LightManager.lights;
-
-        context.clearRect(0, 0, this.map_image_width, this.map_image_height);
-
+        clear(context);
         for (let l in lights) {
-            context.beginPath();
-            context.arc(
-                lights[l].x,
-                lights[l].y,
-                this.parent.LightManager.light_width,
-                0,
-                Math.PI * 2
-            );
-            context.save();
-                context.globalAlpha = 0.5;
-                context.fillStyle = '#FFFF99';
-                context.fill();
-                context.strokeStyle = '#FFFF99';
-                context.stroke();
-            context.restore();
+            circle(context, {
+                point: lights[l],
+                radius: this.parent.LightManager.light_width,
+                color: '#FFFF99',
+                alpha: 0.5
+            });
         }
     }
 
@@ -597,14 +504,10 @@ class CanvasManager {
         // Draw all of the light polygons
         context.beginPath();
         for (let polys_i = 0; polys_i < polys.length; ++polys_i) {
-            const points = polys[polys_i].intersects;
-            // moveTo creates a new path, so it will not be connected to the other polys
-            context.moveTo(points[0].x, points[0].y);
-            for (let points_i = 0; points_i < points.length; ++points_i) {
-                context.lineTo(points[points_i].x, points[points_i].y);
-            }
+            line(context, {
+                points: polys[polys_i].intersects
+            });
         }
-
         // Draw existing content inside new content. All of the current objects only
         // inside the light polygons are shown. Everything else is transparent
         context.globalCompositeOperation = "destination-out";
@@ -623,8 +526,8 @@ class CanvasManager {
     }
 
     disableLight () {
-        this.clearContext(this.light_context);
-        this.clearContext(this.shadow_context);
+        clear(this.light_context);
+        clear(this.shadow_context);
         this.light_canvas.classList.add('hidden');
         this.shadow_canvas.classList.add('hidden');
     }
@@ -638,7 +541,7 @@ class CanvasManager {
         if (this.draw_walls) {
             this.drawWallLines();
         } else {
-            this.clearContext(this.wall_context);
+            clear(this.wall_context);
         }
     }
 
@@ -661,21 +564,6 @@ class CanvasManager {
     canvasStroke (context, color, width) {
         context.strokeStyle = color;
         context.lineWidth = width;
-        context.stroke();
-    }
-
-    canvasCircle (context, x, y, width, color) {
-        context.beginPath();
-        context.arc(
-            x,
-            y,
-            width,
-            0,
-            Math.PI * 2
-        );
-        context.fillStyle = color;
-        context.fill();
-        context.strokeStyle = color;
         context.stroke();
     }
 };

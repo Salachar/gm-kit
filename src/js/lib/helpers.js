@@ -125,7 +125,10 @@ const Helpers = {
         }
     },
 
-    getNormal: function (segment) {
+    getNormal: function (segment, reference_point) {
+        reference_point = reference_point || Mouse;
+        // the "open" normal will be on the side
+        // of the reference point, the mouse in most cases
         if (!segment) return;
         if (segment.segment) segment = segment.segment;
 
@@ -148,17 +151,17 @@ const Helpers = {
         };
 
         let point_one = {
-            x: middle_point.x + mod_vector.x,
-            y: middle_point.y + mod_vector.y
+            x: Math.round(middle_point.x + mod_vector.x),
+            y: Math.round(middle_point.y + mod_vector.y)
         };
 
         let point_two = {
-            x: middle_point.x - mod_vector.x,
-            y: middle_point.y - mod_vector.y
+            x: Math.round(middle_point.x - mod_vector.x),
+            y: Math.round(middle_point.y - mod_vector.y)
         };
 
-        let dist_one = Helpers.pDistance(Mouse, point_one);
-        let dist_two = Helpers.pDistance(Mouse, point_two);
+        let dist_one = Helpers.pDistance(reference_point, point_one);
+        let dist_two = Helpers.pDistance(reference_point, point_two);
 
         if (dist_one.distance <= dist_two.distance) {
             return {
@@ -170,6 +173,10 @@ const Helpers = {
             open: point_two,
             closed: point_one
         };
+    },
+
+    getSlope: function (p1, p2) {
+        return (p2.y - p1.y) / (p2.x - p1.x);
     },
 
     getUnitVector: function (segment) {

@@ -126,8 +126,8 @@ class MapContainer extends Container {
         }
 
         const window_options = {
-            // autoHideMenuBar: 1,
-            // titleBarStyle: 'hidden',
+            autoHideMenuBar: 1,
+            titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,

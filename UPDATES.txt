@@ -1,3 +1,8 @@
+Update (9/4/2019):
+    - Connecting to a one way wall removes the one way data on the split
+        - We need both parts of the split wall to be one way, and they would both need new points
+    - One way arrows need to update with the changing walls
+
 Update (8/29/2019):
     - Added clarification to audio search that tracks under a matching folder are included
         - Added to search input placeholder text

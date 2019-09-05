@@ -5,6 +5,9 @@ What I was working on:
     - Lights need a color picker in order to change them
         - Scenes will not be changable
 
+    - Change Fogofwar and shadow to seen and unseen or something much easier to understand
+
+
 
 PRIORITY: Either cause it's important or I just want to
 
@@ -17,6 +20,7 @@ PRIORITY: Either cause it's important or I just want to
     - Add Grid
 
     - Option to disable walls for a map, so everything is lit up
+
 
 
 TODO:
