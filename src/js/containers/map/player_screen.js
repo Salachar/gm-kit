@@ -32,12 +32,12 @@ class DisplayManager {
     }
 
     setDim (dimmer_mod) {
-        console.log('setdim');
-        let dimmer_opacity = parseFloat(document.getElementById('dimmer').style.opacity, 10);
-        let new_dimmer_opacity = dimmer_opacity + dimmer_mod;
-        if (new_dimmer_opacity < 0) new_dimmer_opacity = 0;
-        if (new_dimmer_opacity > 1) new_dimmer_opacity = 1;
-        document.getElementById('dimmer').style.opacity = new_dimmer_opacity;
+        // console.log('setdim');
+        // let dimmer_opacity = parseFloat(document.getElementById('dimmer').style.opacity, 10);
+        // let new_dimmer_opacity = dimmer_opacity + dimmer_mod;
+        // if (new_dimmer_opacity < 0) new_dimmer_opacity = 0;
+        // if (new_dimmer_opacity > 1) new_dimmer_opacity = 1;
+        // document.getElementById('dimmer').style.opacity = new_dimmer_opacity;
     }
 
     onMapLoad (map) {
@@ -117,10 +117,10 @@ window.onload = () => {
     window.DisplayManager = new DisplayManager();
     window.Mouse = new Mouse();
 
-    document.getElementById('dimmer').style.opacity = 0;
+    // document.getElementById('dimmer').style.opacity = 0;
 
     window.opener.postMessage({
-        event: 'display_window_loaded'
+        event: 'player_screen_loaded'
     });
 };
 

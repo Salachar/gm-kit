@@ -12,6 +12,8 @@ class LightManager {
         this.selected_light = null;
         this.light_width = 10;
 
+        this.show_entire_map = false;
+
         const lights_data = (map || {}).lights_data || {};
         this.lights = lights_data.lights || {};
         this.lights_added = lights_data.lights_added || 0;
@@ -21,6 +23,7 @@ class LightManager {
             'light_move': this.onLightMove.bind(this),
             'load_lights': this.loadLights.bind(this),
             'deselect_light': this.deselectLight.bind(this),
+            'show_entire_map': this.showEntireMap.bind(this),
         }, parent.name);
     }
 
@@ -155,11 +158,23 @@ class LightManager {
             polys.push(this.getLightPolygon(this.lights[l], opts.force_update));
         }
         // This event is only for the display window. When we're drawing
-        Store.fire('light_poly_update', {
+        Store.fire('light_poly_update_(PS)', {
             polys: polys
         });
         this.light_polys = polys;
         return this.light_polys;
+    }
+
+    showEntireMap () {
+        this.show_entire_map = !this.show_entire_map;
+        if (this.show_entire_map) {
+            Store.fire('show_entire_map_(PS)');
+        } else {
+            Store.fire('hide_entire_map_(PS)');
+            this.getAllLightPolygons({
+                force_update: true
+            });
+        }
     }
 
     checkForLights () {

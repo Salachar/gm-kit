@@ -5,20 +5,6 @@ class Store {
         this.__store = {};
 
         this.__key = null;
-
-        this.display_window_events = {
-            'image_loaded': true,
-            'light_poly_update': true,
-            'load_fog': true,
-            'scroll_left': 'ALT',
-            'scroll_right': 'ALT',
-            'scroll_up': 'ALT',
-            'scroll_down': 'ALT',
-            'dim_up': 'ALT',
-            'dim_down': 'ALT',
-            'zoom_in': 'ALT',
-            'zoom_out': 'ALT'
-        };
     }
 
     set key (new_key) {
@@ -29,6 +15,14 @@ class Store {
         return this.__key;
     }
 
+    isPlayerScreenEvent (fired_event) {
+        return (fired_event.indexOf('_(ps)') !== -1 || fired_event.indexOf('_(PS)') !== -1);
+    }
+
+    isPlayerScreenEventOnly (fired_event) {
+        return (fired_event.indexOf('_(PS)') !== -1);
+    }
+
     fire (fired_event, data, key) {
         // Send the current key to the display window
         // If the display windows current key is different
@@ -37,19 +31,15 @@ class Store {
         if (key && this.key && this.key !== key) return;
         key = key || this.key || null;
 
-        // If the display window accepts the event, send it there
-        const dwe = this.display_window_events[fired_event];
-        if (window.display_window && dwe) {
-            if (dwe === true || (dwe === 'ALT' && KEY_DOWN[KEYS.ALT])) {
-                window.display_window.postMessage({
+        if (!CONFIG.is_player_screen && this.isPlayerScreenEvent(fired_event)) {
+            if (window.player_screen) {
+                window.player_screen.postMessage({
                     event: fired_event,
                     data: data,
                     key: key
                 });
             }
-            // If its an ALT event, return early, since we only want the display
-            // screen to get an ALT event
-            if (dwe === 'ALT' && KEY_DOWN[KEYS.ALT]) return;
+            if (this.isPlayerScreenEventOnly(fired_event)) return;
         }
 
         this.set(data);

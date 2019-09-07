@@ -4,14 +4,19 @@ class AudioTemplate {
     }
 
     generate () {
+        // <div id="audio_player_volume_container">
+        //     <input id="audio_player_volume" value="0.1" type="range" min="0" max="1" step="0.01" />
+        // </div>
         return `
             <div class="container_header">
                 <div id="audio_player">
                     <div class="button" id="audio_player_play_pause">PAUSE</div>
                     <div class="button" id="audio_player_loop">LOOP: ON</div>
 
-                    <div id="audio_player_volume_container">
-                        <input id="audio_player_volume" value="0.1" type="range" min="0" max="1" step="0.01" />
+                    <div id="audio_player_volume" class="number_input_container">
+                        <div class="number_input_button arrow_left"></div>
+                        <input type="text" class="number_input" value="50"></input>
+                        <div class="number_input_button arrow_right"></div>
                     </div>
 
                     <div id="audio_player_progress">

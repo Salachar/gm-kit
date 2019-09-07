@@ -4,6 +4,7 @@ const ContainerTemplate = require('../../templates/map');
 const MapListManager = require('./map_list_manager');
 const MapInstance = require('./instance/map');
 const TextManager = require('./text_manager');
+const ControlsManager = require('./controls_manager');
 
 const controls = require('./controls');
 
@@ -31,12 +32,14 @@ class MapContainer extends Container {
         });
 
         this.TextManager = new TextManager();
+        this.ControlsManager = new ControlsManager();
 
         this.setEvents();
         this.addHelp();
 
         Store.register({
-            'mouse_leave': this.onMouseLeave.bind(this)
+            'mouse_leave': this.onMouseLeave.bind(this),
+            'show_player_screen': this.showPlayerScreen.bind(this)
         });
     }
 
@@ -63,7 +66,7 @@ class MapContainer extends Container {
                 break;
             case KEYS.S:
                 if (KEY_DOWN[KEYS.ALT]) {
-                    this.showInDisplayWindow();
+                    Store.fire('show_player_screen');
                 }
             default:
                 // console.log('APP >> Keydown: Unhandled keyCode: ' + keyCode);
@@ -113,21 +116,27 @@ class MapContainer extends Container {
         CONFIG.quick_place = false;
     }
 
-    showInDisplayWindow () {
+    showPlayerScreen () {
         let current_map_data =  (this.current_map || {}).full_data || {};
 
-        if (window.display_window && !window.display_window.closed) {
-            window.display_window.postMessage({
+        if (window.player_screen && !window.player_screen.closed) {
+            window.player_screen.postMessage({
                 event: 'display_map',
                 data: current_map_data,
                 config: CONFIG
+            });
+            Store.fire('zoom_(ps)', {
+                zoom: current_map_data.meta.zoom
+            });
+            Store.fire('brightness_(ps)', {
+                brightness: current_map_data.meta.brightness
             });
             return;
         }
 
         const window_options = {
-            autoHideMenuBar: 1,
-            titleBarStyle: 'hidden',
+            // autoHideMenuBar: 1,
+            // titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -139,7 +148,7 @@ class MapContainer extends Container {
             option_param += x + '=' + window_options[x] + ','
         }
 
-        window.display_window = window.open(
+        window.player_screen = window.open(
             '../html/player_screen.html',
             'electron',
             option_param
@@ -174,6 +183,7 @@ class MapContainer extends Container {
         this.current_map = this.maps[map_name];
         this.current_map.active = true;
         this.current_map.show();
+        this.ControlsManager.update(this.current_map);
         window.MAP = this.current_map;
     }
 
@@ -194,8 +204,8 @@ class MapContainer extends Container {
         Store.remove(map_name);
         resetSnap();
 
-        if (window.display_window && !window.display_window.closed) {
-            window.display_window.postMessage({
+        if (window.player_screen && !window.player_screen.closed) {
+            window.player_screen.postMessage({
                 event: 'remove_map',
                 data: map_name
             });
@@ -270,8 +280,9 @@ class MapContainer extends Container {
 
     setEvents () {
         document.getElementById('load_state').addEventListener('click', (e) => {
-            if (!this.current_map) return;
-            this.current_map.loadState();
+            // if (!this.current_map) return;
+            // this.current_map.loadState();
+            Toast.message('Save/Load State is temporarily disabled');
         });
 
         document.getElementById('create_one_way_wall').addEventListener('click', (e) => {
@@ -287,8 +298,6 @@ class MapContainer extends Container {
         document.getElementById('help').addEventListener('click', (e) => {
             document.getElementById('help_box').classList.toggle('hide');
         });
-
-        // document.getElementById('help').add
     }
 
     addHelp () {

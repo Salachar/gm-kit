@@ -22,6 +22,7 @@ class MapInstance {
         this.active = false;
         // Zoom is now map specific
         this.zoom = 1;
+        this.player_screen_zoom = (map.json.meta || {}).zoom || 1;
         // Whether light is enabled or not for this map
         this.lighting_enabled = CONFIG.is_player_screen;
 
@@ -39,8 +40,8 @@ class MapInstance {
 
         this.el_tab = null;
 
-        this.node = createElement('div', map.name + '_map', {
-            addTo: document.getElementById('map_container')
+        this.node = createElement('div', map.name + '_map map_container', {
+            addTo: document.getElementById('map_containers')
         });
 
         this.SegmentManager = new SegmentManager(map, this, options);
@@ -62,8 +63,20 @@ class MapInstance {
             'remove_light': this.onRemoveLight.bind(this),
             'remove_segment': this.onRemoveSegment.bind(this),
             'remove_text_block': this.onRemoveTextBlock.bind(this),
+            'remove_one_way': this.onRemoveOneWay.bind(this),
             'add_text_block': this.onAddTextBlock.bind(this),
+
+            'zoom_(ps)': this.playerScreenZoom.bind(this)
         }, this.name);
+    }
+
+    playerScreenZoom (data) {
+        if (data && data.zoom) {
+            this.player_screen_zoom = data.zoom;
+        }
+        if (CONFIG.is_player_screen) {
+            this.setZoom(this.player_screen_zoom);
+        }
     }
 
     onZoomIn () {
@@ -105,7 +118,6 @@ class MapInstance {
     }
 
     onLightChange () {
-        this.CanvasManager.drawLights();
         this.CanvasManager.drawLight();
     }
 
@@ -119,8 +131,12 @@ class MapInstance {
 
     onRemoveLight (data) {
         this.LightManager.removeLight(data.object);
-        this.CanvasManager.drawLights();
         this.CanvasManager.drawLight();
+    }
+
+    onRemoveOneWay (data) {
+        this.CanvasManager.drawWallLines();
+        this.updateLighting();
     }
 
     onRemoveSegment (data) {
@@ -158,7 +174,12 @@ class MapInstance {
             },
             json: {
                 segments: this.SegmentManager.sanitizedSegments(),
-                text: this.TextManager.data
+                text: this.TextManager.data,
+                grid: this.CanvasManager.grid
+            },
+            meta: {
+                zoom: this.player_screen_zoom,
+                brightness: this.CanvasManager.brightness
             }
         };
     }
@@ -550,7 +571,7 @@ class MapInstance {
 
     updateLighting () {
         this.SegmentManager.prepareSegments();
-        if (this.lighting_enabled || window.display_window) {
+        if (this.lighting_enabled || window.player_screen) {
             this.CanvasManager.drawLight({
                 force_update: true
             });

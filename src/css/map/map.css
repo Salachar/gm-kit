@@ -1,14 +1,14 @@
 @import "header.css";
 @import "map_list.css";
 @import "text_block.css";
-
+@import "controls.css";
 
 
 /**********************************************************
     CANVASES
 **********************************************************/
 
-#map_container {
+#map_containers {
     position: absolute;
     /* top: 4rem; */
     top: 0;
@@ -17,11 +17,21 @@
     bottom: 0;
     transition: 0.3s top ease;
     background-color: #666;
-    overflow: scroll;
+    overflow: hidden;
 }
 
-#map_container.display {
+#map_containers.display {
     top: 0;
+}
+
+.map_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s top ease;
+    overflow: scroll;
 }
 
 .canvas_container {
@@ -46,8 +56,12 @@
     z-index: var(--image-canvas-z);
 }
 
-.shadow_canvas {
-    z-index: var(--shadow-canvas-z);
+.grid_canvas {
+    z-index: var(--grid-canvas-z);
+}
+
+.shroud_canvas {
+    z-index: var(--shroud-canvas-z);
 }
 
 .light_canvas {

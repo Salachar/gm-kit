@@ -2,6 +2,10 @@ const {
     cacheElements
 } = require('../../lib/helpers');
 
+const {
+    numberInput
+} = require('../../lib/input');
+
 class AudioPlayer {
     constructor (opts = {}) {
         this.parent = opts.parent;
@@ -48,10 +52,15 @@ class AudioPlayer {
             this.el_audio_player_loop.innerHTML = text;
         });
 
-        this.el_audio_player_volume.addEventListener('change', () => {
-            this.player.volume = this.el_audio_player_volume.value;
-            this.parent.data.volume = this.player.volume;
-            this.parent.data.save();
+        numberInput(this.el_audio_player_volume, {
+            step: 0.01,
+            min: 0,
+            max: 1,
+            handler: (value) => {
+                this.player.volume = value;
+                this.parent.data.volume = this.player.volume;
+                this.parent.data.save();
+            }
         });
 
         this.el_audio_player_progress.addEventListener('click', (e) => {
@@ -94,7 +103,8 @@ class AudioPlayer {
 
     set volume (new_volume) {
         this.player.volume = new_volume;
-        this.el_audio_player_volume.value = new_volume;
+        const input = this.el_audio_player_volume.getElementsByClassName('number_input')[0];
+        input.value = new_volume;
     }
 
     get volume () {

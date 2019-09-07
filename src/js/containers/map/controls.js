@@ -12,7 +12,8 @@ module.exports = [{
     text: 'Hold down to allow movement of placed wall endpoints<br>All walls sharing an endpoint will update'
 }, {
     key: 'A',
-    text: 'Place a light (yellow circle) on map where the mouse is'
+    text: 'Place a light (yellow circle) on map at current mouse position',
+    common: true
 }, {
     key: 'E',
     text: 'Enable map lighting on GM screen (optional for GM)<br>Player screen will always have lighting enabled'
@@ -21,13 +22,15 @@ module.exports = [{
     text: 'Disable map lighting on GM screen'
 }, {
     key: 'O',
-    text: 'Toggle door (open/closed) nearest to the mouse (within a certain distance)'
+    text: 'Toggle door (open/closed) nearest to the current mouse position (within a certain distance)',
+    common: true
 }, {
     key: 'T',
-    text: 'Toggle segment closest to the mouse between wall and door (within a certain distance)'
+    text: 'Toggle segment closest to the mouse between wall and door (within a certain distance)',
 }, {
     key: 'DELETE',
-    text: 'Remove light|wall|door|text closest to mouse (within a certain distance)'
+    text: 'Remove object closest to the mouse position (within a certain distance)',
+    common: true
 }, {
     key: 'W',
     text: 'Toggle walls on main window when lighting is on<br>This is entirely optional and only affects the GM screen'

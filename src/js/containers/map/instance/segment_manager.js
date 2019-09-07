@@ -47,9 +47,10 @@ class SegmentManager {
 
         Store.register({
             'switch_wall_door': this.onSwitchWallDoor.bind(this),
-            'image_loaded': this.onImageLoaded.bind(this),
             'toggle_closest_door': this.onToggleClosestDoor.bind(this),
             'deselect_door': this.deselectDoor.bind(this),
+
+            'image_loaded_(ps)': this.onImageLoaded.bind(this)
         }, parent.name);
     }
 
@@ -387,9 +388,10 @@ class SegmentManager {
         const door = closest_segment.segment;
 
         if (door) {
+            // Toggling on an ajar door will reset it to closed
             if (door.temp_p1 || door.temp_p2) {
                 delete door.temp_p1;
-                delete door.temp_p1;
+                delete door.temp_p2;
                 door.open = false;
             } else if (door.open) {
                 door.open = false;

@@ -1,8 +1,7 @@
 const {
-    createElement,
-    configureElement,
-    cacheElements
-} = require('./dom');
+    rgba,
+    copyPoint
+} = require('./helpers');
 
 /*
     NOTE (9/4/20): this.map_image_width used to be passed in for rect size for:
@@ -11,6 +10,13 @@ const {
 */
 
 const Canvas = {
+    size: function (context) {
+        return {
+            width: context.canvas.width || context.canvas.clientWidth || 0,
+            height: context.canvas.height || context.canvas.clientHeight || 0
+        };
+    },
+
     clear: function (context, opts = {}) {
         let {
             start,
@@ -42,8 +48,13 @@ const Canvas = {
         const {
             points,
             alpha,
-            lineCap
+            lineCap,
+            fill,
+            cutout
         } = opts;
+
+        const start_point = copyPoint(points[0]);
+        if (!start_point) return;
 
         let strokes = opts.strokes || [];
         if (opts.width && opts.color) {
@@ -59,19 +70,34 @@ const Canvas = {
             context.globalAlpha = alpha || 1;
             context.beginPath();
             context.moveTo(points[0].x, points[0].y);
-
             for (let i = 1; i < points.length; ++i) {
+                // Invalid points returns a bad copy
+                if (!copyPoint(points[i])) return;
                 context.lineTo(points[i].x, points[i].y);
             }
-
             // Not passing strokes will just create the lines and leave it open
             // to whatever called this function, if more outside operations are desired
-            strokes.forEach((stroke) => {
-                Canvas.stroke(context, {
-                    width: stroke.width,
-                    color: stroke.color
+            if (strokes.length) {
+                strokes.forEach((stroke) => {
+                    Canvas.stroke(context, {
+                        width: stroke.width,
+                        color: stroke.color
+                    });
                 });
-            });
+            }
+            if (cutout) {
+                // "destination-out" : Draw existing content inside new content. This basically
+                // cuts out the drawn shape from the canvas. This will let us see through the sections
+                // we cut out of the shadow and shroud layers
+                context.fillStyle = rgba(0, 0, 0, 1);
+                context.globalCompositeOperation = "destination-out";
+                context.fill();
+            }
+            if (fill) {
+                context.fillStyle = fill.style || rgba(0, 0, 0, 1);
+                context.globalCompositeOperation = fill.composite || "source-over";
+                context.fill();
+            }
         context.restore();
     },
 

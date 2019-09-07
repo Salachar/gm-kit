@@ -1,7 +1,5 @@
 const {
     copy,
-    createElement,
-    rgba,
     isBlankPixel,
     getUnitVector,
     getPerpendicularUnitVector,
@@ -9,6 +7,13 @@ const {
 } = require('../../../lib/helpers');
 
 const {
+    createElement,
+    configureElement
+} = require('../../../lib/dom');
+
+
+const {
+    size,
     clear,
     line,
     circle
@@ -19,24 +24,55 @@ const MAX_MAP_SIZE = 3000;
 class CanvasManager {
     constructor (map = {}, parent, options = {}) {
         this.map = map;
-
         this.parent = parent;
 
         // Initialize to false for display window, true otherwise
         this.draw_walls = !CONFIG.is_player_screen;
-
         this.canvas_container = parent.node;
-
-        this.createCanvasElements(map);
-        this.setCanvasMouseEvents();
-        this.loadImage(options);
 
         this.map_image = null;
         this.map_image_width = CONFIG.window_width;
         this.map_image_height = CONFIG.window_height;
 
+        this.grid = copy(map.json.grid) || {
+            show: false,
+            size: 50,
+            offset: {
+                x: 0,
+                y: 0
+            }
+        };
+
+        this.brightness = (map.json.meta || {}).brightness || 100;
+
+        this.createCanvasElements(map);
+        this.setCanvasMouseEvents();
+        this.loadImage(options).then((img) => {
+            this.resizeCanvases();
+
+            Store.fire('image_loaded_(ps)', {
+                image_dimensions: {
+                    width: this.map_image_width,
+                    height: this.map_image_height
+                }
+            });
+
+            this.drawMap(img);
+            this.drawWallLines();
+            this.drawGrid();
+            this.updateBrightness();
+
+            this.canvas_container.scrollLeft = 0;
+            this.canvas_container.scrollTop = 0;
+
+            // if (options.load_fog) {
+            //     Store.fire('load_fog', {
+            //         fog: options.load_fog
+            //     });
+            // }
+        });
+
         Store.register({
-            'light_poly_update': this.onLightPolyUpdate.bind(this),
             'quick_place_started': this.onQuickPlaceToggled.bind(this),
             'quick_place_ended': this.onQuickPlaceToggled.bind(this),
             'lights_cleared': this.onLightsCleared.bind(this),
@@ -46,19 +82,93 @@ class CanvasManager {
             'scroll_left': this.scrollLeft.bind(this),
             'door_activated': this.onDoorActivated.bind(this),
             'draw_walls': this.drawWallLines.bind(this),
-            'load_fog': this.loadFog.bind(this),
+            // 'load_fog': this.loadFog.bind(this),
 
             'move_segment_toggled': this.refreshPlacements.bind(this),
             'create_one_way_wall_toggled' : this.refreshPlacements.bind(this),
             'move_point_ended': this.refreshPlacements.bind(this),
             'remove_point': this.refreshPlacements.bind(this),
+
+            "toggle_grid_(ps)": this.toggleGrid.bind(this),
+            "grid_size_update_(ps)": this.updateGrid.bind(this),
+            "grid_offset_update_(ps)": this.updateGrid.bind(this),
+            'brightness_(ps)': this.updateBrightness.bind(this),
+
+            'light_poly_update_(PS)': this.onLightPolyUpdate.bind(this),
+            "show_entire_map_(PS)": this.showEntireMapPC.bind(this),
+            "hide_entire_map_(PS)": this.hideEntireMapPC.bind(this),
+            'scroll_(PS)': this.scrollPlayerScreen.bind(this)
         }, parent.name);
 
         window.light_context = this.light_context;
     }
 
+    updateBrightness (data) {
+        if (data && data.brightness) {
+            this.brightness = data.brightness;
+        }
+        if (CONFIG.is_player_screen) {
+            configureElement(this.image_canvas, {
+                css: {
+                    filter: `brightness(${this.brightness}%)`
+                }
+            });
+        }
+    }
+
+    updateGrid (data) {
+        if (data.size) {
+            this.grid.size = data.size;
+        }
+        if (data.offset) {
+            this.grid.offset.x += data.offset.x;
+            this.grid.offset.y += data.offset.y;
+        }
+        this.drawGrid();
+    }
+
+    toggleGrid () {
+        this.grid.show = !this.grid.show;
+        this.drawGrid();
+    }
+
+    drawGrid () {
+        clear(this.grid_context);
+        if (!this.grid.show) return;
+        const canvas_size = size(this.grid_context);
+        // Draw all the horizontal lines
+        for (let y = this.grid.offset.y; y < canvas_size.height; y += this.grid.size) {
+            line(this.grid_context, {
+                points: [{
+                    x: 0,
+                    y: y
+                }, {
+                    x: canvas_size.width,
+                    y: y
+                }],
+                alpha: 0.75,
+                width: 2,
+                color: '#000000'
+            });
+        }
+        // Draw all the horizontal lines
+        for (let x = this.grid.offset.x; x < canvas_size.width; x += this.grid.size) {
+            line(this.grid_context, {
+                points: [{
+                    x: x,
+                    y: 0
+                }, {
+                    x: x,
+                    y: canvas_size.height
+                }],
+                alpha: 0.75,
+                width: 2,
+                color: '#000000'
+            });
+        }
+    }
+
     onLightPolyUpdate (data) {
-        if (!CONFIG.is_player_screen) return;
         this.drawLight({
             force_update: true,
             polys: data.polys
@@ -86,7 +196,7 @@ class CanvasManager {
     }
 
     createCanvasElements (map) {
-        ['control', 'image', 'wall', 'light', 'lights', 'shadow'].forEach((canvas_type) => {
+        ['control', 'image', 'wall', 'light', 'lights', 'shroud', 'grid'].forEach((canvas_type) => {
             let canvas_name = canvas_type + '_canvas';
             this[canvas_name] = createElement('canvas', `${canvas_name} map_canvas`, {
                 addTo: this.canvas_container
@@ -95,20 +205,25 @@ class CanvasManager {
         });
     }
 
-    scrollLeft () {
-        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft - CONFIG.scroll_speed;
+    scrollLeft (scroll_amount) {
+        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft - (scroll_amount || CONFIG.scroll_speed);
     }
 
-    scrollRight () {
-        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + CONFIG.scroll_speed;
+    scrollRight (scroll_amount) {
+        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + (scroll_amount || CONFIG.scroll_speed);
     }
 
-    scrollUp () {
-        this.canvas_container.scrollTop = this.canvas_container.scrollTop - CONFIG.scroll_speed;
+    scrollUp (scroll_amount) {
+        this.canvas_container.scrollTop = this.canvas_container.scrollTop - (scroll_amount || CONFIG.scroll_speed);
     }
 
-    scrollDown () {
-        this.canvas_container.scrollTop = this.canvas_container.scrollTop + CONFIG.scroll_speed;
+    scrollDown (scroll_amount) {
+        this.canvas_container.scrollTop = this.canvas_container.scrollTop + (scroll_amount || CONFIG.scroll_speed);
+    }
+
+    scrollPlayerScreen (data) {
+        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + data.offset.x;
+        this.canvas_container.scrollTop = this.canvas_container.scrollTop + data.offset.y;
     }
 
     setCanvasMouseEvents () {
@@ -141,55 +256,41 @@ class CanvasManager {
     }
 
     loadImage (options) {
-        if (!this.map.image) return;
-
-        let img = new Image;
-        img.onload = () => {
-            this.map_image_width = img.naturalWidth;
-            this.map_image_height = img.naturalHeight;
-            if (this.map_image_width > MAX_MAP_SIZE || this.map_image_height > MAX_MAP_SIZE) {
-                const ratio = this.map_image_width / this.map_image_height;
-                if (ratio > 1) {
-                    // Image is wider than it is taller
-                    this.map_image_width = MAX_MAP_SIZE;
-                    this.map_image_height = this.map_image_width / ratio;
-                } else if (ratio < 1) {
-                    // Image is taller than it is wider
-                    this.map_image_height = MAX_MAP_SIZE;
-                    this.map_image_width = this.map_image_height * ratio;
-                } else {
-                    // Image is a square or something
-                    this.map_image_width = MAX_MAP_SIZE;
-                    this.map_image_height = MAX_MAP_SIZE;
-                }
+        return new Promise((resolve, reject) => {
+            if (!this.map.image) {
+                reject();
+                return;
             }
 
-            this.resizeCanvases();
-
-            Store.fire('image_loaded', {
-                image_dimensions: {
-                    width: this.map_image_width,
-                    height: this.map_image_height
+            let img = new Image;
+            img.onload = () => {
+                this.map_image_width = img.naturalWidth;
+                this.map_image_height = img.naturalHeight;
+                if (this.map_image_width > MAX_MAP_SIZE || this.map_image_height > MAX_MAP_SIZE) {
+                    const ratio = this.map_image_width / this.map_image_height;
+                    if (ratio > 1) {
+                        // Image is wider than it is taller
+                        this.map_image_width = MAX_MAP_SIZE;
+                        this.map_image_height = this.map_image_width / ratio;
+                    } else if (ratio < 1) {
+                        // Image is taller than it is wider
+                        this.map_image_height = MAX_MAP_SIZE;
+                        this.map_image_width = this.map_image_height * ratio;
+                    } else {
+                        // Image is a square or something
+                        this.map_image_width = MAX_MAP_SIZE;
+                        this.map_image_height = MAX_MAP_SIZE;
+                    }
                 }
-            });
 
-            this.drawMap(img);
-            this.drawWallLines();
-
-            this.canvas_container.scrollLeft = 0;
-            this.canvas_container.scrollTop = 0;
-
-            if (options.load_fog) {
-                Store.fire('load_fog', {
-                    fog: options.load_fog
-                });
+                resolve(img);
             }
-        }
-        if (!CONFIG.is_player_screen) {
-            img.src = this.map.dm_image || this.map.image;
-        } else {
-            img.src = this.map.image || this.map.dm_image;
-        }
+            if (!CONFIG.is_player_screen) {
+                img.src = this.map.dm_image || this.map.image;
+            } else {
+                img.src = this.map.image || this.map.dm_image;
+            }
+        });
     }
 
     loadFog (fog) {
@@ -282,9 +383,9 @@ class CanvasManager {
         return state_pixel_data;
     }
 
-    drawFogOfWar () {
-        // The shadowed area that has been seen by the players
-        clear(this.shadow_context).rect(this.shadow_context, {
+    drawShroud () {
+        // The area that has been seen by the players but is no longer lit
+        clear(this.shroud_context).rect(this.shroud_context, {
             alpha: CONFIG.display.fog[CONFIG.window].seen.opacity,
             color: CONFIG.display.fog[CONFIG.window].seen.color
         });
@@ -298,23 +399,14 @@ class CanvasManager {
         });
     }
 
-    drawPlacements (point) {
-        const context = this.control_context;
-
+    drawPlacements () {
         clear(this.control_context);
-        if (this.parent.lighting_enabled || CONFIG.is_player_screen) {
-            this.drawAjarDoors(context);
-            return;
-        }
-
-        context.save();
-            context.lineCap = 'round';
-            // this.drawOneWayPoint (context);
-            this.drawOneWayArrow(context, this.parent.one_way_wall, true);
-            this.drawSegmentBeingPlaced(context);
-            this.drawSnapIndicator(context);
-            this.drawWallEndIndicator(context);
-        context.restore();
+        this.drawAjarDoors(this.control_context);
+        if (CONFIG.is_player_screen) return;
+        this.drawOneWayArrow(this.control_context, this.parent.one_way_wall, true);
+        this.drawSegmentBeingPlaced(this.control_context);
+        this.drawSnapIndicator(this.control_context);
+        this.drawWallEndIndicator(this.control_context);
     }
 
     drawWallLines () {
@@ -324,6 +416,7 @@ class CanvasManager {
     }
 
     drawAjarDoors (context) {
+        if (!this.parent.lighting_enabled) return;
         this.parent.SegmentManager.segments.forEach((segment) => {
             if (!segment.temp_p1 && !segment.temp_p2) return;
             line(context, {
@@ -416,7 +509,8 @@ class CanvasManager {
             }, {
                 color: conf[conf_key_prepend + 'outer_color'],
                 width: conf[conf_key_prepend + 'outer_width']
-            }]
+            }],
+            lineCap: 'round'
         });
     }
 
@@ -424,19 +518,15 @@ class CanvasManager {
         // Exit early for non-applicable modes
         if (CONFIG.lighting_enabled || CONFIG.create_one_way_wall || CONFIG.move_segment) return;
         // Normal wall placement
-        if (Mouse.down && !CONFIG.quick_place && this.parent.SegmentManager.new_wall) {
-            context.beginPath();
-            context.moveTo(this.parent.SegmentManager.new_wall.x, this.parent.SegmentManager.new_wall.y);
-            context.lineTo(Mouse.x, Mouse.y);
-            this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
-        }
+        let point = copyPoint(this.parent.SegmentManager.new_wall);
         // Quick place and there is a legit prev point to connect to
-        if (CONFIG.quick_place && this.parent.last_quickplace_coord.x) {
-            context.beginPath();
-            context.moveTo(this.parent.last_quickplace_coord.x, this.parent.last_quickplace_coord.y);
-            context.lineTo(Mouse.x, Mouse.y);
-            this.canvasStroke(context, CONFIG.display.wall.place_color, CONFIG.display.wall.outer_width);
-        }
+        if (CONFIG.quick_place) point = copyPoint(this.parent.last_quickplace_coord);
+        line(context, {
+            points: [point, Mouse],
+            width: CONFIG.display.wall.outer_width,
+            color: CONFIG.display.wall.place_color,
+            lineCap: 'round'
+        });
     }
 
     drawSnapIndicator (context) {
@@ -467,31 +557,43 @@ class CanvasManager {
 
     drawLight (opts = {}) {
         window.requestAnimationFrame(() => {
+            // The light objects themselves are now drawn so I know where the fuck they are
+            this.drawLights();
             // Getting all the light polys even if we aren't going to draw them, as the
             // display window uses these light polys
             const light_polys = opts.polys || this.parent.LightManager.getAllLightPolygons(opts);
             if (!this.parent.lighting_enabled) return;
             // Refresh the Fog of War Canvas (full transparent gray after this)
             // The fog has to be redrawn otherwise previous areas would be completely lit up
-            this.drawFogOfWar();
-            // Cut the lights out of the shadow context (just refreshed) so we can
+            this.drawShroud();
+            // Cut the lights out of the shroud context (just refreshed) so we can
             // see all the way through to what is currently lit up
-            this.drawLightPolygons(this.shadow_context, light_polys);
+            this.drawLightPolygons(this.shroud_context, light_polys);
             // The light context has not been refreshed, so cutting the lights out here
             // will continue to cut out of the full opaque canvas created on light enable
             this.drawLightPolygons(this.light_context, light_polys);
-            // The light objects themselves are now drawn so I know where the fuck they are
-            this.drawLights();
         });
+    }
+
+    drawLightPolygons (context, polys) {
+        if (!polys.length) return;
+        for (let polys_i = 0; polys_i < polys.length; ++polys_i) {
+            line(context, {
+                points: polys[polys_i].intersects,
+                cutout: true
+            });
+        }
+        // Draw new content over old content (default). This is just resetting the
+        // composite operation for good measure.
+        context.globalCompositeOperation = "source-over";
     }
 
     drawLights () {
         if (CONFIG.is_player_screen) return;
-        const context = this.lights_context;
         const lights = this.parent.LightManager.lights;
-        clear(context);
+        clear(this.lights_context);
         for (let l in lights) {
-            circle(context, {
+            circle(this.lights_context, {
                 point: lights[l],
                 radius: this.parent.LightManager.light_width,
                 color: '#FFFF99',
@@ -500,36 +602,28 @@ class CanvasManager {
         }
     }
 
-    drawLightPolygons (context, polys) {
-        // Draw all of the light polygons
-        context.beginPath();
-        for (let polys_i = 0; polys_i < polys.length; ++polys_i) {
-            line(context, {
-                points: polys[polys_i].intersects
-            });
-        }
-        // Draw existing content inside new content. All of the current objects only
-        // inside the light polygons are shown. Everything else is transparent
-        context.globalCompositeOperation = "destination-out";
-        context.fillStyle = rgba(0, 255, 0, 1);
-        context.fill();
-        // Draw new content over old content (default). This is just resetting the
-        // composite operation, which is needed for the drawing of the shadow.
-        context.globalCompositeOperation = "source-over";
+    showEntireMapPC () {
+        if (!CONFIG.is_player_screen) return;
+        this.disableLight();
+    }
+
+    hideEntireMapPC () {
+        if (!CONFIG.is_player_screen) return;
+        this.enableLight();
     }
 
     enableLight () {
         this.light_canvas.classList.remove('hidden');
-        this.shadow_canvas.classList.remove('hidden');
+        this.shroud_canvas.classList.remove('hidden');
         this.drawShadow();
         this.drawLight();
     }
 
     disableLight () {
         clear(this.light_context);
-        clear(this.shadow_context);
+        clear(this.shroud_context);
         this.light_canvas.classList.add('hidden');
-        this.shadow_canvas.classList.add('hidden');
+        this.shroud_canvas.classList.add('hidden');
     }
 
     toggleWalls () {
@@ -556,7 +650,8 @@ class CanvasManager {
         this.resizeCanvas(this.control_canvas);
         this.resizeCanvas(this.image_canvas);
         this.resizeCanvas(this.wall_canvas);
-        this.resizeCanvas(this.shadow_canvas);
+        this.resizeCanvas(this.grid_canvas);
+        this.resizeCanvas(this.shroud_canvas);
         this.resizeCanvas(this.light_canvas);
         this.resizeCanvas(this.lights_canvas);
     }

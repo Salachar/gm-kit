@@ -69,8 +69,8 @@ class AppManager {
     setEvents () {
         window.addEventListener('message', (e) => {
             let event = e.data;
-            if (event.event === 'display_window_loaded') {
-                this.containers.map.showInDisplayWindow();
+            if (event.event === 'player_screen_loaded') {
+                this.containers.map.showPlayerScreen();
                 return;
             }
         });
@@ -101,11 +101,12 @@ class AppManager {
         });
 
         document.getElementById('save_state').addEventListener('click', (e) => {
-            const map = this.containers.map.current_map;
-            const map_data = this.containers.map.getMapData();
-            const state_data = this.containers.map.getMapStateData();
-            map_data[map.name].json.state = state_data;
-            IPC.send('save_map', map_data);
+            // const map = this.containers.map.current_map;
+            // const map_data = this.containers.map.getMapData();
+            // const state_data = this.containers.map.getMapStateData();
+            // map_data[map.name].json.state = state_data;
+            // IPC.send('save_map', map_data);
+            Toast.message('Save/Load State is temporarily disabled');
         });
 
         IPC.on('message', (e, message = {}) => {

@@ -1,36 +1,52 @@
 What I was working on:
+    - Add menu controls, there should be a button for most things
+        - Menu should be hidable
+        - Re-add arrow key scrolling
+            - Sometimes it just seems better
+            - The scrollers were complete garbage though
+        - Add Grid
+        - Switching maps needs to update the controls
+            - grid values
 
-    - Changing the volume slider to something less ugly
+    - The same wall segment can be added multiple times
 
     - Lights need a color picker in order to change them
         - Scenes will not be changable
 
-    - Change Fogofwar and shadow to seen and unseen or something much easier to understand
-
-
-
-PRIORITY: Either cause it's important or I just want to
-
-    - Load state should show a Toast error if there is no map loaded
-
-    - Load state might not even work in general
-
     - Add functionaliy similar to map folder picking for audio
 
-    - Add Grid
+    - Lights helpful info
+        - Lights should also have a better "default" page when there are no lights
+        - Add a small info bit saying the code is not sent anywhere and only saved to a
+            file on the machine
+        - Link to github and files for people who want to verify it for themselves
 
-    - Option to disable walls for a map, so everything is lit up
+    - Sending lights data to the Player Screen needs to be cleaned up a bit.
+        - Feels really hackish at the moment
 
+    - When connecting between two existing segments, there should be no length check
+        - Maybe disbale for shift clicking in general
+        - Or even altogether at this point
+        - Dont allow snapping to origin point
+
+    - Move one way wall checkbox to the controls
 
 
 TODO:
-    - Add basic trigger functionality
-        - Will require being able to get all data from both the Audio and Lights containers/managers
+    - Opening/Closing doors after they have been cracked open
+        - Need a way to show door on player screen
+
+    - Saving/Loading state:
+        - Currently, the state is read from the GM screen, which is not great, since I dont always run it in lighting mode.
+        - Fog/Light states need to be read from the Player Screen
+        - Load state should show a Toast error if there is no map loaded
+        - Load state might not even work in general
 
     - PDF reading for map and room information
         - DC checks and shit like that
 
     - Add "Triggers"
+        - Will require being able to get all data from both the Audio and Lights containers/managers
         - A trigger is a selection of lights, color, and music
         - When activated, the selected lights (or scenes) will change color to the selected color and the music will play
         - Multiple colors per trigger are not allowed
@@ -47,34 +63,18 @@ TODO:
         - Small input for entering damage/health
         - Plus/Minus toggle
 
-    - Add super basic dice rolling capabilities
+        - Shape/Marker creation for items on the map
+            - Try to make it easy to use for spells and shit
 
-    - Shape/Marker creation for items on the map
-        - Try to make it easy to use for spells and shit
+    - Add super basic dice rolling capabilities
 
     - Sound and Quadrant managers should be moved off the AppManager
         - SoundManager is misleading given that the audio app has been added
         - QuadrantManager is specific only to maps and nothing else needs it
 
-    - Lights helpful info
-        - Add a small info bit saying the code is not sent anywhere and only saved to a
-            file on the machine
-        - Link to github and files for people who want to verify it for themselves
-
     - Look into adding better touch support
         - Touch works pretty for maps but there are some bad quirks with it that prevent touch
             only use for wall placement
-
-    - Add menu controls, there should be a button for everything
-        - Menu should be hidable
-        - Re-add arrow key scrolling
-            - Sometimes it just seems better
-            - The scrollers were complete garbage though
-
-    - When connecting between two existing segments, there should be no length check
-        - Maybe disbale for shift clicking in general
-        - Or even altogether at this point
-        - Dont allow snapping to origin point
 
     - Build Process
         - Get building for both windows and mac, no installation required

@@ -47,8 +47,8 @@ const DOM = {
                 }
             }
         }
-
-        if (opts.html) {
+        // You know, incase the fucking html is the number 0
+        if (typeof opts.html !== "undefined") {
             node.innerHTML = opts.html;
         }
 
