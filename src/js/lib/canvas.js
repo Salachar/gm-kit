@@ -1,6 +1,5 @@
 const {
-    rgba,
-    copyPoint
+    rgba
 } = require('./helpers');
 
 /*
@@ -8,6 +7,15 @@ const {
         drawFogOfWar
         drawShadow
 */
+
+// Faster copyPoint only used in this file
+function fastCopy (point = {}) {
+    if (!point || typeof point.x !== 'number' || typeof point.y !== 'number') return null;
+    return {
+        x: point.x,
+        y: point.y
+    };
+}
 
 const Canvas = {
     size: function (context) {
@@ -31,9 +39,10 @@ const Canvas = {
         }
 
         if (!end) {
+            const size = Canvas.size(context);
             end = {
-                x: context.canvas.width || context.canvas.clientWidth || 0,
-                y: context.canvas.height || context.canvas.clientHeight || 0,
+                x: size.width,
+                y: size.height,
             }
         }
 
@@ -53,7 +62,7 @@ const Canvas = {
             cutout
         } = opts;
 
-        const start_point = copyPoint(points[0]);
+        const start_point = fastCopy(points[0]);
         if (!start_point) return;
 
         let strokes = opts.strokes || [];
@@ -72,7 +81,7 @@ const Canvas = {
             context.moveTo(points[0].x, points[0].y);
             for (let i = 1; i < points.length; ++i) {
                 // Invalid points returns a bad copy
-                if (!copyPoint(points[i])) return;
+                if (!fastCopy(points[i])) return;
                 context.lineTo(points[i].x, points[i].y);
             }
             // Not passing strokes will just create the lines and leave it open

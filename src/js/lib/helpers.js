@@ -30,8 +30,8 @@ const Helpers = {
         function returnPointCopy (point) {
             if (typeof point_to_copy.x !== 'number' || typeof point_to_copy.x !== 'number') return null;
             return {
-                x: point.x,
-                y: point.y
+                x: Math.round(point.x),
+                y: Math.round(point.y)
             };
         }
     },

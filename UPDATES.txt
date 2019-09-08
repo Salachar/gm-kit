@@ -1,4 +1,8 @@
 Update (9/7/2019):
+
+    - After all maps are removed, the controls toggle no longer works
+        - All events were being cleared, even onces not tied to keys, which we want to keep
+        - After the last map is removed, only the key and keyEvents are now cleared
     - Move one way wall checkbox to the controls
         - It doesn't belong there, only Player Screen related things do
         - I did update the label, could still be a little cleaner

@@ -1,5 +1,6 @@
 What I was working on:
     - Need to look at show entire map toggle getting out of sync between windows
+        - Need to fix toggle out of sync when GM is on map PS is not
 
     - Lights need a color picker in order to change them
         - Scenes will not be changable

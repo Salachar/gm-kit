@@ -166,6 +166,8 @@ class LightManager {
     }
 
     showEntireMap () {
+        // If there is no player screen, there is nothing to toggle
+        if (!window.player_screen) return;
         this.show_entire_map = !this.show_entire_map;
         if (this.show_entire_map) {
             Store.fire('show_entire_map_(PS)');

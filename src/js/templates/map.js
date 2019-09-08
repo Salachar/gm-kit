@@ -54,11 +54,11 @@ class MapTemplate {
             </div>
 
             <div class="container_body">
-                <div id="no_map_screen">
-                    <div id="no_map_screen_load">CLICK TO<br>LOAD MAP</div>
-                </div>
-
                 <div id="map_main_section">
+                    <div id="no_map_screen">
+                        <div id="no_map_screen_load">CLICK TO<br>LOAD MAP</div>
+                    </div>
+
                     <div id="map_containers"></div>
 
                     <div id="map_controls_container">

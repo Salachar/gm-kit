@@ -282,7 +282,6 @@ class CanvasManager {
                         this.map_image_height = MAX_MAP_SIZE;
                     }
                 }
-
                 resolve(img);
             }
             if (!CONFIG.is_player_screen) {
