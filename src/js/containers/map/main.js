@@ -24,6 +24,7 @@ class MapContainer extends Container {
         this.maps = {};
         this.current_map = null;
 
+        this.el_map_main_section = document.getElementById('map_main_section');
         this.el_tabs = document.getElementById('map_tabs');
         this.el_help_table = document.getElementById('help_table');
 
@@ -39,8 +40,18 @@ class MapContainer extends Container {
 
         Store.register({
             'mouse_leave': this.onMouseLeave.bind(this),
-            'show_player_screen': this.showPlayerScreen.bind(this)
+            'show_player_screen': this.showPlayerScreen.bind(this),
+            'show_map_controls': this.showMapControls.bind(this),
+            'hide_map_controls': this.hideMapControls.bind(this)
         });
+    }
+
+    showMapControls () {
+        this.el_map_main_section.classList.add('open');
+    }
+
+    hideMapControls () {
+        this.el_map_main_section.classList.remove('open');
     }
 
     onMouseLeave () {
@@ -219,8 +230,7 @@ class MapContainer extends Container {
             this.setActiveMap(map_keys[map_keys.length - 1]);
         }
         if (!map_keys.length) {
-            Store.key = null;
-            Store.clear();
+            Store.clearKeys();
             document.getElementById('no_map_screen').classList.remove('hidden');
         }
     }

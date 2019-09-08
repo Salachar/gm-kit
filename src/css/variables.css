@@ -56,7 +56,8 @@
     --containers-z: 20;
 
     /* Map header */
-    --text-block-container-z: 10;
+    --help-box-z: 15;
+    --text-block-container-z: 15;
     --map-controls-height: 3rem;
     --map-tabs-height: 3rem;
 

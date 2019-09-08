@@ -441,18 +441,33 @@ class SegmentManager {
     }
 
     checkSegmentsMatch (s1, s2) {
+        // If p1 and p2 are the same
         if (s1.p1.x === s2.p1.x &&
             s1.p2.x === s2.p2.x &&
             s1.p1.y === s2.p1.y &&
             s1.p2.y === s2.p2.y) {
             return true;
         }
+        // If p1 and p2 are swapped (still matching segment)
+        if (s1.p1.x === s2.p2.x &&
+            s1.p2.x === s2.p1.x &&
+            s1.p1.y === s2.p2.y &&
+            s1.p2.y === s2.p1.y) {
+            return true;
+        }
+        return false;
+    }
+
+    segmentExists (segment) {
+        for (let i = 0; i < this.segments.length; ++i) {
+            if (this.checkSegmentsMatch(segment, this.segments[i])) return true;
+        }
         return false;
     }
 
     checkForWallEnds (opts = {}) {
         resetSnap();
-        const closest_end = this.findClosestWallEnd(CONFIG.snap.distance);
+        const closest_end = this.findClosestWallEnd(CONFIG.snap.distance, opts);
         if (!closest_end) return null;
 
         CONFIG.snap.indicator.show = opts.show_indicator;
@@ -460,11 +475,18 @@ class SegmentManager {
         return CONFIG.snap.indicator;
     }
 
-    findClosestWallEnd (snap_distance = CONFIG.snap.distance) {
+    findClosestWallEnd (snap_distance = CONFIG.snap.distance, opts = {}) {
         this.connected_segments = [];
         let closest_end = null;
 
+        const exclude = opts.exclude;
         this.segments.forEach((segment) => {
+            // Does either segment point match the point to exclude
+            if (exclude) {
+                if (pointMatch(exclude, segment.p1, 1)) return;
+                if (pointMatch(exclude, segment.p2, 1)) return;
+            }
+
             ['p1', 'p2'].forEach((point) => {
                 const dist = this.pointDistance(Mouse, segment[point]);
                 if (dist < snap_distance && (!closest_end || dist < closest_end.dist)) {
@@ -483,6 +505,8 @@ class SegmentManager {
 
         if (!closest_end) return null;
 
+        // If an endpoint has been found, find all other segments that share the
+        // same endpoint (mainly for moving purposes, as all would need to change)
         this.segments.forEach((segment) => {
             if (pointMatch(segment.p1, closest_end.point, 1) || pointMatch(segment.p2, closest_end.point, 1)) {
                 this.connected_segments.push(segment.id);
@@ -502,7 +526,8 @@ class SegmentManager {
         resetSnap();
 
         const closest_point = this.getClosestPointOnSegment({
-            distance: CONFIG.snap.distance
+            distance: CONFIG.snap.distance,
+            exclude: opts.exclude
         });
         if (!closest_point) return null;
 
@@ -516,8 +541,14 @@ class SegmentManager {
         let closest_segment = null;
         let closest_segment_info = null;
         let distance = null;
+        const exclude = opts.exclude;
 
         this.segments.forEach((segment) => {
+            if (exclude) {
+                if (pointMatch(exclude, segment.p1, 1)) return;
+                if (pointMatch(exclude, segment.p2, 1)) return;
+            }
+
             const segment_info = pDistance(Mouse, segment);
             if (!distance || segment_info.distance < distance) {
                 distance = segment_info.distance;
@@ -670,10 +701,12 @@ class SegmentManager {
 	    const y_sq = (s.p2.y - s.p1.y) * (s.p2.y - s.p1.y);
 	    const dist = Math.sqrt(x_sq + y_sq);
 
-        if (pointMatch(s.p1, s.p2)) {
+        if (this.segmentExists(segment)) {
+            console.log('Segment with these points already exists');
+        } else if (pointMatch(s.p1, s.p2)) {
             console.log('Wall/Door points are the same, not adding');
-        } else if (!ignore_dist_check && dist < CONFIG.snap.distance) {
-            console.log('Wall/Door is too short, not adding');
+        // } else if (!ignore_dist_check && dist < CONFIG.snap.distance) {
+        //     console.log('Wall/Door is too short, not adding');
         } else {
             this.segments.push(s);
             this.segments_map[s.id] = s;

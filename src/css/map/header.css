@@ -21,19 +21,15 @@
     margin-top: 0.75rem;
 }
 
-#help {
-    float: right;
-    margin-right: 0.5rem;
-}
-
 #help_box {
     position: absolute;
     top: var(--container-header-height);
-    right: 0;
-    z-index: 15;
+    left: 0;
+    z-index: var(--help-box-z);
     background-color: #444;
     color: #EEE;
     transition: 0.3s all ease;
+    padding: 0 1rem 2rem 0.5rem;
 }
 
 #help_box.hide {

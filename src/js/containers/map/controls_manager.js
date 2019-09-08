@@ -13,11 +13,12 @@ const controls = require('./controls');
 
 class ControlsManager {
     constructor (opts = {}) {
-        this.el_text_block_container = document.getElementById('map_controls_container');
+        this.node = document.getElementById('map_controls_container');
 
         this.open = false;
 
         const cache_list = [
+            'map_controls_toggle',
             'common_hotkeys',
             'show_player_screen',
             'show_entire_map',
@@ -33,6 +34,15 @@ class ControlsManager {
 
         this.addCommonHotKeys();
         this.setEvents();
+    }
+
+    toggle () {
+        this.open = !this.open;
+        if (this.open) {
+            Store.fire('show_map_controls');
+        } else {
+            Store.fire('hide_map_controls');
+        }
     }
 
     show () {
@@ -68,6 +78,10 @@ class ControlsManager {
     }
 
     setEvents () {
+        this.el_map_controls_toggle.addEventListener('click', (e) => {
+            this.toggle();
+        });
+
         this.el_show_player_screen.addEventListener('click', (e) => {
             Store.fire('show_player_screen');
         });

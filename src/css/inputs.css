@@ -198,7 +198,7 @@
     height: var(--input-height);
     padding: 0 0.5rem;
     border: 0;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(255,255,255,0.1);
     color: white;
     box-sizing: border-box;
     font-size: var(--font-medium);
@@ -278,7 +278,6 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    /* width: 1rem; */
     color: white;
     line-height: 2rem;
     font-weight: bold;
@@ -305,19 +304,19 @@
 
 .arrow_buttons {
     text-align: center;
+    height: 2rem;
 }
 
 .arrow_button {
     cursor: pointer;
     position: relative;
-    display: inline-block;
-    vertical-align: top;
+    float: left;
     height: var(--input-height);
-    width: var(--input-height);
+    width: 4rem;
     font-size: 1.25rem;
     text-align: center;
     background-color: var(--button-bg-color);
-    margin-right: 0.5rem;
+    margin-right: 1rem;
 }
 .arrow_button:last-child {
     margin-right: 0
@@ -354,11 +353,4 @@
 
 .arrow_right:before {
     content: '\25B6';
-}
-
-.arrow_buttons .arrow_button {
-    width: 4.41rem;
-    height: 2rem;
-    display: inline-block;
-    vertical-align: top;
 }

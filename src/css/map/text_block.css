@@ -51,7 +51,7 @@
     height: 100%;
     box-sizing: border-box;
     padding: 0.5rem;
-    background-color: rgba(80, 80, 80, 0.75);
+    background-color: rgba(80, 80, 80, 0.9);
     color: white;
     font-size: var(--font-medium);
 }

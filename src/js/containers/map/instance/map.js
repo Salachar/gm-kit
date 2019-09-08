@@ -104,17 +104,13 @@ class MapInstance {
             segment: data.add_segment
         });
         CONFIG.snap.indicator.show = false;
-        this.CanvasManager.drawWallLines();
-        this.CanvasManager.drawPlacements();
-        this.updateLighting();
+        this.drawPlacementsUpdateLighting();
     }
 
     onSplitSegment (data) {
         this.SegmentManager.splitWall(data.split_data);
         CONFIG.snap.indicator.show = false;
-        this.CanvasManager.drawWallLines();
-        this.CanvasManager.drawPlacements();
-        this.updateLighting();
+        this.drawPlacementsUpdateLighting();
     }
 
     onLightChange () {
@@ -142,6 +138,12 @@ class MapInstance {
     onRemoveSegment (data) {
         this.SegmentManager.removeSegment(data.object.segment);
         this.CanvasManager.drawWallLines();
+        this.updateLighting();
+    }
+
+    drawPlacementsUpdateLighting () {
+        this.CanvasManager.drawWallLines();
+        this.CanvasManager.drawPlacements();
         this.updateLighting();
     }
 
@@ -294,28 +296,34 @@ class MapInstance {
         }
     }
 
-    checkForSnapPoint () {
+    checkForSnapPoint (exclude = {}) {
         const snap_point = this.SegmentManager.checkForWallEnds({
-            show_indicator: true
+            show_indicator: true,
+            exclude: exclude.point || null
         });
         if (!snap_point) {
             this.SegmentManager.checkForWallLines({
-                show_indicator: true
+                show_indicator: true,
+                exclude: exclude.point || null
             });
         }
     }
 
     mouseDown () {
+        // We aren't doing anything with context menus at the moment, so ignore all but left nouse
         if (!Mouse.left) return;
 
+        // The user clicked on the map while the text input was open
         if (this.TextManager.open) {
             this.TextManager.close();
             return;
         }
 
+        // Check to see if the user has clicked on a light
         let is_light_selected = this.LightManager.checkForLights();
         if (is_light_selected) return;
 
+        // If lighting is enable on the GM side, check to see if a door was selected
         if (this.lighting_enabled) {
             return this.SegmentManager.checkForDoors();
         }
@@ -341,11 +349,17 @@ class MapInstance {
             return this.mouseDownQuickPlace();
         }
 
+        // There is nothing else to check for if lighting is enabled
         if (this.lighting_enabled) return;
 
+        // Check for a snap point, if we are starting a wall close to an end or line
+        // Make the new wall start with that end or point on the line, this makes it super easy
+        // to create light-tight rooms
         this.checkForSnapPoint();
 
+        // By default any new wall will start with where the mouse was clicked...
         this.SegmentManager.new_wall = copyPoint(Mouse);
+        // ...unless there was something close enought to snap to (set in checkForSnapPoint)
         if (CONFIG.snap.indicator.point) {
             this.SegmentManager.new_wall = copyPoint(CONFIG.snap.indicator.point);
         }
@@ -446,6 +460,7 @@ class MapInstance {
     }
 
     mouseMove () {
+        // Move point mode, CTRL is being held
         if (CONFIG.move_segment) {
             if (Mouse.down && Store.get('control_point')) {
                 this.SegmentManager.handleControlPoint(Store.get('control_point'));
@@ -454,11 +469,10 @@ class MapInstance {
                     control_point: this.SegmentManager.getControlPoint()
                 });
             }
-            this.CanvasManager.drawPlacements();
-            this.CanvasManager.drawWallLines();
-            return;
+            return this.drawPlacementsUpdateLighting();
         }
 
+        // The user is dragging a light
         if (this.LightManager.selected_light) {
             Store.fire('light_move', {
                 light: {
@@ -474,8 +488,10 @@ class MapInstance {
             return this.dragDoor();
         }
 
+        // There is nothing more to check for if lighting is enabled
         if (this.lighting_enabled) return;
 
+        // User is turning a wall into a one-way wall...
         if (CONFIG.create_one_way_wall) {
             let closest_wall = this.ObjectManager.findClosest('segment');
             let one_way_info = getNormal(closest_wall);
@@ -486,14 +502,15 @@ class MapInstance {
                 this.one_way_wall.segment = null;
                 this.one_way_wall.points = null;
             }
-
-            this.CanvasManager.drawPlacements();
-            this.CanvasManager.drawWallLines();
-            return;
+            return this.drawPlacementsUpdateLighting();
         }
 
+        // General wall placing, check for points to snap to, and
+        // make sure to exclude the starting point
         if (Mouse.down || CONFIG.quick_place) {
-            this.checkForSnapPoint();
+            this.checkForSnapPoint({
+                point: this.SegmentManager.new_wall || this.last_quickplace_coord
+            });
         }
 
         this.CanvasManager.drawPlacements();

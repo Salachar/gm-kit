@@ -1,3 +1,24 @@
+Update (9/7/2019):
+    - Move one way wall checkbox to the controls
+        - It doesn't belong there, only Player Screen related things do
+        - I did update the label, could still be a little cleaner
+    - Lighting now updates properly for point moving and one way placement
+    - The same wall segment can be added multiple times
+        - Added checks for matching segments before adding
+    - Add menu controls, there should be a button for most things
+        - Menu should be hidable
+    - Sending lights data to the Player Screen needs to be cleaned up a bit.
+        - Feels really hackish at the moment
+        - This is much better with the new player screen event system
+    - When connecting between two existing segments, there should be no length check
+        - Maybe disbale for shift clicking in general
+        - Or even altogether at this point
+        - Dont allow snapping to origin point
+        - No snapping is allowed to origin points or the segments it shares
+    - Move HELP button to the left side
+        - Also moved the help box to the left and gave it a little padding
+
+
 Update (9/6/2019):
     - Overlay grids are now saved when the map is saved
     - mousedown on the arrow and number inputs now keeps going, as opposed to individual clicks
@@ -8,6 +29,17 @@ Update (9/6/2019):
         - all _(PS) events are sent only to the player screen
         - display_window_events map removed from store.js
         - I can re-add alt events at some point, but I might just make the controls the only way for some of them
+    - Add menu controls, there should be a button for most things
+        - Re-add arrow key scrolling
+            - Sometimes it just seems better
+            - The scrollers were complete garbage though
+        - Add Grid
+        - Switching maps needs to update the controls
+            - grid values
+            - zoom
+            - brightness
+
+
 Update (9/5/2019):
     - Calling delete on a segment with a one way wall will delete the one way wall info and redraw appropriately
     - Fixed drawing the light on the maps
@@ -23,6 +55,7 @@ Update (9/5/2019):
     - Add menu controls, there should be a button for most things
         - Option to disable walls for a map, so everything is lit up
     - Show Entire Map detoggling doesnt show lights on Player Screen, it needs to update
+
 
 Update (9/4/2019):
     - Connecting to a one way wall removes the one way data on the split
@@ -84,6 +117,7 @@ Update (8/29/2019):
         - This shit appears to just simply work, just set the data
     - Fix one way wall indicator to better show which side is see through
         - A big arrow going through the wall showing direction of light passage should work
+
 
 Update (8/28/2019):
     - Cleaning up the text input modals

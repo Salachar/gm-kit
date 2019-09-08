@@ -1,38 +1,32 @@
 What I was working on:
-    - Add menu controls, there should be a button for most things
-        - Menu should be hidable
-        - Re-add arrow key scrolling
-            - Sometimes it just seems better
-            - The scrollers were complete garbage though
-        - Add Grid
-        - Switching maps needs to update the controls
-            - grid values
-
-    - The same wall segment can be added multiple times
+    - Need to look at show entire map toggle getting out of sync between windows
 
     - Lights need a color picker in order to change them
         - Scenes will not be changable
 
-    - Add functionaliy similar to map folder picking for audio
+    - Map/Audio/Lifx pages need "help" pages:
+        - The map one is pretty good, maybe just more description
+        - Audio should be similar to the map one
+            - Add functionaliy similar to map folder picking for audio
+        - LIFX should be similar
+            - Just a single text input with some text
+            - Lights should also have a better "default" page when there are no lights
+            - Add a small info bit saying the code is not sent anywhere and only saved to a
+                file on the machine
+            - Link to github and files for people who want to verify it for themselves
 
-    - Lights helpful info
-        - Lights should also have a better "default" page when there are no lights
-        - Add a small info bit saying the code is not sent anywhere and only saved to a
-            file on the machine
-        - Link to github and files for people who want to verify it for themselves
+    - Rename "move_segment" shit to "move_point" or something
 
-    - Sending lights data to the Player Screen needs to be cleaned up a bit.
-        - Feels really hackish at the moment
+    - SegmentManager "new_wall" needs a name change
+        - It's just the x/y for the start point of the wall being placed
+        - This whole flow is complete trash, stop bouncing between the map and SegmentManager
 
-    - When connecting between two existing segments, there should be no length check
-        - Maybe disbale for shift clicking in general
-        - Or even altogether at this point
-        - Dont allow snapping to origin point
-
-    - Move one way wall checkbox to the controls
-
+    - Why the fuck does the SegmentManager also have its own pointDistance function
 
 TODO:
+    - Hover/active/animation for the menu icon
+        - This is just for fun
+
     - Opening/Closing doors after they have been cracked open
         - Need a way to show door on player screen
 

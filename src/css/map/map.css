@@ -15,13 +15,27 @@
     left: 0;
     right: 0;
     bottom: 0;
-    transition: 0.3s top ease;
+    /* transition: 0.3s top ease; */
     background-color: #666;
     overflow: hidden;
 }
 
 #map_containers.display {
     top: 0;
+}
+
+#map_main_section {
+    position: absolute;
+    /* top: 4rem; */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s all ease;
+    /* overflow: hidden; */
+}
+#map_main_section.open {
+    right: 20rem;
 }
 
 .map_container {

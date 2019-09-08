@@ -95,8 +95,12 @@ class Store {
     }
 
     clear () {
-        this.__store = {};
         this.__events = {};
+        this.clearData();
+        this.clearKeys();
+    }
+
+    clearKeys () {
         this.__key_events = {};
         this.__key = null;
     }
