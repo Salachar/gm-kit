@@ -43,8 +43,6 @@ class SegmentManager {
 
         this.all_segments = null;
 
-        this.connected_segments = [];
-
         Store.register({
             'switch_wall_door': this.onSwitchWallDoor.bind(this),
             'toggle_closest_door': this.onToggleClosestDoor.bind(this),
@@ -284,12 +282,11 @@ class SegmentManager {
 	    return seg_l;
 	}
 
-    moveWithMouse (control_point) {
+    moveWithMouse (control_point = {}) {
         if (!control_point) return;
 
         const point = control_point.point;
-        this.connected_segments.forEach((segment_id) => {
-            const segment = this.segments_map[segment_id];
+        this.segments.forEach((segment) => {
             if (pointMatch(point, segment.p1, 1)) {
                 segment.p1 = copyPoint(Mouse);
             }
@@ -310,12 +307,16 @@ class SegmentManager {
         });
     }
 
-    findSegmentsWithPoint (point) {
+    findSegmentsWithPoint (point, opts = {}) {
         if (!point) return [];
 
         return this.segments.filter((segment) => {
-            // return pointMatch(segment.p1, point, 1) || pointMatch(segment.p2, point, 1);
-            return (pDistance(point, segment).distance < 1);
+            const dist_info = pDistance(point, segment, {
+                line_only: opts.line_only || false
+            });
+
+            if (!dist_info.distance) return false;
+            return (dist_info.distance < 1);
         });
     }
 
@@ -328,7 +329,7 @@ class SegmentManager {
             segment.p1_grab = false;
             segment.p2_grab = false;
 
-            let dist = this.pointDistance(Mouse, segment.temp_p1 || segment.p1);
+            let dist = pDistance(Mouse, segment.temp_p1 || segment.p1).distance || 9999999999;
             if (dist <= CONFIG.door_grab_dist) {
                 this.selectDoor({
                     index: i,
@@ -337,7 +338,7 @@ class SegmentManager {
                 return true;
             }
 
-            dist = this.pointDistance(Mouse, segment.temp_p2 || segment.p2);
+            dist = pDistance(Mouse, segment.temp_p2 || segment.p2).distance || 9999999999;
             if (dist <= CONFIG.door_grab_dist) {
                 this.selectDoor({
                     index: i,
@@ -476,7 +477,6 @@ class SegmentManager {
     }
 
     findClosestWallEnd (snap_distance = CONFIG.snap.distance, opts = {}) {
-        this.connected_segments = [];
         let closest_end = null;
 
         const exclude = opts.exclude;
@@ -488,7 +488,7 @@ class SegmentManager {
             }
 
             ['p1', 'p2'].forEach((point) => {
-                const dist = this.pointDistance(Mouse, segment[point]);
+                const dist = pDistance(Mouse, segment[point]).distance || 999999999;
                 if (dist < snap_distance && (!closest_end || dist < closest_end.dist)) {
                     closest_end = {
                         dist: dist,
@@ -503,23 +503,7 @@ class SegmentManager {
             });
         });
 
-        if (!closest_end) return null;
-
-        // If an endpoint has been found, find all other segments that share the
-        // same endpoint (mainly for moving purposes, as all would need to change)
-        this.segments.forEach((segment) => {
-            if (pointMatch(segment.p1, closest_end.point, 1) || pointMatch(segment.p2, closest_end.point, 1)) {
-                this.connected_segments.push(segment.id);
-            }
-        })
-
-        return closest_end;
-    }
-
-    pointDistance (p1, p2) {
-        const x_sq = (p2.x - p1.x) * (p2.x - p1.x);
-        const y_sq = (p2.y - p1.y) * (p2.y - p1.y);
-        return Math.sqrt(x_sq + y_sq);
+        return closest_end || null;
     }
 
     checkForWallLines (opts = {}) {
@@ -683,30 +667,22 @@ class SegmentManager {
         }
 
         this.addSegment({
-            segment: new_seg_one,
-            ignore_dist_check: true
+            segment: new_seg_one
         });
         this.addSegment({
-            segment: new_seg_two,
-            ignore_dist_check: true
+            segment: new_seg_two
         });
     }
 
     addSegment (opts = {}) {
-        const { segment, ignore_dist_check } = opts;
+        const { segment } = opts;
 		if (!segment) return;
-		const s = this.finalizeSegment(segment);
+        const s = this.finalizeSegment(segment);
 
-		const x_sq = (s.p2.x - s.p1.x) * (s.p2.x - s.p1.x);
-	    const y_sq = (s.p2.y - s.p1.y) * (s.p2.y - s.p1.y);
-	    const dist = Math.sqrt(x_sq + y_sq);
-
-        if (this.segmentExists(segment)) {
+        if (this.segmentExists(s)) {
             console.log('Segment with these points already exists');
         } else if (pointMatch(s.p1, s.p2)) {
             console.log('Wall/Door points are the same, not adding');
-        // } else if (!ignore_dist_check && dist < CONFIG.snap.distance) {
-        //     console.log('Wall/Door is too short, not adding');
         } else {
             this.segments.push(s);
             this.segments_map[s.id] = s;
@@ -715,11 +691,15 @@ class SegmentManager {
 
     splitWalls (new_wall) {
         // Split any walls the wall has endpoints on
-        this.findSegmentsWithPoint(new_wall.p1).forEach((segment) => {
+        this.findSegmentsWithPoint(new_wall.p1, {
+            line_only: true
+        }).forEach((segment) => {
             this.splitSegment(segment, new_wall.p1);
         });
 
-        this.findSegmentsWithPoint(new_wall.p2).forEach((segment) => {
+        this.findSegmentsWithPoint(new_wall.p2, {
+            line_only: true
+        }).forEach((segment) => {
             this.splitSegment(segment, new_wall.p2);
         });
 

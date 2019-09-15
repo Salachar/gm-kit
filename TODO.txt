@@ -1,4 +1,20 @@
 What I was working on:
+    - Spell markers:
+        - predefined list of shapes
+            - cone (tied to point)
+            - cube/square (tied to cell)
+            - sphere/ring/cyclinder (ties to point)
+            - line (tied to cell)
+        - 5 foot increments
+        - tied to intersection point or grid if its enabled
+            - otherwise free place I guess
+        - color? probably not that important (would help with multiple spells)
+
+    - Shift should reference the last segment place, not just the last coords
+        - Moving the last wall placed will fuck things up when going back
+            to quick placing
+    - When all walls are removed, maps are still "complete"
+
     - Need to look at show entire map toggle getting out of sync between windows
         - Need to fix toggle out of sync when GM is on map PS is not
 
@@ -16,15 +32,15 @@ What I was working on:
                 file on the machine
             - Link to github and files for people who want to verify it for themselves
 
-    - Rename "move_segment" shit to "move_point" or something
-
     - SegmentManager "new_wall" needs a name change
         - It's just the x/y for the start point of the wall being placed
         - This whole flow is complete trash, stop bouncing between the map and SegmentManager
 
-    - Why the fuck does the SegmentManager also have its own pointDistance function
-
 TODO:
+    - Add spotofy support to audio page
+        - Need to look more into the widget support, it doesnt look great
+        - Spotify Web Playback API
+
     - Hover/active/animation for the menu icon
         - This is just for fun
 

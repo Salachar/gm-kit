@@ -85,32 +85,47 @@ const Helpers = {
         return value * value;
     },
 
-    pDistance: function (point, line, opts = {}) {
-        if (!point || !line) return;
-        if (line.segment) line = line.segment;
+    pDistance: function (point, item, opts = {}) {
+        if (!point || !item) return;
+        if (item.segment) item = item.segment;
 
-        // The line can also be a light, which will only have an X and a Y
-        // In this case, just calculate the point to point distance and return.
-        if (line.x && line.y && !line.p1) {
+        // The "item" can be anything, segment, light, point
+        // If it's a simple point, get the distance and return
+        if (item.x && item.y && !item.p1) {
             return {
-                distance: Math.sqrt(Helpers.sqr(line.x - point.x) + Helpers.sqr(line.y - point.y)),
-                x: line.x,
-                y: line.y
+                distance: Math.sqrt(Helpers.sqr(item.x - point.x) + Helpers.sqr(item.y - point.y)),
+                x: item.x,
+                y: item.y
             }
         }
 
-        if (line.position) {
+        if (item.position) {
             return {
-                distance: Math.sqrt(Helpers.sqr(line.position.x - point.x) + Helpers.sqr(line.position.y - point.y)),
-                x: line.position.x,
-                y: line.position.y
+                distance: Math.sqrt(Helpers.sqr(item.position.x - point.x) + Helpers.sqr(item.position.y - point.y)),
+                x: item.position.x,
+                y: item.position.y
             }
         }
 
-        const A = point.x - line.p1.x;
-        const B = point.y - line.p1.y;
-        const C = line.p2.x - line.p1.x;
-        const D = line.p2.y - line.p1.y;
+        // Now we're looking at a segment with p1 and p2, check the endpoints first
+        let p1_match = Helpers.pointMatch(point, item.p1, 1);
+        let p2_match = Helpers.pointMatch(point, item.p2, 1);
+        if (opts.line_only && (p1_match || p2_match)) {
+            return {
+                distance: null,
+                x: null,
+                y: null
+            };
+        }
+
+        return Helpers.distanceToLine(point, item);
+    },
+
+    distanceToLine: function (point, item) {
+        const A = point.x - item.p1.x;
+        const B = point.y - item.p1.y;
+        const C = item.p2.x - item.p1.x;
+        const D = item.p2.y - item.p1.y;
 
         const dot = (A * C) + (B * D);
         const len_sq = (C * C) + (D * D);
@@ -119,14 +134,14 @@ const Helpers = {
         let xx = 0;
         let yy = 0;
         if (param < 0) {
-            xx = line.p1.x;
-            yy = line.p1.y;
+            xx = item.p1.x;
+            yy = item.p1.y;
         } else if (param > 1) {
-            xx = line.p2.x;
-            yy = line.p2.y;
+            xx = item.p2.x;
+            yy = item.p2.y;
         } else {
-            xx = line.p1.x + param * C;
-            yy = line.p1.y + param * D;
+            xx = item.p1.x + param * C;
+            yy = item.p1.y + param * D;
         }
 
         const dx = point.x - xx;
@@ -136,6 +151,27 @@ const Helpers = {
             x: xx,
             y: yy
         }
+    },
+
+    getDotProduct: function (v1, v2) {
+        return v1.x * v2.x + v1.y * v2.y;
+    },
+
+    getMagnitude: function (v) {
+        return Math.sqrt(Helpers.sqr(v.x) + Helpers.sqr(v.y));
+    },
+
+    getAngleBetweenVectors: function (v1, v2) {
+        // cos(angle) = dot(v1, v2) / (mag(v1) * mag(v2))
+        const dot = Helpers.getDotProduct(v1, v2);
+        const v1_mag = Helpers.getMagnitude(v1);
+        const v2_mag = Helpers.getMagnitude(v2);
+        const cos_angle = dot / (v1_mag * v2_mag);
+        const angle = Math.acos(cos_angle);
+
+        // if (v2.y)
+
+        return angle;
     },
 
     getNormal: function (segment, reference_point) {

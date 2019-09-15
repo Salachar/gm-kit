@@ -63,6 +63,15 @@ const InputHelpers = {
         const right_arrow = node.getElementsByClassName('arrow_right')[0];
         const input = node.getElementsByClassName('number_input')[0];
 
+        if (opts.init) {
+            input.value = opts.init;
+            if (opts.store_key) {
+                Store.set({
+                    [opts.store_key]: opts.init
+                });
+            }
+        }
+
         left_arrow.addEventListener('mousedown', (e) => {
             fireInput(-1);
         });
@@ -97,7 +106,14 @@ const InputHelpers = {
             if (set) {
                 input.value = value.toFixed(InputHelpers.getDecimalCount(opts.step));
             }
-            opts.handler(value);
+            if (opts.store_key) {
+                Store.set({
+                    [opts.store_key]: value
+                });
+            }
+            if (opts.handler) {
+                opts.handler(value);
+            }
         }
     },
 
@@ -147,6 +163,56 @@ const InputHelpers = {
                 opts.handler(offset);
             }, opts.interval);
         }
+    },
+
+    radioInput: function (node, opts = {}) {
+        // <div class="checkbox_container">
+        //     <div class="checkbox"></div>
+        //     <div class="checkbox_label"></div>
+        // </div>
+
+        const { options } = opts;
+
+        options.forEach((option) => {
+            const value = option.value;
+            const label = option.label || value;
+
+            const container = createElement('div', 'checkbox_container', {
+                addTo: node
+            });
+            const checkbox = createElement('div', 'checkbox', {
+                addTo: container,
+                dataset: {
+                    value: value
+                }
+            });
+            createElement('div', 'checkbox_label', {
+                html: label,
+                addTo: container
+            });
+
+            checkbox.addEventListener('click', (e) => {
+                const is_checked = checkbox.classList.contains('checked');
+                [...node.getElementsByClassName('checkbox')].forEach((cb) => {
+                    cb.classList.remove('checked');
+                });
+                if (!is_checked) {
+                    checkbox.classList.add('checked');
+                    if (opts.store_key) {
+                        Store.set({
+                            [opts.store_key]: checkbox.dataset.value
+                        });
+                    }
+                    if (opts.handler) {
+                        opts.handler(checkbox.dataset.value);
+                    }
+                } else {
+                    Store.set({
+                        [opts.store_key]: null
+                    });
+                }
+            });
+        });
     }
 };
 

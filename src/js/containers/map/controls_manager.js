@@ -6,7 +6,8 @@ const {
 const {
     setValue,
     numberInput,
-    arrowInput
+    arrowInput,
+    radioInput
 } = require('../../lib/input');
 
 const controls = require('./controls');
@@ -27,7 +28,9 @@ class ControlsManager {
             'grid_shift',
             'scroll_buttons',
             'map_zoom',
-            'player_screen_brightness'
+            'player_screen_brightness',
+            'spell_marker_size',
+            'spell_marker_shape',
         ];
 
         cacheElements(this, cache_list);
@@ -109,6 +112,22 @@ class ControlsManager {
                     offset: offset
                 });
             }
+        });
+
+        numberInput(this.el_spell_marker_size, {
+            step: 5,
+            init: 20,
+            store_key: 'spell_marker_size'
+        });
+
+        radioInput(this.el_spell_marker_shape, {
+            options: [
+                { value: 'line' },
+                { value: 'square' },
+                { value: 'circle' },
+                { value: 'cone' }
+            ],
+            store_key: 'spell_marker_shape'
         });
 
         arrowInput(this.el_scroll_buttons, {

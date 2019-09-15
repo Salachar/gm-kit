@@ -1,9 +1,12 @@
+const SpellManager = require('./spell_manager');
+
 const {
     copy,
     isBlankPixel,
     getUnitVector,
     getPerpendicularUnitVector,
-    copyPoint
+    copyPoint,
+    getAngleBetweenVectors
 } = require('../../../lib/helpers');
 
 const {
@@ -11,12 +14,12 @@ const {
     configureElement
 } = require('../../../lib/dom');
 
-
 const {
     size,
     clear,
     line,
-    circle
+    circle,
+    cone
 } = require('../../../lib/canvas');
 
 const MAX_MAP_SIZE = 3000;
@@ -72,6 +75,12 @@ class CanvasManager {
             // }
         });
 
+        this.SpellManager = new SpellManager({
+            map_instance: this.parent,
+            context: this.spell_context,
+            parent: this
+        });
+
         Store.register({
             'quick_place_started': this.onQuickPlaceToggled.bind(this),
             'quick_place_ended': this.onQuickPlaceToggled.bind(this),
@@ -84,7 +93,7 @@ class CanvasManager {
             'draw_walls': this.drawWallLines.bind(this),
             // 'load_fog': this.loadFog.bind(this),
 
-            'move_segment_toggled': this.refreshPlacements.bind(this),
+            'move_mode_toggled': this.refreshPlacements.bind(this),
             'create_one_way_wall_toggled' : this.refreshPlacements.bind(this),
             'move_point_ended': this.refreshPlacements.bind(this),
             'remove_point': this.refreshPlacements.bind(this),
@@ -99,8 +108,6 @@ class CanvasManager {
             "hide_entire_map_(PS)": this.hideEntireMapPC.bind(this),
             'scroll_(PS)': this.scrollPlayerScreen.bind(this)
         }, parent.name);
-
-        window.light_context = this.light_context;
     }
 
     updateBrightness (data) {
@@ -124,6 +131,8 @@ class CanvasManager {
             this.grid.offset.x += data.offset.x;
             this.grid.offset.y += data.offset.y;
         }
+        this.grid.offset.x =  this.grid.offset.x % this.grid.size;
+        this.grid.offset.y =  this.grid.offset.y % this.grid.size;
         this.drawGrid();
     }
 
@@ -196,7 +205,7 @@ class CanvasManager {
     }
 
     createCanvasElements (map) {
-        ['control', 'image', 'wall', 'light', 'lights', 'shroud', 'grid'].forEach((canvas_type) => {
+        ['control', 'image', 'wall', 'light', 'lights', 'shroud', 'grid', 'spell'].forEach((canvas_type) => {
             let canvas_name = canvas_type + '_canvas';
             this[canvas_name] = createElement('canvas', `${canvas_name} map_canvas`, {
                 addTo: this.canvas_container
@@ -515,7 +524,7 @@ class CanvasManager {
 
     drawSegmentBeingPlaced (context) {
         // Exit early for non-applicable modes
-        if (CONFIG.lighting_enabled || CONFIG.create_one_way_wall || CONFIG.move_segment) return;
+        if (CONFIG.lighting_enabled || CONFIG.create_one_way_wall || CONFIG.move_mode) return;
         // Normal wall placement
         let point = copyPoint(this.parent.SegmentManager.new_wall);
         // Quick place and there is a legit prev point to connect to
@@ -539,7 +548,7 @@ class CanvasManager {
     }
 
     drawWallEndIndicator (context) {
-        if (!CONFIG.move_segment) return;
+        if (!CONFIG.move_mode) return;
         const point_highlight = this.parent.SegmentManager.getControlPoint();
         if (!point_highlight) return;
         circle(context, {
@@ -649,6 +658,7 @@ class CanvasManager {
         this.resizeCanvas(this.control_canvas);
         this.resizeCanvas(this.image_canvas);
         this.resizeCanvas(this.wall_canvas);
+        this.resizeCanvas(this.spell_canvas);
         this.resizeCanvas(this.grid_canvas);
         this.resizeCanvas(this.shroud_canvas);
         this.resizeCanvas(this.light_canvas);

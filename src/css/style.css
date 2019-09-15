@@ -21,7 +21,7 @@
 }
 
 html {
-    font-size: 14px;
+    font-size: 10px;
 }
 
 html, body {
@@ -52,4 +52,10 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+#ui_scale {
+    float: right;
+    margin: 0.5rem;
+    width: 10rem;
 }

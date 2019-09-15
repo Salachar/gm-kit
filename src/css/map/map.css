@@ -70,6 +70,10 @@
     z-index: var(--image-canvas-z);
 }
 
+.spell_canvas {
+    z-index: var(--spell-canvas-z);
+}
+
 .grid_canvas {
     z-index: var(--grid-canvas-z);
 }

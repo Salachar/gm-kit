@@ -91,10 +91,12 @@ class Store {
     }
 
     clearData () {
+        console.log('data');
         this.__store = {};
     }
 
     clear () {
+        console.log('clear');
         this.__events = {};
         this.clearData();
         this.clearKeys();

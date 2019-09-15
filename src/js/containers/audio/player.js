@@ -102,9 +102,9 @@ class AudioPlayer {
     }
 
     set volume (new_volume) {
-        this.player.volume = new_volume;
+        this.player.volume = new_volume.toFixed(2);
         const input = this.el_audio_player_volume.getElementsByClassName('number_input')[0];
-        input.value = new_volume;
+        input.value = this.player.volume;
     }
 
     get volume () {

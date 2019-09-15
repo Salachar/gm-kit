@@ -64,7 +64,7 @@ class MapContainer extends Container {
         switch (keyCode) {
             case KEYS.CONTROL:
                 this.enableSegmentMove();
-                Store.fire('move_segment_toggled');
+                Store.fire('move_mode_toggled');
                 break;
             case KEYS.SHIFT:
                 this.enableSegmentQuickPlace();
@@ -108,22 +108,22 @@ class MapContainer extends Container {
     }
 
     enableSegmentMove () {
-        CONFIG.move_segment = true;
+        CONFIG.move_mode = true;
         CONFIG.quick_place = false;
     }
 
     disableSegmentMove () {
-        CONFIG.move_segment = false;
+        CONFIG.move_mode = false;
         CONFIG.quick_place = false;
     }
 
     enableSegmentQuickPlace () {
-        CONFIG.move_segment = false;
+        CONFIG.move_mode = false;
         CONFIG.quick_place = true;
     }
 
     disableSegmentQuickPlace () {
-        CONFIG.move_segment = false;
+        CONFIG.move_mode = false;
         CONFIG.quick_place = false;
     }
 
@@ -146,8 +146,8 @@ class MapContainer extends Container {
         }
 
         const window_options = {
-            // autoHideMenuBar: 1,
-            // titleBarStyle: 'hidden',
+            autoHideMenuBar: 1,
+            titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -186,7 +186,10 @@ class MapContainer extends Container {
 
     setActiveMap (map_name) {
         Store.key = map_name;
-        Store.clearData();
+
+        // I don't know what this actually did, there isn't much map data tied to the upper levels of the store
+        // Store.clearData();
+
         if (this.current_map) {
             this.current_map.active = false;
             this.current_map.hide();

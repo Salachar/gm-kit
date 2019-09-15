@@ -45,8 +45,10 @@ function createWindow () {
     loadConfig();
 
     WINDOW = new BrowserWindow({
-        width: 2400,
-        height: 1300,
+        // width: 2400,
+        // height: 1300,
+        width: 1280,
+        height: 720,
         icon: __dirname + '/map.png'
     });
     WINDOW.setMenu(null);

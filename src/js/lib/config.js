@@ -54,7 +54,7 @@ let CONFIG = {
 
     move_point_dist: 10,
 
-    move_segment: false,
+    move_mode: false,
 
     quick_place: false,
 

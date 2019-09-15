@@ -7,12 +7,17 @@ const ObjectManager = require('./object_manager');
 const {
     createElement,
     copyPoint,
-    getNormal
+    copy,
+    resetSnap,
+    getNormal,
+    getAngleBetweenVectors
 } = require('../../../lib/helpers');
 
 class MapInstance {
     constructor (map = {}, options = {}) {
         this.map = map;
+        this.map.json = this.map.json || {};
+        this.map.json.meta = this.map.json.meta || {};
 
         // Link back to the main map manager if its needed
         this.manager = options.manager;
@@ -36,7 +41,7 @@ class MapInstance {
             points: null
         };
 
-        this.move_segment = null;
+        this.move_mode = null;
 
         this.el_tab = null;
 
@@ -244,7 +249,7 @@ class MapInstance {
     }
 
     onDelete (point) {
-        if (CONFIG.move_segment) {
+        if (CONFIG.move_mode) {
             this.SegmentManager.removePoint(Store.get('control_point'));
             return;
         }
@@ -328,7 +333,7 @@ class MapInstance {
             return this.SegmentManager.checkForDoors();
         }
 
-        if (CONFIG.move_segment) {
+        if (CONFIG.move_mode) {
             Store.set({
                 control_point: this.SegmentManager.getControlPoint()
             });
@@ -415,7 +420,10 @@ class MapInstance {
             Store.fire('deselect_door');
         }
 
-        if (CONFIG.move_segment) return;
+        const spell_marker_shape = Store.get('spell_marker_shape');
+        if (spell_marker_shape) return;
+
+        if (CONFIG.move_mode) return;
 
         if (CONFIG.create_one_way_wall) return;
 
@@ -442,12 +450,13 @@ class MapInstance {
                 Store.fire('split_segment', {
                     split_data: {
                         point: copyPoint(CONFIG.snap.indicator.point),
-                        segment: CONFIG.snap.indicator.segment,
+                        segment: copy(CONFIG.snap.indicator.segment),
                         new_segment: new_wall
                     }
                 });
             }
-            CONFIG.snap.indicator.point = null;
+            // CONFIG.snap.indicator.point = null;
+            resetSnap();
         }
 
         this.last_quickplace_coord = copyPoint(new_wall.p2);
@@ -460,8 +469,22 @@ class MapInstance {
     }
 
     mouseMove () {
+        const spell_marker_shape = Store.get('spell_marker_shape');
+        if (spell_marker_shape) {
+            // return this.CanvasManager.drawSpellMarker({
+            //     shape: spell_marker_shape,
+            //     size: Store.get('spell_marker_size'),
+            // });
+            return Store.fire('draw_spell_marker', {
+                spell: {
+                    shape: spell_marker_shape,
+                    size: Store.get('spell_marker_size')
+                }
+            });
+        }
+
         // Move point mode, CTRL is being held
-        if (CONFIG.move_segment) {
+        if (CONFIG.move_mode) {
             if (Mouse.down && Store.get('control_point')) {
                 this.SegmentManager.handleControlPoint(Store.get('control_point'));
             } else {

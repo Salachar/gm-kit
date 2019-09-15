@@ -1,5 +1,17 @@
-Update (9/7/2019):
+Update (9/14/2019):
+    - Added UI Scale input to the app, still needs a label
+    - When a wall start when snapped to the middle of a line, it does not split the segment being snapped to
+        - This no longer seems to be happening, at least I can't reproduce it anymore
+    - Rename "move_segment" shit to "move_point" or something
+        - Renamed to "move_mode"
+    - Why the fuck does the SegmentManager also have its own pointDistance function
+        - Removed and using pDistance from helpers
+    - Fixed issue where segments were trying to be split when only an endpoint matched
+        - This was causing issues with one way walls triggering new normals and shit
+    - connected_segments tracking for moving was removed, it was broken and is cleaner without it
+        - Cost is performance during wall/point moving, which is not as important
 
+Update (9/7/2019):
     - After all maps are removed, the controls toggle no longer works
         - All events were being cleared, even onces not tied to keys, which we want to keep
         - After the last map is removed, only the key and keyEvents are now cleared

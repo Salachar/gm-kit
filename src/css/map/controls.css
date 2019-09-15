@@ -36,12 +36,23 @@
     width: 20rem;
     background-color: var(--container-header-bg);
     z-index: 10;
-    padding: 0.5rem;
+
     transform: translateX(100%);
     box-sizing: border-box;
+    /* overflow-y: scroll; */
 }
 #map_controls_container.open {
     transform: translateX(0%);
+}
+
+#map_controls_body {
+    padding: 0.5rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: scroll;
 }
 
 #map_controls_container .button {

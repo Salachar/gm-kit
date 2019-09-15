@@ -119,7 +119,19 @@
     RADIO
 **********************************************************/
 
-.radio {
+.radio_input {
+    margin-top: 0.5rem;
+}
+
+.radio_input .checkbox_container {
+    display: block;
+}
+
+.radio_input .checkbox {
+    /* display: block; */
+}
+
+/* .radio {
     position: relative;
     display: inline-block;
     vertical-align: top;
@@ -162,7 +174,7 @@
     top: 50%;
     left: 50%;
     border-radius: 50%;
-}
+} */
 
 
 
@@ -282,7 +294,8 @@
     line-height: 2rem;
     font-weight: bold;
     opacity: 0.2;
-    font-size: 1.5rem;
+    /* font-size: 1.5rem; */
+    font-size: var(--font-medium);
 }
 
 .number_input_min {

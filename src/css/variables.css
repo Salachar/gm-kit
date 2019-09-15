@@ -63,13 +63,14 @@
 
     /* Map containers contents */
     --image-canvas-z: 1;
-    --grid-canvas-z: 2;
-    --shroud-canvas-z: 3;
-    --light-canvas-z: 4;
-    --lights-canvas-z: 5;
-    --wall-canvas-z: 6;
-    --control-canvas-z: 7;
-    --text-block-marker-z: 8;
+    --spell-canvas-z: 2;
+    --grid-canvas-z: 3;
+    --shroud-canvas-z: 4;
+    --light-canvas-z: 5;
+    --lights-canvas-z: 6;
+    --wall-canvas-z: 7;
+    --control-canvas-z: 8;
+    --text-block-marker-z: 9;
 
     --no-map-z: 9;
 }

@@ -33,7 +33,7 @@
 }
 
 #help_box.hide {
-    transform: translateY(-100%);
+    transform: translateY(-120%);
 }
 
 #help_table td {

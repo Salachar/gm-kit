@@ -68,65 +68,77 @@ class MapTemplate {
                             <div class="menu_icon_bar menu_icon_bar_3"></div>
                         </div>
 
-                        <div id="common_hotkeys" class="map_control_section">
-                            <div class="button_text">Common Hotkeys used during sessions</div>
-                        </div>
-
-                        <div class="map_control_section">
-                            <div class="button_text">Show the current map on the Player Screen. This will create the Player Screen window if it doesn't exist and display the current map.</div>
-                            <div id="show_player_screen" class="button">Show on Player Screen</div>
-                        </div>
-
-                        <div class="map_control_section">
-                            <div class="button_text">Ignores all walls and lights up the entire map on the Player Screen</div>
-                            <div id="show_entire_map" class="button">Show Entire Map</div>
-                        </div>
-
-                        <div class="map_control_section">
-                            <div class="button_text">Overlay a grid onto the map, this will show on both the GM and Player Screen. Saving the map will save the current grid settings.</div>
-                            <div id="grid_toggle" class="button">Toggle Grid</div>
-
-                            <div class="button_text">Change the grid size (pixels)</div>
-                            <div id="grid_size_container" class="number_input_container">
-                                <div class="number_input_button arrow_left"></div>
-                                <input type="text" class="number_input" value="50"></input>
-                                <div class="number_input_button arrow_right"></div>
+                        <div id="map_controls_body">
+                            <div id="common_hotkeys" class="map_control_section">
+                                <div class="button_text">Common Hotkeys used during sessions</div>
                             </div>
 
-                            <div class="button_text">Shift the overlayed grid</div>
-                            <div id="grid_shift" class="arrow_buttons">
-                                <div class="arrow_button arrow_left"></div>
-                                <div class="arrow_button arrow_top"></div>
-                                <div class="arrow_button arrow_bottom"></div>
-                                <div class="arrow_button arrow_right"></div>
+                            <div class="map_control_section">
+                                <div class="button_text">Show the current map on the Player Screen. This will create the Player Screen window if it doesn't exist and display the current map.</div>
+                                <div id="show_player_screen" class="button">Show on Player Screen</div>
                             </div>
-                        </div>
 
-                        <div class="map_control_section">
-                            <div class="button_text">Scroll the Player Screen</div>
-                            <div id="scroll_buttons" class="arrow_buttons">
-                                <div class="arrow_button arrow_left"></div>
-                                <div class="arrow_button arrow_top"></div>
-                                <div class="arrow_button arrow_bottom"></div>
-                                <div class="arrow_button arrow_right"></div>
+                            <div class="map_control_section">
+                                <div class="button_text">Ignores all walls and lights up the entire map on the Player Screen</div>
+                                <div id="show_entire_map" class="button">Show Entire Map</div>
                             </div>
-                        </div>
 
-                        <div class="map_control_section">
-                            <div class="button_text">Zoom the Player Screen</div>
-                            <div id="map_zoom" class="number_input_container">
-                                <div class="number_input_button arrow_left"></div>
-                                <input type="text" class="number_input" value="1"></input>
-                                <div class="number_input_button arrow_right"></div>
+                            <div class="map_control_section">
+                                <div class="button_text">Spell Markers: Will snap to overlay grid if used</div>
+                                <div id="spell_marker_size" class="number_input_container">
+                                    <div class="number_input_button arrow_left"></div>
+                                    <input type="text" class="number_input"></input>
+                                    <div class="number_input_button arrow_right"></div>
+                                </div>
+                                <div id="spell_marker_shape" class="radio_input"></div>
                             </div>
-                        </div>
 
-                        <div class="map_control_section">
-                            <div class="button_text">Dim the Player Screen (aritifical screen brightness)</div>
-                            <div id="player_screen_brightness" class="number_input_container">
-                                <div class="number_input_button arrow_left"></div>
-                                <input type="text" class="number_input" value="100"></input>
-                                <div class="number_input_button arrow_right"></div>
+                            <div class="map_control_section">
+                                <div class="button_text">Overlay a grid onto the map, this will show on both the GM and Player Screen. Saving the map will save the current grid settings.</div>
+                                <div id="grid_toggle" class="button">Toggle Grid</div>
+
+                                <div class="button_text">Change the grid size (pixels)</div>
+                                <div id="grid_size_container" class="number_input_container">
+                                    <div class="number_input_button arrow_left"></div>
+                                    <input type="text" class="number_input" value="50"></input>
+                                    <div class="number_input_button arrow_right"></div>
+                                </div>
+
+                                <div class="button_text">Shift the overlayed grid</div>
+                                <div id="grid_shift" class="arrow_buttons">
+                                    <div class="arrow_button arrow_left"></div>
+                                    <div class="arrow_button arrow_top"></div>
+                                    <div class="arrow_button arrow_bottom"></div>
+                                    <div class="arrow_button arrow_right"></div>
+                                </div>
+                            </div>
+
+                            <div class="map_control_section">
+                                <div class="button_text">Scroll the Player Screen</div>
+                                <div id="scroll_buttons" class="arrow_buttons">
+                                    <div class="arrow_button arrow_left"></div>
+                                    <div class="arrow_button arrow_top"></div>
+                                    <div class="arrow_button arrow_bottom"></div>
+                                    <div class="arrow_button arrow_right"></div>
+                                </div>
+                            </div>
+
+                            <div class="map_control_section">
+                                <div class="button_text">Zoom the Player Screen</div>
+                                <div id="map_zoom" class="number_input_container">
+                                    <div class="number_input_button arrow_left"></div>
+                                    <input type="text" class="number_input" value="1"></input>
+                                    <div class="number_input_button arrow_right"></div>
+                                </div>
+                            </div>
+
+                            <div class="map_control_section">
+                                <div class="button_text">Dim the Player Screen (aritifical screen brightness)</div>
+                                <div id="player_screen_brightness" class="number_input_container">
+                                    <div class="number_input_button arrow_left"></div>
+                                    <input type="text" class="number_input" value="100"></input>
+                                    <div class="number_input_button arrow_right"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

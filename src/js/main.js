@@ -17,6 +17,15 @@ const {
     getWindowDimensions
 } = require('./lib/helpers');
 
+const {
+    cacheElements
+} = require('./lib/dom');
+
+const {
+    numberInput
+} = require('./lib/input');
+
+
 class AppManager {
     constructor () {
         this.active_container = null;
@@ -39,6 +48,12 @@ class AppManager {
                 parent: this
             })
         };
+
+        cacheElements(this, [
+            'ui_scale'
+        ]);
+
+        this.el_html = document.getElementsByTagName('html')[0];
 
         getWindowDimensions();
 
@@ -67,6 +82,19 @@ class AppManager {
     }
 
     setEvents () {
+        const html_styles = getComputedStyle(this.el_html);
+        const html_font_size = html_styles.getPropertyValue('font-size');
+        const font_size = parseInt(html_font_size, 10);
+
+        numberInput(this.el_ui_scale, {
+            step: 0.5,
+            min: 7,
+            init: font_size,
+            handler: (value) => {
+                this.el_html.style.fontSize = value + 'px'
+            }
+        });
+
         window.addEventListener('message', (e) => {
             let event = e.data;
             if (event.event === 'player_screen_loaded') {
