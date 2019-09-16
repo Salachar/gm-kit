@@ -1,3 +1,7 @@
+.lights_body {
+    overflow: scroll;
+}
+
 #lifx_access_code_input {
     width: 40rem;
 }

@@ -12,7 +12,7 @@ class LightsTemplate {
                 <div id="lifx_reset" class="button">RESET LIGHTS</div>
             </div>
 
-            <div class="container_body">
+            <div class="container_body lights_body">
             </div>
         `;
     }

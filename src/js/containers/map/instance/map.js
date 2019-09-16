@@ -318,6 +318,8 @@ class MapInstance {
         // We aren't doing anything with context menus at the moment, so ignore all but left nouse
         if (!Mouse.left) return;
 
+        if (Store.get('spell_marker_shape')) return;
+
         // The user clicked on the map while the text input was open
         if (this.TextManager.open) {
             this.TextManager.close();
@@ -420,8 +422,7 @@ class MapInstance {
             Store.fire('deselect_door');
         }
 
-        const spell_marker_shape = Store.get('spell_marker_shape');
-        if (spell_marker_shape) return;
+        if (Store.get('spell_marker_shape')) return;
 
         if (CONFIG.move_mode) return;
 
@@ -471,10 +472,6 @@ class MapInstance {
     mouseMove () {
         const spell_marker_shape = Store.get('spell_marker_shape');
         if (spell_marker_shape) {
-            // return this.CanvasManager.drawSpellMarker({
-            //     shape: spell_marker_shape,
-            //     size: Store.get('spell_marker_size'),
-            // });
             return Store.fire('draw_spell_marker', {
                 spell: {
                     shape: spell_marker_shape,

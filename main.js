@@ -77,8 +77,13 @@ function sendMaps () {
 }
 
 function sendAudio () {
+    // console.log('send audio');
     const list = AudioHelpers.generateList();
-    WINDOW.webContents.send('files_loaded', list);
+    if (!list) {
+        WINDOW.webContents.send('audio_list_error', list);
+    } else {
+        WINDOW.webContents.send('files_loaded', list);
+    }
 }
 
 // This method will be called when Electron has finished
@@ -94,6 +99,14 @@ function chooseMapDirectory () {
     });
 }
 
+function chooseAudioDirectory () {
+    FileHelpers.chooseDirectory(function (folder_path) {
+        global.shared.CONFIG.audio_directory = folder_path;
+        FileHelpers.writeConfig();
+        WINDOW.webContents.send('audio_folder_chosen');
+    });
+}
+
 IPC.on('app_loaded', (e) => {
     WINDOW.webContents.send('config', global.shared.CONFIG);
 });
@@ -103,8 +116,12 @@ IPC.on('lifx_access_code', (e, lifx_access_code) => {
     FileHelpers.writeConfig();
 });
 
-IPC.on('open_dialog_modal', (e) => {
+IPC.on('open_map_dialog_modal', (e) => {
     chooseMapDirectory();
+});
+
+IPC.on('open_audio_dialog_modal', (e) => {
+    chooseAudioDirectory();
 });
 
 IPC.on('load_maps', (e) => {
@@ -186,10 +203,11 @@ function loadAudioData () {
         let audio_data = fs.readFileSync(audio_path, {
             encoding: 'utf-8'
         });
-        WINDOW.webContents.send('data_loaded', JSON.stringify(audio_data));
+        WINDOW.webContents.send('data_loaded', JSON.parse(audio_data));
     } catch (e) {
         console.log(e);
         console.log('No audio_data.json file found');
+        WINDOW.webContents.send('data_loaded', {});
     }
 }
 

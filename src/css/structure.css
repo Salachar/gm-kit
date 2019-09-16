@@ -99,3 +99,49 @@
     height: var(--container-header-height);
     background-color: var(--container-header-bg);
 }
+
+
+
+/**********************************************************
+    HELP SCREEN
+**********************************************************/
+
+.help_screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s top ease;
+    overflow: scroll;
+    z-index: var(--help-z);
+    background-color: #666;
+}
+
+.help_screen_action {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 3rem;
+    border: 0.4rem dashed #EEE;
+    color: #EEE;
+    padding: 3rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.help_screen_action:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.help_screen_main_text {
+    font-size: 3rem;
+    font-style: italic;
+}
+
+.help_screen_support_text {
+    margin-top: 2rem;
+    font-size: 2rem;
+    font-style: italic;
+}

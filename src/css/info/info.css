@@ -53,3 +53,9 @@
     float: right;
     width: 78%;
 }
+
+#info_click_amount {
+    display: inline-block;
+    width: 15rem;
+    margin: 0.5rem 0 0 0.5rem;
+}

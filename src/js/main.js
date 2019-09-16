@@ -104,7 +104,7 @@ class AppManager {
         });
 
         document.body.addEventListener('keydown', (e) => {
-            // e.preventDefault();
+            if (KEY_DOWN[e.keyCode]) return;
             KEY_DOWN[e.keyCode] = true;
             this.active_container.keyDown(e.keyCode);
         });

@@ -19,6 +19,8 @@ class AudioTemplate {
                         <div class="number_input_button arrow_right"></div>
                     </div>
 
+                    <div class="button" id="choose_audio_directory">Choose Audio Directory</div>
+
                     <div id="audio_player_progress">
                         <div id="audio_player_current_time"></div>
                         <div id="audio_player_progress_played"></div>
@@ -29,6 +31,12 @@ class AudioTemplate {
             </div>
 
             <div class="container_body">
+                <div id="no_audio_screen" class="help_screen">
+                    <div id="no_audio_screen_load" class="help_screen_action">
+                        <div class="help_screen_main_text">CLICK TO PICK AUDIO FOLDER</div>
+                    </div>
+                </div>
+
                 <div id="tracks_section" class="section">
                     <div class="section_title">tracks</div>
                     <div id="tracks_body" class="section_body"></div>

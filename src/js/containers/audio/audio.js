@@ -135,12 +135,41 @@ class AudioManager {
         return el_new_audio_file;
     }
 
+    clearTracks () {
+        this.el_tracks_body.innerHTML = '';
+    }
+
+    clearSearch () {
+        this.el_search_body.innerHTML = '';
+    }
+
+    clearPrevious () {
+        this.el_previous_body.innerHTML = '';
+        // this.data.previous = {};
+    }
+
+    clearAll () {
+        this.clearTracks();
+        this.clearSearch();
+        this.clearPrevious();
+    }
+
     buildAudioList (audio_files) {
+        this.clearAll();
+
         let parent_node = this.el_tracks_body;
         Object.keys(audio_files).forEach((key) => {
+            let override_section = null;
+            if (key === 'files') {
+                override_section = {
+                    type: 'directory',
+                    files: audio_files[key],
+                    name: 'Tracks'
+                };
+            };
             this.createTrackSection({
                 initial: true,
-                section: audio_files[key],
+                section: override_section || audio_files[key],
                 parent_node: parent_node
             });
         });

@@ -10,12 +10,10 @@
 
 #map_containers {
     position: absolute;
-    /* top: 4rem; */
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    /* transition: 0.3s top ease; */
     background-color: #666;
     overflow: hidden;
 }
@@ -26,13 +24,11 @@
 
 #map_main_section {
     position: absolute;
-    /* top: 4rem; */
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     transition: 0.3s all ease;
-    /* overflow: hidden; */
 }
 #map_main_section.open {
     right: 20rem;
@@ -97,42 +93,4 @@
 .control_canvas {
     z-index: var(--control-canvas-z);
     cursor: crosshair;
-}
-
-
-
-/**********************************************************
-    NO MAP SCREEN
-**********************************************************/
-
-#no_map_screen {
-    position: absolute;
-    /* top: 4rem; */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: 0.3s top ease;
-    overflow: scroll;
-    z-index: var(--no-map-z);
-    background-color: #666;
-}
-
-#no_map_screen_load {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    border-radius: 3rem;
-    border: 0.4rem dashed #EEE;
-    color: #EEE;
-    font-size: 3rem;
-    font-style: italic;
-    padding: 3rem;
-    cursor: pointer;
-    text-align: center;
-}
-
-#no_map_screen_load:hover {
-    background-color: rgba(255, 255, 255, 0.3);
 }

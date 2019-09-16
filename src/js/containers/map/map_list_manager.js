@@ -172,7 +172,7 @@ class MapListManager {
         });
 
         this.el_folder_button.addEventListener('click', (e) => {
-            IPC.send('open_dialog_modal');
+            IPC.send('open_map_dialog_modal');
         });
 
         document.getElementById('map_list_search').addEventListener('keyup', (e) => {

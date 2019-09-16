@@ -67,7 +67,11 @@ class MapContainer extends Container {
                 Store.fire('move_mode_toggled');
                 break;
             case KEYS.SHIFT:
-                this.enableSegmentQuickPlace();
+                if (Store.get('spell_marker_shape')) {
+                    Store.fire('show_affected_tiles');
+                } else {
+                    this.enableSegmentQuickPlace();
+                }
                 break;
             case KEYS.LEFT_BRACKET:
                 Store.fire('dim_down');
@@ -95,8 +99,14 @@ class MapContainer extends Container {
                 this.disableSegmentMove();
                 break;
             case KEYS.SHIFT:
-                this.disableSegmentQuickPlace();
+                if (Store.get('spell_marker_shape')) {
+                    Store.fire('hide_affected_tiles');
+                } else {
+                    this.enableSegmentQuickPlace();
+                }
                 break;
+                // this.disableSegmentQuickPlace();
+                // break;
             default:
                 // console.log('APP >> Keyup: Unhandled keyCode: ' + e.keyCode);
                 break;
@@ -232,6 +242,7 @@ class MapContainer extends Container {
         if (removing_current_map && map_keys.length) {
             this.setActiveMap(map_keys[map_keys.length - 1]);
         }
+
         if (!map_keys.length) {
             Store.clearKeys();
             document.getElementById('no_map_screen').classList.remove('hidden');

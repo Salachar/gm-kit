@@ -22,6 +22,8 @@ class SpellManager {
         // The alpha for all of the drawn spell markers
         this.alpha = 0.25;
 
+        this.show_affected_tiles = false;
+
         this.spell_marker = {
             origin: null,
             angle: null
@@ -38,7 +40,9 @@ class SpellManager {
         };
 
         Store.register({
-            'draw_spell_marker': this.drawSpellMarker.bind(this)
+            'draw_spell_marker': this.drawSpellMarker.bind(this),
+            'show_affected_tiles': this.showAffectedTiles.bind(this),
+            'hide_affected_tiles': this.hideAffectedTiles.bind(this)
         }, this.map_instance.name);
     }
 
@@ -109,7 +113,7 @@ class SpellManager {
                 break;
         }
 
-        this.findAffectedSquares();
+        this.drawAffectedSquares();
     }
 
     updateMarkerInfo () {
@@ -226,19 +230,36 @@ class SpellManager {
         };
     }
 
-    findAffectedSquares () {
+    showAffectedTiles () {
+        this.show_affected_tiles = true;
+        this.drawAffectedSquares();
+    }
+
+    hideAffectedTiles () {
+        this.show_affected_tiles = false;
+
+    }
+
+    drawAffectedSquares () {
+        if (!this.show_affected_tiles) return;
+
         const { width, height } = size(this.context);
         const pixel_data = pixelData(this.context);
 
         const half_grid_size = this.grid.size / 2;
-        for (let y = this.grid.offset.y; y < (height - this.grid.offset.y); y+= this.grid.size) {
+        const y_bound = height - this.grid.offset.y;
+        const x_bound = width - this.grid.offset.x;
+        const grid_size = this.grid.size;
+
+        for (let y = this.grid.offset.y; y < y_bound; y += grid_size) {
             let cell_y = y + half_grid_size;
             let row_data = pixel_data[cell_y];
             if (!row_data) continue;
 
-            for (let x = this.grid.offset.x; x < (width - this.grid.offset.x); x += this.grid.size) {
+            for (let x = this.grid.offset.x; x < x_bound; x += grid_size) {
                 let cell_x = x + half_grid_size;
                 let cell_data = row_data[cell_x];
+                if (!cell_data) continue;
 
                 if (!cell_data.blank) {
                     rect(this.context, {
@@ -246,7 +267,7 @@ class SpellManager {
                             x: cell_x,
                             y: cell_y
                         },
-                        width: this.grid.size,
+                        width: grid_size,
                         color: '#0000FF',
                         alpha: this.alpha,
                     });

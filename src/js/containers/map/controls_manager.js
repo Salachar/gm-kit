@@ -160,6 +160,19 @@ class ControlsManager {
                 })
             }
         });
+
+        [...document.getElementsByClassName('map_control_section')].forEach((section) => {
+            // console.log(header);
+
+            const header = section.getElementsByClassName('map_control_section_header')[0];
+            const body = section.getElementsByClassName('map_control_section_body')[0];
+
+            if (!header || !body) return;
+
+            header.addEventListener('click', (e) => {
+                body.classList.toggle('hidden');
+            });
+        });
     }
 }
 

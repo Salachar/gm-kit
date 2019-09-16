@@ -71,12 +71,11 @@ class AudioData {
     set (data) {
         if (!data) return;
         try {
-            data = JSON.parse(data);
             delete data.track;
 
-            this.tracks = data.tracks;
-            this.previous = data.previous;
-            this.collapse = data.collapse;
+            this.tracks = data.tracks || {};
+            this.previous = data.previous || {};
+            this.collapse = data.collapse || {};
             this.volume =  data.volume || 0.1;
 
             this.parent.player.volume = this.volume;

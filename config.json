@@ -1,5 +1,5 @@
 {
-    "audio_directory": "C:\\DnD\\audio_tracks",
     "map_directory": "C:\\DnD\\app_maps",
-    "lifx_access_code": "ca5b1f77e93fb039ffcc69b8c181d1f21d2890f8a80af42996e50f55cc153d78"
+    "lifx_access_code": "ca5b1f77e93fb039ffcc69b8c181d1f21d2890f8a80af42996e50f55cc153d78",
+    "audio_directory": "C:\\DnD\\audio_tracks"
 }

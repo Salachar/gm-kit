@@ -2,8 +2,13 @@ const Container = require('../base');
 const ContainerTemplate = require('../../templates/info');
 
 const {
-    createElement
-} = require('../../lib/helpers');
+    createElement,
+    cacheElements
+} = require('../../lib/dom');
+const {
+    numberInput
+} = require('../../lib/input');
+
 
 const generators = {
     deva_generator: require('./generators/deva'),
@@ -29,7 +34,11 @@ class InfoContainer extends Container {
             template: ContainerTemplate
         });
 
-        this.amount_per_click = 1;
+        cacheElements(this, [
+            'info_click_amount'
+        ]);
+
+        this.amount_per_click = 5;
 
         this.results = [];
 
@@ -89,10 +98,19 @@ class InfoContainer extends Container {
             });
         });
 
-        document.getElementById('generate_amount').addEventListener('keyup', (e) => {
-            const value = e.currentTarget.value;
-            if (isNaN(value)) value = 1;
-            this.amount_per_click = value;
+        // document.getElementById('generate_amount').addEventListener('keyup', (e) => {
+        //     const value = e.currentTarget.value;
+        //     if (isNaN(value)) value = 1;
+        //     this.amount_per_click = value;
+        // });
+
+        numberInput(this.el_info_click_amount, {
+            min: 1,
+            init: this.amount_per_click,
+            handler: (value) => {
+                if (isNaN(value)) value = 1;
+                this.amount_per_click = value;
+            }
         });
     }
 }
