@@ -85,10 +85,10 @@ class CanvasManager {
             'quick_place_started': this.onQuickPlaceToggled.bind(this),
             'quick_place_ended': this.onQuickPlaceToggled.bind(this),
             'lights_cleared': this.onLightsCleared.bind(this),
-            'scroll_up': this.scrollUp.bind(this),
-            'scroll_right': this.scrollRight.bind(this),
-            'scroll_down': this.scrollDown.bind(this),
-            'scroll_left': this.scrollLeft.bind(this),
+            // 'scroll_up': this.scrollUp.bind(this),
+            // 'scroll_right': this.scrollRight.bind(this),
+            // 'scroll_down': this.scrollDown.bind(this),
+            // 'scroll_left': this.scrollLeft.bind(this),
             'door_activated': this.onDoorActivated.bind(this),
             'draw_walls': this.drawWallLines.bind(this),
             // 'load_fog': this.loadFog.bind(this),
@@ -214,21 +214,21 @@ class CanvasManager {
         });
     }
 
-    scrollLeft (scroll_amount) {
-        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft - (scroll_amount || CONFIG.scroll_speed);
-    }
+    // scrollLeft (scroll_amount) {
+    //     this.canvas_container.scrollLeft = this.canvas_container.scrollLeft - (scroll_amount || CONFIG.scroll_speed);
+    // }
 
-    scrollRight (scroll_amount) {
-        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + (scroll_amount || CONFIG.scroll_speed);
-    }
+    // scrollRight (scroll_amount) {
+    //     this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + (scroll_amount || CONFIG.scroll_speed);
+    // }
 
-    scrollUp (scroll_amount) {
-        this.canvas_container.scrollTop = this.canvas_container.scrollTop - (scroll_amount || CONFIG.scroll_speed);
-    }
+    // scrollUp (scroll_amount) {
+    //     this.canvas_container.scrollTop = this.canvas_container.scrollTop - (scroll_amount || CONFIG.scroll_speed);
+    // }
 
-    scrollDown (scroll_amount) {
-        this.canvas_container.scrollTop = this.canvas_container.scrollTop + (scroll_amount || CONFIG.scroll_speed);
-    }
+    // scrollDown (scroll_amount) {
+    //     this.canvas_container.scrollTop = this.canvas_container.scrollTop + (scroll_amount || CONFIG.scroll_speed);
+    // }
 
     scrollPlayerScreen (data) {
         this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + data.offset.x;

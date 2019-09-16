@@ -26,8 +26,12 @@ class SpellManager {
 
         this.spell_marker = {
             origin: null,
-            angle: null
+            angle: 0
         };
+        this.angle_increase = 0.01;
+        this.angle_timer = null;
+
+        this.new_spell = null;
 
         // A current list of the spells for drawing
         this.spells = [];
@@ -40,10 +44,54 @@ class SpellManager {
         };
 
         Store.register({
+            'place_spell_marker': this.placeSpellMarker.bind(this),
             'draw_spell_marker': this.drawSpellMarker.bind(this),
             'show_affected_tiles': this.showAffectedTiles.bind(this),
-            'hide_affected_tiles': this.hideAffectedTiles.bind(this)
+            'hide_affected_tiles': this.hideAffectedTiles.bind(this),
+            // 'arrow_up_down': this.onArrowUp.bind(this),
+            // 'arrow_down_down': this.onArrowDown.bind(this),
+            'arrow_right_press': this.onArrowRightPress.bind(this),
+            'arrow_left_press': this.onArrowLeftPress.bind(this),
+            'arrow_right_release': this.onArrowRightRelease.bind(this),
+            'arrow_left_release': this.onArrowLeftRelease.bind(this),
         }, this.map_instance.name);
+    }
+
+    onArrowUp () {
+        // Fire event for controls manager to listen to and change spell marker size
+    }
+
+    onArrowDown () {
+        // Fire event for controls manager to listen to and change spell marker size
+    }
+
+    onArrowRightPress () {
+        this.setAngleTimer(1);
+    }
+
+    onArrowLeftPress () {
+        this.setAngleTimer(-1);
+    }
+
+    onArrowRightRelease () {
+        this.killAngleTimer();
+    }
+
+    onArrowLeftRelease () {
+        this.killAngleTimer();
+    }
+
+    setAngleTimer (mod) {
+        this.angle_timer = setInterval(() => {
+            this.spell_marker.angle += (this.angle_increase * mod);
+            this.new_spell.angle = this.spell_marker.angle;
+            this.drawAll();
+        }, 10);
+    }
+
+    killAngleTimer () {
+        window.clearInterval(this.angle_timer);
+        this.angle_timer = null;
     }
 
     get grid () {
@@ -51,12 +99,17 @@ class SpellManager {
     }
 
     addSpell (spell) {
-        this.spells.push(spell);
-        this.drawSpells();
+        this.spells.push(spell || this.new_spell);
+        // this.drawSpells();
+        this.drawAll();
     }
 
     removeSpell () {
 
+    }
+
+    placeSpellMarker () {
+        this.addSpell(this.new_spell);
     }
 
     drawSpells () {
@@ -113,32 +166,13 @@ class SpellManager {
                 break;
         }
 
-        this.drawAffectedSquares();
-    }
-
-    updateMarkerInfo () {
-        let origin = copyPoint(Mouse);
-        let angle = null;
-
-        if (Mouse.down) {
-            origin = {
-                x: Mouse.downX,
-                y: Mouse.downY
-            };
-            const v1 = {
-                x: 1,
-                y: 0
-            };
-            const v2 = {
-                x: Mouse.x - Mouse.downX,
-                y: Mouse.y - Mouse.downY
-            }
-            angle = getAngleBetweenVectors(v1, v2);
-            if (v2.y < v1.y) angle *= -1;
-        }
-
-        this.spell_marker.origin = origin;
-        this.spell_marker.angle = angle || this.spell_marker.angle || null;
+        // Draw the origin point
+        circle(this.context, {
+            point: spell.origin,
+            radius: 10,
+            color: spell.color,
+            alpha: this.alpha * 2
+        });
     }
 
     drawSpellMarker (opts = {}) {
@@ -146,38 +180,26 @@ class SpellManager {
         const { shape, size } = spell;
         if (!shape || !size || !this.grid.show) return;
 
-        let new_spell = {
+        this.new_spell = {
             shape: spell.shape,
             size: (size / 5) * this.grid.size,
-            origin: null,
+            origin: copyPoint(Mouse),
             angle: this.spell_marker.angle,
             color: '#FF0000'
         };
 
-        // "final" means that we want to keep everything as is and put
-        // the spell into the list without updates/modifications
-        if (!spell.final) {
-            this.updateMarkerInfo();
-        }
+        this.drawAll(this.new_spell);
+    }
 
-        new_spell.origin = this.spell_marker.origin;
-
-        // TODO: Either refine or remove grid snapping.
-        // The DM will know how to line it up how they want and I shouldnt force their hand
-        // if (this.shapes[shape] === 'intersect') {
-        //     new_spell.origin = this.getClosestIntersect(this.spell_marker.origin);
-        // } else if (this.shapes[shape] === 'cell') {
-        //     new_spell.origin = this.getClosestCell(this.spell_marker.origin);
-        // }
-
-        if (!new_spell.origin) return;
-
-        if (spell.final) {
-            return this.addSpell(new_spell);
-        }
-
+    drawAll (spell) {
         clear(this.context);
-        this.drawSpell(new_spell);
+        this.drawSpells();
+        this.drawSpell(spell || this.new_spell);
+        this.drawAffectedSquares();
+    }
+
+    drawPlaced (clear_context) {
+        if (clear_context) clear(this.context);
         this.drawSpells();
     }
 
@@ -237,7 +259,7 @@ class SpellManager {
 
     hideAffectedTiles () {
         this.show_affected_tiles = false;
-
+        this.drawAll(this.new_spell);
     }
 
     drawAffectedSquares () {
@@ -262,6 +284,13 @@ class SpellManager {
                 if (!cell_data) continue;
 
                 if (!cell_data.blank) {
+                    const valid = this.checkSurroundingCells(pixel_data, cell_x, cell_y);
+                    if (!valid) continue;
+
+                    // The cell data alpha will have a stacked value from the overlapping
+                    // spell markers, so we can use that to make cells affected by two
+                    // spells darker to show its hit by both
+                    // TODO: account for spell marker origin point, which will throw it off
                     rect(this.context, {
                         point: {
                             x: cell_x,
@@ -269,11 +298,36 @@ class SpellManager {
                         },
                         width: grid_size,
                         color: '#0000FF',
-                        alpha: this.alpha,
+                        alpha: (cell_data.a / 255),
                     });
                 }
             }
         }
+    }
+
+    checkSurroundingCells (pixel_data, middle_x, middle_y) {
+        // I can adjust how far apart and how many of the additional points
+        // need to be hit for a valid cell
+        const amount_required = 2;
+        let amount_valid = 0;
+        const offset = this.grid.size / 4;
+
+        [{x: 0, y: -offset},  // top`
+        {x: offset, y: 0},    // right
+        {x: 0, y: offset},    // bottom
+        {x: -offset, y: 0}    // left
+        ].forEach((point_mod) => {
+            try {
+                const cell_x = middle_x + point_mod.x;
+                const cell_y = middle_y + point_mod.y;
+                const cell = pixel_data[cell_y][cell_x];
+                if (!cell.blank) amount_valid += 1;
+            } catch (e) {
+                console.log(e);
+            }
+        });
+
+        return amount_valid >= amount_required;
     }
 }
 

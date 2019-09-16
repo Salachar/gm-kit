@@ -11,6 +11,7 @@ Update (9/14/2019):
     - connected_segments tracking for moving was removed, it was broken and is cleaner without it
         - Cost is performance during wall/point moving, which is not as important
 
+
 Update (9/7/2019):
     - After all maps are removed, the controls toggle no longer works
         - All events were being cleared, even onces not tied to keys, which we want to keep

@@ -270,7 +270,7 @@ const Canvas = {
                     style: color
                 },
                 width: 5,
-                alpha: 0.5
+                alpha: alpha
             });
         context.restore();
     },

@@ -272,10 +272,10 @@ class MapInstance {
             [KEYS.E]: 'enable_light',
             [KEYS.O]: 'toggle_closest_door',
             [KEYS.T]: 'switch_wall_door',
-            [KEYS.LEFT]: 'scroll_left',
-            [KEYS.RIGHT]: 'scroll_right',
-            [KEYS.UP]: 'scroll_up',
-            [KEYS.DOWN]: 'scroll_down'
+            [KEYS.LEFT]: 'arrow_left_press',
+            [KEYS.RIGHT]: 'arrow_right_press',
+            [KEYS.UP]: 'arrow_up_press',
+            [KEYS.DOWN]: 'arrow_down_press'
         }
 
         if (events[key]) {
@@ -293,7 +293,11 @@ class MapInstance {
 
         const events = {
             [KEYS.CONTROL]: 'move_point_ended',
-            [KEYS.SHIFT]: 'quick_place_ended'
+            [KEYS.SHIFT]: 'quick_place_ended',
+            [KEYS.LEFT]: 'arrow_left_release',
+            [KEYS.RIGHT]: 'arrow_right_release',
+            [KEYS.UP]: 'arrow_up_release',
+            [KEYS.DOWN]: 'arrow_down_release'
         };
 
         if (events[key]) {
@@ -318,7 +322,10 @@ class MapInstance {
         // We aren't doing anything with context menus at the moment, so ignore all but left nouse
         if (!Mouse.left) return;
 
-        if (Store.get('spell_marker_shape')) return;
+        if (Store.get('spell_marker_shape')) {
+            Store.fire('place_spell_marker');
+            return;
+        }
 
         // The user clicked on the map while the text input was open
         if (this.TextManager.open) {
