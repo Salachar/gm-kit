@@ -81,6 +81,10 @@ const Helpers = {
         return "rgba(" + r + "," + g + "," + b + "," + a + ")";
     },
 
+    rgb: function (r,g,b) {
+        return "rgb(" + r + "," + g + "," + b + ")";
+    },
+
     sqr: function (value) {
         return value * value;
     },

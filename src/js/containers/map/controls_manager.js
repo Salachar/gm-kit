@@ -7,7 +7,10 @@ const {
     setValue,
     numberInput,
     arrowInput,
-    radioInput
+    radioInput,
+    colorPicker,
+    checkboxInput,
+    deselect
 } = require('../../lib/input');
 
 const controls = require('./controls');
@@ -31,12 +34,22 @@ class ControlsManager {
             'player_screen_brightness',
             'spell_marker_size',
             'spell_marker_shape',
+            'spell_marker_color',
+            'show_affected_tiles'
         ];
 
         cacheElements(this, cache_list);
 
         this.addCommonHotKeys();
         this.setEvents();
+
+        Store.register({
+            'deselect_spell_marker': this.deselectSpellMarker.bind(this),
+        });
+    }
+
+    deselectSpellMarker () {
+        deselect(this.el_spell_marker_shape);
     }
 
     toggle () {
@@ -127,7 +140,29 @@ class ControlsManager {
                 { value: 'circle' },
                 { value: 'cone' }
             ],
-            store_key: 'spell_marker_shape'
+            store: {
+                keys: ['spell_marker_shape'],
+                events: ['spell_marker_shape_updated']
+            }
+        });
+
+        colorPicker(this.el_spell_marker_color, {
+            store_key: 'spell_marker_color',
+            handler: (value) => {
+                console.log(value);
+            }
+        });
+
+        checkboxInput(this.el_show_affected_tiles, {
+            store: {
+                keys: [
+                    'show_affected_tiles',
+                    'show_affected_tiles_checked'
+                ],
+                events: [
+                    'show_affected_tiles_toggled'
+                ]
+            }
         });
 
         arrowInput(this.el_scroll_buttons, {
@@ -162,13 +197,9 @@ class ControlsManager {
         });
 
         [...document.getElementsByClassName('map_control_section')].forEach((section) => {
-            // console.log(header);
-
             const header = section.getElementsByClassName('map_control_section_header')[0];
             const body = section.getElementsByClassName('map_control_section_body')[0];
-
             if (!header || !body) return;
-
             header.addEventListener('click', (e) => {
                 body.classList.toggle('hidden');
             });

@@ -13,6 +13,10 @@ const {
     resetSnap
 } = require('../../lib/helpers');
 
+const {
+    checkboxInput
+} = require('../../lib/input');
+
 class MapContainer extends Container {
     constructor (opts = {}) {
         super({
@@ -67,8 +71,10 @@ class MapContainer extends Container {
                 Store.fire('move_mode_toggled');
                 break;
             case KEYS.SHIFT:
-                if (Store.get('spell_marker_shape')) {
-                    Store.fire('show_affected_tiles');
+                if (Store.get('spell_marker_shape') && !Store.get('show_affected_tiles_checked')) {
+                    Store.fire('show_affected_tiles_toggled', {
+                        'show_affected_tiles': true
+                    });
                 } else {
                     this.enableSegmentQuickPlace();
                 }
@@ -99,14 +105,14 @@ class MapContainer extends Container {
                 this.disableSegmentMove();
                 break;
             case KEYS.SHIFT:
-                if (Store.get('spell_marker_shape')) {
-                    Store.fire('hide_affected_tiles');
+                if (Store.get('spell_marker_shape') && !Store.get('show_affected_tiles_checked')) {
+                    Store.fire('show_affected_tiles_toggled', {
+                        'show_affected_tiles': false
+                    });
                 } else {
-                    this.enableSegmentQuickPlace();
+                    this.disableSegmentQuickPlace();
                 }
                 break;
-                // this.disableSegmentQuickPlace();
-                // break;
             default:
                 // console.log('APP >> Keyup: Unhandled keyCode: ' + e.keyCode);
                 break;
@@ -196,6 +202,9 @@ class MapContainer extends Container {
 
     setActiveMap (map_name) {
         Store.key = map_name;
+        // Store.set({
+        //     current_map_name: this.SegmentManager.getControlPoint()
+        // });
 
         // I don't know what this actually did, there isn't much map data tied to the upper levels of the store
         // Store.clearData();
@@ -208,6 +217,8 @@ class MapContainer extends Container {
         this.current_map.active = true;
         this.current_map.show();
         this.ControlsManager.update(this.current_map);
+
+
         window.MAP = this.current_map;
     }
 
@@ -309,14 +320,15 @@ class MapContainer extends Container {
             Toast.message('Save/Load State is temporarily disabled');
         });
 
-        document.getElementById('create_one_way_wall').addEventListener('click', (e) => {
-            CONFIG.create_one_way_wall = !CONFIG.create_one_way_wall;
-            if (CONFIG.create_one_way_wall) {
-                e.currentTarget.classList.add('checked');
-            } else {
-                e.currentTarget.classList.remove('checked');
+        checkboxInput(document.getElementById('create_one_way_wall'), {
+            store: {
+                keys: [
+                    'create_one_way_wall'
+                ],
+                events: [
+                    'create_one_way_wall_toggled'
+                ]
             }
-            Store.fire('create_one_way_wall_toggled');
         });
 
         document.getElementById('help').addEventListener('click', (e) => {

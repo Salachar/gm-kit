@@ -85,11 +85,11 @@ let CONFIG = {
         fog: {
             gm_screen: {
                 seen: {
-                    color: 'rgba(0, 0, 100, 1)',
+                    color: 'rgba(40, 40, 40, 1)',
                     opacity: 0.5
                 },
                 hidden: {
-                    color: 'rgba(100, 0, 0, 1)',
+                    color: 'rgba(20, 20, 20, 1)',
                     opacity: 0.7
                 }
             },

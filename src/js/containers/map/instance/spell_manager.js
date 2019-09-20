@@ -46,15 +46,26 @@ class SpellManager {
         Store.register({
             'place_spell_marker': this.placeSpellMarker.bind(this),
             'draw_spell_marker': this.drawSpellMarker.bind(this),
-            'show_affected_tiles': this.showAffectedTiles.bind(this),
-            'hide_affected_tiles': this.hideAffectedTiles.bind(this),
+            'show_affected_tiles_toggled': this.onShowAffectedTilesToggled.bind(this),
             // 'arrow_up_down': this.onArrowUp.bind(this),
             // 'arrow_down_down': this.onArrowDown.bind(this),
             'arrow_right_press': this.onArrowRightPress.bind(this),
             'arrow_left_press': this.onArrowLeftPress.bind(this),
             'arrow_right_release': this.onArrowRightRelease.bind(this),
             'arrow_left_release': this.onArrowLeftRelease.bind(this),
+            'spell_marker_shape_updated': this.onSpellMarkerShapeUpdated.bind(this)
         }, this.map_instance.name);
+    }
+
+    onShowAffectedTilesToggled () {
+        this.drawAll(this.new_spell);
+    }
+
+    onSpellMarkerShapeUpdated () {
+        if (!Store.get('spell_marker_shape')) {
+            this.new_spell = null;
+            this.drawAll();
+        }
     }
 
     onArrowUp () {
@@ -99,8 +110,8 @@ class SpellManager {
     }
 
     addSpell (spell) {
-        this.spells.push(spell || this.new_spell);
-        // this.drawSpells();
+        this.spells.push(this.new_spell);
+        this.new_spell = null;
         this.drawAll();
     }
 
@@ -109,7 +120,8 @@ class SpellManager {
     }
 
     placeSpellMarker () {
-        this.addSpell(this.new_spell);
+        this.addSpell();
+        Store.fire('deselect_spell_marker');
     }
 
     drawSpells () {
@@ -120,6 +132,8 @@ class SpellManager {
     }
 
     drawSpell (spell) {
+        if (!spell) return;
+
         switch (spell.shape) {
             case 'line':
                 rect(this.context, {
@@ -185,7 +199,7 @@ class SpellManager {
             size: (size / 5) * this.grid.size,
             origin: copyPoint(Mouse),
             angle: this.spell_marker.angle,
-            color: '#FF0000'
+            color: Store.get('spell_marker_color') || '#FF0000'
         };
 
         this.drawAll(this.new_spell);
@@ -252,18 +266,8 @@ class SpellManager {
         };
     }
 
-    showAffectedTiles () {
-        this.show_affected_tiles = true;
-        this.drawAffectedSquares();
-    }
-
-    hideAffectedTiles () {
-        this.show_affected_tiles = false;
-        this.drawAll(this.new_spell);
-    }
-
     drawAffectedSquares () {
-        if (!this.show_affected_tiles) return;
+        if (!Store.get('show_affected_tiles')) return;
 
         const { width, height } = size(this.context);
         const pixel_data = pixelData(this.context);
@@ -287,18 +291,14 @@ class SpellManager {
                     const valid = this.checkSurroundingCells(pixel_data, cell_x, cell_y);
                     if (!valid) continue;
 
-                    // The cell data alpha will have a stacked value from the overlapping
-                    // spell markers, so we can use that to make cells affected by two
-                    // spells darker to show its hit by both
-                    // TODO: account for spell marker origin point, which will throw it off
                     rect(this.context, {
                         point: {
                             x: cell_x,
                             y: cell_y
                         },
                         width: grid_size,
-                        color: '#0000FF',
-                        alpha: (cell_data.a / 255),
+                        color: '#444444',
+                        alpha: this.alpha
                     });
                 }
             }

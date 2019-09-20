@@ -352,7 +352,7 @@ class MapInstance {
             return;
         }
 
-        if (CONFIG.create_one_way_wall) {
+        if (Store.get('create_one_way_wall')) {
             if (this.one_way_wall.points && this.one_way_wall.segment) {
                 this.one_way_wall.segment.one_way = this.one_way_wall.points;
             }
@@ -433,7 +433,7 @@ class MapInstance {
 
         if (CONFIG.move_mode) return;
 
-        if (CONFIG.create_one_way_wall) return;
+        if (Store.get('create_one_way_wall')) return;
 
         if (this.lighting_enabled || CONFIG.quick_place) return;
 
@@ -519,7 +519,7 @@ class MapInstance {
         if (this.lighting_enabled) return;
 
         // User is turning a wall into a one-way wall...
-        if (CONFIG.create_one_way_wall) {
+        if (Store.get('create_one_way_wall')) {
             let closest_wall = this.ObjectManager.findClosest('segment');
             let one_way_info = getNormal(closest_wall);
             if (one_way_info) {

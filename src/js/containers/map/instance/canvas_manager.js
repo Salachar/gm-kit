@@ -524,7 +524,7 @@ class CanvasManager {
 
     drawSegmentBeingPlaced (context) {
         // Exit early for non-applicable modes
-        if (CONFIG.lighting_enabled || CONFIG.create_one_way_wall || CONFIG.move_mode) return;
+        if (CONFIG.lighting_enabled || Store.get('create_one_way_wall') || CONFIG.move_mode) return;
         // Normal wall placement
         let point = copyPoint(this.parent.SegmentManager.new_wall);
         // Quick place and there is a legit prev point to connect to

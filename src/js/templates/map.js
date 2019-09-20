@@ -118,7 +118,7 @@ class MapTemplate {
                             </div>
 
                             <div class="map_control_section">
-                                <div class="map_control_section_header">Spell Markers</div>
+                                <div class="map_control_section_header">Spell/Shape Markers</div>
 
                                 <div class="map_control_section_body">
                                     <div class="button_text">Currently only useable with overlay grid enabled</div>
@@ -127,7 +127,15 @@ class MapTemplate {
                                         <input type="text" class="number_input"></input>
                                         <div class="number_input_button arrow_right"></div>
                                     </div>
+
                                     <div id="spell_marker_shape" class="radio_input"></div>
+                                    <div id="spell_marker_color" class="color_picker"></div>
+
+                                    <div class="button_text">Will cause a performance drop only while placing markers</div>
+                                    <div class="checkbox_container">
+                                        <div id="show_affected_tiles" class="checkbox"></div>
+                                        <div class="checkbox_label">Show grid cells affected by spells</div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -142,14 +150,18 @@ class MapTemplate {
                                         <div class="arrow_button arrow_bottom"></div>
                                         <div class="arrow_button arrow_right"></div>
                                     </div>
+
                                     <div class="map_section_spacer"></div>
+
                                     <div class="button_text">Zoom the Player Screen</div>
                                     <div id="map_zoom" class="number_input_container">
                                         <div class="number_input_button arrow_left"></div>
                                         <input type="text" class="number_input" value="1"></input>
                                         <div class="number_input_button arrow_right"></div>
                                     </div>
+
                                     <div class="map_section_spacer"></div>
+
                                     <div class="button_text">Dim the Player Screen (aritifical screen brightness)</div>
                                     <div id="player_screen_brightness" class="number_input_container">
                                         <div class="number_input_button arrow_left"></div>

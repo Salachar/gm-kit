@@ -31,7 +31,7 @@ const DOM = {
         return node;
     },
 
-    configureElement (node, opts = {}) {
+    configureElement: function (node, opts = {}) {
         if (opts.attributes) {
             for (let attr in opts.attributes) {
                 if (opts.attributes[attr]) {

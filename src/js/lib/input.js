@@ -1,6 +1,14 @@
 const {
-    createElement
+    createElement,
+    configureElement
 } = require('./dom');
+const {
+    pixelData,
+    line
+} = require('./canvas');
+const {
+    rgb
+} = require('./helpers');
 
 const InputHelpers = {
     // Single timer for all the inputs, nobody should be doing multiple
@@ -32,6 +40,82 @@ const InputHelpers = {
     setValue (node, value) {
         const input = node.getElementsByClassName('number_input')[0];
         input.value = value;
+    },
+
+    colorPicker: function (node, opts = {}) {
+        const canvas = createElement('canvas', 'color_picker_canvas', {
+            addTo: node
+        });
+        const context = canvas.getContext('2d');
+
+        let crosshair = createElement('div', 'color_picker_crosshair', {
+            addTo: node
+        });
+
+        let pixel_index = 0;
+
+        canvas.width = node.clientWidth;
+        canvas.height = node.clientHeight;
+
+        const fidelity = 255 / (canvas.width / 6);
+
+        // start with red
+        let r = 255;
+        let g = 0;
+        let b = 0;
+        // increase green to 255
+        for (g; g <= 255; g += fidelity) { pixel_index += 1; drawLine();}
+        // reduce red to 0
+        for (r; r >= 0; r -= fidelity) { pixel_index += 1; drawLine();}
+        // increase blue to 255
+        for (b; b <= 255; b += fidelity) { pixel_index += 1; drawLine();}
+        // reduce green to 0
+        for (g; g >= 0; g -= fidelity) { pixel_index += 1; drawLine();}
+        // increase red to 255
+        for (r; r <= 255; r += fidelity) { pixel_index += 1; drawLine();}
+        // reduce blue to 0
+        for (b; b >= 0; b -= fidelity) { pixel_index += 1; drawLine();}
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const pos = {
+                x: Math.round(e.clientX - rect.left),
+                y: Math.round(e.clientY - rect.top)
+            };
+
+            configureElement(crosshair, {
+                css: {
+                    top: pos.y + 'px',
+                    left: pos.x + 'px'
+                }
+            });
+
+            const pixel_data = pixelData(context);
+            const selected = pixel_data[pos.y][pos.x];
+            const color = rgb(selected.r, selected.g, selected.b);
+            if (opts.store_key) {
+                Store.set({
+                    [opts.store_key]: color
+                });
+            }
+            if (opts.handler) {
+                opts.handler(color);
+            }
+        });
+
+        function drawLine () {
+            line(context, {
+                points: [{
+                    x: pixel_index,
+                    y: 0
+                }, {
+                    x: pixel_index,
+                    y: canvas.height
+                }],
+                width: 1,
+                color: rgb(r,g,b)
+            });
+        }
     },
 
     numberInput: function (node, opts = {}) {
@@ -172,6 +256,15 @@ const InputHelpers = {
         // </div>
 
         const { options } = opts;
+        const store = opts.store || {};
+
+        const dataset = {};
+        (store.keys || []).forEach((key, index) => {
+            dataset['store_key_' + index] = key;
+        });
+        configureElement(node, {
+            dataset: dataset
+        });
 
         options.forEach((option) => {
             const value = option.value;
@@ -196,24 +289,73 @@ const InputHelpers = {
                 [...node.getElementsByClassName('checkbox')].forEach((cb) => {
                     cb.classList.remove('checked');
                 });
+
+                let new_value = null;
+
                 if (!is_checked) {
                     checkbox.classList.add('checked');
-                    if (opts.store_key) {
+                    new_value = checkbox.dataset.value;
+                }
+
+                if (store) {
+                    (store.keys || []).forEach((key) => {
                         Store.set({
-                            [opts.store_key]: checkbox.dataset.value
+                            [key]: new_value
                         });
-                    }
-                    if (opts.handler) {
-                        opts.handler(checkbox.dataset.value);
-                    }
-                } else {
-                    Store.set({
-                        [opts.store_key]: null
                     });
+                    (store.events || []).forEach((event) => {
+                        Store.fire(event);
+                    })
+                }
+
+                if (opts.handler) {
+                    opts.handler(checkbox.dataset.value);
                 }
             });
         });
-    }
+    },
+
+    checkboxInput (node, opts = {}) {
+        node.addEventListener('click', (e) => {
+            let new_value = false;
+            if (!node.classList.contains('checked')) {
+                node.classList.add('checked');
+                new_value = true;
+            } else {
+                node.classList.remove('checked');
+            }
+
+            if (opts.store) {
+                (opts.store.keys || []).forEach((key) => {
+                    Store.set({
+                        [key]: new_value
+                    });
+                });
+                (opts.store.events || []).forEach((event) => {
+                    Store.fire(event);
+                })
+            }
+        });
+    },
+
+    deselect (node) {
+        console.log(node);
+        console.log(node.dataset);
+
+        for (let d in node.dataset) {
+            if (d.indexOf('store_key') !== -1) {
+                Store.set({
+                    [node.dataset[d]]: null
+                });
+            }
+        }
+
+        if (node.classList.contains('radio_input')) {
+            [...node.getElementsByClassName('checkbox')].forEach((cb) => {
+                cb.classList.remove('checked');
+            });
+        }
+    },
 };
 
 module.exports = InputHelpers;
