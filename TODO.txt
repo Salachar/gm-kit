@@ -104,12 +104,14 @@ TODO:
     - Add map sources link:
         - This can just be a stupid little like the help node
         - I can a button like "Community Maps" or something
-        https://www.patreon.com/venatusmaps
-        https://www.patreon.com/blueswordgames
-        https://2minutetabletop.com/
+
+
         https://www.reddit.com/r/battlemaps/
+        https://2minutetabletop.com/
         https://mikeschley.com/
         https://jaredblando.com/cartography/
+        https://www.patreon.com/caeora (Blue Sword Games)
+        https://www.patreon.com/venatusmaps
         https://www.patreon.com/neutralparty
 
 

@@ -1,22 +1,23 @@
 const IMAGES = {
     'MAP': {
-        'INITIAL_LOAD': 'https://i.lensdump.com/i/isRecv.png',
-        'MAP_SELECT': 'https://i.lensdump.com/i/isRvgC.png',
-        'MAP_ONE_WAY_WALL': 'https://i.lensdump.com/i/isto45.png',
-        'MAP_DOORS': 'https://i.lensdump.com/i/istYtC.png',
-        'SPELL_ONE': 'https://i.lensdump.com/i/is1px3.png',
-        'SPELL_TWO': 'https://i.lensdump.com/i/is1KSF.png',
-        'PLAYER_SCREEN_ONE': 'https://i.lensdump.com/i/istzMi.png',
-        'PLAYER_SCREEN_TWO': 'https://i.lensdump.com/i/istn69.png',
+        'INITIAL_LOAD': 'https://i.lensdump.com/i/isRecv.md.png',
+        'MAP_SELECT': 'https://i.lensdump.com/i/isRvgC.md.png',
+        'MAP_ONE_WAY_WALL': 'https://i.lensdump.com/i/isto45.md.png',
+        'MAP_DOORS': 'https://i.lensdump.com/i/istYtC.md.png',
+        'SPELL_ONE': 'https://i.lensdump.com/i/is1px3.md.png',
+        'SPELL_TWO': 'https://i.lensdump.com/i/is1KSF.md.png',
+        'PLAYER_SCREEN_ONE': 'https://i.lensdump.com/i/istzMi.md.png',
+        'PLAYER_SCREEN_TWO': 'https://i.lensdump.com/i/istn69.md.png',
     },
     'AUDIO': {
-        'OVERVIEW': 'https://i.lensdump.com/i/istvz2.png',
+        "INITIAL": 'https://i.lensdump.com/i/isHtHx.md.png',
+        'OVERVIEW': 'https://i.lensdump.com/i/istvz2.md.png',
     },
     'INFO': {
-        'OVERVIEW': 'https://i.lensdump.com/i/istSao.png',
+        'OVERVIEW': 'https://i.lensdump.com/i/istSao.md.png',
     },
     'LIGHTS': {
-        'OVERVIEW': 'https://i.lensdump.com/i/istLbv.png',
+        'OVERVIEW': 'https://i.lensdump.com/i/istLbv.md.png',
     }
 }
 
@@ -37,7 +38,8 @@ function populateImages () {
 
                 image_node.addEventListener('click', (e) => {
                     el_image_modal.classList.remove('hidden');
-                    el_image_modal_img.style.backgroundImage = `url("${image_source}")`;
+                    // Remove the .md so the bigger image is not a compressed version
+                    el_image_modal_img.style.backgroundImage = `url("${image_source.replace('.md', '')}")`;
                 });
             }
         } catch (e) {

@@ -5,7 +5,16 @@ html, body {
     font-size: 14px;
     color: white;
     font-family: Helvetica, Arial, sans-serif;
-    background-color: rgba(75,75,75,1);
+    background-color: rgba(60,60,60,1);
+}
+
+.spacer {
+    height: 1rem;
+}
+
+.note {
+    color: rgba(255, 0, 0, 0.5);
+    font-weight: bold;
 }
 
 header {
@@ -19,19 +28,22 @@ header {
 }
 
 section {
-    padding: 2rem 6rem;
+    /* padding: 2rem 6rem; */
+    margin-top: 2rem;
 }
 
 .section_header {
     background-color: rgba(100,100,100,1);
-    /* height: 2rem; */
     padding: 1rem;
     font-size: 1.75rem;
-    /* line-height: 2rem; */
     text-align: center;
-    border-radius: 1rem;
+    /* border-radius: 1rem; */
     margin-bottom: 1rem;
     word-break: break-word;
+}
+
+.section_body {
+    padding: 0 6rem 2rem 6rem;
 }
 
 .section_images {
@@ -51,9 +63,17 @@ section {
 
 ul {
     list-style: square;
+    margin-bottom: 0;
+    background-color: rgba(255,255,255,0.1);
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 1rem;
 }
 li {
-    margin: 0.5rem 0;
+    margin: 0.35rem 0;
+}
+li a {
+    color: rgba(140,140,255,1);
+    text-decoration: none;
 }
 
 #image_modal {
