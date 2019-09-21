@@ -1,7 +1,11 @@
 const IMAGES = {
     'MAP': {
+        'INITIAL_LOAD': 'https://i.lensdump.com/i/isRecv.png',
+        'MAP_SELECT': 'https://i.lensdump.com/i/isRvgC.png',
         'MAP_ONE_WAY_WALL': 'https://i.lensdump.com/i/isto45.png',
         'MAP_DOORS': 'https://i.lensdump.com/i/istYtC.png',
+        'SPELL_ONE': 'https://i.lensdump.com/i/is1px3.png',
+        'SPELL_TWO': 'https://i.lensdump.com/i/is1KSF.png',
         'PLAYER_SCREEN_ONE': 'https://i.lensdump.com/i/istzMi.png',
         'PLAYER_SCREEN_TWO': 'https://i.lensdump.com/i/istn69.png',
     },

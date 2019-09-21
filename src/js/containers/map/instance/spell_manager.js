@@ -297,8 +297,8 @@ class SpellManager {
                             y: cell_y
                         },
                         width: grid_size,
-                        color: '#444444',
-                        alpha: this.alpha
+                        color: '#0000AA',
+                        alpha: this.alpha * 2
                     });
                 }
             }
@@ -310,7 +310,7 @@ class SpellManager {
         // need to be hit for a valid cell
         const amount_required = 2;
         let amount_valid = 0;
-        const offset = this.grid.size / 4;
+        const offset = Math.round(this.grid.size / 4);
 
         [{x: 0, y: -offset},  // top`
         {x: offset, y: 0},    // right
