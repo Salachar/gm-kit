@@ -1,0 +1,81 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-size: 14px;
+    color: white;
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: rgba(75,75,75,1);
+}
+
+header {
+    background-color: rgba(150,150,150,1);
+    height: 3rem;
+    padding: 1rem;
+    font-size: 2.5rem;
+    line-height: 3rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+section {
+    padding: 2rem;
+}
+
+.section_header {
+    background-color: rgba(100,100,100,1);
+    /* height: 2rem; */
+    padding: 1rem;
+    font-size: 1.75rem;
+    /* line-height: 2rem; */
+    text-align: center;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    word-break: break-word;
+}
+
+.section_images {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.section_image {
+    width: 100%;
+    cursor: pointer;
+}
+
+ul {
+    list-style: square;
+}
+li {
+    margin: 0.5rem 0;
+}
+
+#image_modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 2rem;
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,0.80);
+}
+
+#image_modal > div {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
