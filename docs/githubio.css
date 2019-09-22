@@ -71,7 +71,7 @@ ul {
 li {
     margin: 0.35rem 0;
 }
-li a {
+a {
     color: rgba(140,140,255,1);
     text-decoration: none;
 }
