@@ -19,13 +19,15 @@ html, body {
 
 header {
     background-color: rgba(150,150,150,1);
-    height: 3rem;
+    /* height: 3rem; */
     padding: 1rem;
     font-size: 2.5rem;
-    line-height: 3rem;
+    /* line-height: 3rem; */
     text-align: center;
     font-weight: bold;
 }
+
+
 
 section {
     /* padding: 2rem 6rem; */
