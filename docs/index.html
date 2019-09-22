@@ -9,7 +9,10 @@
 	<body>
 		<header>
 			<!-- <div id="home"></div> -->
-			GM Kit (tentative)
+			<span>
+				GM Kit
+				<span class="superscript">(tentative)</span>
+			</span>
 		</header>
 
 		<main>
@@ -52,7 +55,7 @@
 			<section id="map">
 				<div class="section_header">Maps: Walls and Dynamic Lighting</div>
 				<div class="section_body">
-					<div class="section_description">The app works by asking for a folder of maps when you first go to load one. This will populate a modal allowing you to see which maps have walls added to them (complete) and which ones don't (image only). Walls can easily be added to the map by drawing them on whereever you want, which are then used for the dyanmic lighting on the map.
+					<div class="section_description">The app works by asking for a folder of maps when you first go to load one. This will populate a modal allowing you to see which maps have walls added to them (complete) and which ones don't (image only). Walls can easily be added to the map by drawing them on wherever you want, which are then used for the dynamic lighting on the map.
 						<ul>
 							<li>Walls can be added anywhere for custom dynamic lighting</li>
 							<li>Doors can be added, which can be instantly opened or "dragged" open for full or partial light</li>
@@ -80,7 +83,7 @@
 			<section id="audio">
 				<div class="section_header">Audio: Local Track Management and Player</div>
 				<div class="section_body">
-					<div class="section_description">By pointing the app to a local folder of audio tracks, they will all become available to play and manage. Tracks can be searched by name or folder, and can be tagged for easier searching. Tracks can hold any number of tags, though the UI may not like it at the moment. Tracks simply loop when ended (unless looping has been turned off). Previously played tracks are saved to help when switcing between tracks
+					<div class="section_description">By pointing the app to a local folder of audio tracks, they will all become available to play and manage. Tracks can be searched by name or folder, and can be tagged for easier searching. Tracks can hold any number of tags, though the UI may not like it at the moment. Tracks simply loop when ended (unless looping has been turned off). Previously played tracks are saved to help when switching between tracks
 						<ul>
 							<li>Easily view and manage a tree of local audio tracks.</li>
 							<li>Collapsed sections are saved and will remain collapsed upon app relaunch.</li>
@@ -97,7 +100,7 @@
 			<section id="info">
 				<div class="section_header">Info: Random Name and Quest Generators</div>
 				<div class="section_body">
-					<div class="section_description">Several small generators to help with coming up with names and places on the spot. Names are split between races and gender and any number can be generated at a time. Clicking on a result will mark it to remain in the list during the current app session.
+					<div class="section_description">Several small generators to help come up with names and places on the spot. Names are split between races and gender and any number can be generated at a time. Clicking on a result will mark it to remain in the list during the current app session.
 						<div class="spacer"></div>
 						The names mainly came from:
 						<ul>
@@ -110,10 +113,10 @@
 			</section>
 
 			<section id="lights">
-				<div class="section_header">Lights: LIFX Light Control</div>
+				<div class="section_header">Lights: Smart Bulb Control</div>
 				<div class="section_body">
-					<div class="note">IN PROGRESS (limited functionality)</div>
-					<div class="section_description">By inputting your unique LIFX Access Code, you can have limited control over your smart lights. Currently, only individual lights can be turned on/off or scenes can be activated. (NOTE: Your LIFX Access Code will not be sent anywhere, and is only saved to a local config.json file on your computer.
+					<div class="note">IN PROGRESS (limited functionality and LIFX only)</div>
+					<div class="section_description">By inputting your unique LIFX Access Code, you can have limited control over your smart lights. Currently only individual lights can be turned on/off or scenes can be activated. Your LIFX Access Code will not be sent anywhere, and is only saved to a local config.json file on your computer.
 						<ul>
 							<li>All individual lights are listed at the top and can be turned on/off</li>
 							<li>All scenes are listed and can activated</li>
@@ -140,9 +143,12 @@
 
 			<div id="image_modal" class="hidden">
 				<div id="image_modal_img"></div>
+				<div class="modal_close"></div>
 			</div>
 		</main>
 
-		<footer></footer>
+		<!-- <footer>
+			<a href="https://salachar.github.io/" target="_blank">My Main Page</a>
+		</footer> -->
 	</body>
 </html>
