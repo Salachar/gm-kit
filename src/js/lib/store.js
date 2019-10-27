@@ -16,11 +16,17 @@ class Store {
     }
 
     isPlayerScreenEvent (fired_event) {
-        return (fired_event.indexOf('_(ps)') !== -1 || fired_event.indexOf('_(PS)') !== -1);
+        return (fired_event.indexOf('(ps)') !== -1 || fired_event.indexOf('(PS)') !== -1);
     }
 
     isPlayerScreenEventOnly (fired_event) {
-        return (fired_event.indexOf('_(PS)') !== -1);
+        return (fired_event.indexOf('(PS)') !== -1);
+    }
+
+    parseEvent (fired_event) {
+        // -(ps) events get sent to the player screen with the ps tags
+        // removed, so it will be processed like normal
+        return fired_event.replace('-(ps)', '');
     }
 
     fire (fired_event, data, key) {
@@ -34,7 +40,7 @@ class Store {
         if (!CONFIG.is_player_screen && this.isPlayerScreenEvent(fired_event)) {
             if (window.player_screen) {
                 window.player_screen.postMessage({
-                    event: fired_event,
+                    event: this.parseEvent(fired_event),
                     data: data,
                     key: key
                 });
@@ -44,12 +50,12 @@ class Store {
 
         this.set(data);
 
-        (this.__events[fired_event] || []).forEach((callback) => {
+        (this.__events[this.parseEvent(fired_event)] || []).forEach((callback) => {
             callback(data);
         });
 
         if (this.key && this.__key_events[this.key]) {
-            (this.__key_events[this.key][fired_event] || []).forEach((callback) => {
+            (this.__key_events[this.key][this.parseEvent(fired_event)] || []).forEach((callback) => {
                 callback(data);
             });
         }
@@ -57,7 +63,14 @@ class Store {
 
     set (data) {
         for (let d in data) {
-            this.__store[d] = data[d];
+            let send = (d.indexOf('-(ps)') !== -1);
+            let key = d.replace('-(ps)', '');
+            this.__store[key] = data[d];
+            if (send) {
+                this.fire('store_data_set_(PS)', {
+                    [key]: data[d]
+                });
+            }
         }
     }
 

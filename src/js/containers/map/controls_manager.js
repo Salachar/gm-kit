@@ -111,6 +111,7 @@ class ControlsManager {
         });
 
         numberInput(this.el_grid_size_container, {
+            step: 0.25,
             handler: (value) => {
                 Store.fire('grid_size_update_(ps)', {
                     size: value
@@ -156,11 +157,11 @@ class ControlsManager {
         checkboxInput(this.el_show_affected_tiles, {
             store: {
                 keys: [
-                    'show_affected_tiles',
-                    'show_affected_tiles_checked'
+                    'show_affected_tiles-(ps)',
+                    'show_affected_tiles_checked-(ps)'
                 ],
                 events: [
-                    'show_affected_tiles_toggled'
+                    'show_affected_tiles_toggled-(ps)'
                 ]
             }
         });

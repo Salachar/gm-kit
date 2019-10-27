@@ -195,9 +195,9 @@ class SpellManager {
         if (!shape || !size || !this.grid.show) return;
 
         this.new_spell = {
-            shape: spell.shape,
+            shape: shape,
             size: (size / 5) * this.grid.size,
-            origin: copyPoint(Mouse),
+            origin: spell.origin || copyPoint(Mouse),
             angle: this.spell_marker.angle,
             color: Store.get('spell_marker_color') || '#FF0000'
         };
@@ -278,12 +278,12 @@ class SpellManager {
         const grid_size = this.grid.size;
 
         for (let y = this.grid.offset.y; y < y_bound; y += grid_size) {
-            let cell_y = y + half_grid_size;
+            let cell_y = Math.floor(y + half_grid_size);
             let row_data = pixel_data[cell_y];
             if (!row_data) continue;
 
             for (let x = this.grid.offset.x; x < x_bound; x += grid_size) {
-                let cell_x = x + half_grid_size;
+                let cell_x = Math.floor(x + half_grid_size);
                 let cell_data = row_data[cell_x];
                 if (!cell_data) continue;
 
@@ -298,7 +298,7 @@ class SpellManager {
                         },
                         width: grid_size,
                         color: '#0000AA',
-                        alpha: this.alpha * 2
+                        alpha: this.alpha
                     });
                 }
             }

@@ -94,6 +94,9 @@ class DisplayManager {
                 this.removeMap(data.data);
                 return;
             }
+            if (data.event === 'store_data_set') {
+                return Store.set(data.data);
+            }
             Store.fire(e.data.event, e.data.data, e.data.key);
         });
 

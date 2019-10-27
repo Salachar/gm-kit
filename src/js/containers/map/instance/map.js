@@ -323,7 +323,7 @@ class MapInstance {
         if (!Mouse.left) return;
 
         if (Store.get('spell_marker_shape')) {
-            Store.fire('place_spell_marker');
+            Store.fire('place_spell_marker-(ps)');
             return;
         }
 
@@ -479,10 +479,11 @@ class MapInstance {
     mouseMove () {
         const spell_marker_shape = Store.get('spell_marker_shape');
         if (spell_marker_shape) {
-            return Store.fire('draw_spell_marker', {
+            return Store.fire('draw_spell_marker-(ps)', {
                 spell: {
                     shape: spell_marker_shape,
-                    size: Store.get('spell_marker_size')
+                    size: Store.get('spell_marker_size'),
+                    origin: copyPoint(Mouse)
                 }
             });
         }
