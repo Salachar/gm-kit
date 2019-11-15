@@ -105,12 +105,12 @@ class MapInstance {
         this.pre_fit_scroll_left = this.node.scrollLeft;
         this.pre_fit_scroll_top = this.node.scrollTop;
 
-        if (this.managers.canvas.map_image_ratio > window_ratio) {
+        if (this.managers.canvas.canvases.image.ratio > window_ratio) {
             // The image is wider and needs to be bound by width
-            this.setZoom(CONFIG.window_width / this.managers.canvas.map_image_width);
+            this.setZoom(CONFIG.window_width / this.managers.canvas.canvases.image.width);
         } else {
             // The image is taller and needs to be bound by height
-            this.setZoom(CONFIG.window_height / this.managers.canvas.map_image_height);
+            this.setZoom(CONFIG.window_height / this.managers.canvas.canvases.image.height);
         }
     }
 

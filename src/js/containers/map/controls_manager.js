@@ -13,7 +13,7 @@ const {
     deselect
 } = require('../../lib/input');
 
-const controls = require('./controls');
+const help_text = require('./help_text');
 
 class ControlsManager {
     constructor (opts = {}) {
@@ -78,17 +78,17 @@ class ControlsManager {
     }
 
     addCommonHotKeys () {
-        controls.forEach((control) => {
-            if (!control.common) return;
+        help_text.forEach((help_item) => {
+            if (!help_item.common) return;
             let hotkeys = createElement('div', 'hotkey_section', {
                 addTo: this.el_common_hotkeys
             });
             createElement('span', 'hotkey_key', {
-                html: control.key + ':',
+                html: help_item.key + ':',
                 addTo: hotkeys
             });
             createElement('span', 'hotkey_desc', {
-                html: control.text,
+                html: help_item.text,
                 addTo: hotkeys
             });
         });

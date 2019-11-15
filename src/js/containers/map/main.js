@@ -6,7 +6,7 @@ const MapInstance = require('./instance/map');
 const TextManager = require('./text_manager');
 const ControlsManager = require('./controls_manager');
 
-const controls = require('./controls');
+const help_text = require('./help_text');
 
 const {
     createElement,
@@ -337,17 +337,17 @@ class MapContainer extends Container {
     }
 
     addHelp () {
-        controls.forEach((control) => {
-            let help_control = createElement('tr', 'help_section', {
+        help_text.forEach((help_item) => {
+            let help_item_node = createElement('tr', 'help_section', {
                 addTo: this.el_help_table
             });
             createElement('td', 'help_key', {
-                html: control.key,
-                addTo: help_control
+                html: help_item.key,
+                addTo: help_item_node
             });
             createElement('td', 'help_desc', {
-                html: control.text,
-                addTo: help_control
+                html: help_item.text,
+                addTo: help_item_node
             });
         });
     }
