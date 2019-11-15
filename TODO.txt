@@ -1,3 +1,7 @@
+Refactor Issues:
+    Switching map doesnt update lighting properly
+    Brightness is broken
+
 What I was working on:
     - Spell markers:
         - predefined list of shapes
@@ -106,13 +110,7 @@ TODO:
         - I can a button like "Community Maps" or something
 
 
-        https://www.reddit.com/r/battlemaps/
-        https://2minutetabletop.com/
-        https://mikeschley.com/
-        https://jaredblando.com/cartography/
-        https://www.patreon.com/caeora (Blue Sword Games)
-        https://www.patreon.com/venatusmaps
-        https://www.patreon.com/neutralparty
+
 
 
 

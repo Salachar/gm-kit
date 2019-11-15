@@ -94,7 +94,7 @@ class MapTemplate {
                             </div>
 
                             <div class="map_control_section">
-                                <div class="map_control_section_header">Grid Ovelay</div>
+                                <div class="map_control_section_header">Grid Overlay</div>
 
                                 <div class="map_control_section_body">
                                     <div class="button_text">Overlay a grid onto the map, this will show on both the GM and Player Screen. Saving the map will save the current grid settings.</div>
@@ -143,6 +143,8 @@ class MapTemplate {
                                 <div class="map_control_section_header">Player Screen Controls</div>
 
                                 <div class="map_control_section_body">
+                                    <div id="toggle_map_fit" class="button">Toggle Map Fit</div>
+
                                     <div class="button_text">Scroll the Player Screen</div>
                                     <div id="scroll_buttons" class="arrow_buttons">
                                         <div class="arrow_button arrow_left"></div>

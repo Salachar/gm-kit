@@ -38,6 +38,8 @@ let CONFIG = {
     window_width: null,
     window_height: null,
 
+    max_map_size: 3000,
+
     snap: {
         indicator: {
             show: false,

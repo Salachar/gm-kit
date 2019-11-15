@@ -162,8 +162,8 @@ class MapContainer extends Container {
         }
 
         const window_options = {
-            autoHideMenuBar: 1,
-            titleBarStyle: 'hidden',
+            // autoHideMenuBar: 1,
+            // titleBarStyle: 'hidden',
             width: 800,
             height: 600,
             top: 360,
@@ -203,7 +203,7 @@ class MapContainer extends Container {
     setActiveMap (map_name) {
         Store.key = map_name;
         // Store.set({
-        //     current_map_name: this.SegmentManager.getControlPoint()
+        //     current_map_name: this.managers.segment.getControlPoint()
         // });
 
         // I don't know what this actually did, there isn't much map data tied to the upper levels of the store

@@ -2,19 +2,19 @@ const {
     pDistance,
     copyPoint,
     sqr
-} = require('../../../lib/helpers');
+} = require('../../../../lib/helpers');
 
-class LightManager {
-    constructor (map = {}, parent) {
-        this.map = map;
-        this.parent = parent;
+const Base = require('./base');
+class LightManager extends Base {
+    constructor (opts = {}) {
+        super(opts);
 
         this.selected_light = null;
         this.light_width = 10;
 
         this.show_entire_map = false;
 
-        const lights_data = (map || {}).lights_data || {};
+        const lights_data = (this.map_data || {}).lights_data || {};
         this.lights = lights_data.lights || {};
         this.lights_added = lights_data.lights_added || 0;
 
@@ -24,7 +24,7 @@ class LightManager {
             'load_lights': this.loadLights.bind(this),
             'deselect_light': this.deselectLight.bind(this),
             'show_entire_map': this.showEntireMap.bind(this),
-        }, parent.name);
+        }, this.map_instance.name);
     }
 
     onAddLight (data) {
@@ -50,14 +50,14 @@ class LightManager {
             };
         }
 
-        const light_quadrant_key = QuadrantManager.getQuadrant(this.parent, light);
+        const light_quadrant_key = QuadrantManager.getQuadrant(this.map_instance, light);
 
         let intersects = [];
         // Go through all of the angle quadrants TL, TR, BR, BL
         for (let quadrants_i = 0; quadrants_i < QuadrantManager.angle_quadrants.length; ++quadrants_i) {
             // Get the actual key for the quadrant (TL | TR | BR | BL)
             const quadrant_key = QuadrantManager.angle_quadrants_keys[quadrants_i];
-            const segments_to_check = QuadrantManager.getSegments(this.parent, light_quadrant_key, quadrant_key);
+            const segments_to_check = QuadrantManager.getSegments(this.map_instance, light_quadrant_key, quadrant_key);
 
             // Go through all of the angles in that quadrant (angle_amount / 4) length
             const quadrant_array = QuadrantManager.angle_quadrants[quadrants_i];

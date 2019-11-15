@@ -1,15 +1,16 @@
 const {
     pDistance,
     copyPoint
-} = require('../../../lib/helpers');
+} = require('../../../../lib/helpers');
 
-class ObjectManager {
-    constructor (parent) {
-        this.parent = parent;
+const Base = require('./base');
+class ObjectManager extends Base {
+    constructor (opts = {}) {
+        super(opts);
 
         Store.register({
             'remove_closest': this.removeClosest.bind(this),
-        }, parent.name);
+        }, this.map_instance.name);
     }
 
     findClosest (type, point, distance_limit) {
@@ -20,18 +21,18 @@ class ObjectManager {
         let search_array = null;
         switch (type) {
             case 'segment':
-                search_array = this.parent.SegmentManager.segments;
+                search_array = this.map_instance.managers.segment.segments;
                 break;
             case 'light':
                 search_array = [];
-                for (let l in this.parent.LightManager.lights) {
-                    search_array.push(this.parent.LightManager.lights[l]);
+                for (let l in this.map_instance.managers.light.lights) {
+                    search_array.push(this.map_instance.managers.light.lights[l]);
                 }
                 break;
             case 'text_block':
                 search_array = [];
-                for (let t in this.parent.TextManager.text_blocks) {
-                    search_array.push(this.parent.TextManager.text_blocks[t]);
+                for (let t in this.map_instance.managers.text.text_blocks) {
+                    search_array.push(this.map_instance.managers.text.text_blocks[t]);
                 }
                 break;
         }
@@ -86,7 +87,7 @@ class ObjectManager {
             item = 'one_way';
         }
 
-        if (this.parent.lighting_enabled && (item !== 'light' || item !== 'text_block')) return;
+        if (this.map_instance.lighting_enabled && (item !== 'light' || item !== 'text_block')) return;
 
         if (!closest.reject) {
             Store.fire('remove_' + item, {

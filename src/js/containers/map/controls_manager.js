@@ -35,7 +35,8 @@ class ControlsManager {
             'spell_marker_size',
             'spell_marker_shape',
             'spell_marker_color',
-            'show_affected_tiles'
+            'show_affected_tiles',
+            'toggle_map_fit'
         ];
 
         cacheElements(this, cache_list);
@@ -70,10 +71,10 @@ class ControlsManager {
     }
 
     update (map) {
-        setValue(this.el_grid_size_container, map.CanvasManager.grid.size);
+        setValue(this.el_grid_size_container, map.managers.canvas.canvases.grid.attributes.size);
         // Not saved to map data, but tracked during the application session between maps
         setValue(this.el_map_zoom, map.player_screen_zoom);
-        setValue(this.el_player_screen_brightness, map.CanvasManager.brightness);
+        setValue(this.el_player_screen_brightness, map.managers.canvas.canvases.image.brightness);
     }
 
     addCommonHotKeys () {
@@ -108,6 +109,10 @@ class ControlsManager {
 
         this.el_grid_toggle.addEventListener('click', (e) => {
             Store.fire('toggle_grid_(ps)');
+        });
+
+        this.el_toggle_map_fit.addEventListener('click', (e) => {
+            Store.fire('toggle_map_fit-(PS)');
         });
 
         numberInput(this.el_grid_size_container, {
@@ -191,6 +196,7 @@ class ControlsManager {
             max: 200,
             interval: 30,
             handler: (value) => {
+                // console
                 Store.fire('brightness_(ps)', {
                     brightness: value
                 })

@@ -1,17 +1,17 @@
-const CanvasManager = require('./canvas_manager');
-const SegmentManager = require('./segment_manager');
-const LightManager = require('./light_manager');
-const TextManager = require('./text_manager');
-const ObjectManager = require('./object_manager');
-
 const {
     createElement,
     copyPoint,
     copy,
     resetSnap,
     getNormal,
-    getAngleBetweenVectors
+    getWindowDimensions
 } = require('../../../lib/helpers');
+
+const CanvasManager = require('./managers/canvas');
+const SegmentManager = require('./managers/segment');
+const LightManager = require('./managers/light');
+const TextManager = require('./managers/text');
+const ObjectManager = require('./managers/object');
 
 class MapInstance {
     constructor (map = {}, options = {}) {
@@ -20,12 +20,19 @@ class MapInstance {
         this.map.json.meta = this.map.json.meta || {};
 
         // Link back to the main map manager if its needed
+        // TextManager uses this at the moment
         this.manager = options.manager;
+
         // The path to the image for the map
         this.image = map.image || null;
         // Is this the currently active map or not
         this.active = false;
         // Zoom is now map specific
+        this.map_fit = false;
+        this.pre_fit_zoom = 1;
+        this.pre_fit_scroll_top;
+        this.pre_fit_scroll_left;
+
         this.zoom = 1;
         this.player_screen_zoom = (map.json.meta || {}).zoom || 1;
         // Whether light is enabled or not for this map
@@ -49,11 +56,17 @@ class MapInstance {
             addTo: document.getElementById('map_containers')
         });
 
-        this.SegmentManager = new SegmentManager(map, this, options);
-        this.CanvasManager = new CanvasManager(map, this, options);
-        this.LightManager = new LightManager(map, this, options);
-        this.ObjectManager = new ObjectManager(this);
-        this.TextManager = new TextManager(map, this, options);
+        const opts = {
+            map_data: map,
+            map_instance: this
+        };
+        this.managers = {
+            segment: new SegmentManager(opts),
+            canvas: new CanvasManager(opts),
+            light: new LightManager(opts),
+            object: new ObjectManager(opts),
+            text: new TextManager(opts),
+        };
 
         Store.register({
             'enable_light': this.onEnableLight.bind(this),
@@ -70,9 +83,35 @@ class MapInstance {
             'remove_text_block': this.onRemoveTextBlock.bind(this),
             'remove_one_way': this.onRemoveOneWay.bind(this),
             'add_text_block': this.onAddTextBlock.bind(this),
-
-            'zoom_(ps)': this.playerScreenZoom.bind(this)
+            'zoom_(ps)': this.playerScreenZoom.bind(this),
+            'toggle_map_fit': this.toggleMapFit.bind(this),
         }, this.name);
+    }
+
+    toggleMapFit () {
+        getWindowDimensions();
+
+        let window_ratio = (CONFIG.window_width / CONFIG.window_height) || 1;
+        this.map_fit = !this.map_fit;
+
+        if (!this.map_fit) {
+            this.setZoom(this.pre_fit_zoom || 1);
+            this.node.scrollLeft = this.pre_fit_scroll_left;
+            this.node.scrollTop = this.pre_fit_scroll_top;
+            return;
+        }
+
+        this.pre_fit_zoom = this.zoom;
+        this.pre_fit_scroll_left = this.node.scrollLeft;
+        this.pre_fit_scroll_top = this.node.scrollTop;
+
+        if (this.managers.canvas.map_image_ratio > window_ratio) {
+            // The image is wider and needs to be bound by width
+            this.setZoom(CONFIG.window_width / this.managers.canvas.map_image_width);
+        } else {
+            // The image is taller and needs to be bound by height
+            this.setZoom(CONFIG.window_height / this.managers.canvas.map_image_height);
+        }
     }
 
     playerScreenZoom (data) {
@@ -92,6 +131,12 @@ class MapInstance {
         this.setZoom(this.zoom - 0.025);
     }
 
+    setZoom (new_zoom) {
+        // this.prev_zoom = this.zoom;
+        this.zoom = new_zoom;
+        this.node.style.zoom = this.zoom;
+    }
+
     onEnableLight () {
         this.enableLight();
     }
@@ -101,11 +146,11 @@ class MapInstance {
     }
 
     onAddTextBlock () {
-        this.TextManager.showTextInput();
+        this.managers.text.showTextInput();
     }
 
     onAddSegment (data) {
-        this.SegmentManager.addSegment({
+        this.managers.segment.addSegment({
             segment: data.add_segment
         });
         CONFIG.snap.indicator.show = false;
@@ -113,47 +158,47 @@ class MapInstance {
     }
 
     onSplitSegment (data) {
-        this.SegmentManager.splitWall(data.split_data);
+        this.managers.segment.splitWall(data.split_data);
         CONFIG.snap.indicator.show = false;
         this.drawPlacementsUpdateLighting();
     }
 
     onLightChange () {
-        this.CanvasManager.drawLight();
+        this.managers.canvas.drawLight();
     }
 
     onDoorDrag (data) {
-        this.SegmentManager.updateSelectedDoor(data.door_point);
-        this.CanvasManager.drawPlacements();
-        this.CanvasManager.drawLight({
+        this.managers.segment.updateSelectedDoor(data.door_point);
+        Store.fire('draw_placements');
+        this.managers.canvas.drawLight({
             force_update: true
         });
     }
 
     onRemoveLight (data) {
-        this.LightManager.removeLight(data.object);
-        this.CanvasManager.drawLight();
+        this.managers.light.removeLight(data.object);
+        this.managers.canvas.drawLight();
     }
 
     onRemoveOneWay (data) {
-        this.CanvasManager.drawWallLines();
+        Store.fire('draw_walls');
         this.updateLighting();
     }
 
     onRemoveSegment (data) {
-        this.SegmentManager.removeSegment(data.object.segment);
-        this.CanvasManager.drawWallLines();
+        this.managers.segment.removeSegment(data.object.segment);
+        Store.fire('draw_walls');
         this.updateLighting();
     }
 
     drawPlacementsUpdateLighting () {
-        this.CanvasManager.drawWallLines();
-        this.CanvasManager.drawPlacements();
+        Store.fire('draw_walls');
+        Store.fire('draw_placements');
         this.updateLighting();
     }
 
     onRemoveTextBlock (data) {
-        this.TextManager.removeText(data.object.segment);
+        this.managers.text.removeText(data.object.segment);
     }
 
     set tab (tab) {
@@ -175,33 +220,33 @@ class MapInstance {
             image: this.image,
             lights_data: {
                 enabled: this.lighting_enabled,
-                lights: this.LightManager.lights,
-                lights_added: this.LightManager.lights_added,
-                polys: this.LightManager.light_polys
+                lights: this.managers.light.lights,
+                lights_added: this.managers.light.lights_added,
+                polys: this.managers.light.light_polys
             },
             json: {
-                segments: this.SegmentManager.sanitizedSegments(),
-                text: this.TextManager.data,
-                grid: this.CanvasManager.grid
+                segments: this.managers.segment.sanitizedSegments(),
+                text: this.managers.text.data,
+                grid: this.managers.canvas.canvases.grid.attributes
             },
             meta: {
                 zoom: this.player_screen_zoom,
-                brightness: this.CanvasManager.brightness
+                brightness: this.managers.canvas.brightness
             }
         };
     }
 
     get state () {
-        const state_light_data = Object.keys(this.LightManager.lights).map((key) => {
+        const state_light_data = Object.keys(this.managers.light.lights).map((key) => {
             return {
-                x: this.LightManager.lights[key].x,
-                y: this.LightManager.lights[key].y
+                x: this.managers.light.lights[key].x,
+                y: this.managers.light.lights[key].y
             };
         });
 
         return {
             lights: state_light_data,
-            fog: this.CanvasManager.getFog()
+            fog: this.managers.canvas.canvases.shadow.data
         };
     }
 
@@ -233,7 +278,7 @@ class MapInstance {
     show () {
         this.node.classList.remove('hidden');
         if (this.tab) this.tab.classList.add('selected');
-        // this.CanvasManager.checkScroll();
+        // this.managers.canvas.checkScroll();
     }
 
     shutdown () {
@@ -243,14 +288,9 @@ class MapInstance {
         }
     }
 
-    setZoom (new_zoom) {
-        this.zoom = new_zoom;
-        this.node.style.zoom = this.zoom;
-    }
-
     onDelete (point) {
         if (CONFIG.move_mode) {
-            this.SegmentManager.removePoint(Store.get('control_point'));
+            this.managers.segment.removePoint(Store.get('control_point'));
             return;
         }
         Store.fire('remove_closest', {
@@ -259,7 +299,7 @@ class MapInstance {
     }
 
     onKeyDown (key) {
-        if (this.TextManager.open) return;
+        if (this.managers.text.open) return;
         const event_data = { point: Mouse.point };
 
         const events = {
@@ -283,12 +323,12 @@ class MapInstance {
         } else if (key === KEYS.DELETE) {
             this.onDelete(Mouse.point);
         } else if (key === KEYS.W) {
-            this.CanvasManager.toggleWalls();
+            this.managers.canvas.toggleWalls();
         }
     }
 
     onKeyUp (key) {
-        // if (this.TextManager.open) return;
+        // if (this.managers.text.open) return;
         const event_data = { point: Mouse.point };
 
         const events = {
@@ -306,12 +346,12 @@ class MapInstance {
     }
 
     checkForSnapPoint (exclude = {}) {
-        const snap_point = this.SegmentManager.checkForWallEnds({
+        const snap_point = this.managers.segment.checkForWallEnds({
             show_indicator: true,
             exclude: exclude.point || null
         });
         if (!snap_point) {
-            this.SegmentManager.checkForWallLines({
+            this.managers.segment.checkForWallLines({
                 show_indicator: true,
                 exclude: exclude.point || null
             });
@@ -328,27 +368,28 @@ class MapInstance {
         }
 
         // The user clicked on the map while the text input was open
-        if (this.TextManager.open) {
-            this.TextManager.close();
+        if (this.managers.text.open) {
+            this.managers.text.close();
             return;
         }
 
         // Check to see if the user has clicked on a light
-        let is_light_selected = this.LightManager.checkForLights();
+        let is_light_selected = this.managers.light.checkForLights();
         if (is_light_selected) return;
 
         // If lighting is enable on the GM side, check to see if a door was selected
         if (this.lighting_enabled) {
-            return this.SegmentManager.checkForDoors();
+            return this.managers.segment.checkForDoors();
         }
 
         if (CONFIG.move_mode) {
             Store.set({
-                control_point: this.SegmentManager.getControlPoint()
+                control_point: this.managers.segment.getControlPoint()
             });
-            this.SegmentManager.handleControlPoint(Store.get('control_point'));
-            this.CanvasManager.drawPlacements();
-            this.CanvasManager.drawWallLines();
+            this.managers.segment.handleControlPoint(Store.get('control_point'));
+
+            Store.fire('draw_placements');
+            Store.fire('draw_walls');
             return;
         }
 
@@ -372,10 +413,10 @@ class MapInstance {
         this.checkForSnapPoint();
 
         // By default any new wall will start with where the mouse was clicked...
-        this.SegmentManager.new_wall = copyPoint(Mouse);
+        this.managers.segment.new_wall = copyPoint(Mouse);
         // ...unless there was something close enought to snap to (set in checkForSnapPoint)
         if (CONFIG.snap.indicator.point) {
-            this.SegmentManager.new_wall = copyPoint(CONFIG.snap.indicator.point);
+            this.managers.segment.new_wall = copyPoint(CONFIG.snap.indicator.point);
         }
     }
 
@@ -421,11 +462,11 @@ class MapInstance {
             control_point: null
         });
 
-        if (this.LightManager.selected_light) {
+        if (this.managers.light.selected_light) {
             Store.fire('deselect_light');
         }
 
-        if (this.SegmentManager.selected_door) {
+        if (this.managers.segment.selected_door) {
             Store.fire('deselect_door');
         }
 
@@ -437,12 +478,12 @@ class MapInstance {
 
         if (this.lighting_enabled || CONFIG.quick_place) return;
 
-        if (!this.SegmentManager.new_wall) return;
+        if (!this.managers.segment.new_wall) return;
 
         let new_wall = {
             p1: {
-                x: this.SegmentManager.new_wall.x,
-                y: this.SegmentManager.new_wall.y
+                x: this.managers.segment.new_wall.x,
+                y: this.managers.segment.new_wall.y
             },
             p2: {
                 x: Mouse.upX,
@@ -473,7 +514,7 @@ class MapInstance {
             add_segment: new_wall
         });
 
-        this.SegmentManager.new_wall = null;
+        this.managers.segment.new_wall = null;
     }
 
     mouseMove () {
@@ -491,20 +532,20 @@ class MapInstance {
         // Move point mode, CTRL is being held
         if (CONFIG.move_mode) {
             if (Mouse.down && Store.get('control_point')) {
-                this.SegmentManager.handleControlPoint(Store.get('control_point'));
+                this.managers.segment.handleControlPoint(Store.get('control_point'));
             } else {
                 Store.set({
-                    control_point: this.SegmentManager.getControlPoint()
+                    control_point: this.managers.segment.getControlPoint()
                 });
             }
             return this.drawPlacementsUpdateLighting();
         }
 
         // The user is dragging a light
-        if (this.LightManager.selected_light) {
+        if (this.managers.light.selected_light) {
             Store.fire('light_move', {
                 light: {
-                    id: this.LightManager.selected_light.id,
+                    id: this.managers.light.selected_light.id,
                     x: Mouse.x,
                     y: Mouse.y
                 }
@@ -512,7 +553,7 @@ class MapInstance {
             return;
         }
 
-        if (this.lighting_enabled && this.SegmentManager.selected_door) {
+        if (this.lighting_enabled && this.managers.segment.selected_door) {
             return this.dragDoor();
         }
 
@@ -521,7 +562,7 @@ class MapInstance {
 
         // User is turning a wall into a one-way wall...
         if (Store.get('create_one_way_wall')) {
-            let closest_wall = this.ObjectManager.findClosest('segment');
+            let closest_wall = this.managers.object.findClosest('segment');
             let one_way_info = getNormal(closest_wall);
             if (one_way_info) {
                 this.one_way_wall.segment = closest_wall.segment;
@@ -537,15 +578,15 @@ class MapInstance {
         // make sure to exclude the starting point
         if (Mouse.down || CONFIG.quick_place) {
             this.checkForSnapPoint({
-                point: this.SegmentManager.new_wall || this.last_quickplace_coord
+                point: this.managers.segment.new_wall || this.last_quickplace_coord
             });
         }
 
-        this.CanvasManager.drawPlacements();
+        Store.fire('draw_placements');
     }
 
     dragDoor () {
-        let selected_door = this.SegmentManager.selected_door;
+        let selected_door = this.managers.segment.selected_door;
 
         if (!selected_door.p1_grab && !selected_door.p2_grab) return;
 
@@ -574,7 +615,7 @@ class MapInstance {
 
         // If there is no length for the door, we need to get it.
         // There will never be a length the first time a door is dragged
-        selected_door.length = selected_door.length || this.SegmentManager.segmentLength(selected_door);
+        selected_door.length = selected_door.length || this.managers.segment.segmentLength(selected_door);
 
         // Unit vector * door length = new vector for door
         const d_u1 = u1 * selected_door.length;
@@ -604,20 +645,20 @@ class MapInstance {
 
     enableLight () {
         this.lighting_enabled = true;
-        this.SegmentManager.prepareSegments();
-        this.CanvasManager.enableLight();
+        this.managers.segment.prepareSegments();
+        this.managers.canvas.enableLight();
     }
 
     disableLight () {
         if (CONFIG.is_player_screen) return;
         this.lighting_enabled = false;
-        this.CanvasManager.disableLight();
+        this.managers.canvas.disableLight();
     }
 
     updateLighting () {
-        this.SegmentManager.prepareSegments();
+        this.managers.segment.prepareSegments();
         if (this.lighting_enabled || window.player_screen) {
-            this.CanvasManager.drawLight({
+            this.managers.canvas.drawLight({
                 force_update: true
             });
         }

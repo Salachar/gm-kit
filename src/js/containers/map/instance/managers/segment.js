@@ -7,20 +7,20 @@ const {
     resetSnap,
     getNormal,
     getSlope
-} = require('../../../lib/helpers');
+} = require('../../../../lib/helpers');
 
-class SegmentManager {
-    constructor (map = {}, parent) {
-        this.map = map;
-        this.parent = parent;
+const Base = require('./base');
+class SegmentManager extends Base {
+    constructor (opts = {}) {
+        super(opts)
 
-    	this.walls = this.loadSegments((map.json || {}).walls || []);
-    	this.doors = this.loadSegments((map.json || {}).doors || []);
+    	this.walls = this.loadSegments((this.map_data.json || {}).walls || []);
+    	this.doors = this.loadSegments((this.map_data.json || {}).doors || []);
 
         this.segments = this.joinSegments(this.walls, this.doors);
         this.segments_map = {};
 
-        const loaded_segments = this.loadSegments((map.json || {}).segments || []);
+        const loaded_segments = this.loadSegments((this.map_data.json || {}).segments || []);
         if (loaded_segments.length) this.segments = loaded_segments;
 
         this.generateSegmentMap();
@@ -47,9 +47,8 @@ class SegmentManager {
             'switch_wall_door': this.onSwitchWallDoor.bind(this),
             'toggle_closest_door': this.onToggleClosestDoor.bind(this),
             'deselect_door': this.deselectDoor.bind(this),
-
             'image_loaded_(ps)': this.onImageLoaded.bind(this)
-        }, parent.name);
+        }, this.map_instance.name);
     }
 
     onSwitchWallDoor (data) {
@@ -384,7 +383,7 @@ class SegmentManager {
     toggleClosestDoor (point) {
         if (!this.segments.length) return;
 
-        let closest_segment = this.parent.ObjectManager.findClosest('segment', point);
+        let closest_segment = this.map_instance.managers.object.findClosest('segment', point);
         if (!closest_segment || closest_segment.segment.type !== 'door') return;
         const door = closest_segment.segment;
 
@@ -412,7 +411,7 @@ class SegmentManager {
 
     switchBetweenDoorAndWall (point) {
         point = point || copyPoint(Mouse);
-        let closest_segment = this.parent.ObjectManager.findClosest('segment', point);
+        let closest_segment = this.map_instance.managers.object.findClosest('segment', point);
         if (!closest_segment) return;
 
         const type = closest_segment.segment.type;
@@ -556,10 +555,10 @@ class SegmentManager {
     }
 
     getControlPoint () {
-        let point = this.parent.SegmentManager.findClosestWallEnd();
+        let point = this.map_instance.managers.segment.findClosestWallEnd();
         let end = true;
         if (!point) {
-            point = this.parent.SegmentManager.getClosestPointOnSegment({
+            point = this.map_instance.managers.segment.getClosestPointOnSegment({
                 distance: CONFIG.move_point_dist
             });
             end = false;
@@ -715,4 +714,5 @@ class SegmentManager {
 		this.createQuadrants();
 	}
 };
+
 module.exports = SegmentManager;

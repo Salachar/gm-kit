@@ -1,12 +1,12 @@
 const {
     createElement
-} = require('../../../lib/helpers');
+} = require('../../../../lib/helpers');
 
-class TextManager {
-    constructor (map = {}, parent, options = {}) {
-        this.map = map;
-        this.parent = parent;
-
+const Base = require('./base');
+class TextManager extends Base {
+    constructor (opts = {}) {
+        super(opts);
+        
         this.text_blocks = {};
         this.text_icons = {};
 
@@ -27,15 +27,15 @@ class TextManager {
     }
 
     get open () {
-        return this.parent.manager.TextManager.open;
+        return this.map_instance.manager.TextManager.open;
     }
 
     close () {
-        this.parent.manager.TextManager.close();
+        this.map_instance.manager.TextManager.close();
     }
 
     loadTextBlocks () {
-        this.text_blocks = (this.map.json || {}).text || {};
+        this.text_blocks = (this.map_data.json || {}).text || {};
         for (let key in this.text_blocks) {
             this.addIcon({
                 key: key,
@@ -91,7 +91,7 @@ class TextManager {
         const key = this.position.x + '_' + this.position.y;
         const text = (this.text_blocks[key] || {}).text || '';
 
-        this.parent.manager.TextManager.show({
+        this.map_instance.manager.TextManager.show({
             text: text,
             key: key,
             position: this.position,
@@ -101,7 +101,7 @@ class TextManager {
 
     render () {
         this.el_text_container = createElement('div', 'text_container', {
-            addTo: this.parent.node
+            addTo: this.map_instance.node
         });
     }
 }

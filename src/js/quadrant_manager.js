@@ -37,20 +37,20 @@ class QuadrantManager {
     getSegments (map, light_quadrant, angle_quadrant) {
         const is_same_quadrant = light_quadrant === angle_quadrant;
         if (is_same_quadrant) {
-            return map.SegmentManager.quadrants[angle_quadrant];
+            return map.managers.segment.quadrants[angle_quadrant];
         }
 
         const is_opposite_quadrant = this.quadrant_opposites[light_quadrant] === angle_quadrant;
         if (is_opposite_quadrant) {
-            return map.SegmentManager.allSegments();
+            return map.managers.segment.allSegments();
         }
 
-        return map.SegmentManager.getQuadrantSegments([light_quadrant, angle_quadrant]);
+        return map.managers.segment.getQuadrantSegments([light_quadrant, angle_quadrant]);
     }
 
     getQuadrant (map, point) {
-        const x_bound = map.SegmentManager.bounds.width / 2;
-        const y_bound = map.SegmentManager.bounds.height / 2;
+        const x_bound = map.managers.segment.bounds.width / 2;
+        const y_bound = map.managers.segment.bounds.height / 2;
 
         if (point.x <= x_bound && point.y <= y_bound) {
             return 'TL';

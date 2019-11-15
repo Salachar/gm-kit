@@ -78,8 +78,8 @@
     z-index: var(--shroud-canvas-z);
 }
 
-.light_canvas {
-    z-index: var(--light-canvas-z);
+.shadow_canvas {
+    z-index: var(--shadow-canvas-z);
 }
 
 .lights_canvas {

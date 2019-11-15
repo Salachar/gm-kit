@@ -66,7 +66,7 @@
     --spell-canvas-z: 2;
     --grid-canvas-z: 3;
     --shroud-canvas-z: 4;
-    --light-canvas-z: 5;
+    --shadow-canvas-z: 5;
     --lights-canvas-z: 6;
     --wall-canvas-z: 7;
     --control-canvas-z: 8;

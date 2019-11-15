@@ -1,23 +1,20 @@
 const {
-    copyPoint,
-    getAngleBetweenVectors
-} = require('../../../lib/helpers');
+    copyPoint
+} = require('../../../../lib/helpers');
 
 const {
     pixelData,
     size,
     clear,
-    line,
     circle,
     cone,
     rect
-} = require('../../../lib/canvas');
+} = require('../../../../lib/canvas');
 
-class SpellManager {
+const Base = require('./base');
+class SpellCanvas extends Base {
     constructor (opts = {}) {
-        this.map_instance = opts.map_instance;
-        this.context = opts.context;
-        this.parent = opts.parent;
+        super('spell', opts);
 
         // The alpha for all of the drawn spell markers
         this.alpha = 0.25;
@@ -106,7 +103,8 @@ class SpellManager {
     }
 
     get grid () {
-        return this.parent.grid;
+        // TODO: This
+        // return this.manager.grid;
     }
 
     addSpell (spell) {
@@ -331,4 +329,4 @@ class SpellManager {
     }
 }
 
-module.exports = SpellManager;
+module.exports = SpellCanvas;
