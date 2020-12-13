@@ -10,21 +10,19 @@ const QuadrantManager = require('./quadrant_manager');
 const MapContainer = require('./containers/map/main');
 const InfoContainer = require('./containers/info/main');
 const AudioContainer = require('./containers/audio/main');
-const LightsContainer = require('./containers/lights/main');
-const TriggersContainer = require('./containers/triggers/main');
 
 const {
     getWindowDimensions
 } = require('./lib/helpers');
 
 const {
-    cacheElements
+    cacheElements,
+    listener
 } = require('./lib/dom');
 
 const {
     numberInput
 } = require('./lib/input');
-
 
 class AppManager {
     constructor () {
@@ -41,17 +39,7 @@ class AppManager {
             audio: new AudioContainer({
                 parent: this
             }),
-            lights: new LightsContainer({
-                parent: this
-            }),
-            triggers: new TriggersContainer({
-                parent: this
-            })
         };
-
-        cacheElements(this, [
-            'ui_scale'
-        ]);
 
         this.el_html = document.getElementsByTagName('html')[0];
 
@@ -61,7 +49,14 @@ class AppManager {
 
         Store.register({
             'save_map': this.saveMap.bind(this),
+            "ui_scale_change": this.onUIScaleChange.bind(this)
         });
+    }
+
+    onUIScaleChange (data) {
+        const new_scale = data.ui_scale;
+        if (typeof new_scale !== 'number') return;
+        this.el_html.style.fontSize = new_scale + 'px'
     }
 
     setActiveContainer (container) {
@@ -74,10 +69,7 @@ class AppManager {
 
     saveMap () {
         const map_data = this.containers.map.getMapData();
-        if (!map_data) {
-            Toast.error('There is no map to save');
-            return;
-        }
+        if (!map_data) return Toast.error('There is no map to save');
         IPC.send('save_map', map_data);
     }
 
@@ -86,50 +78,42 @@ class AppManager {
         const html_font_size = html_styles.getPropertyValue('font-size');
         const font_size = parseInt(html_font_size, 10);
 
-        numberInput(this.el_ui_scale, {
+        numberInput("ui_scale", {
             step: 0.5,
             min: 7,
             init: font_size,
-            handler: (value) => {
-                this.el_html.style.fontSize = value + 'px'
-            }
+            store_key: "ui_scale",
+            store_event: "ui_scale_change"
         });
 
-        window.addEventListener('message', (e) => {
-            let event = e.data;
-            if (event.event === 'player_screen_loaded') {
-                this.containers.map.showPlayerScreen();
-                return;
-            }
+        listener(window, 'message', (e) => {
+            const event = (e.data || {}).event;
+            if (!event) return;
+            Store.fire(event);
         });
 
-        document.body.addEventListener('keydown', (e) => {
-            // e.preventDefault();
+        listener(document.body, 'keydown', (e) => {
             if (KEY_DOWN[e.keyCode]) return;
             KEY_DOWN[e.keyCode] = true;
             this.active_container.keyDown(e.keyCode);
-        });
+        }, {prevent_default: false});
 
-        document.body.addEventListener('keyup', (e) => {
-            e.preventDefault();
+        listener(document.body, 'keyup', (e) => {
             KEY_DOWN[e.keyCode] = false;
             this.active_container.keyUp(e.keyCode);
-        });
+        }, {prevent_default: true});
 
-        document.getElementById('save_map').addEventListener('click', (e) => {
+        listener('save_map', 'click', (e) => {
             this.saveMap();
         });
 
-        document.getElementById('save_all_maps').addEventListener('click', (e) => {
+        listener('save_all_maps', 'click', (e) => {
             const map_data = this.containers.map.getAllMapData();
-            if (!map_data) {
-                Toast.error('There are no maps to save');
-                return;
-            }
+            if (!map_data) return Toast.error('There are no maps to save');
             IPC.send('save_map', map_data);
         });
 
-        document.getElementById('save_state').addEventListener('click', (e) => {
+        listener('save_state', 'click', (e) => {
             // const map = this.containers.map.current_map;
             // const map_data = this.containers.map.getMapData();
             // const state_data = this.containers.map.getMapStateData();
@@ -139,17 +123,8 @@ class AppManager {
         });
 
         IPC.on('message', (e, message = {}) => {
-            switch (message.type) {
-                case 'success':
-                    Toast.success(message.text);
-                    break;
-                case 'error':
-                    Toast.error(message.text);
-                    break;
-                default:
-                    Toast.message(message.text);
-                    break;
-            }
+            const { type = 'message' } = message;
+            Toast[type](message.text);
         });
     }
 }

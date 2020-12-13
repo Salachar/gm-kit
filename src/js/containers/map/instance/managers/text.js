@@ -35,7 +35,7 @@ class TextManager extends Base {
     }
 
     loadTextBlocks () {
-        this.text_blocks = (this.map_data.json || {}).text || {};
+        this.text_blocks = this.map_data.json.text || {};
         for (let key in this.text_blocks) {
             this.addIcon({
                 key: key,

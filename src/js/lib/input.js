@@ -2,10 +2,12 @@ const {
     createElement,
     configureElement
 } = require('./dom');
+
 const {
     pixelData,
     line
 } = require('./canvas');
+
 const {
     rgb
 } = require('./helpers');
@@ -43,6 +45,8 @@ const InputHelpers = {
     },
 
     colorPicker: function (node, opts = {}) {
+        node = checkNode(node);
+
         const canvas = createElement('canvas', 'color_picker_canvas', {
             addTo: node
         });
@@ -93,14 +97,8 @@ const InputHelpers = {
             const pixel_data = pixelData(context);
             const selected = pixel_data[pos.y][pos.x];
             const color = rgb(selected.r, selected.g, selected.b);
-            if (opts.store_key) {
-                Store.set({
-                    [opts.store_key]: color
-                });
-            }
-            if (opts.handler) {
-                opts.handler(color);
-            }
+
+            handleValue(opts, color);
         });
 
         function drawLine () {
@@ -119,17 +117,17 @@ const InputHelpers = {
     },
 
     numberInput: function (node, opts = {}) {
-        // <div class="number_input_container">
-        //     <div class="number_input_button arrow_left"></div>
-        //     <input type="text" class="number_input" value="50"></input>
-        //     <div class="number_input_button arrow_right"></div>
-        // </div>
+        node = checkNode(node);
+
+        node.classList.add('number_input_container');
 
         opts.step = opts.step || 1;
         opts.interval = (typeof opts.interval === 'number') ? opts.interval : 100;
 
-        // Possible create all the necessary elements here, but for now
-        // I'll just add what I need as go given the above template
+        const left_arrow = createElement('div', 'number_input_button arrow_left', { addTo: node });
+        const right_arrow = createElement('div', 'number_input_button arrow_right', { addTo: node });
+        const input = createElement('input', 'number_input', { addTo: node });
+
         if (typeof opts.min === 'number') {
             createElement('div', 'number_input_info number_input_min', {
                 html: opts.min,
@@ -142,10 +140,6 @@ const InputHelpers = {
                 addTo: node
             });
         }
-
-        const left_arrow = node.getElementsByClassName('arrow_left')[0];
-        const right_arrow = node.getElementsByClassName('arrow_right')[0];
-        const input = node.getElementsByClassName('number_input')[0];
 
         if (opts.init) {
             input.value = opts.init;
@@ -190,32 +184,22 @@ const InputHelpers = {
             if (set) {
                 input.value = value.toFixed(InputHelpers.getDecimalCount(opts.step));
             }
-            if (opts.store_key) {
-                Store.set({
-                    [opts.store_key]: value
-                });
-            }
-            if (opts.handler) {
-                opts.handler(value);
-            }
+
+            handleStore(opts, value);
         }
     },
 
     arrowInput: function (node, opts = {}) {
-        // <div class="arrow_buttons">
-        //     <div class="arrow_button arrow_left"></div>
-        //     <div class="arrow_button arrow_top"></div>
-        //     <div class="arrow_button arrow_bottom"></div>
-        //     <div class="arrow_button arrow_right"></div>
-        // </div>
+        node = checkNode(node);
 
         opts.step = opts.step || 1;
         opts.interval = (typeof opts.interval === 'number') ? opts.interval : 100;
 
-        const left_arrow = node.getElementsByClassName('arrow_left')[0];
-        const top_arrow = node.getElementsByClassName('arrow_top')[0];
-        const right_arrow = node.getElementsByClassName('arrow_right')[0];
-        const bottom_arrow = node.getElementsByClassName('arrow_bottom')[0];
+        node.classList.add('arrow_buttons');
+        const left_arrow = createElement('div', 'arrow_button arrow_left', {addTo: node});
+        const top_arrow = createElement('div', 'arrow_button arrow_top', {addTo: node});
+        const right_arrow = createElement('div', 'arrow_button arrow_right', {addTo: node});
+        const bottom_arrow = createElement('div', 'arrow_button arrow_bottom', {addTo: node});
 
         left_arrow.addEventListener('mousedown', (e) => {
             fireInput(-1, 0);
@@ -242,33 +226,26 @@ const InputHelpers = {
                 x: x * opts.step,
                 y: y * opts.step
             };
-            opts.handler(offset);
-            InputHelpers.timer = setInterval(() => {
-                opts.handler(offset);
-            }, opts.interval);
+            handleValue(opts, offset)
         }
     },
 
     radioInput: function (node, opts = {}) {
-        // <div class="checkbox_container">
-        //     <div class="checkbox"></div>
-        //     <div class="checkbox_label"></div>
-        // </div>
+        node = checkNode(node);
+        node.classList.add('radio_input');
 
         const { options } = opts;
-        const store = opts.store || {};
-
-        const dataset = {};
-        (store.keys || []).forEach((key, index) => {
-            dataset['store_key_' + index] = key;
-        });
-        configureElement(node, {
-            dataset: dataset
-        });
 
         options.forEach((option) => {
-            const value = option.value;
-            const label = option.label || value;
+            let value = null;
+            let label = null;
+            if (typeof option === 'string') {
+                value = option;
+                label = option;
+            } else {
+                value = option.value;
+                label = option.label || value;
+            }
 
             const container = createElement('div', 'checkbox_container', {
                 addTo: node
@@ -297,25 +274,14 @@ const InputHelpers = {
                     new_value = checkbox.dataset.value;
                 }
 
-                if (store) {
-                    (store.keys || []).forEach((key) => {
-                        Store.set({
-                            [key]: new_value
-                        });
-                    });
-                    (store.events || []).forEach((event) => {
-                        Store.fire(event);
-                    })
-                }
-
-                if (opts.handler) {
-                    opts.handler(checkbox.dataset.value);
-                }
+                handleValue(opts, new_value);
             });
         });
     },
 
     checkboxInput (node, opts = {}) {
+        node = checkNode(node);
+
         node.addEventListener('click', (e) => {
             let new_value = false;
             if (!node.classList.contains('checked')) {
@@ -325,22 +291,23 @@ const InputHelpers = {
                 node.classList.remove('checked');
             }
 
-            if (opts.store) {
-                (opts.store.keys || []).forEach((key) => {
-                    Store.set({
-                        [key]: new_value
-                    });
-                });
-                (opts.store.events || []).forEach((event) => {
-                    Store.fire(event);
-                })
-            }
+            handleStore(opts, new_value);
+
+            // if (opts.store) {
+            //     (opts.store.keys || []).forEach((key) => {
+            //         Store.set({
+            //             [key]: new_value
+            //         });
+            //     });
+            //     (opts.store.events || []).forEach((event) => {
+            //         Store.fire(event);
+            //     })
+            // }
         });
     },
 
     deselect (node) {
-        console.log(node);
-        console.log(node.dataset);
+        node = checkNode(node);
 
         for (let d in node.dataset) {
             if (d.indexOf('store_key') !== -1) {
@@ -349,7 +316,6 @@ const InputHelpers = {
                 });
             }
         }
-
         if (node.classList.contains('radio_input')) {
             [...node.getElementsByClassName('checkbox')].forEach((cb) => {
                 cb.classList.remove('checked');
@@ -357,5 +323,49 @@ const InputHelpers = {
         }
     },
 };
+
+function checkNode (node) {
+    if (typeof node === 'string') {
+        return document.getElementById(node);
+    }
+    return node;
+}
+
+function handleValue (opts, value) {
+    const handler = opts.handler || function(){};
+    handler(value);
+    handleStore(opts, value);
+    if (typeof opts.interval === 'number') {
+        InputHelpers.timer = setInterval(() => {
+            handler(value);
+            handleStore(opts, value);
+        }, opts.interval);
+    }
+}
+
+function handleStore (opts = {}, value) {
+    const { store_key, store_event } = opts;
+    if (!store_key && !store_event) return;
+    if (store_key && !store_event) {
+        store_key.split(' ').forEach((key) => {
+            Store.set({
+                [key]: value
+            });
+        });
+    }
+    if (store_event && !store_key) {
+        Store.fire(store_event);
+    }
+    if (store_event && store_key) {
+        store_key.split(' ').forEach((key) => {
+            Store.set({
+                [key]: value
+            });
+        });
+        Store.fire(store_event, {
+            [store_key.split(' ')[0]]: value
+        });
+    }
+}
 
 module.exports = InputHelpers;

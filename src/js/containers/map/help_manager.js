@@ -1,4 +1,4 @@
-module.exports = [{
+const HELP_INFO = [{
     key: '* +',
     text: 'Zoom in on the currently selected map'
 },{
@@ -65,3 +65,62 @@ module.exports = [{
 //     key: 'BOTTOM *',
 //     text: 'Scroll the map to the bottom'
 // }
+
+const {
+    createElement,
+    cacheElements,
+    listener 
+} = require('../../lib/dom');
+
+class HelpManager {
+    constructor () {
+        cacheElements(this, [
+            'help_box',
+            'help_table'
+        ]);
+
+        this.populate();
+        this.setEvents();
+    }
+
+    populate () {
+        HELP_INFO.forEach((help_item) => {
+            let help_item_node = createElement('tr', 'help_section', {
+                addTo: this.el_help_table
+            });
+            createElement('td', 'help_key', {
+                html: help_item.key,
+                addTo: help_item_node
+            });
+            createElement('td', 'help_desc', {
+                html: help_item.text,
+                addTo: help_item_node
+            });
+        });
+    }
+
+    setEvents () {
+        listener('help', 'click', (e) => {
+            this.el_help_box.classList.toggle('hide');
+        });
+    }
+
+    static getHelpInfo () {
+        return HELP_INFO;
+    }
+
+    static template () {
+        return `
+            <div id="help_box" class="hide">
+                <table id="help_table">
+                    <tr>
+                        <th class="help_key">Key</th>
+                        <th></th>
+                    </tr>
+                </table>
+            </div>
+        `;
+    }
+}
+
+module.exports = HelpManager;

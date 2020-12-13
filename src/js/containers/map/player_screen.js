@@ -16,28 +16,6 @@ class DisplayManager {
         this.current_map = null;
 
         this.setEvents();
-
-        Store.register({
-            'dim_down': this.onDimDown.bind(this),
-            'dim_up': this.onDimUp.bind(this),
-        });
-    }
-
-    onDimDown () {
-        this.setDim(-0.01);
-    }
-
-    onDimUp () {
-        this.setDim(0.01);
-    }
-
-    setDim (dimmer_mod) {
-        // console.log('setdim');
-        // let dimmer_opacity = parseFloat(document.getElementById('dimmer').style.opacity, 10);
-        // let new_dimmer_opacity = dimmer_opacity + dimmer_mod;
-        // if (new_dimmer_opacity < 0) new_dimmer_opacity = 0;
-        // if (new_dimmer_opacity > 1) new_dimmer_opacity = 1;
-        // document.getElementById('dimmer').style.opacity = new_dimmer_opacity;
     }
 
     onMapLoad (map) {
@@ -84,7 +62,7 @@ class DisplayManager {
 
     setEvents () {
         window.addEventListener('message', (e) => {
-            console.log(e);
+            // console.log(e);
             const data = e.data;
             if (data.event === 'display_map') {
                 this.onMapLoad(data.data);
@@ -95,6 +73,7 @@ class DisplayManager {
                 return;
             }
             if (data.event === 'store_data_set') {
+                console.log(data);
                 return Store.set(data.data);
             }
             Store.fire(e.data.event, e.data.data, e.data.key);
@@ -120,12 +99,16 @@ window.onload = () => {
     window.DisplayManager = new DisplayManager();
     window.Mouse = new Mouse();
 
-    // document.getElementById('dimmer').style.opacity = 0;
-
     window.opener.postMessage({
         event: 'player_screen_loaded'
     });
 };
+
+window.onunload = function (e) {
+    window.opener.postMessage({
+        event: 'player_screen_unloaded'
+    });
+ }
 
 window.onresize = () => {
     getWindowDimensions();

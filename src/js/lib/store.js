@@ -15,6 +15,10 @@ class Store {
         return this.__key;
     }
 
+    get data () {
+        return this.__store;
+    }
+
     isPlayerScreenEvent (fired_event) {
         return (fired_event.indexOf('(ps)') !== -1 || fired_event.indexOf('(PS)') !== -1);
     }
@@ -37,6 +41,7 @@ class Store {
         if (key && this.key && this.key !== key) return;
         key = key || this.key || null;
 
+        // only (ps) or (PS) events get sent to the player screen
         if (!CONFIG.is_player_screen && this.isPlayerScreenEvent(fired_event)) {
             if (window.player_screen) {
                 window.player_screen.postMessage({
@@ -48,12 +53,15 @@ class Store {
             if (this.isPlayerScreenEventOnly(fired_event)) return;
         }
 
-        this.set(data);
+        // set data sent with event in the store
+        if (data) this.set(data);
 
+        // Fire events at the "global" level
         (this.__events[this.parseEvent(fired_event)] || []).forEach((callback) => {
             callback(data);
         });
 
+        // Check to see if there are registered events under the current store key
         if (this.key && this.__key_events[this.key]) {
             (this.__key_events[this.key][this.parseEvent(fired_event)] || []).forEach((callback) => {
                 callback(data);
@@ -61,23 +69,34 @@ class Store {
         }
     }
 
-    set (data) {
-        for (let d in data) {
-            // let send = (d.indexOf('-(ps)') !== -1);
-            let send = !CONFIG.is_player_screen;
-
-            let key = d.replace('-(ps)', '');
-            this.__store[key] = data[d];
-            if (send) {
-                this.fire('store_data_set_(PS)', {
-                    [key]: data[d]
+    set (data, key) {
+        let store_key = key || this.key || null;
+        if (store_key && !this.__store[store_key]) {
+            this.__store[store_key] = {};
+        }
+        for (let data_key in data) {
+            if (store_key) {
+                this.__store[store_key][data_key] = data[data_key];
+            } else {
+                this.__store[data_key] = data[data_key];
+            }
+            if (!CONFIG.is_player_screen) {
+                this.fire('store_data_set-(PS)', {
+                    store_key: store_key,
+                    [data_key]: data[data_key]
                 });
             }
         }
     }
 
-    get (key) {
-        return this.__store[key] || null;
+    get (data_key, store_key) {
+        store_key = store_key || this.key || null;
+        let value = null;
+        if (store_key) {
+             value = this.__store[store_key][data_key] || null;
+             if (value) return value;
+        }
+        return this.__store[data_key] || null;
     }
 
     register (events, key) {

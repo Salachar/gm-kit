@@ -136,7 +136,7 @@ IPC.on('load_map', (e, maps = {}) => {
     let loaded_maps = {};
     for (let m in maps) {
         let map = JSON.parse(JSON.stringify(maps[m]));
-
+        console.log(map);
         if (map.json) {
             try {
                 const json = JSON.parse(fs.readFileSync(map.json, {
@@ -151,7 +151,7 @@ IPC.on('load_map', (e, maps = {}) => {
         }
 
         if (!map.json_directory) {
-            map.json_directory = map.image.replace(/png|jpg|jpeg|bmp/, 'json');
+            map.json_directory = map[map.type].replace(/png|jpg|jpeg|bmp|mp4/, 'json');
         }
 
         loaded_maps[map.name] = map;

@@ -16,6 +16,9 @@ const ObjectManager = require('./managers/object');
 class MapInstance {
     constructor (map = {}, options = {}) {
         this.map = map;
+
+        console.log(map);
+
         this.map.json = this.map.json || {};
         this.map.json.meta = this.map.json.meta || {};
 
@@ -24,7 +27,10 @@ class MapInstance {
         this.manager = options.manager;
 
         // The path to the image for the map
-        this.image = map.image || null;
+        // this.image = map.image || null;
+        // TODO: stupid video shit
+        // this.media = map.image || map.video || null;
+
         // Is this the currently active map or not
         this.active = false;
         // Zoom is now map specific
@@ -36,7 +42,9 @@ class MapInstance {
         this.zoom = 1;
         this.player_screen_zoom = (map.json.meta || {}).zoom || 1;
         // Whether light is enabled or not for this map
-        this.lighting_enabled = CONFIG.is_player_screen;
+        Store.set({
+            lighting_enabled: CONFIG.is_player_screen
+        });
 
         this.last_quickplace_coord = {
             x: null,
@@ -69,8 +77,9 @@ class MapInstance {
         };
 
         Store.register({
-            'enable_light': this.onEnableLight.bind(this),
-            'disable_light': this.onDisableLight.bind(this),
+            // 'enable_light': this.onEnableLight.bind(this),
+            // 'disable_light': this.onDisableLight.bind(this),
+
             'add_segment': this.onAddSegment.bind(this),
             'split_segment': this.onSplitSegment.bind(this),
             'light_moved': this.onLightChange.bind(this),
@@ -137,13 +146,13 @@ class MapInstance {
         this.node.style.zoom = this.zoom;
     }
 
-    onEnableLight () {
-        this.enableLight();
-    }
+    // onEnableLight () {
+    //     this.enableLight();
+    // }
 
-    onDisableLight () {
-        this.disableLight();
-    }
+    // onDisableLight () {
+    //     this.disableLight();
+    // }
 
     onAddTextBlock () {
         this.managers.text.showTextInput();
@@ -215,11 +224,9 @@ class MapInstance {
 
     get data () {
         return {
-            name: this.name,
-            json_directory: this.map.json_directory,
-            image: this.image,
+            ...this.map,
             lights_data: {
-                enabled: this.lighting_enabled,
+                enabled: Store.get('lighting_enabled'),
                 lights: this.managers.light.lights,
                 lights_added: this.managers.light.lights_added,
                 polys: this.managers.light.light_polys
@@ -302,6 +309,8 @@ class MapInstance {
         if (this.managers.text.open) return;
         const event_data = { point: Mouse.point };
 
+        console.log(key);
+
         const events = {
             [KEYS.QUESTION]: 'add_text_block',
             [KEYS.MINUS]: 'zoom_out',
@@ -378,7 +387,7 @@ class MapInstance {
         if (is_light_selected) return;
 
         // If lighting is enable on the GM side, check to see if a door was selected
-        if (this.lighting_enabled) {
+        if (Store.get('lighting_enabled')) {
             return this.managers.segment.checkForDoors();
         }
 
@@ -405,7 +414,7 @@ class MapInstance {
         }
 
         // There is nothing else to check for if lighting is enabled
-        if (this.lighting_enabled) return;
+        if (Store.get('lighting_enabled')) return;
 
         // Check for a snap point, if we are starting a wall close to an end or line
         // Make the new wall start with that end or point on the line, this makes it super easy
@@ -476,7 +485,7 @@ class MapInstance {
 
         if (Store.get('create_one_way_wall')) return;
 
-        if (this.lighting_enabled || CONFIG.quick_place) return;
+        if (Store.get('lighting_enabled') || CONFIG.quick_place) return;
 
         if (!this.managers.segment.new_wall) return;
 
@@ -518,12 +527,9 @@ class MapInstance {
     }
 
     mouseMove () {
-        const spell_marker_shape = Store.get('spell_marker_shape');
-        if (spell_marker_shape) {
+        if (Store.get('spell_marker_shape')) {
             return Store.fire('draw_spell_marker-(ps)', {
                 spell: {
-                    shape: spell_marker_shape,
-                    size: Store.get('spell_marker_size'),
                     origin: copyPoint(Mouse)
                 }
             });
@@ -553,12 +559,12 @@ class MapInstance {
             return;
         }
 
-        if (this.lighting_enabled && this.managers.segment.selected_door) {
+        if (Store.get('lighting_enabled') && this.managers.segment.selected_door) {
             return this.dragDoor();
         }
 
         // There is nothing more to check for if lighting is enabled
-        if (this.lighting_enabled) return;
+        if (Store.get('lighting_enabled')) return;
 
         // User is turning a wall into a one-way wall...
         if (Store.get('create_one_way_wall')) {
@@ -643,21 +649,9 @@ class MapInstance {
         });
     }
 
-    enableLight () {
-        this.lighting_enabled = true;
-        this.managers.segment.prepareSegments();
-        this.managers.canvas.enableLight();
-    }
-
-    disableLight () {
-        if (CONFIG.is_player_screen) return;
-        this.lighting_enabled = false;
-        this.managers.canvas.disableLight();
-    }
-
     updateLighting () {
-        this.managers.segment.prepareSegments();
-        if (this.lighting_enabled || window.player_screen) {
+        Store.fire('prepare_segments');
+        if (Store.get('lighting_enabled') || window.player_screen) {
             this.managers.canvas.drawLight({
                 force_update: true
             });

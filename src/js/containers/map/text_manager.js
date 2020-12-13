@@ -1,6 +1,6 @@
 const {
     cacheElements
-} = require('../../lib/helpers');
+} = require('../../lib/dom');
 
 class TextManager {
     constructor (opts = {}) {
@@ -35,6 +35,7 @@ class TextManager {
     }
 
     setEvents () {
+
         this.el_text_block_save.addEventListener('click', (e) => {
             this.current_text_data.receiver.addText({
                 text: this.el_text_block_textarea.value,
@@ -54,6 +55,23 @@ class TextManager {
         this.el_text_block_close.addEventListener('click', (e) => {
             this.close();
         });
+    }
+
+    static template () {
+        return `
+            <div id="text_block_container">
+                <div class="text_block_header">
+                    <div class="text_block_header_buttons">
+                        <div id="text_block_save" class="button">SAVE</div>
+                        <div id="text_block_delete" class="button">DELETE</div>
+                    </div>
+                    <div id="text_block_close"></div>
+                </div>
+                <div class="text_block_body">
+                    <textarea id="text_block_textarea"></textarea>
+                </div>
+            </div>
+        `;
     }
 }
 

@@ -65,7 +65,9 @@ class ControlCanvas extends Base {
 
     drawAjarDoors () {
         const context = this.context;
-        if (!this.map_instance.lighting_enabled) return;
+
+        if (!Store.get('lighting_enabled'));
+
         this.map_instance.managers.segment.segments.forEach((segment) => {
             if (!segment.temp_p1 && !segment.temp_p2) return;
             line(context, {
@@ -87,8 +89,10 @@ class ControlCanvas extends Base {
 
     drawSegmentBeingPlaced () {
         const context = this.context;
+        
         // Exit early for non-applicable modes
-        if (CONFIG.lighting_enabled || Store.get('create_one_way_wall') || CONFIG.move_mode) return;
+        if (Store.get('lighting_enabled') || Store.get('create_one_way_wall') || CONFIG.move_mode) return;
+
         // Normal wall placement
         let point = copyPoint(this.map_instance.managers.segment.new_wall);
         // Quick place and there is a legit prev point to connect to

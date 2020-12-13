@@ -4,7 +4,7 @@ const {
 
 class Container {
     constructor (opts = {}) {
-        this.template = null;
+        // this.template = null;
         this.node = null;
         this.tab = null;
 
@@ -60,7 +60,8 @@ class Container {
     }
 
     createTemplate (opts) {
-        this.template = new opts.template();
+        console.log(this);
+        this.thing = (opts.template) ? new opts.template() : this.template();
         // Always render unless false is explicity passed in
         if (opts.render !== false) this.render();
     }
@@ -78,7 +79,7 @@ class Container {
     }
 
     render () {
-        this.node.innerHTML = this.template.generate();
+        this.node.innerHTML = (typeof this.thing === 'string') ? this.thing : this.thing.generate();
         this.container_header = this.node.getElementsByClassName('container_header')[0];
         this.container_body = this.node.getElementsByClassName('container_body')[0];
 

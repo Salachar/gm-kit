@@ -50,7 +50,9 @@ class SpellCanvas extends Base {
             'arrow_left_press': this.onArrowLeftPress.bind(this),
             'arrow_right_release': this.onArrowRightRelease.bind(this),
             'arrow_left_release': this.onArrowLeftRelease.bind(this),
-            'spell_marker_shape_updated': this.onSpellMarkerShapeUpdated.bind(this)
+
+            'spell_marker_shape_updated': this.onSpellMarkerShapeUpdated.bind(this),
+            // 'spell_marker_angle_updated': this.drawSpellMarker.bind(this),
         }, this.map_instance.name);
     }
 
@@ -93,6 +95,12 @@ class SpellCanvas extends Base {
         this.angle_timer = setInterval(() => {
             this.spell_marker.angle += (this.angle_increase * mod);
             this.new_spell.angle = this.spell_marker.angle;
+            Store.fire('draw_spell_marker-(ps)', {
+                spell: {
+                    origin: copyPoint(Mouse)
+                },
+                'spell_marker_angle': this.spell_marker.angle
+            });
             this.drawAll();
         }, 10);
     }
@@ -100,11 +108,6 @@ class SpellCanvas extends Base {
     killAngleTimer () {
         window.clearInterval(this.angle_timer);
         this.angle_timer = null;
-    }
-
-    get grid () {
-        // TODO: This
-        // return this.manager.grid;
     }
 
     addSpell (spell) {
@@ -131,12 +134,13 @@ class SpellCanvas extends Base {
 
     drawSpell (spell) {
         if (!spell) return;
+        const grid = Store.get('grid');
 
         switch (spell.shape) {
             case 'line':
                 rect(this.context, {
                     point: spell.origin,
-                    width: this.grid.size,
+                    width: grid.size,
                     height: spell.size,
                     color: spell.color,
                     angle: spell.angle,
@@ -188,15 +192,23 @@ class SpellCanvas extends Base {
     }
 
     drawSpellMarker (opts = {}) {
+        // debugger;
+
+        const grid = Store.get('grid');
         const spell = opts.spell || {};
-        const { shape, size } = spell;
-        if (!shape || !size || !this.grid.show) return;
+        // const { shape, size } = spell;
+
+        const shape = Store.get('spell_marker_shape');
+        const size = Store.get('spell_marker_size');
+
+        if (!shape || !size || !grid.show) return;
 
         this.new_spell = {
             shape: shape,
-            size: (size / 5) * this.grid.size,
+            size: (size / 5) * grid.size,
             origin: spell.origin || copyPoint(Mouse),
-            angle: this.spell_marker.angle,
+            // angle: this.spell_marker.angle,
+            angle: Store.get('spell_marker_angle') || 0,
             color: Store.get('spell_marker_color') || '#FF0000'
         };
 
@@ -217,70 +229,73 @@ class SpellCanvas extends Base {
 
     getClosestCell (point) {
         point = point || copyPoint(Mouse);
+        const grid = Store.get('grid');
 
         // Normalize the point and grid by offsetting the point the same as the grid
-        point.x -= this.grid.offset.x;
-        point.y -= this.grid.offset.y;
+        point.x -= grid.offset.x;
+        point.y -= grid.offset.y;
 
-        const floor_x = Math.floor(point.x / this.grid.size);
-        const floor_y = Math.floor(point.y / this.grid.size);
+        const floor_x = Math.floor(point.x / grid.size);
+        const floor_y = Math.floor(point.y / grid.size);
 
         // returns the point in the middle of the cell
         return {
-            x: (floor_x * this.grid.size) + this.grid.offset.x,
-            y: (floor_y * this.grid.size) + this.grid.offset.y
+            x: (floor_x * grid.size) + grid.offset.x,
+            y: (floor_y * grid.size) + grid.offset.y
         };
     }
 
     getClosestIntersect (point) {
         point = point || copyPoint(Mouse);
+        const grid = Store.get('grid');
 
         // Normalize the point and grid by offsetting the point the same as the grid
-        point.x -= this.grid.offset.x;
-        point.y -= this.grid.offset.y;
+        point.x -= grid.offset.x;
+        point.y -= grid.offset.y;
 
-        const floor_x = Math.floor(point.x / this.grid.size);
-        const floor_y = Math.floor(point.y / this.grid.size);
+        const floor_x = Math.floor(point.x / grid.size);
+        const floor_y = Math.floor(point.y / grid.size);
 
         // The coordinates of the top/left cell the mouse is in
         // but not necessarily the closest corner of the cell
-        const base_x = floor_x * this.grid.size;
-        const base_y = floor_y * this.grid.size;
+        const base_x = floor_x * grid.size;
+        const base_y = floor_y * grid.size;
 
         let final_x = base_x;
         let final_y = base_y;
 
-        const half_grid_size = this.grid.size / 2;
+        const half_grid_size = grid.size / 2;
         if ((point.x - base_x) > half_grid_size) {
-            final_x = base_x + this.grid.size;
+            final_x = base_x + grid.size;
         }
         if ((point.y - base_y) > half_grid_size) {
-            final_y = base_y + this.grid.size;
+            final_y = base_y + grid.size;
         }
 
         return {
-            x: final_x + this.grid.offset.x,
-            y: final_y + this.grid.offset.y
+            x: final_x + grid.offset.x,
+            y: final_y + grid.offset.y
         };
     }
 
     drawAffectedSquares () {
         if (!Store.get('show_affected_tiles')) return;
+        const grid = Store.get('grid');
 
         const { width, height } = size(this.context);
         const pixel_data = pixelData(this.context);
 
-        const half_grid_size = this.grid.size / 2;
-        const y_bound = height - this.grid.offset.y;
-        const x_bound = width - this.grid.offset.x;
-        const grid_size = this.grid.size;
+        const half_grid_size = grid.size / 2;
+        const y_bound = height - grid.offset.y;
+        const x_bound = width - grid.offset.x;
+        const grid_size = grid.size;
 
-        for (let y = this.grid.offset.y; y < y_bound; y += grid_size) {
+        for (let y = grid.offset.y; y < y_bound; y += grid_size) {
             let cell_y = Math.floor(y + half_grid_size);
             let row_data = pixel_data[cell_y];
             if (!row_data) continue;
 
-            for (let x = this.grid.offset.x; x < x_bound; x += grid_size) {
+            for (let x = grid.offset.x; x < x_bound; x += grid_size) {
                 let cell_x = Math.floor(x + half_grid_size);
                 let cell_data = row_data[cell_x];
                 if (!cell_data) continue;
@@ -304,11 +319,13 @@ class SpellCanvas extends Base {
     }
 
     checkSurroundingCells (pixel_data, middle_x, middle_y) {
+        const grid = Store.get('grid');
+
         // I can adjust how far apart and how many of the additional points
         // need to be hit for a valid cell
         const amount_required = 2;
         let amount_valid = 0;
-        const offset = Math.round(this.grid.size / 4);
+        const offset = Math.round(grid.size / 4);
 
         [{x: 0, y: -offset},  // top`
         {x: offset, y: 0},    // right

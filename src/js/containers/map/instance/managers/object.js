@@ -13,6 +13,39 @@ class ObjectManager extends Base {
         }, this.map_instance.name);
     }
 
+    removeClosest (data = {}) {
+        const point = data.point || copyPoint(Mouse);
+        // Get the closest of each type of item, in order of priority
+        let close_objects = ['light', 'segment', 'text_block'].map((search_type) => {
+            return this.findClosest(search_type, point) || null;
+        }).filter(x => x);
+
+        let closest_object = {
+            distance: 999999999,
+            type: null
+        };
+
+        close_objects.forEach((close_object) => {
+            // Since the list is in priority order we don't want equal distance items to win
+            if (close_object.distance >= closest_object.distance) return;
+            closest_object = close_object;
+            // Special case for segments. If the segment is a one way wall only delete the one way portion
+            if (close_object.type === 'segment' && close_object.segment.one_way) {
+                delete closest_object.segment.one_way;
+                closest_object.type = 'one_way';
+            }
+        });
+
+        // Only allows lights to be removed if lighting is enabled
+        if (Store.get('lighting_enabled') && !closest_object.type.match(/light/)) return;
+
+        if (closest_object.type) {
+            Store.fire('remove_' + closest_object.type, {
+                object: closest_object
+            });
+        }
+    }
+
     findClosest (type, point, distance_limit) {
         if (!type) return;
         point = point || copyPoint(Mouse);
@@ -42,7 +75,8 @@ class ObjectManager extends Base {
         let closest = {
             segment: null,
             index: null,
-            distance: null
+            distance: null,
+            type: type
         };
 
         search_array.forEach((segment, index) => {
@@ -56,47 +90,6 @@ class ObjectManager extends Base {
 
         if (closest.distance > distance_limit) return null;
         return closest;
-    }
-
-    removeClosest (data) {
-        let point = copyPoint(Mouse);
-        if (data.point) point = data.point;
-
-        const closest_light = this.findClosest('light', point);
-        const closest_segment = this.findClosest('segment', point);
-        const closest_text = this.findClosest('text_block', point);
-
-        let closest = closest_segment || {
-            reject: true,
-            distance: 999999999
-        };
-        let item = 'segment';
-
-        if (closest_light && closest_light.distance < closest.distance) {
-            closest = closest_light;
-            item = 'light';
-        }
-
-        if (closest_text && closest_text.distance < closest.distance) {
-            closest = closest_text;
-            item = 'text_block';
-        }
-
-        if (item === 'segment' && closest.segment && closest.segment.one_way) {
-            delete closest.segment.one_way;
-            item = 'one_way';
-        }
-
-        if (this.map_instance.lighting_enabled && (item !== 'light' || item !== 'text_block')) return;
-
-        if (!closest.reject) {
-            Store.fire('remove_' + item, {
-                object: closest
-            });
-            return true;
-        }
-
-        return false;
     }
 }
 module.exports = ObjectManager;

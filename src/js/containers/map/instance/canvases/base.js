@@ -3,15 +3,26 @@ const { clear } = require('../../../../lib/canvas');
 
 class Base {
     constructor (name, opts = {}) {
+        const { map_data = {}, map_instance, manager } = opts;
+        const { type } = map_data
+
         this.name = name;
-        this.map_data = opts.map_data;
-        this.map_instance = opts.map_instance;
-        this.manager = opts.manager;
+        this.map_data = map_data;
+        this.map_type = type;
+        this.map_instance = map_instance;
+        this.manager = manager;
 
         this.create();
     }
 
     create () {
+        if (this.name === 'image' && this.map_type === 'video') {
+            this.video = createElement('video', `${this.name}_canvas map_canvas`, {
+                addTo: this.manager.canvas_container
+            });
+            return;
+        }
+
         this.canvas = createElement('canvas', `${this.name}_canvas map_canvas`, {
             addTo: this.manager.canvas_container
         });
@@ -38,6 +49,18 @@ class Base {
     }
 
     resize (width, height) {
+        // TODO : something video
+
+        if (this.video) {
+            this.video.setAttribute('width', width);
+            this.video.setAttribute('height', height);
+            this.video.style.width = width + 'px';
+            this.video.style.height = height + 'px';
+        }
+
+
+        if (!this.canvas) return;
+
         this.canvas.setAttribute('width', width);
         this.canvas.setAttribute('height', height);
         this.canvas.style.width = width + 'px';

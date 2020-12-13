@@ -15,7 +15,7 @@ class WallCanvas extends Base {
     }
 
     toggleWalls () {
-        if (!this.map_instance.lighting_enabled) {
+        if (!Store.get('lighting_enabled')) {
             Toast.message('Walls can only be toggled when light is enabled');
             return;
         }

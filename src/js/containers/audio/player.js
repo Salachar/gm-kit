@@ -32,6 +32,17 @@ class AudioPlayer {
 
         this.setEvents();
         this.setPlayerEvents();
+
+        Store.register({
+            'audio_volume_change': this.onVolumeChange.bind(this),
+        });
+    }
+
+    onVolumeChange (data) {
+        const new_volume = data.audio_volume;
+        this.player.volume = new_volume;
+        this.parent.data.volume = this.player.volume;
+        this.parent.data.save();
     }
 
     setEvents () {
@@ -52,15 +63,12 @@ class AudioPlayer {
             this.el_audio_player_loop.innerHTML = text;
         });
 
-        numberInput(this.el_audio_player_volume, {
+        numberInput("audio_player_volume", {
             step: 0.01,
             min: 0,
             max: 1,
-            handler: (value) => {
-                this.player.volume = value;
-                this.parent.data.volume = this.player.volume;
-                this.parent.data.save();
-            }
+            store_key: 'audio_volume',
+            store_event: 'audio_volume_change'
         });
 
         this.el_audio_player_progress.addEventListener('click', (e) => {

@@ -1,12 +1,11 @@
 const Container = require('../base');
-const ContainerTemplate = require('../../templates/map');
 
 const MapListManager = require('./map_list_manager');
 const MapInstance = require('./instance/map');
 const TextManager = require('./text_manager');
 const ControlsManager = require('./controls_manager');
-
-const help_text = require('./help_text');
+const PlayerScreenManager = require('./player_screen_manager');
+const HelpManager = require('./help_manager');
 
 const {
     createElement,
@@ -22,7 +21,6 @@ class MapContainer extends Container {
         super({
             ...opts,
             type: 'map',
-            template: ContainerTemplate
         });
 
         this.maps = {};
@@ -30,7 +28,6 @@ class MapContainer extends Container {
 
         this.el_map_main_section = document.getElementById('map_main_section');
         this.el_tabs = document.getElementById('map_tabs');
-        this.el_help_table = document.getElementById('help_table');
 
         this.MapListManager = new MapListManager({
             onMapLoad: this.onMapLoad.bind(this)
@@ -38,13 +35,12 @@ class MapContainer extends Container {
 
         this.TextManager = new TextManager();
         this.ControlsManager = new ControlsManager();
+        this.HelpManager = new HelpManager();
 
         this.setEvents();
-        this.addHelp();
 
         Store.register({
             'mouse_leave': this.onMouseLeave.bind(this),
-            'show_player_screen': this.showPlayerScreen.bind(this),
             'show_map_controls': this.showMapControls.bind(this),
             'hide_map_controls': this.hideMapControls.bind(this)
         });
@@ -143,49 +139,6 @@ class MapContainer extends Container {
         CONFIG.quick_place = false;
     }
 
-    showPlayerScreen () {
-        let current_map_data =  (this.current_map || {}).full_data || {};
-
-        if (window.player_screen && !window.player_screen.closed) {
-            window.player_screen.postMessage({
-                event: 'display_map',
-                data: current_map_data,
-                config: CONFIG
-            });
-            Store.fire('zoom_(ps)', {
-                zoom: current_map_data.meta.zoom
-            });
-            Store.fire('brightness_(ps)', {
-                brightness: current_map_data.meta.brightness
-            });
-            return;
-        }
-
-        const window_options = {
-            // autoHideMenuBar: 1,
-            // titleBarStyle: 'hidden',
-            width: 800,
-            height: 600,
-            top: 360,
-            left: 10,
-        };
-
-        let option_param = '';
-        for (let x in window_options) {
-            option_param += x + '=' + window_options[x] + ','
-        }
-
-        window.player_screen = window.open(
-            '../html/player_screen.html',
-            'electron',
-            option_param
-        );
-
-        // Clear all key downs, key ups dont register properly when a new
-        // window open and the old one loses focus
-        KEY_DOWN = {};
-    }
-
     onMapLoad (maps) {
         let map_keys = Object.keys(maps);
         if (!map_keys.length) return;
@@ -202,24 +155,20 @@ class MapContainer extends Container {
 
     setActiveMap (map_name) {
         Store.key = map_name;
-        // Store.set({
-        //     current_map_name: this.managers.segment.getControlPoint()
-        // });
-
-        // I don't know what this actually did, there isn't much map data tied to the upper levels of the store
-        // Store.clearData();
 
         if (this.current_map) {
             this.current_map.active = false;
             this.current_map.hide();
         }
+
         this.current_map = this.maps[map_name];
         this.current_map.active = true;
         this.current_map.show();
         this.ControlsManager.update(this.current_map);
 
-
-        window.MAP = this.current_map;
+        Store.set({
+            current_map_data: (this.current_map || {}).full_data || {}
+        })
     }
 
     addMap (map) {
@@ -239,12 +188,9 @@ class MapContainer extends Container {
         Store.remove(map_name);
         resetSnap();
 
-        if (window.player_screen && !window.player_screen.closed) {
-            window.player_screen.postMessage({
-                event: 'remove_map',
-                data: map_name
-            });
-        }
+        Store.fire('player_screen_remove_map', {
+            map_name: map_name
+        });
 
         this.maps[map_name].shutdown();
         delete this.maps[map_name];
@@ -321,35 +267,67 @@ class MapContainer extends Container {
         });
 
         checkboxInput(document.getElementById('create_one_way_wall'), {
-            store: {
-                keys: [
-                    'create_one_way_wall'
-                ],
-                events: [
-                    'create_one_way_wall_toggled'
-                ]
-            }
-        });
-
-        document.getElementById('help').addEventListener('click', (e) => {
-            document.getElementById('help_box').classList.toggle('hide');
+            store_key: 'create_one_way_wall',
+            store_event: 'create_one_way_wall_toggled'
         });
     }
 
-    addHelp () {
-        help_text.forEach((help_item) => {
-            let help_item_node = createElement('tr', 'help_section', {
-                addTo: this.el_help_table
-            });
-            createElement('td', 'help_key', {
-                html: help_item.key,
-                addTo: help_item_node
-            });
-            createElement('td', 'help_desc', {
-                html: help_item.text,
-                addTo: help_item_node
-            });
-        });
+    template () {
+        return `
+            <div class="container_header">
+                <div id="controls">
+                    <div id="help" class="button">Help</div>
+
+                    <div class="button_spacer"></div>
+
+                    <div id="load_files" class="button">Load</div>
+                    <div id="load_state" class="button">Load State</div>
+
+                    <div class="button_spacer"></div>
+
+                    <div id="save_map" class="button">Save</div>
+                    <div id="save_all_maps" class="button">Save All</div>
+                    <div id="save_state" class="button">Save State</div>
+
+                    <div class="button_spacer"></div>
+
+                    <div class="checkbox_container">
+                        <div id="create_one_way_wall" class="checkbox"></div>
+                        <div class="checkbox_label">One-Way Wall (modify existing wall)</div>
+                    </div>
+                </div>
+
+                ${HelpManager.template()}
+                ${TextManager.template()}
+
+                <div id="map_tabs"></div>
+            </div>
+
+            <div class="container_body">
+                <div id="map_main_section">
+                    <div id="no_map_screen" class="help_screen">
+                        <div id="no_map_screen_load" class="help_screen_action">
+                            <div class="help_screen_main_text">CLICK TO LOAD MAP</div>
+                            <div class="help_screen_support_text">If you have not selected a map folder, you will be prompted to</div>
+                        </div>
+                    </div>
+
+                    <div id="map_containers"></div>
+
+                    <div id="map_controls_container">
+                        <div id="map_controls_toggle" class="menu_icon">
+                            <div class="menu_icon_bar menu_icon_bar_1"></div>
+                            <div class="menu_icon_bar menu_icon_bar_2"></div>
+                            <div class="menu_icon_bar menu_icon_bar_3"></div>
+                        </div>
+
+                        ${ControlsManager.template()}
+                    </div>
+                </div>
+
+                ${MapListManager.template()}
+            </div>
+        `;
     }
 }
 

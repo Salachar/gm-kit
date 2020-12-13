@@ -21,8 +21,23 @@ class ImageCanvas extends Base {
 
     load () {
         return new Promise((resolve, reject) => {
-            if (!this.map_data.image) {
+            if (!this.map_data.image && !this.map_data.video) {
                 reject();
+                return;
+            }
+
+            if (this.map_type === 'video') {
+                console.log(this.map_data.video);
+                this.video.src = this.map_data.video;
+                this.video.loop = true;
+                this.video.play();
+
+
+                this.width = 1920;
+                this.height = 1080;
+                this.ratio = 16 / 9;
+
+                resolve();
                 return;
             }
 
@@ -31,21 +46,21 @@ class ImageCanvas extends Base {
                 this.width = this.image.naturalWidth;
                 this.height = this.image.naturalHeight;
                 this.ratio = this.width / this.height;
-
                 this.confine();
-
-                resolve(this.image);
+                resolve();
             }
 
             if (!CONFIG.is_player_screen) {
-                this.image.src = this.map_data.dm_image || this.map_data.image;
+                this.image.src = this.map_data.dm_version || this.map_data.image;
             } else {
-                this.image.src = this.map_data.image || this.map_data.dm_image;
+                this.image.src = this.map_data.image || this.map_data.dm_version;
             }
         });
     }
 
     confine () {
+        if (this.map_type === 'video') return;
+
         if (this.width > CONFIG.max_map_size || this.height > CONFIG.max_map_size) {
             if (this.ratio > 1) {
                 // Image is wider than it is taller
@@ -60,10 +75,12 @@ class ImageCanvas extends Base {
                 this.width = CONFIG.max_map_size;
                 this.height = CONFIG.max_map_size;
             }
-        }                
+        }
     }
 
     updateBrightness (data) {
+        if (this.map_type === 'video') return;
+
         if (data && data.brightness) {
             this.brightness = data.brightness;
         }
@@ -77,6 +94,8 @@ class ImageCanvas extends Base {
     }
 
     draw () {
+        if (this.map_type === 'video') return;
+
         this.context.drawImage(this.image, 0, 0, this.width, this.height);
         return this;
     }

@@ -1,4 +1,5 @@
 const {
+    listener,
     cacheElements,
     createElement
 } = require('../../lib/dom');
@@ -13,7 +14,7 @@ const {
     deselect
 } = require('../../lib/input');
 
-const help_text = require('./help_text');
+const HelpManager = require('./help_manager');
 
 class ControlsManager {
     constructor (opts = {}) {
@@ -21,25 +22,12 @@ class ControlsManager {
 
         this.open = false;
 
-        const cache_list = [
-            'map_controls_toggle',
-            'common_hotkeys',
-            'show_player_screen',
-            'show_entire_map',
-            'grid_toggle',
+        cacheElements(this, [
             'grid_size_container',
-            'grid_shift',
-            'scroll_buttons',
             'map_zoom',
             'player_screen_brightness',
-            'spell_marker_size',
             'spell_marker_shape',
-            'spell_marker_color',
-            'show_affected_tiles',
-            'toggle_map_fit'
-        ];
-
-        cacheElements(this, cache_list);
+        ]);
 
         this.addCommonHotKeys();
         this.setEvents();
@@ -78,10 +66,10 @@ class ControlsManager {
     }
 
     addCommonHotKeys () {
-        help_text.forEach((help_item) => {
+        HelpManager.getHelpInfo().forEach((help_item) => {
             if (!help_item.common) return;
             let hotkeys = createElement('div', 'hotkey_section', {
-                addTo: this.el_common_hotkeys
+                addTo: 'common_hotkeys'
             });
             createElement('span', 'hotkey_key', {
                 html: help_item.key + ':',
@@ -95,112 +83,81 @@ class ControlsManager {
     }
 
     setEvents () {
-        this.el_map_controls_toggle.addEventListener('click', (e) => {
+        listener('map_controls_toggle', 'click', (e) => {
             this.toggle();
         });
 
-        this.el_show_player_screen.addEventListener('click', (e) => {
+        listener('show_player_screen', 'click', (e) => {
             Store.fire('show_player_screen');
         });
 
-        this.el_show_entire_map.addEventListener('click', (e) => {
+        listener('show_entire_map', 'click', (e) => {
             Store.fire('show_entire_map');
         });
 
-        this.el_grid_toggle.addEventListener('click', (e) => {
+        listener('grid_toggle', 'click', (e) => {
             Store.fire('toggle_grid_(ps)');
         });
 
-        this.el_toggle_map_fit.addEventListener('click', (e) => {
+        listener('toggle_map_fit', 'click', (e) => {
             Store.fire('toggle_map_fit-(PS)');
         });
 
-        numberInput(this.el_grid_size_container, {
+        numberInput('grid_size_container', {
             step: 0.25,
-            handler: (value) => {
-                Store.fire('grid_size_update_(ps)', {
-                    size: value
-                });
-            }
+            init: 50,
+            store_key: 'size',
+            store_event: 'grid_size_update_(ps)'
         });
 
-        arrowInput(this.el_grid_shift, {
+        arrowInput('grid_shift', {
             step: 1,
-            handler: (offset) => {
-                Store.fire('grid_offset_update_(ps)', {
-                    offset: offset
-                });
-            }
+            store_key: 'offset',
+            store_event: 'grid_offset_update_(ps)'
         });
 
-        numberInput(this.el_spell_marker_size, {
+        numberInput('spell_marker_size', {
             step: 5,
             init: 20,
             store_key: 'spell_marker_size'
         });
 
-        radioInput(this.el_spell_marker_shape, {
-            options: [
-                { value: 'line' },
-                { value: 'square' },
-                { value: 'circle' },
-                { value: 'cone' }
-            ],
-            store: {
-                keys: ['spell_marker_shape'],
-                events: ['spell_marker_shape_updated']
-            }
+        radioInput('spell_marker_shape', {
+            options: ['line', 'square', 'circle', 'cone'],
+            store_key: 'spell_marker_shape',
+            store_event: 'spell_marker_shape_updated-(ps)'
         });
 
-        colorPicker(this.el_spell_marker_color, {
-            store_key: 'spell_marker_color',
-            handler: (value) => {
-                console.log(value);
-            }
+        colorPicker('spell_marker_color', {
+            store_key: 'spell_marker_color'
         });
 
-        checkboxInput(this.el_show_affected_tiles, {
-            store: {
-                keys: [
-                    'show_affected_tiles-(ps)',
-                    'show_affected_tiles_checked-(ps)'
-                ],
-                events: [
-                    'show_affected_tiles_toggled-(ps)'
-                ]
-            }
+        checkboxInput('show_affected_tiles', {
+            store_key: 'show_affected_tiles show_affected_tiles_checked',
+            store_event: 'show_affected_tiles_toggled-(ps)'
         });
 
-        arrowInput(this.el_scroll_buttons, {
+        arrowInput('scroll_buttons', {
             step: 2,
             interval: 10,
-            handler: (offset) => {
-                Store.fire('scroll_(PS)', {
-                    offset: offset
-                });
-            }
+            store_key: 'offset',
+            store_event: 'scroll_(PS)'
         });
 
-        numberInput(this.el_map_zoom, {
+        numberInput('map_zoom', {
             step: 0.025,
             interval: 20,
-            handler: (value) => {
-                Store.fire('zoom_(ps)', {
-                    zoom: value
-                });
-            }
+            store_key: 'zoom',
+            store_event: 'zoom_(ps)'
         });
 
-        numberInput(this.el_player_screen_brightness, {
+        numberInput('player_screen_brightness', {
             min: 0,
             max: 200,
+            init: 100,
             interval: 30,
-            handler: (value) => {
-                // console
-                Store.fire('brightness_(ps)', {
-                    brightness: value
-                })
-            }
+            store_key: 'brightness',
+            store_event: 'brightness_(ps)'
         });
 
         [...document.getElementsByClassName('map_control_section')].forEach((section) => {
@@ -211,6 +168,83 @@ class ControlsManager {
                 body.classList.toggle('hidden');
             });
         });
+    }
+
+    static template () {
+        return `
+            <div id="map_controls_body">
+                <div class="map_control_section">
+                    <div class="map_control_section_header">Common Hotkeys</div>
+                    <div id="common_hotkeys" class="map_control_section_body">
+                        <div class="button_text">Common Hotkeys used during sessions</div>
+                    </div>
+                </div>
+
+                <div class="map_control_section">
+                    <div class="map_control_section_body">
+                        <div class="button_text">Show the current map on the Player Screen. This will also create the Player Screen window if it doesn't exist</div>
+                        <div id="show_player_screen" class="button">Show on Player Screen</div>
+                    </div>
+                </div>
+
+                <div class="map_control_section">
+                    <div class="map_control_section_body">
+                        <div class="button_text">Ignores all walls and lights up the entire map on the Player Screen</div>
+                        <div id="show_entire_map" class="button">Show Entire Map</div>
+                    </div>
+                </div>
+
+                <div class="map_control_section">
+                    <div class="map_control_section_header">Grid Overlay</div>
+
+                    <div class="map_control_section_body">
+                        <div class="button_text">Overlay a grid onto the map, this will show on both the GM and Player Screen. Saving the map will save the current grid settings.</div>
+                        <div id="grid_toggle" class="button">Toggle Grid</div>
+
+                        <div class="button_text">Change the grid size (pixels)</div>
+                        <div id="grid_size_container"></div>
+
+                        <div class="button_text">Shift the overlayed grid</div>
+                        <div id="grid_shift">
+                    </div>
+                </div>
+
+                <div class="map_control_section">
+                    <div class="map_control_section_header">Spell/Shape Markers</div>
+
+                    <div class="map_control_section_body">
+                        <div class="button_text">Currently only useable with overlay grid enabled</div>
+                        <div id="spell_marker_size" class="number_input_container"></div>
+
+                        <div id="spell_marker_shape" class="radio_input"></div>
+                        <div id="spell_marker_color" class="color_picker"></div>
+
+                        <div class="button_text">Will cause a performance drop only while placing markers</div>
+                        <div class="checkbox_container">
+                            <div id="show_affected_tiles" class="checkbox"></div>
+                            <div class="checkbox_label">Show grid cells affected by spells</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map_control_section">
+                    <div class="map_control_section_header">Player Screen Controls</div>
+
+                    <div class="map_control_section_body">
+                        <div id="toggle_map_fit" class="button">Toggle Map Fit</div>
+
+                        <div class="button_text">Scroll the Player Screen</div>
+                        <div id="scroll_buttons"></div>
+
+                        <div class="button_text">Zoom the Player Screen</div>
+                        <div id="map_zoom"></div>
+
+                        <div class="button_text">Dim the Player Screen (artificial screen brightness)</div>
+                        <div id="player_screen_brightness"></div>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 }
 

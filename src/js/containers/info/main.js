@@ -34,10 +34,6 @@ class InfoContainer extends Container {
             template: ContainerTemplate
         });
 
-        cacheElements(this, [
-            'info_click_amount'
-        ]);
-
         this.amount_per_click = 5;
 
         this.results = [];
@@ -47,6 +43,16 @@ class InfoContainer extends Container {
 
         this.initGenerators();
         this.setEvents();
+
+        Store.register({
+            "info_generator_amount_change": this.onAmountChange.bind(this),
+        });
+    }
+
+    onAmountChange (data) {
+        const new_amount = data.info_generator_amount;
+        if (isNaN(new_amount)) new_amount = 1;
+        this.amount_per_click = new_amount;
     }
 
     initGenerators () {
@@ -98,19 +104,11 @@ class InfoContainer extends Container {
             });
         });
 
-        // document.getElementById('generate_amount').addEventListener('keyup', (e) => {
-        //     const value = e.currentTarget.value;
-        //     if (isNaN(value)) value = 1;
-        //     this.amount_per_click = value;
-        // });
-
-        numberInput(this.el_info_click_amount, {
+        numberInput("info_click_amount", {
             min: 1,
             init: this.amount_per_click,
-            handler: (value) => {
-                if (isNaN(value)) value = 1;
-                this.amount_per_click = value;
-            }
+            store_key: "info_generator_amount",
+            store_event: "info_generator_amount_change"
         });
     }
 }

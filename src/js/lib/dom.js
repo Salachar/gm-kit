@@ -1,4 +1,17 @@
 const DOM = {
+    listener (node, event, handler, opts = {}) {
+        // Node can be an id string or an element
+        if (typeof node === 'string') {
+            node = document.getElementById(node);
+        }
+        node.addEventListener(event, (e) => {
+            if (opts.prevent_default) {
+                e.preventDefault();
+            }
+            handler(e);
+        });
+    },
+    
     cacheElements (obj, cache_list) {
         cache_list.forEach((id) => {
             obj['el_' + id] = document.getElementById(id);
@@ -22,10 +35,11 @@ const DOM = {
         }
 
         if (opts.addTo) {
-            if (!opts.addTo.length) opts.addTo = [opts.addTo];
-            opts.addTo.forEach((container) => {
-                container.appendChild(node);
-            });
+            let container = opts.addTo;
+            if (typeof container === 'string') {
+                container = document.getElementById(container);
+            }
+            container.appendChild(node);
         }
 
         return node;

@@ -14,18 +14,15 @@ class SegmentManager extends Base {
     constructor (opts = {}) {
         super(opts)
 
-    	this.walls = this.loadSegments((this.map_data.json || {}).walls || []);
-    	this.doors = this.loadSegments((this.map_data.json || {}).doors || []);
-
-        this.segments = this.joinSegments(this.walls, this.doors);
+        this.segments = null;
+        this.all_segments = null;
         this.segments_map = {};
 
-        const loaded_segments = this.loadSegments((this.map_data.json || {}).segments || []);
-        if (loaded_segments.length) this.segments = loaded_segments;
-
-        this.generateSegmentMap();
-
         this.selected_door = null;
+        this.new_wall = null;
+
+        this.initializeSegments();
+        this.generateSegmentMap();
 
     	this.quadrants = {
     		TL: [],
@@ -39,20 +36,29 @@ class SegmentManager extends Base {
     		height: window.innerHeight
     	};
 
-        this.new_wall = null;
-
-        this.all_segments = null;
-
         Store.register({
-            'switch_wall_door': this.onSwitchWallDoor.bind(this),
-            'toggle_closest_door': this.onToggleClosestDoor.bind(this),
+            'prepare_segments': this.prepareSegments.bind(this),
+            'switch_wall_door': this.switchBetweenDoorAndWall.bind(this),
+            'toggle_closest_door': this.toggleClosestDoor.bind(this),
             'deselect_door': this.deselectDoor.bind(this),
             'image_loaded_(ps)': this.onImageLoaded.bind(this)
         }, this.map_instance.name);
     }
 
-    onSwitchWallDoor (data) {
-        this.switchBetweenDoorAndWall(data.point);
+    initializeSegments () {
+        // LEGACY: JSON data has the segments split into "walls" and "doors" sections
+        const is_legacy = (this.map_data.json.walls || []).length > 0;
+        if (is_legacy) {
+            this.walls = this.loadSegments(this.map_data.json.walls || []);
+            this.doors = this.loadSegments(this.map_data.json.doors || []);
+            this.segments = this.joinSegments(this.walls, this.doors);
+            Toast.message(`Map "${this.map_instance.name}" is using legacy JSON, re-saving is recommended`);
+        } else {
+            // Newer map JSON has everything as segments with type determining wall|door|etc
+            // const loaded_segments = this.loadSegments(this.map_data.json.segments || []);
+            // if (loaded_segments.length) this.segments = loaded_segments;
+            this.segments = this.loadSegments(this.map_data.json.segments || []);
+        }
     }
 
     onImageLoaded (data) {
@@ -60,10 +66,6 @@ class SegmentManager extends Base {
         if (CONFIG.is_player_screen) {
             Store.fire('enable_light');
         }
-    }
-
-    onToggleClosestDoor (data) {
-        this.toggleClosestDoor(data.point);
     }
 
     sanitizedSegments () {
@@ -119,6 +121,7 @@ class SegmentManager extends Base {
     }
 
     joinSegments (walls, doors) {
+        // Legacy function for older map JSON
         let segments = [];
         walls.forEach((wall) => {
             wall.type = 'wall';
@@ -380,7 +383,8 @@ class SegmentManager extends Base {
         });
 	}
 
-    toggleClosestDoor (point) {
+    toggleClosestDoor (data) {
+        const point = data.point || {};
         if (!this.segments.length) return;
 
         let closest_segment = this.map_instance.managers.object.findClosest('segment', point);
@@ -409,8 +413,8 @@ class SegmentManager extends Base {
         }
     }
 
-    switchBetweenDoorAndWall (point) {
-        point = point || copyPoint(Mouse);
+    switchBetweenDoorAndWall (data = {}) {
+        const point = data.point || copyPoint(Mouse);
         let closest_segment = this.map_instance.managers.object.findClosest('segment', point);
         if (!closest_segment) return;
 

@@ -39,7 +39,7 @@ class CanvasManager extends Base{
             control: new ControlCanvas(canvas_opts),
         };
 
-        this.canvases.image.load().then((img) => {
+        this.canvases.image.load().then(() => {
             this.resizeCanvases();
 
             Store.fire('image_loaded_(ps)', {
@@ -57,8 +57,11 @@ class CanvasManager extends Base{
             this.canvas_container.scrollTop = 0;
         });
 
-        Store.register({            
+        Store.register({
             'door_activated': this.onDoorActivated.bind(this),
+
+            'enable_light': this.enableLight.bind(this),
+            'disable_light': this.disableLight.bind(this),
 
             'move_mode_toggled': this.refreshPlacements.bind(this),
             'create_one_way_wall_toggled' : this.refreshPlacements.bind(this),
@@ -73,6 +76,7 @@ class CanvasManager extends Base{
     }
 
     onLightPolyUpdate (data) {
+        console.log('onLightPolyUpdate');
         this.drawLight({
             force_update: true,
             polys: data.polys
@@ -80,6 +84,8 @@ class CanvasManager extends Base{
     }
 
     onDoorActivated () {
+        // debugger;
+        console.log('activate door');
         this.canvases.control.draw();
         this.drawLight({
             force_update: true
@@ -97,8 +103,8 @@ class CanvasManager extends Base{
     }
 
     drawOneWayArrow (opts = {}) {
-        const { context, segment, placing } = opts;
-        
+        let { context, segment, placing } = opts;
+
         // placing determines whether we're drawing a placed one way wall
         // or one in preview, yet to be placed, which requires a little data handling
         if (placing && segment.segment) {
@@ -157,16 +163,16 @@ class CanvasManager extends Base{
         window.requestAnimationFrame(() => {
             // The light objects themselves are now drawn so I know where the fuck they are
             this.canvases.lights.draw();
-            
+
             // Getting all the light polys even if we aren't going to draw them, as the
             // display window uses these light polys
             const light_polys = opts.polys || this.map_instance.managers.light.getAllLightPolygons(opts);
-            if (!this.map_instance.lighting_enabled) return;
-            
+            if (!Store.get('lighting_enabled')) return;
+
             // Refresh the Fog of War Canvas (full transparent gray after this)
             // The fog has to be redrawn otherwise previous areas would be completely lit up
             this.canvases.shroud.draw();
-            
+
             // Cut the lights out of the shroud context (just refreshed) so we can
             // see all the way through to what is currently lit up
             this.drawLightPolygons(this.canvases.shroud.context, light_polys);
@@ -201,12 +207,16 @@ class CanvasManager extends Base{
     }
 
     enableLight () {
+        Store.set({lighting_enabled: true});
+        Store.fire('prepare_segments');
         this.canvases.shroud.show();
         this.canvases.shadow.show().draw();
         this.drawLight();
     }
 
     disableLight () {
+        // if (CONFIG.is_player_screen) return;
+        Store.set({lighting_enabled: false});
         this.canvases.shadow.clear().hide();
         this.canvases.shroud.clear().hide();
     }

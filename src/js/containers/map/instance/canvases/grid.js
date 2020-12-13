@@ -15,6 +15,10 @@ class GridCanvas extends Base {
             }
         };
 
+        Store.set({
+            grid: copy(this.attributes)
+        }, this.map_instance.name);
+
         Store.register({
             "toggle_grid_(ps)": this.toggle.bind(this),
             "grid_size_update_(ps)": this.update.bind(this),
@@ -32,6 +36,11 @@ class GridCanvas extends Base {
         }
         this.attributes.offset.x =  this.attributes.offset.x % this.attributes.size;
         this.attributes.offset.y =  this.attributes.offset.y % this.attributes.size;
+
+        Store.fire('grid_update', {
+            grid: copy(this.attributes)
+        });
+        
         this.draw();
     }
 

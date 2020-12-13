@@ -36,7 +36,7 @@ class ToastMesseger {
     show (type) {
         this.hidden = false;
         this.node.classList.add('show-toast');
-        this.node.classList.add(`toast-${type}`);
+        if (type) this.node.classList.add(`toast-${type}`);
         return this;
     }
 

@@ -1,6 +1,8 @@
 const {
-    createElement
-} = require('../../lib/helpers');
+    cacheElements,
+    createElement,
+    listener
+} = require('../../lib/dom');
 
 class MapListManager {
     constructor (opts = {}) {
@@ -9,13 +11,9 @@ class MapListManager {
         this.onMapLoad = opts.onMapLoad;
 
         this.node = document.getElementById('map_list_modal');
+
         this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
         this.el_modal_body = document.getElementById('map_list_modal_body');
-
-        // Buttons
-        this.el_open_button = document.getElementById('map_list_modal_open');
-        this.el_folder_button = document.getElementById('map_list_modal_folder');
-        this.el_close_button = document.getElementById('map_list_modal_close');
 
         this.el_map_list = document.getElementById('map_list_modal_body_list');
         this.el_map_preview = document.getElementById('map_list_modal_body_preview');
@@ -56,7 +54,7 @@ class MapListManager {
                 addTo: section_node
             });
 
-            if (s.match(/complete|image_only|json_only/)) {
+            if (s.match(/complete|image|video|json/)) {
                 for (let f in sections[s]) {
                     // Closure to make sure reference to map is kept
                     ((map) => {
@@ -65,6 +63,7 @@ class MapListManager {
                             addTo: section_container,
                             events: {
                                 click: (e) => {
+                                    console.log('stuff');
                                     if (e.defaultPrevented) return;
                                     let selected_map = {};
                                     selected_map[map.name] = map;
@@ -114,7 +113,7 @@ class MapListManager {
         search(sections_copy);
         function search (sections) {
             for (let s in sections) {
-                if (s.match(/complete|image_only|json_only/)) {
+                if (s.match(/complete|image|video|json/)) {
                     for (let f in sections[s]) {
                         let map = sections[s][f];
                         let name = map.name.toLowerCase();
@@ -155,27 +154,27 @@ class MapListManager {
     }
 
     setEvents () {
-        document.getElementById('load_files').addEventListener('click', (e) => {
+        listener('load_files', 'click', (e) => {
             IPC.send('load_maps');
         });
 
-        document.getElementById('no_map_screen_load').addEventListener('click', (e) => {
+        listener('no_map_screen_load', 'click', (e) => {
             IPC.send('load_maps');
         });
 
-        this.el_open_button.addEventListener('click', (e) => {
+        listener('map_list_modal_open', 'click', (e) => {
             IPC.send('load_map', this.selected_maps);
         });
 
-        this.el_close_button.addEventListener('click', (e) => {
+        listener('map_list_modal_close', 'click', (e) => {
             this.closeModal();
         });
 
-        this.el_folder_button.addEventListener('click', (e) => {
+        listener('map_list_modal_folder', 'click', (e) => {
             IPC.send('open_map_dialog_modal');
         });
 
-        document.getElementById('map_list_search').addEventListener('keyup', (e) => {
+        listener('map_list_search', 'keyup', (e) => {
             const search_string = e.currentTarget.value;
             this.searchMaps(this.map_list, search_string);
         });
@@ -189,6 +188,31 @@ class MapListManager {
             this.onMapLoad(maps);
             this.closeModal();
         });
+    }
+
+    static template () {
+        return `
+            <div id="map_list_modal_wrap" class="hidden">
+                <div id="map_list_modal" class="modal">
+                    <div class="modal_header">
+                        <div class="modal_title">
+                            <span class="modal_title_info">&#9432;</span>
+                            <span class="modal_title_text">Select Map:</span>
+                        </div>
+                        <div class="modal_header_buttons">
+                            <input id="map_list_search" type="text" class="text_input"></input>
+                            <div id="map_list_modal_folder" class="button">MAP DIRECTORY</div>
+                            <div id="map_list_modal_open" class="button">OPEN SELECTED</div>
+                        </div>
+                        <div id="map_list_modal_close" class="modal_close"></div>
+                    </div>
+                    <div id="map_list_modal_body" class="modal_body">
+                        <div id="map_list_modal_body_preview"></div>
+                        <div id="map_list_modal_body_list"></div>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 }
 module.exports = MapListManager;
