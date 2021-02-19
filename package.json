@@ -2,7 +2,7 @@
   "name": "Map-Editor",
   "version": "1.0.0",
   "description": "Electron based D&D dynamic lighting application",
-  "main": "main.js",
+  "main": "src/electron/electron.js",
   "scripts": {
     "start": "electron .",
     "build-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --prune=true --out=build",
