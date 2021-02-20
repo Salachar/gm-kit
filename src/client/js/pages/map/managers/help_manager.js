@@ -67,6 +67,7 @@ const HELP_INFO = [{
 // }
 
 const {
+    c,
     createElement,
     cacheElements,
     listener
@@ -79,25 +80,25 @@ class HelpManager {
             'help_table'
         ]);
 
-        this.populate();
-        this.setEvents();
+        // this.populate();
+        // this.setEvents();
     }
 
-    populate () {
-        HELP_INFO.forEach((help_item) => {
-            let help_item_node = createElement('tr', 'help_section', {
-                addTo: this.el_help_table
-            });
-            createElement('td', 'help_key', {
-                html: help_item.key,
-                addTo: help_item_node
-            });
-            createElement('td', 'help_desc', {
-                html: help_item.text,
-                addTo: help_item_node
-            });
-        });
-    }
+    // populate () {
+    //     HELP_INFO.forEach((help_item) => {
+    //         let help_item_node = createElement('tr', 'help_section', {
+    //             addTo: this.el_help_table
+    //         });
+    //         createElement('td', 'help_key', {
+    //             html: help_item.key,
+    //             addTo: help_item_node
+    //         });
+    //         createElement('td', 'help_desc', {
+    //             html: help_item.text,
+    //             addTo: help_item_node
+    //         });
+    //     });
+    // }
 
     setEvents () {
         listener('help', 'click', (e) => {
@@ -105,22 +106,98 @@ class HelpManager {
         });
     }
 
+    render () {
+        return ['div .help_container', [
+            ['div #help .button HTML=Help', {
+                click: (e) => {
+                    document.getElementById('help_box').classList.toggle('hide');
+                }
+            }],
+            ['div #help_box .hide', [
+                ['table #help_table', [
+                    ['tr', [
+                        ['th .help_key HTML=Key'],
+                        ['th'],
+                    ]],
+                    ...HELP_INFO.map((help_item) => {
+                        return ['tr .help_section', [
+                            [`td .help_key HTML=${help_item.key}`],
+                            [`td .help_desc HTML=${help_item.text}`],
+                        ]]
+                    })
+                ]],
+            ]]
+        ]];
+
+        // return ['div', '.help_container', {}, [
+        //     ['div', '#help .button', {
+        //         html: 'Help',
+        //         events: {
+        //             click: (e) => {
+        //                 document.getElementById('help_box').classList.toggle('hide');
+        //             }
+        //         },
+        //     }],
+        //     ['div', '#help_box .hide', {}, [
+        //         ['table', '#help_table', {}, [
+        //             ['tr', '', {}, [
+        //                 ['th', '.help_key', {
+        //                     html: 'Key',
+        //                 }],
+        //                 ['th'],
+        //             ]],
+        //             ...HELP_INFO.map((help_item) => {
+        //                 return ['tr', '.help_section', {}, [
+        //                     ['td', '.help_key', {
+        //                         html: help_item.key,
+        //                     }],
+        //                     ['td', '.help_desc', {
+        //                         html: help_item.text,
+        //                     }],
+        //                 ]]
+        //             })
+        //         ]],
+        //     ]]
+        // ]];
+
+        // return ['div', '#help_box .hide', {}, [
+        //     ['table', '#help_table', {}, [
+        //         ['tr', '', {}, [
+        //             ['th', '.help_key', {
+        //                 html: 'Key',
+        //             }],
+        //             ['th'],
+        //         ]],
+        //         ...HELP_INFO.map((help_item) => {
+        //             return ['tr', '.help_section', {}, [
+        //                 ['td', '.help_key', {
+        //                     html: help_item.key,
+        //                 }],
+        //                 ['td', '.help_desc', {
+        //                     html: help_item.text,
+        //                 }],
+        //             ]]
+        //         })
+        //     ]],
+        // ]];
+    }
+
     static getHelpInfo () {
         return HELP_INFO;
     }
 
-    static template () {
-        return `
-            <div id="help_box" class="hide">
-                <table id="help_table">
-                    <tr>
-                        <th class="help_key">Key</th>
-                        <th></th>
-                    </tr>
-                </table>
-            </div>
-        `;
-    }
+    // static template () {
+    //     return `
+    //         <div id="help_box" class="hide">
+    //             <table id="help_table">
+    //                 <tr>
+    //                     <th class="help_key">Key</th>
+    //                     <th></th>
+    //                 </tr>
+    //             </table>
+    //         </div>
+    //     `;
+    // }
 }
 
 module.exports = HelpManager;

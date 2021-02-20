@@ -4,6 +4,8 @@ const {
 
 class Container {
     constructor (opts = {}) {
+        const { render = true } = opts;
+
         this.node = null;
         this.tab = null;
 
@@ -13,7 +15,7 @@ class Container {
 
         this.createNode(this.type);
         this.createTab(this.type);
-        this.render();
+        if (render) this.render();
 
         if (opts.active === true) {
             this.parent.setActiveContainer(this);
@@ -66,8 +68,8 @@ class Container {
 
     render () {
         this.node.innerHTML = this.template();
-        this.container_header = this.node.getElementsByClassName('container_header')[0];
-        this.container_body = this.node.getElementsByClassName('container_body')[0];
+        // this.container_header = this.node.getElementsByClassName('container_header')[0];
+        // this.container_body = this.node.getElementsByClassName('container_body')[0];
     }
 }
 

@@ -120,15 +120,25 @@ class NumberInput {
       max
     } = this.props;
 
-    return `
-      <div class="${classname} number_input_container">
-        <div id="arrow_left_${this.guid}" class="number_input_button arrow_left"></div>
-        ${!isNaN(min) ? `<div class="number_input_info number_input_min">${min}</div>` : ''}
-        <input id="number_input_${this.guid}" class="number_input" value=${default_value} />
-        ${!isNaN(max) ? `<div class="number_input_info number_input_max">${max}</div>` : ''}
-        <div id="arrow_right_${this.guid}" class="number_input_button arrow_right"></div>
-      </div>
-    `;
+    return [`div .${classname} .number_input_container`, [
+      [`div #arrow_left_${this.guid} .number_input_button .arrow_left`],
+      !isNaN(min) && [`div .number_input_info .number_input_min HTML=${min}`],
+      [`input #number_input_${this.guid} .number_input`, {
+        value: default_value
+      }],
+      !isNaN(max) && [`div .number_input_info .number_input_max HTML=${max}`],
+      [`div #arrow_right_${this.guid} .number_input_button .arrow_right`],
+    ]];
+
+    // return `
+    //   <div class="${classname} number_input_container">
+    //     <div id="arrow_left_${this.guid}" class="number_input_button arrow_left"></div>
+    //     ${!isNaN(min) ? `<div class="number_input_info number_input_min">${min}</div>` : ''}
+    //     <input id="number_input_${this.guid}" class="number_input" value=${default_value} />
+    //     ${!isNaN(max) ? `<div class="number_input_info number_input_max">${max}</div>` : ''}
+    //     <div id="arrow_right_${this.guid}" class="number_input_button arrow_right"></div>
+    //   </div>
+    // `;
   }
 }
 

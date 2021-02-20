@@ -268,6 +268,11 @@ const Helpers = {
         return createElement(type, classes, opts);
     },
 
+    c: function (type, classes, opts = {}) {
+        console.log(classes);
+        return createElement(type, classes, opts);
+    },
+
     configureElement: function (node, opts = {}) {
         return configureElement(node, opts);
     },

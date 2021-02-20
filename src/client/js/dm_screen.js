@@ -49,7 +49,7 @@ class AppManager {
 
         getWindowDimensions();
 
-        this.setEvents();
+        // this.setEvents();
 
         Store.register({
             'save_map': this.saveMap.bind(this),

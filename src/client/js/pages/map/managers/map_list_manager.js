@@ -157,9 +157,9 @@ class MapListManager {
             IPC.send('load_maps');
         });
 
-        listener('no_map_screen_load', 'click', (e) => {
-            IPC.send('load_maps');
-        });
+        // listener('no_map_screen_load', 'click', (e) => {
+        //     IPC.send('load_maps');
+        // });
 
         listener('map_list_modal_open', 'click', (e) => {
             IPC.send('load_map', this.selected_maps);
