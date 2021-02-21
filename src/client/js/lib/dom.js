@@ -91,8 +91,6 @@ const DOM = {
 
         let node = document.createElement(tag);
 
-        console.log(identifiers);
-
         (identifiers || '').split(' ').forEach((identifier) => {
             if (identifier[0] === '#') {
                 node.id = identifier.replace('#','');
@@ -125,8 +123,6 @@ const DOM = {
     },
 
     ctwo: function (parent, html_array = []) {
-        console.log(html_array);
-
         if (!Array.isArray(html_array)) return;
 
         const [
@@ -185,6 +181,27 @@ const DOM = {
         if (opts.click) {
             node.addEventListener('click', opts.click);
         }
+        if (opts.mousedown) {
+            node.addEventListener('mousedown', opts.mousedown);
+        }
+        if (opts.mouseup) {
+            node.addEventListener('mouseup', opts.mouseup);
+        }
+        if (opts.mouseleave) {
+            node.addEventListener('mouseleave', opts.mouseleave);
+        }
+
+
+        if (opts.onchange) {
+            node.addEventListener('change', opts.onchange);
+            node.addEventListener('keyup', opts.onchange);
+        }
+        if (opts.mouseend) {
+            node.addEventListener('mouseup', opts.mouseend);
+            node.addEventListener('mouseleave', opts.mouseend);
+        }
+
+
 
         if (typeof opts.value !== opts.value) {
             node.value = opts.value;

@@ -287,7 +287,7 @@ class MapContainer extends Container {
                 // ['div', '#help .button', {
                 //     html: 'Help'
                 // }],
-                new HelpManager().render(),
+                // new HelpManager().render(),
 
                 ['div .button_spacer'],
                 ['div #load_files .button HTML=Load'],
@@ -324,7 +324,7 @@ class MapContainer extends Container {
                     ['div #no_map_screen_load .help_screen_action', {
                         click: (e) => {
                             console.log('load_maps');
-                            // IPC.send('load_maps');
+                            IPC.send('load_maps');
                         }
                     }, [
                         ['div .help_screen_main_text HTML=CLICK TO LOAD MAP'],

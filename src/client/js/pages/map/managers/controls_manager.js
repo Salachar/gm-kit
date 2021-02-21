@@ -6,6 +6,7 @@ const {
 } = Lib.dom;
 
 const NumberInput = require('../../../lib/numberInput');
+const ArrowInput = require('../../../lib/inputs/arrowInput');
 
 const {
     setValue,
@@ -114,17 +115,17 @@ class ControlsManager {
         //     store_event: 'grid_size_update_(ps)'
         // });
 
-        arrowInput('grid_shift', {
-            step: 1,
-            store_key: 'offset',
-            store_event: 'grid_offset_update_(ps)'
-        });
+        // arrowInput('grid_shift', {
+        //     step: 1,
+        //     store_key: 'offset',
+        //     store_event: 'grid_offset_update_(ps)'
+        // });
 
-        numberInput('spell_marker_size', {
-            step: 5,
-            init: 20,
-            store_key: 'spell_marker_size'
-        });
+        // numberInput('spell_marker_size', {
+        //     step: 5,
+        //     init: 20,
+        //     store_key: 'spell_marker_size'
+        // });
 
         radioInput('spell_marker_shape', {
             options: ['line', 'square', 'circle', 'cone'],
@@ -141,28 +142,28 @@ class ControlsManager {
             store_event: 'show_affected_tiles_toggled-(ps)'
         });
 
-        arrowInput('scroll_buttons', {
-            step: 2,
-            interval: 10,
-            store_key: 'offset',
-            store_event: 'scroll_(PS)'
-        });
+        // arrowInput('scroll_buttons', {
+        //     step: 2,
+        //     interval: 10,
+        //     store_key: 'offset',
+        //     store_event: 'scroll_(PS)'
+        // });
 
-        numberInput('map_zoom', {
-            step: 0.025,
-            interval: 20,
-            store_key: 'zoom',
-            store_event: 'zoom_(ps)'
-        });
+        // numberInput('map_zoom', {
+        //     step: 0.025,
+        //     interval: 20,
+        //     store_key: 'zoom',
+        //     store_event: 'zoom_(ps)'
+        // });
 
-        numberInput('player_screen_brightness', {
-            min: 0,
-            max: 200,
-            init: 100,
-            interval: 30,
-            store_key: 'brightness',
-            store_event: 'brightness_(ps)'
-        });
+        // numberInput('player_screen_brightness', {
+        //     min: 0,
+        //     max: 200,
+        //     init: 100,
+        //     interval: 30,
+        //     store_key: 'brightness',
+        //     store_event: 'brightness_(ps)'
+        // });
 
         [...document.getElementsByClassName('map_control_section')].forEach((section) => {
             const header = section.getElementsByClassName('map_control_section_header')[0];
@@ -226,7 +227,12 @@ class ControlsManager {
                         }).render(),
 
                         ['div .button_text HTML=Shift the overlayed grid'],
-                        ['div #grid_shift'],
+                        // ['div #grid_shift'],
+                        new ArrowInput('#grid_shift', {
+                            step: 1,
+                            store_key: 'offset',
+                            store_event: 'grid_offset_update_(ps)'
+                        }).render(),
                     ]],
                 ]],
 
@@ -234,7 +240,12 @@ class ControlsManager {
                     ['div .map_control_section_header HTML=Spell/Shape Markers'],
                     ['div .map_control_section_body', [
                         ['div .button_text HTML=Currently only useable with overlay grid enabled'],
-                        ['div #spell_marker_suze .number_input_container'],
+                        // ['div #spell_marker_size .number_input_container'],
+                        new NumberInput('spell_marker_size', {
+                            step: 5,
+                            init: 20,
+                            store_key: 'spell_marker_size'
+                        }).render(),
 
                         ['div #spell_marker_shape .radio_input'],
                         ['div #spell_marker_color .color_picker'],
@@ -255,13 +266,33 @@ class ControlsManager {
                         }],
 
                         ['div .button_text HTML=Scroll the Player Screen'],
-                        ['div #scroll_buttons'],
+                        // ['div #scroll_buttons'],
+                        new ArrowInput('#scroll_buttons', {
+                            step: 2,
+                            interval: 10,
+                            store_key: 'offset',
+                            store_event: 'scroll_(PS)'
+                        }).render(),
 
                         ['div .button_text HTML=Zoom the Player Screen'],
-                        ['div #map_zoom'],
+                        // ['div #map_zoom'],
+                        new NumberInput('map_zoom', {
+                            step: 0.025,
+                            interval: 20,
+                            store_key: 'zoom',
+                            store_event: 'zoom_(ps)'
+                        }).render(),
 
                         ['div .button_text HTML=Dim the Player Screen (artificial screen brightness)'],
-                        ['div #player_screen_brightness'],
+                        // ['div #player_screen_brightness'],
+                        new NumberInput('player_screen_brightness', {
+                            min: 0,
+                            max: 200,
+                            init: 100,
+                            interval: 30,
+                            store_key: 'brightness',
+                            store_event: 'brightness_(ps)'
+                        }).render(),
                     ]],
                 ]],
             ]],
