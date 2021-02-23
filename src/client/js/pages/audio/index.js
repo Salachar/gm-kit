@@ -49,19 +49,19 @@ class AudioContainer extends Container {
         // Files are loaded second
         IPC.on('files_loaded', (e, files_json) => {
             console.log(1);
-            this.el_no_audio_screen.classList.add('hidden');
+            this.refs.no_audio_screen.classList.add('hidden');
             // this.audio_manager.buildAudioList(files_json);
             this.buildAudioList(files_json);
         });
         IPC.on('audio_list_error', (e) => {
-            this.el_no_audio_screen.classList.remove('hidden');
+            this.refs.no_audio_screen.classList.remove('hidden');
         });
     }
 
     onSearch (search_string) {
         let search_string = e.currentTarget.value;
         if (search_string.length < 2) {
-            this.el_search_body.innerHTML = '';
+            this.refs.search_body.innerHTML = '';
             return;
         }
 
@@ -89,11 +89,13 @@ class AudioContainer extends Container {
         }
 
         // this.generateSearchResults(matches);
-        this.el_search_body.innerHTML = '';
+        this.refs.search_body.innerHTML = '';
+        console.log(2);
         matches.forEach((match) => {
+
             this.createAudioTrackNode({
                 track: match,
-                parent: this.el_search_body
+                parent: this.refs.search_body
             });
         });
     }
@@ -123,9 +125,10 @@ class AudioContainer extends Container {
             this.data.previous[opts.key] = true;
             this.data.save();
         }
+        console.log(this);
         this.createAudioTrackNode({
             track: this.data.tracks[opts.key],
-            parent: this.el_previous_body
+            parent: this.refs.previous_body
         });
     }
 
@@ -154,6 +157,7 @@ class AudioContainer extends Container {
                 });
             },
             oncreate: (node) => {
+                console.log(this.data.tracks[opts.track.key]);
                 this.data.tracks[opts.track.key].tags.forEach((tag) => {
                     this.addTag({
                         tag: tag,
@@ -182,7 +186,7 @@ class AudioContainer extends Container {
         //     });
         // });
 
-        return el_new_audio_file;
+        // return el_new_audio_file;
     }
 
     clearTracks () {
@@ -209,6 +213,7 @@ class AudioContainer extends Container {
 
 
     buildAudioList (audio_files) {
+        console.log('build audio list');
         this.clearAll();
 
         // let parent_node = this.el_tracks_body;
@@ -272,6 +277,7 @@ class AudioContainer extends Container {
 
                             this.data.add(track);
 
+                            console.log(1);
                             let el_new_audio_file = this.createAudioTrackNode({
                                 initial: opts.initial || false,
                                 parent: opts.parent_node,
@@ -424,11 +430,7 @@ class AudioContainer extends Container {
         }], this);
 
         ctwo(this.node, ['div .container_body', [
-            ['div #no_audio_screen .help_screen', {
-                oncreate: (node) => {
-                    this.el_no_audio_screen = node;
-                }
-            }, [
+            ['div #no_audio_screen .help_screen', [
                 ['div #no_audio_screen_load .help_screen_action', {
                     click: (e) => IPC.send('open_audio_dialog_modal'),
                 }, [
@@ -458,9 +460,9 @@ class AudioContainer extends Container {
                     ['span HTML=previously played'],
                     ['div #clear_previous HTML=CLEAR', {
                         click: (e) => {
-                            // this.el_previous_body.innerHTML = '';
-                            // this.data.previous = {};
-                            // this.data.save();
+                            this.refs.previous_body.innerHTML = '';
+                            this.data.previous = {};
+                            this.data.save();
                         }
                     }],
                 ]],

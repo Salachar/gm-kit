@@ -124,7 +124,7 @@ const DOM = {
 
     ctwo: function (parent, html_array = [], component) {
         // console.log(html_array);
-        console.log(html_array);
+        // console.log(html_array);
         if (!Array.isArray(html_array) || !html_array.length) return;
 
         const [
