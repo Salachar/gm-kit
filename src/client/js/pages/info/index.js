@@ -1,37 +1,30 @@
 const Container = require('../base');
-// const ContainerTemplate = require('./template');
+
+const { ctwo } = Lib.dom;
 
 const generators = require('./generators');
-
-const {
-    createElement,
-} = Lib.dom;
-
-const {
-    numberInput,
-} = Lib.input;
+const NumberInput = require('../../lib/inputs/numberInput');
 
 class InfoContainer extends Container {
     constructor (opts = {}) {
         super({
             ...opts,
             type: 'info',
-            // template: ContainerTemplate
+            render: false,
         });
 
         this.amount_per_click = 5;
 
         this.results = [];
 
-        this.el_buttons = document.getElementById('info_buttons');
-        this.el_results = document.getElementById('info_results');
-
-        this.initGenerators();
-        this.setEvents();
+        this.el_buttons = null;
+        this.el_results = null;
 
         Store.register({
             "info_generator_amount_change": this.onAmountChange.bind(this),
         });
+
+        this.render();
     }
 
     onAmountChange (data) {
@@ -40,84 +33,93 @@ class InfoContainer extends Container {
         this.amount_per_click = new_amount;
     }
 
-    initGenerators () {
-        for (let x in generators) {
-            generators[x].init(this);
-        }
-    }
-
     addResult (result) {
-        const node = createElement('div', 'result', {
-            prependTo: this.el_results,
-            events: {
+        ctwo(this.el_results, ['div .result', {
+            oncreate: (node) => {
+                this.results.push({
+                    type: result.type,
+                    value: result.value,
+                    node: node
+                });
+            },
+            click: (e) => e.currentTarget.classList.add('marked'),
+        }, [
+            [`span .result_key HTML=${result.type}`],
+            [`span .result_value HTML=${result.value}`],
+        ]]);
+    }
+
+    renderNameButtons () {
+        const name_buttons = [];
+
+        Object.keys(generators).forEach((generator_key) => {
+            const generator = generators[generator_key];
+            name_buttons.push([`div .info_button .button HTML=Male ${generator.title}`, {
                 click: (e) => {
-                    e.currentTarget.classList.add('marked');
+                    for (var i = 0; i < this.amount_per_click; ++i) {
+                        this.addResult({
+                            type: 'Male ' + generator.title,
+                            value: generator.generate(generator.male)
+                        });
+                    }
                 }
-            }
+            }]);
+            name_buttons.push([`div .info_button .button HTML=Female ${generator.title}`, {
+                click: (e) => {
+                    for (var i = 0; i < this.amount_per_click; ++i) {
+                        this.addResult({
+                            type: 'Female ' + generator.title,
+                            value: generator.generate(generator.female)
+                        });
+                    }
+                }
+            }]);
         });
 
-        createElement('span', 'result_key', {
-            html: result.type,
-            addTo: node
-        });
-
-        createElement('span', 'result_value', {
-            html: result.value,
-            addTo: node
-        });
-
-        this.results.push({
-            type: result.type,
-            value: result.value,
-            node: node
-        });
+        return name_buttons;
     }
 
-    setEvents () {
-        document.getElementById('clear_results_all').addEventListener('click', (e) => {
-            this.el_results.innerHTML = '';
-            this.results = [];
-        });
-
-        document.getElementById('clear_results').addEventListener('click', () => {
-            this.results = this.results.filter((result) => {
-                if (!result.node.classList.contains('marked')) {
-                    result.node.remove();
-                } else {
-                    return result;
+    render () {
+        ctwo(this.node, ['div .container_header', [
+            ['div #clear_results_all .button HTML=Clear All Results', {
+                click: (e) => {
+                    this.el_results.innerHTML = '';
+                    this.results = [];
                 }
-            });
-        });
+            }],
+            ['div #clear_results .button HTML=Clear Unmarked Results', {
+                click: (e) => {
+                    this.results = this.results.filter((result) => {
+                        if (!result.node.classList.contains('marked')) {
+                            result.node.remove();
+                        } else {
+                            return result;
+                        }
+                    });
+                }
+            }],
+            new NumberInput("#info_click_amount", {
+                min: 1,
+                init: this.amount_per_click,
+                store_key: "info_generator_amount",
+                store_event: "info_generator_amount_change"
+            }).render(),
+        ]]);
 
-        numberInput("info_click_amount", {
-            min: 1,
-            init: this.amount_per_click,
-            store_key: "info_generator_amount",
-            store_event: "info_generator_amount_change"
-        });
-    }
-
-    template () {
-        return `
-            <div class="container_header">
-                <div id="clear_results_all" class="button">Clear All Results</div>
-                <div id="clear_results" class="button">Clear Unmarked Results</div>
-
-                <div id="info_click_amount" class="number_input_container">
-                    <div class="number_input_button arrow_left"></div>
-                    <input type="text" class="number_input"></input>
-                    <div class="number_input_button arrow_right"></div>
-                </div>
-
-            </div>
-
-            <div class="container_body">
-                <div id="info_buttons">
-
-                </div>
-                <div id="info_results"></div>
-            </div>
-        `;
+        ctwo(this.node, ['div .container_body', [
+            ['div #info_buttons', {
+                oncreate: (node) => {
+                    this.el_buttons = node;
+                }
+            }, [
+                ...this.renderNameButtons(),
+            ]],
+            ['div #info_results', {
+                oncreate: (node) => {
+                    this.el_results = node;
+                }
+            }],
+        ]]);
     }
 }
 

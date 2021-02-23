@@ -50,36 +50,20 @@ class ArrowInput {
 
     return [`div ${identifiers} .arrow_buttons`, [
       ['div .arrow_button .arrow_left', {
-        mousedown: (e) => {
-          this.fireInput(-1, 0);
-        },
-        mouseend: (e) => {
-          this.stopTimer();
-        }
+        mousedown: (e) => this.fireInput(-1, 0),
+        mouseend: (e) => this.stopTimer(),
       }],
       ['div .arrow_button .arrow_top', {
-        mousedown: (e) => {
-          this.fireInput(0, -1);
-        },
-        mouseend: (e) => {
-          this.stopTimer();
-        }
+        mousedown: (e) => this.fireInput(0, -1),
+        mouseend: (e) => this.stopTimer(),
       }],
       ['div .arrow_button .arrow_right', {
-        mousedown: (e) => {
-          this.fireInput(1, 0);
-        },
-        mouseend: (e) => {
-          this.stopTimer();
-        }
+        mousedown: (e) => this.fireInput(1, 0),
+        mouseend: (e) => this.stopTimer(),
       }],
       ['div .arrow_button .arrow_bottom', {
-        mousedown: (e) => {
-          this.fireInput(0, 1);
-        },
-        mouseend: (e) => {
-          this.stopTimer();
-        }
+        mousedown: (e) => this.fireInput(0, 1),
+        mouseend: (e) => this.stopTimer(),
       }],
     ]]
   }

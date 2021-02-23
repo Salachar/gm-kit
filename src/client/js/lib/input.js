@@ -1,16 +1,7 @@
 const {
     createElement,
-    configureElement
+
 } = require('./dom');
-
-const {
-    pixelData,
-    line
-} = require('./canvas');
-
-const {
-    rgb
-} = require('./helpers');
 
 const InputHelpers = {
     // Single timer for all the inputs, nobody should be doing multiple
@@ -42,78 +33,6 @@ const InputHelpers = {
     setValue (node, value) {
         const input = node.getElementsByClassName('number_input')[0];
         input.value = value;
-    },
-
-    colorPicker: function (node, opts = {}) {
-        node = checkNode(node);
-
-        const canvas = createElement('canvas', 'color_picker_canvas', {
-            addTo: node
-        });
-        const context = canvas.getContext('2d');
-
-        let crosshair = createElement('div', 'color_picker_crosshair', {
-            addTo: node
-        });
-
-        let pixel_index = 0;
-
-        canvas.width = node.clientWidth;
-        canvas.height = node.clientHeight;
-
-        const fidelity = 255 / (canvas.width / 6);
-
-        // start with red
-        let r = 255;
-        let g = 0;
-        let b = 0;
-        // increase green to 255
-        for (g; g <= 255; g += fidelity) { pixel_index += 1; drawLine();}
-        // reduce red to 0
-        for (r; r >= 0; r -= fidelity) { pixel_index += 1; drawLine();}
-        // increase blue to 255
-        for (b; b <= 255; b += fidelity) { pixel_index += 1; drawLine();}
-        // reduce green to 0
-        for (g; g >= 0; g -= fidelity) { pixel_index += 1; drawLine();}
-        // increase red to 255
-        for (r; r <= 255; r += fidelity) { pixel_index += 1; drawLine();}
-        // reduce blue to 0
-        for (b; b >= 0; b -= fidelity) { pixel_index += 1; drawLine();}
-
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const pos = {
-                x: Math.round(e.clientX - rect.left),
-                y: Math.round(e.clientY - rect.top)
-            };
-
-            configureElement(crosshair, {
-                css: {
-                    top: pos.y + 'px',
-                    left: pos.x + 'px'
-                }
-            });
-
-            const pixel_data = pixelData(context);
-            const selected = pixel_data[pos.y][pos.x];
-            const color = rgb(selected.r, selected.g, selected.b);
-
-            handleValue(opts, color);
-        });
-
-        function drawLine () {
-            line(context, {
-                points: [{
-                    x: pixel_index,
-                    y: 0
-                }, {
-                    x: pixel_index,
-                    y: canvas.height
-                }],
-                width: 1,
-                color: rgb(r,g,b)
-            });
-        }
     },
 
     numberInput: function (node, opts = {}) {

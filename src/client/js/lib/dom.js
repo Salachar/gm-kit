@@ -122,8 +122,10 @@ const DOM = {
         return node;
     },
 
-    ctwo: function (parent, html_array = []) {
-        if (!Array.isArray(html_array)) return;
+    ctwo: function (parent, html_array = [], component) {
+        // console.log(html_array);
+        console.log(html_array);
+        if (!Array.isArray(html_array) || !html_array.length) return;
 
         const [
             markup,
@@ -152,7 +154,13 @@ const DOM = {
         // identifier being #id or .class
         split_markup.forEach((identifier) => {
             if (identifier[0] === '#') {
-                node.id = identifier.replace('#','');
+                const id = identifier.replace('#','');
+                node.id = id;
+                if (component) {
+                    if (!component.refs) component.refs = {};
+                    component.refs[id] = node;
+                }
+
             }
             if (identifier[0] === '.') {
                 node.classList.add( identifier.replace('.',''));
@@ -177,6 +185,18 @@ const DOM = {
             node.innerHTML = html;
         }
 
+        if (opts.oncreate) {
+            opts.oncreate(node);
+        }
+
+        if (opts.dataset) {
+            for (let data in opts.dataset) {
+                if (opts.dataset[data]) {
+                    node.dataset[data] = opts.dataset[data];
+                }
+            }
+        }
+
         // The most common events
         if (opts.click) {
             node.addEventListener('click', opts.click);
@@ -190,7 +210,13 @@ const DOM = {
         if (opts.mouseleave) {
             node.addEventListener('mouseleave', opts.mouseleave);
         }
+        if (opts.keydown) {
+            node.addEventListener('keydown', opts.keydown);
+        }
 
+        if (opts.contextmenu) {
+            node.addEventListener('contextmenu', opts.contextmenu);
+        }
 
         if (opts.onchange) {
             node.addEventListener('change', opts.onchange);
@@ -217,7 +243,7 @@ const DOM = {
 
         if (children.length) {
             children.forEach((child_html_array) => {
-                DOM.ctwo(node, child_html_array);
+                DOM.ctwo(node, child_html_array, component);
             });
         }
 

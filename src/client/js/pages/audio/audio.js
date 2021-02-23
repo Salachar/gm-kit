@@ -97,26 +97,22 @@ class AudioManager {
             return;
         }
 
-        let el_new_audio_file = createElement('div', 'audio_file', {
-            html: opts.track.name,
+        Lib.dom.ctwo(opts.parent, [`div .audio_file HTML=${opts.track.name}`, {
             dataset: {
                 tag: opts.tag,
                 key: opts.track.key
             },
-            events: {
-                click: (e) => {
-                    if (e.defaultPrevented) return;
-                    if (this.current_node) this.current_node.classList.remove('selected');
-                    this.current_node = el_new_audio_file;
-                    this.current_node.classList.add('selected');
-                    this.player.start(opts.track);
-                    this.addToPrevious({
-                        key: opts.track.key
-                    });
-                }
-            },
-            addTo: opts.parent
-        });
+            click: (e) => {
+                if (e.defaultPrevented) return;
+                if (this.current_node) this.current_node.classList.remove('selected');
+                this.current_node = el_new_audio_file;
+                this.current_node.classList.add('selected');
+                this.player.start(opts.track);
+                this.addToPrevious({
+                    key: opts.track.key
+                });
+            }
+        }]);
 
         // All tags created during the initial building of the list
         // are removable
@@ -154,6 +150,8 @@ class AudioManager {
     buildAudioList (audio_files) {
         this.clearAll();
 
+        console.log(audio_files);
+
         let parent_node = this.el_tracks_body;
         Object.keys(audio_files).forEach((key) => {
             let override_section = null;
@@ -180,11 +178,10 @@ class AudioManager {
     }
 
     createTrackSection (opts = {}) {
-        let el_new_section = createElement('div', 'audio_file_section');
-        // Create the section title element
-        createElement('div', 'audio_file_section_title', {
-            html: opts.section.name,
-            events: {
+        let el_new_section_body = null;
+
+        Lib.dom.ctwo(opts.parent_node, ['div .audio_file_section', [
+            [`div .audio_file_section_title HTML=${opts.section.name}`, {
                 click: (e) => {
                     el_new_section_body.classList.toggle('collapse');
                     if (el_new_section_body.classList.contains('collapse')) {
@@ -194,17 +191,13 @@ class AudioManager {
                     }
                     this.data.save();
                 }
-            },
-            addTo: el_new_section
-        });
-
-        let el_new_section_body_class = 'audio_file_section_body';
-        if (this.data.collapse[opts.section.name]) {
-            el_new_section_body_class += ' collapse';
-        }
-        let el_new_section_body = createElement('div', el_new_section_body_class, {
-            addTo: el_new_section
-        });
+            }],
+            [`div .audio_file_section_body ${this.data.collapse[opts.section.name] ? '.collapse' : ''}`, {
+                oncreate: (node) => {
+                    el_new_section_body = node;
+                }
+            }],
+        ]]);
 
         // If there are section files I need to add nodes to represent
         // the tracks that can be played
@@ -228,8 +221,6 @@ class AudioManager {
                 });
             }
         });
-
-        opts.parent_node.appendChild(el_new_section);
     }
 
     createTrack (opts = {}) {
@@ -243,66 +234,51 @@ class AudioManager {
             track: this.data.tracks[track.key]
         });
 
-        createElement('input', 'audio_file_tag_input', {
-            addTo: el_new_audio_file,
-            events: {
-                click: (e) => {
-                    e.preventDefault();
-                    return false;
-                },
-                keydown: (e) => {
-                    if (e.code !== 'Enter') return;
-                    let tag = e.currentTarget.value.trim();
-                    if (!tag || tag === '') return;
-                    this.data.tracks[track.key].tags.push(tag);
-                    this.addTag({
-                        tag: tag,
-                        parent_node: el_new_audio_file,
-                        save: true,
-                        removable: true
-                    });
-                    e.currentTarget.value = '';
-                }
+        Lib.dom.ctwo(el_new_audio_file, ['input .audio_file_tag_input', {
+            click: (e) => {
+                e.preventDefault();
+                return false;
+            },
+            keydown: (e) => {
+                if (e.code !== 'Enter') return;
+                let tag = e.currentTarget.value.trim();
+                if (!tag || tag === '') return;
+                this.data.tracks[track.key].tags.push(tag);
+                this.addTag({
+                    tag: tag,
+                    parent_node: el_new_audio_file,
+                    save: true,
+                    removable: true
+                });
+                e.currentTarget.value = '';
             }
-        });
+        }]);
     }
 
     addTag (opts = {}) {
         let tag_class = 'audio_file_tag';
         if (opts.removable) tag_class += ' removable';
-        let new_tag = createElement('div', tag_class, {
-            html: opts.tag,
-            addTo: opts.parent_node
-        });
 
-        if (opts.removable) {
-            createElement('div', 'audio_file_tag_remove', {
-                addTo: new_tag,
-                dataset: {
-                    tag: opts.tag,
-                    key: opts.parent_node.dataset.key
-                },
-                events: {
-                    click: (e) => {
-                        e.preventDefault();
-                        const key = e.currentTarget.dataset.key;
-                        if (!key) {
-                            console.error('There was no parent key found for this tag');
-                            return;
-                        }
-                        const new_tags = this.data.tracks[key].tags.filter((curr_tag) => {
-                            return curr_tag !== e.currentTarget.dataset.tag;
-                        });
-                        this.data.tracks[key].tags = new_tags;
-                        e.currentTarget.parentElement.remove();
-                        this.data.save();
+        Lib.dom.ctwo(opts.parent_node, [`div ${tag_class}`, [
+            opts.removable && ['div .audio_file_tag_remove', {
+                click: (e) => {
+                    e.preventDefault();
+                    const key = e.currentTarget.dataset.key;
+                    if (!key) {
+                        console.error('There was no parent key found for this tag');
+                        return;
                     }
+                    const new_tags = this.data.tracks[key].tags.filter((curr_tag) => {
+                        return curr_tag !== e.currentTarget.dataset.tag;
+                    });
+                    this.data.tracks[key].tags = new_tags;
+                    e.currentTarget.parentElement.remove();
+                    this.data.save();
                 }
-            });
-        }
-        if (opts.save) {
-            this.data.save();
-        }
+            }]
+        ]]);
+
+        if (opts.save) this.data.save();
     }
 }
 

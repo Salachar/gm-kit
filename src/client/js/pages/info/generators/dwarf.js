@@ -5,16 +5,11 @@
 */
 
 const {
-    generateNameButtons,
     randomFromList
-} = require('../helpers');
+} = Lib.helpers;
 
 const dwarf_names = {
     title: 'Dwarf',
-
-    init: function (container) {
-        generateNameButtons(this, container);
-    },
 
     generate: function (gender_names) {
         return randomFromList(gender_names) + ' (clan ' + randomFromList(this.clans) + ')';

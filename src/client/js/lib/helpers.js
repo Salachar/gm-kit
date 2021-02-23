@@ -5,6 +5,15 @@ const {
 } = require('./dom');
 
 const Helpers = {
+    percentage: function () {
+        return Math.floor(Math.random() * (100 - 1) + 1);
+    },
+
+    randomFromList: function (list) {
+        let list_index = Math.floor(Math.random() * list.length);
+        return list[list_index];
+    },
+
     resetSnap: function () {
         CONFIG.snap.indicator.show = false;
         CONFIG.snap.indicator.point = null;

@@ -1,16 +1,21 @@
 class NumberInput {
-  constructor (classname, props = {}) {
+  constructor (identifiers, props = {}) {
     this.guid = Lib.guid.generate();
 
     this.timer = null;
 
     this.props = {
-      classname: classname || '',
+      identifiers: identifiers || '',
       step: 1,
       interval: 100,
       default_value: 0,
       ...props,
     };
+  }
+
+  set (value) {
+    const input = document.getElementById(`number_input_${this.guid}`);
+    input.value = value;
   }
 
   stopTimer () {
@@ -55,36 +60,26 @@ class NumberInput {
 
   render () {
     const {
-      classname,
+      identifiers,
       default_value,
       min,
       max
     } = this.props;
 
-    return [`div .${classname} .number_input_container`, [
+    return [`div ${identifiers} .number_input_container`, [
       [`div .number_input_button .arrow_left`, {
-        mousedown: (e) => {
-          this.fireInput(-1);
-        },
-        mouseend: (e) => {
-          this.stopTimer();
-        }
+        mousedown: (e) => this.fireInput(-1),
+        mouseend: (e) => this.stopTimer(),
       }],
       !isNaN(min) && [`div .number_input_info .number_input_min HTML=${min}`],
       [`input #number_input_${this.guid} .number_input`, {
         value: default_value,
-        onchange: (e) => {
-          this.checkValue();
-        }
+        onchange: (e) => this.checkValue(),
       }],
       !isNaN(max) && [`div .number_input_info .number_input_max HTML=${max}`],
       [`div .number_input_button .arrow_right`, {
-        mousedown: (e) => {
-          this.fireInput(1);
-        },
-        mouseend: (e) => {
-          this.stopTimer();
-        }
+        mousedown: (e) => this.fireInput(1),
+        mouseend: (e) => this.stopTimer(),
       }],
     ]];
   }

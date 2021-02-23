@@ -9,13 +9,13 @@ class MapListManager {
 
         this.onMapLoad = opts.onMapLoad;
 
-        this.node = document.getElementById('map_list_modal');
+        // this.node = document.getElementById('map_list_modal');
 
-        this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
-        this.el_modal_body = document.getElementById('map_list_modal_body');
+        // this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
+        // this.el_modal_body = document.getElementById('map_list_modal_body');
 
-        this.el_map_list = document.getElementById('map_list_modal_body_list');
-        this.el_map_preview = document.getElementById('map_list_modal_body_preview');
+        // this.el_map_list = document.getElementById('map_list_modal_body_list');
+        // this.el_map_preview = document.getElementById('map_list_modal_body_preview');
 
         // Reference to the current map hovered over for preview images
         this.current_map_hover = null;
@@ -23,20 +23,21 @@ class MapListManager {
         // List of maps that have been checked for mass open
         this.selected_maps = {};
 
-        this.addInfoTitle();
-        this.setEvents();
+        // this.addInfoTitle();
+        this.setIPCEvents();
     }
 
-    addInfoTitle () {
-        if (!CONFIG.params.map_dir) return;
-        const modal_title = this.node.getElementsByClassName('modal_title')[0];
-        if (!modal_title) return;
-        modal_title.setAttribute('title', CONFIG.params.map_dir);
-    }
+    // addInfoTitle () {
+    //     if (!CONFIG.params.map_dir) return;
+    //     const modal_title = this.node.getElementsByClassName('modal_title')[0];
+    //     if (!modal_title) return;
+    //     modal_title.setAttribute('title', CONFIG.params.map_dir);
+    // }
 
     createFileTree (map_list) {
-        this.el_map_list.innerHTML = '';
-        this.addSection(map_list, this.el_map_list);
+        const el_map_list = document.getElementById('map_list_modal_body_list');
+        el_map_list.innerHTML = '';
+        this.addSection(map_list, el_map_list);
         this.openModal();
     }
 
@@ -94,7 +95,8 @@ class MapListManager {
                                 let img = new Image;
                                 img.onload = () => {
                                     if (image_source !== this.current_map_hover) return;
-                                    this.el_map_preview.style.backgroundImage = `url("${img.src}")`;
+                                    const el_map_preview = document.getElementById('map_list_modal_body_preview');
+                                    el_map_preview.style.backgroundImage = `url("${img.src}")`;
                                 }
                                 img.src = image_source;
                             })(map.image);
@@ -143,41 +145,19 @@ class MapListManager {
     }
 
     openModal () {
-        this.el_modal_wrap.classList.remove('hidden');
+        const modal_wrap = document.getElementById('map_list_modal_wrap')
+        modal_wrap.classList.remove('hidden');
     }
 
     closeModal () {
-        this.el_modal_wrap.classList.add('hidden');
-        this.el_map_list.innerHTML = '';
+        const modal_wrap = document.getElementById('map_list_modal_wrap')
+        modal_wrap.classList.add('hidden');
+        const el_map_list = document.getElementById('map_list_modal_body_list');
+        el_map_list.innerHTML = '';
         document.getElementById('map_list_search').value = '';
     }
 
-    setEvents () {
-        listener('load_files', 'click', (e) => {
-            IPC.send('load_maps');
-        });
-
-        // listener('no_map_screen_load', 'click', (e) => {
-        //     IPC.send('load_maps');
-        // });
-
-        listener('map_list_modal_open', 'click', (e) => {
-            IPC.send('load_map', this.selected_maps);
-        });
-
-        listener('map_list_modal_close', 'click', (e) => {
-            this.closeModal();
-        });
-
-        listener('map_list_modal_folder', 'click', (e) => {
-            IPC.send('open_map_dialog_modal');
-        });
-
-        listener('map_list_search', 'keyup', (e) => {
-            const search_string = e.currentTarget.value;
-            this.searchMaps(this.map_list, search_string);
-        });
-
+    setIPCEvents () {
         IPC.on('maps_loaded', (e, map_list) => {
             this.map_list = map_list;
             this.createFileTree(map_list);
@@ -189,29 +169,42 @@ class MapListManager {
         });
     }
 
-    static template () {
-        return `
-            <div id="map_list_modal_wrap" class="hidden">
-                <div id="map_list_modal" class="modal">
-                    <div class="modal_header">
-                        <div class="modal_title">
-                            <span class="modal_title_info">&#9432;</span>
-                            <span class="modal_title_text">Select Map:</span>
-                        </div>
-                        <div class="modal_header_buttons">
-                            <input id="map_list_search" type="text" class="text_input"></input>
-                            <div id="map_list_modal_folder" class="button">MAP DIRECTORY</div>
-                            <div id="map_list_modal_open" class="button">OPEN SELECTED</div>
-                        </div>
-                        <div id="map_list_modal_close" class="modal_close"></div>
-                    </div>
-                    <div id="map_list_modal_body" class="modal_body">
-                        <div id="map_list_modal_body_preview"></div>
-                        <div id="map_list_modal_body_list"></div>
-                    </div>
-                </div>
-            </div>
-        `;
+    renderMapList () {
+
+    }
+
+    render () {
+        return ['div #map_list_modal_wrap .hidden', [
+            ['div #map_list_modal .modal', [
+                ['div .modal_header', [
+                    ['div .modal_title', [
+                        ['span .modal_title_info HTML=&#9432;'],
+                        ['span .modal_title_text HTML=Select Map:'],
+                    ]],
+                    ['div .modal_header_button', [
+                        ['input #map_list_search .text_input', {
+                            onchange: (e) => {
+                                const search_string = e.currentTarget.value;
+                                this.searchMaps(this.map_list, search_string);
+                            }
+                        }],
+                        ['div #map_list_modal_folder .button HTML=MAP DIRECTORY', {
+                            click: (e) => IPC.send('open_map_dialog_modal')
+                        }],
+                        ['div #map_list_modal_open .button HTML=OPEN SELECTED', {
+                            click: (e) => IPC.send('load_map', this.selected_maps)
+                        }],
+                    ]],
+                    ['div #map_list_modal_close .modal_close', {
+                        click: (e) => this.closeModal()
+                    }],
+                ]],
+                ['div #map_list_modal_body .modal_body', [
+                    ['div #map_list_modal_body_preview'],
+                    ['div #map_list_modal_body_list']
+                ]],
+            ]],
+        ]];
     }
 }
 module.exports = MapListManager;
