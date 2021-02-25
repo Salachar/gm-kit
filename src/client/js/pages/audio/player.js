@@ -108,7 +108,7 @@ class AudioPlayer {
                 max: 1,
                 store_key: 'audio_volume',
                 store_event: 'audio_volume_change'
-            }).render(),
+            }),
 
             ['div #choose_audio_directory .button HTML=Choose Audio Directory', {
                 click: (e) => IPC.send('open_audio_dialog_modal'),

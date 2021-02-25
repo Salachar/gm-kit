@@ -57,6 +57,7 @@
     bottom: 0;
     left: 0;
     overflow-y: scroll;
+    padding: 0 1.5rem;
 }
 
 #map_controls_container .button {
@@ -66,41 +67,24 @@
     text-align: center;
 }
 
-#show_player_screen {
-    width: 100%;
-}
-
-#show_entire_map {
-    margin-bottom: 0 !important;
-}
-
 .map_control_section {
-    margin-bottom: 2rem;
-}
-
-.map_control_section_body {
-    padding: 0.5rem 0.5rem 0 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .map_control_section_header {
-    padding: 0.5rem;
+    /* padding: 0.5rem; */
     text-align: center;
-    background-color: rgba(255,255,255,0.15);
-    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
 }
-.map_control_section_header:hover {
-    background-color: var(--button-hover-color);
-}
-.map_control_section_header:active {
-    background-color: var(--button-active-color);
-}
-
 
 .map_section_spacer {
     height: 1rem;
 }
 
-#grid_size_container {
+#grid_size_input {
     margin-bottom: 1rem;
 }
 

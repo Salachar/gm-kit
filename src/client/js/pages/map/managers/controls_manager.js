@@ -1,3 +1,4 @@
+const Button = require('../../../lib/inputs/button');
 const NumberInput = require('../../../lib/inputs/numberInput');
 const ArrowInput = require('../../../lib/inputs/arrowInput');
 const Checkbox = require('../../../lib/inputs/checkbox');
@@ -10,52 +11,19 @@ class ControlsManager {
     constructor (opts = {}) {
         this.open = false;
 
-        this.createInputs();
-
         Store.register({
             'deselect_spell_marker': this.deselectSpellMarker.bind(this),
         });
     }
 
-    createInputs () {
-        this.grid_size_input = new NumberInput('#grid_size_container', {
-            step: 0.25,
-            init: 50,
-            store_key: 'size',
-            store_event: 'grid_size_update_(ps)'
-        });
-
-        this.spell_marker_shape = new RadioInput('#spell_marker_shape', {
-            options: ['line', 'square', 'circle', 'cone'],
-            store_key: 'spell_marker_shape',
-            store_event: 'spell_marker_shape_updated-(ps)'
-        });
-
-        this.map_zoom_input = new NumberInput('#map_zoom', {
-            step: 0.025,
-            interval: 20,
-            store_key: 'zoom',
-            store_event: 'zoom_(ps)'
-        });
-
-        this.player_screen_brightness_input = new NumberInput('#player_screen_brightness', {
-            min: 0,
-            max: 200,
-            init: 100,
-            interval: 30,
-            store_key: 'brightness',
-            store_event: 'brightness_(ps)'
-        });
-    }
-
     deselectSpellMarker () {
-        this.spell_marker_shape.deselect();
+        this.refs.spell_marker_shape.deselect();
     }
 
     update (map) {
-        this.grid_size_input.set(map.managers.canvas.canvases.grid.attributes.size);
-        this.map_zoom_input.set(map.player_screen_zoom);
-        this.player_screen_brightness_input.set(map.managers.canvas.canvases.image.brightness);
+        this.refs.grid_size_input.set(map.managers.canvas.canvases.grid.attributes.size);
+        this.refs.map_zoom_input.set(map.player_screen_zoom);
+        this.refs.player_screen_brightness.set(map.managers.canvas.canvases.image.brightness);
     }
 
     render () {
@@ -77,101 +45,94 @@ class ControlsManager {
 
             ['div #map_controls_body', [
                 ['div .map_control_section', [
-                    ['div .map_control_section_header HTML=Common Hotkeys'],
-                    ['div #common_hotkeys .map_control_section_body', [
-                        ['div .button_text HTML=Common Hotkeys used during sessions'],
-                        ...HelpManager.getHelpInfo().map((help_item) => {
-                            if (!help_item.common) return;
-                            return ['div .hotkey_section', [
-                                [`span .hotkey_key HTML=${help_item.key}`],
-                                [`span .hotkey_desc HTML=${help_item.text}`],
-                            ]]
-                        }).filter(e => e),
-                    ]],
-                ]],
-
-                ['div .map_control_section', [
+                    ['div .map_control_section_header HTML=Player Screen'],
                     ['div .map_control_section_body', [
-                        ['div #show_player_screen .button HTML=Show on Player Screen', {
-                            click: (e) => Store.fire('show_player_screen')
-                        }],
-                    ]],
-                ]],
-
-                ['div .map_control_section', [
-                    ['div .map_control_section_body', [
-                        ['div #show_entire_map .button HTML=Show Entire Map', {
-                            click: (e) => Store.fire('show_entire_map')
-                        }],
+                        new Button('#show_on_player_screen', {
+                            text: 'Show on Player Screen',
+                            store_event: 'show_player_screen',
+                        }),
+                        new Button('#show_entire_map', {
+                            text: 'Show Entire Map',
+                            store_event: 'show_entire_map',
+                        }),
+                        new Button('#toggle_map_fit', {
+                            text: 'Toggle Map Fit',
+                            store_event: 'toggle_map_fit-(PS)',
+                        }),
+                        // new ArrowInput('#scroll_buttons', {
+                        //     text: 'Scroll the Player Screen',
+                        //     step: 2,
+                        //     interval: 10,
+                        //     store_key: 'offset',
+                        //     store_event: 'scroll_(PS)'
+                        // }),
+                        new NumberInput('#map_zoom_input', {
+                            text: 'Zoom',
+                            step: 0.025,
+                            interval: 20,
+                            store_key: 'zoom',
+                            store_event: 'zoom_(ps)',
+                            parent: this,
+                        }),
+                        new NumberInput('#player_screen_brightness', {
+                            text: 'Brightness',
+                            min: 0,
+                            max: 200,
+                            default_value: 100,
+                            interval: 30,
+                            store_key: 'brightness',
+                            store_event: 'brightness_(ps)',
+                            parent: this,
+                        }),
                     ]],
                 ]],
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
                     ['div .map_control_section_body', [
-                        ['div .button_text HTML=Overlay a grid onto the map, this will show on both the GM and Player Screen. Saving the map will save the current grid settings'],
-                        ['div #grid_toggle .button HTML=Toggle Grid', {
-                            click: (e) => Store.fire('toggle_grid_(ps)')
-                        }],
-
-                        ['div .button_text HTML=Change the grid size (pixels'],
-                        this.grid_size_input.render(),
-
-                        ['div .button_text HTML=Shift the overlayed grid'],
+                        new Button('#grid_toggle', {
+                            text: 'Toggle Grid',
+                            store_event: 'toggle_grid_(ps)',
+                        }),
+                        new NumberInput('#grid_size_input', {
+                            text: 'Size',
+                            step: 0.25,
+                            default_value: 50,
+                            store_key: 'size',
+                            store_event: 'grid_size_update_(ps)',
+                            parent: this,
+                        }),
                         new ArrowInput('#grid_shift', {
                             step: 1,
                             store_key: 'offset',
                             store_event: 'grid_offset_update_(ps)'
-                        }).render(),
+                        }),
                     ]],
                 ]],
 
                 ['div .map_control_section', [
-                    ['div .map_control_section_header HTML=Spell/Shape Markers'],
+                    ['div .map_control_section_header HTML=Spell Markers'],
                     ['div .map_control_section_body', [
-                        ['div .button_text HTML=Currently only useable with overlay grid enabled'],
                         new NumberInput('#spell_marker_size', {
+                            text: '* Requires Grid',
                             step: 5,
                             init: 20,
                             store_key: 'spell_marker_size'
-                        }).render(),
-
-                        this.spell_marker_shape.render(),
+                        }),
+                        new RadioInput('#spell_marker_shape', {
+                            options: ['line', 'square', 'circle', 'cone'],
+                            store_key: 'spell_marker_shape',
+                            store_event: 'spell_marker_shape_updated-(ps)',
+                            parent: this,
+                        }),
                         new ColorPicker('#spell_marker_color', {
                             store_key: 'spell_marker_color'
-                        }).render(),
-
-                        ['div .button_text HTML=Will cause a performance drop only while placing markers'],
-                        ['div .checkbox_container', [
-                            new Checkbox('show_affected_tiles', {
-                                store_key: 'show_affected_tiles show_affected_tiles_checked',
-                                store_event: 'show_affected_tiles_toggled-(ps)'
-                            }).render(),
-                            ['div .checkbox_label HTML=Show grid cells affected by spells'],
-                        ]],
-                    ]],
-                ]],
-
-                ['div .map_control_section', [
-                    ['div .map_control_section_header HTML=>Player Screen Controls'],
-                    ['div .map_control_section_body', [
-                        ['div #toggle_map_fit .button HTML=Toggle Map Fit', {
-                            click: (e) => Store.fire('toggle_map_fit-(PS)')
-                        }],
-
-                        ['div .button_text HTML=Scroll the Player Screen'],
-                        new ArrowInput('#scroll_buttons', {
-                            step: 2,
-                            interval: 10,
-                            store_key: 'offset',
-                            store_event: 'scroll_(PS)'
-                        }).render(),
-
-                        ['div .button_text HTML=Zoom the Player Screen'],
-                        this.map_zoom_input.render(),
-
-                        ['div .button_text HTML=Dim the Player Screen (artificial screen brightness)'],
-                        this.player_screen_brightness_input.render(),
+                        }),
+                        new Checkbox('show_affected_tiles', {
+                            text: 'Highlight Affected Tiles',
+                            store_key: 'show_affected_tiles show_affected_tiles_checked',
+                            store_event: 'show_affected_tiles_toggled-(ps)'
+                        }),
                     ]],
                 ]],
             ]],

@@ -1,7 +1,8 @@
+const Lib = require('..');
 const Base = require('./base');
 class RadioInput extends Base {
   constructor (identifiers, props = {}) {
-    super(props);
+    super(identifiers, props);
 
     this.radio_inputs = [];
 
@@ -10,6 +11,8 @@ class RadioInput extends Base {
       options: [],
       ...props,
     };
+
+    return this.render();
   }
 
   deselect () {
@@ -24,7 +27,7 @@ class RadioInput extends Base {
       options,
     } = this.props;
 
-    return [`div ${identifiers} .radio_input`, [
+    return Lib.dom.generate([`div ${identifiers} .radio_input`, [
       ...options.map((option) => {
         let value = option;
         let label = option;
@@ -66,7 +69,7 @@ class RadioInput extends Base {
           [`div .checkbox_label HTML=${label}`],
         ]];
       }),
-    ]]
+    ]]);
   }
 }
 

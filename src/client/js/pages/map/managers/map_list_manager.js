@@ -71,6 +71,7 @@ class MapListManager {
     }
 
     createFileTree (map_list) {
+        console.log(map_list);
         this.refs.map_list_modal_body_list.innerHTML = '';
         Lib.dom.generate(this.generateSectionNodes(map_list), this, this.refs.map_list_modal_body_list);
         this.openModal();
@@ -112,10 +113,12 @@ class MapListManager {
         let classname = '.map_list_map';
         if (map.video) {
             // mapname += ' (VIDEO)';
+            mapname = '[VIDEO] ' + mapname;
             classname += ' .map_list_map_video';
         }
         if (map.json) {
             // mapname += ' (M)';
+            mapname = '[WALLS] ' + mapname;
             classname += ' .map_list_map_json';
         }
 

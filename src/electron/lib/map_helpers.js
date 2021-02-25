@@ -27,6 +27,7 @@ const MapHelpers = {
     },
 
     investigateFile: function (dir, item, type) {
+        // type is 'video' or 'image' based on the types passed into readDir
         const [file_name, file_type] = item.split('.');
 
         // If the file is a DM image, skip it
@@ -47,14 +48,6 @@ const MapHelpers = {
             if (prepend_file_check) dm_version = prepend_file_check;
             if (append_file_check) dm_version = append_file_check;
         });
-
-        // let dm_version = FileHelpers.getFile({
-        //     dir: dir,
-        //     file: `DM_${file_name}.${file_type}`
-        // }) || FileHelpers.getFile({
-        //     dir: dir,
-        //     file: `${file_name}_DM.${file_type}`
-        // });
 
         // Create the file object
         let file_obj = {
@@ -93,6 +86,12 @@ const MapHelpers = {
 
         let dir_split = relative_directory.split(path.sep);
         dir_split.push('files');
+
+        let directory_split = this.directory.split(path.sep);
+        let main_folder_name = directory_split[directory_split.length - 1];
+        dir_split.unshift(main_folder_name);
+
+        dir_split = dir_split.filter(e => e);
 
         let curr = this.list;
         for (let i = 0; i <= dir_split.length; ++i) {

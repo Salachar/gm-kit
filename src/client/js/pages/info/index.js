@@ -103,7 +103,7 @@ class InfoContainer extends Container {
                     init: this.amount_per_click,
                     store_key: "info_generator_amount",
                     store_event: "info_generator_amount_change"
-                }).render(),
+                }),
             ]],
             ['div .container_body', [
                 ['div #info_buttons', {

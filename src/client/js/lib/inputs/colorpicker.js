@@ -10,7 +10,7 @@ const {
 const Base = require('./base');
 class ColorPicker extends Base {
   constructor (identifiers, props = {}) {
-    super(props);
+    super(identifiers, props);
 
     this.container = null;
     this.canvas = null;
@@ -21,6 +21,8 @@ class ColorPicker extends Base {
       identifiers: identifiers || '',
       ...props,
     };
+
+    return this.render();
   }
 
   render () {
@@ -28,12 +30,22 @@ class ColorPicker extends Base {
       identifiers,
     } = this.props;
 
+    /*
+    ColorPicker currently cant use Lib.dom.generate
+    since it wouldnt have dimensions at creation time
+    so the colors couldnt be drawn correctly
+
+    TODO: Create a separate constant sized popup?
+    */
+
     return [`div ${identifiers} .color_picker`, {
       oncreate: (node) => {
         this.container = node;
       },
       },[['canvas .color_picker_canvas', {
         oncreate: (canvas) => {
+          console.log(this.container);
+
           this.canvas = canvas;
           let context = canvas.getContext('2d');
           this.context = context;

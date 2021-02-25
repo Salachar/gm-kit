@@ -1,7 +1,8 @@
+const Lib = require('..');
 const Base = require('./base');
 class ArrowInput extends Base {
   constructor (identifiers, props = {}) {
-    super(props);
+    super(identifiers, props);
 
     this.timer = null;
 
@@ -11,6 +12,8 @@ class ArrowInput extends Base {
       interval: 100,
       ...props,
     };
+
+    return this.render();
   }
 
   stopTimer () {
@@ -49,26 +52,30 @@ class ArrowInput extends Base {
   render () {
     const {
       identifiers,
+      text,
     } = this.props;
 
-    return [`div ${identifiers} .arrow_buttons`, [
-      ['div .arrow_button .arrow_left', {
-        mousedown: (e) => this.fireInput(-1, 0),
-        mouseend: (e) => this.stopTimer(),
-      }],
-      ['div .arrow_button .arrow_top', {
-        mousedown: (e) => this.fireInput(0, -1),
-        mouseend: (e) => this.stopTimer(),
-      }],
-      ['div .arrow_button .arrow_right', {
-        mousedown: (e) => this.fireInput(1, 0),
-        mouseend: (e) => this.stopTimer(),
-      }],
-      ['div .arrow_button .arrow_bottom', {
-        mousedown: (e) => this.fireInput(0, 1),
-        mouseend: (e) => this.stopTimer(),
-      }],
-    ]]
+    return Lib.dom.generate(['div .input_container', [
+      text && [`div .input_text HTML=${text}`],
+      [`div ${identifiers} .arrow_buttons`, [
+        ['div .arrow_button .arrow_top', {
+          mousedown: (e) => this.fireInput(0, -1),
+          mouseend: (e) => this.stopTimer(),
+        }],
+        ['div .arrow_button .arrow_bottom', {
+          mousedown: (e) => this.fireInput(0, 1),
+          mouseend: (e) => this.stopTimer(),
+        }],
+        ['div .arrow_button .arrow_left', {
+          mousedown: (e) => this.fireInput(-1, 0),
+          mouseend: (e) => this.stopTimer(),
+        }],
+        ['div .arrow_button .arrow_right', {
+          mousedown: (e) => this.fireInput(1, 0),
+          mouseend: (e) => this.stopTimer(),
+        }],
+      ]],
+    ]]);
   }
 }
 

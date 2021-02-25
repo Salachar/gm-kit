@@ -268,13 +268,11 @@ class MapContainer extends Container {
                     ['div #save_all_maps .button HTML=Save All'],
                     ['div #save_state .button HTML=Save State'],
                     ['div .button_spacer'],
-                    ['div .checkbox_container', [
-                        new Checkbox('create_one_way_wall', {
-                            store_key: 'create_one_way_wall',
-                            store_event: 'create_one_way_wall_toggled'
-                        }).render(),
-                        ['div .checkbox_label HTML=One-Way Wall (modify existing wall)'],
-                    ]],
+                    new Checkbox('create_one_way_wall', {
+                        text: 'One-Way Wall (modify existing wall)',
+                        store_key: 'create_one_way_wall',
+                        store_event: 'create_one_way_wall_toggled',
+                    }),
                 ]],
 
                 // Help Manager gets created and added
