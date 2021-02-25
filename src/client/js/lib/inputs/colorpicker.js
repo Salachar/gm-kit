@@ -7,8 +7,11 @@ const {
   rgb
 } = require('../helpers');
 
-class ColorPicker {
+const Base = require('./base');
+class ColorPicker extends Base {
   constructor (identifiers, props = {}) {
+    super(props);
+
     this.container = null;
     this.canvas = null;
     this.context = null;
@@ -91,7 +94,7 @@ class ColorPicker {
           const selected = pixel_data[pos.y][pos.x];
           const color = rgb(selected.r, selected.g, selected.b);
 
-          Lib.input.handleStore({
+          this.handleStore({
             store_key,
           }, color);
         },

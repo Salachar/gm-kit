@@ -1,9 +1,8 @@
 const Container = require('../base');
 
-const { ctwo } = Lib.dom;
-
 const generators = require('./generators');
 const NumberInput = require('../../lib/inputs/numberInput');
+const Lib = require('../../lib');
 
 class InfoContainer extends Container {
     constructor (opts = {}) {
@@ -34,7 +33,7 @@ class InfoContainer extends Container {
     }
 
     addResult (result) {
-        ctwo(this.el_results, ['div .result', {
+        Lib.dom.generate(['div .result', {
             oncreate: (node) => {
                 this.results.push({
                     type: result.type,
@@ -46,7 +45,7 @@ class InfoContainer extends Container {
         }, [
             [`span .result_key HTML=${result.type}`],
             [`span .result_value HTML=${result.value}`],
-        ]]);
+        ]], null, this.el_results);
     }
 
     renderNameButtons () {
@@ -80,46 +79,47 @@ class InfoContainer extends Container {
     }
 
     render () {
-        ctwo(this.node, ['div .container_header', [
-            ['div #clear_results_all .button HTML=Clear All Results', {
-                click: (e) => {
-                    this.el_results.innerHTML = '';
-                    this.results = [];
-                }
-            }],
-            ['div #clear_results .button HTML=Clear Unmarked Results', {
-                click: (e) => {
-                    this.results = this.results.filter((result) => {
-                        if (!result.node.classList.contains('marked')) {
-                            result.node.remove();
-                        } else {
-                            return result;
-                        }
-                    });
-                }
-            }],
-            new NumberInput("#info_click_amount", {
-                min: 1,
-                init: this.amount_per_click,
-                store_key: "info_generator_amount",
-                store_event: "info_generator_amount_change"
-            }).render(),
-        ]]);
-
-        ctwo(this.node, ['div .container_body', [
-            ['div #info_buttons', {
-                oncreate: (node) => {
-                    this.el_buttons = node;
-                }
-            }, [
-                ...this.renderNameButtons(),
+        Lib.dom.generate(['div .page', [
+            ['div .container_header', [
+                ['div #clear_results_all .button HTML=Clear All Results', {
+                    click: (e) => {
+                        this.el_results.innerHTML = '';
+                        this.results = [];
+                    }
+                }],
+                ['div #clear_results .button HTML=Clear Unmarked Results', {
+                    click: (e) => {
+                        this.results = this.results.filter((result) => {
+                            if (!result.node.classList.contains('marked')) {
+                                result.node.remove();
+                            } else {
+                                return result;
+                            }
+                        });
+                    }
+                }],
+                new NumberInput("#info_click_amount", {
+                    min: 1,
+                    init: this.amount_per_click,
+                    store_key: "info_generator_amount",
+                    store_event: "info_generator_amount_change"
+                }).render(),
             ]],
-            ['div #info_results', {
-                oncreate: (node) => {
-                    this.el_results = node;
-                }
-            }],
-        ]]);
+            ['div .container_body', [
+                ['div #info_buttons', {
+                    oncreate: (node) => {
+                        this.el_buttons = node;
+                    }
+                }, [
+                    ...this.renderNameButtons(),
+                ]],
+                ['div #info_results', {
+                    oncreate: (node) => {
+                        this.el_results = node;
+                    }
+                }],
+            ]]
+        ]], null, this.node);
     }
 }
 

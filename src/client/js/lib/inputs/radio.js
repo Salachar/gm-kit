@@ -1,5 +1,8 @@
-class RadioInput {
+const Base = require('./base');
+class RadioInput extends Base {
   constructor (identifiers, props = {}) {
+    super(props);
+
     this.radio_inputs = [];
 
     this.props = {
@@ -54,7 +57,7 @@ class RadioInput {
                   new_value = value;
               }
 
-              Lib.input.handleStore({
+              this.handleStore({
                 store_key,
                 store_event
               }, value);

@@ -1,5 +1,8 @@
-class ArrowInput {
+const Base = require('./base');
+class ArrowInput extends Base {
   constructor (identifiers, props = {}) {
+    super(props);
+
     this.timer = null;
 
     this.props = {
@@ -28,14 +31,14 @@ class ArrowInput {
       y: y * step
     };
 
-    Lib.input.handleStore({
+    this.handleStore({
       store_key,
       store_event,
     }, offset);
 
     if (typeof interval === 'number') {
       this.timer = setInterval(() => {
-        Lib.input.handleStore({
+        this.handleStore({
           store_key,
           store_event,
         }, offset);

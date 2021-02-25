@@ -69,7 +69,6 @@ class AudioData {
     }
 
     set (data) {
-        console.log(data);
         if (!data) return;
         try {
             delete data.track;

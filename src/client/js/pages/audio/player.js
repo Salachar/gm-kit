@@ -16,6 +16,8 @@ class AudioPlayer {
         Store.register({
             'audio_volume_change': this.onVolumeChange.bind(this),
         });
+
+        this.setPlayerEvents();
     }
 
     onVolumeChange (data) {
@@ -54,7 +56,6 @@ class AudioPlayer {
     }
 
     start (track) {
-        console.log(this);
         this.player.src = track.source;
         this.refs.audio_player_now_playing.innerHTML = track.name;
         this.clear();
@@ -78,10 +79,8 @@ class AudioPlayer {
         this.duration = 0;
     }
 
-
-    render (parent) {
-        console.log(parent);
-        Lib.dom.ctwo(parent, ['div #audio_player', [
+    render () {
+        return Lib.dom.generate(['div #audio_player', [
             ['div #audio_player_play_pause .button HTML=PAUSE', {
                 click: (e) => {
                     if (!this.player.src) return;

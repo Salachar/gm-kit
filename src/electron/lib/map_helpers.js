@@ -56,6 +56,9 @@ const MapHelpers = {
             type: 'json'
         });
 
+        // Temporary for better identification of map type
+        if (file_obj.video) file_obj.name += ' (video)';
+
         if (json_exists) {
             file_obj.json = json_exists;
             file_obj.type = 'complete';

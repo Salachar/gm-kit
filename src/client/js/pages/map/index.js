@@ -8,14 +8,11 @@ const TextManager = require('./managers/text_manager');
 const Checkbox = require('../../lib/inputs/checkbox');
 
 const MapInstance = require('./instance');
+const Lib = require('../../lib');
 
 const {
     resetSnap,
 } = Lib.helpers;
-
-const {
-    ctwo
-} = Lib.dom;
 
 class MapContainer extends Container {
     constructor (opts = {}) {
@@ -28,10 +25,7 @@ class MapContainer extends Container {
         this.maps = {};
         this.current_map = null;
 
-        // this.el_map_main_section = document.getElementById('map_main_section');
-        // this.el_tabs = document.getElementById('map_tabs');
-
-        // this.TextManager = new TextManager();
+        this.TextManager = new TextManager();
         this.ControlsManager = new ControlsManager();
         // this.HelpManager = new HelpManager();
 
@@ -45,13 +39,11 @@ class MapContainer extends Container {
     }
 
     showMapControls () {
-        const el = document.getElementById('map_main_section');
-        el.classList.add('open');
+        this.refs.map_main_section.classList.add('open');
     }
 
     hideMapControls () {
-        const el = document.getElementById('map_main_section');
-        el.classList.remove('open');
+        this.refs.map_main_section.classList.remove('open');
     }
 
     onMouseLeave () {
@@ -209,9 +201,8 @@ class MapContainer extends Container {
     addMapTab (map) {
         const tabs = document.getElementById('map_tabs');
         const { name } = map;
-        ctwo(tabs, [`div .map_tab HTML=${name}`, {
+        Lib.dom.generate([`div .map_tab HTML=${name}`, {
             oncreate: (node) => {
-                console.log(map);
                 this.maps[name].tab = node;
             },
             click: (e) => {
@@ -225,7 +216,7 @@ class MapContainer extends Container {
                     this.removeMap(name);
                 }
             }]
-        ]]);
+        ]], null, tabs);
     }
 
     getMapData () {
@@ -251,73 +242,71 @@ class MapContainer extends Container {
     }
 
     render () {
-        // TODO: some of these are ids and not classes
-        // Add functionality to determine based on . or #
-        ctwo(this.node, ['div .container_header', [
-            ['div #controls', [
-                // ['div', '#help .button', {
-                //     html: 'Help'
-                // }],
-                // new HelpManager().render(),
+        Lib.dom.generate([
+            ['div .container_header', [
+                ['div #controls', [
+                    // ['div', '#help .button', {
+                    //     html: 'Help'
+                    // }],
+                    // new HelpManager().render(),
 
-                ['div .button_spacer'],
-                ['div #load_files .button HTML=Load', {
-                    click: (e) => {
-                        IPC.send('load_maps');
-                    }
-                }],
-                ['div #load_state .button HTML=Load State', {
-                    click: (e) => {
-                        // if (!this.current_map) return;
-                        // this.current_map.loadState();
-                        Toast.message('Save/Load State is temporarily disabled');
-                    }
-                }],
-                ['div .button_spacer'],
-                ['div #save_map .button HTML=Save'],
-                ['div #save_all_maps .button HTML=Save All'],
-                ['div #save_state .button HTML=Save State'],
-                ['div .button_spacer'],
-                ['div .checkbox_container', [
-                    new Checkbox('create_one_way_wall', {
-                        store_key: 'create_one_way_wall',
-                        store_event: 'create_one_way_wall_toggled'
-                    }).render(),
-                    ['div .checkbox_label HTML=One-Way Wall (modify existing wall)'],
-                ]],
-            ]],
-
-            // Help Manager gets created and added
-            // new HelpManager().render(),
-
-            // Text Manager gets created and added
-            // new TextManager().render(this),
-
-            ['div #map_tabs'],
-        ]]),
-
-        ctwo(this.node, ['div .container_body', [
-            ['div #map_main_section', [
-                ['div #no_map_screen .help_screen', [
-                    ['div #no_map_screen_load .help_screen_action', {
+                    ['div .button_spacer'],
+                    ['div #load_files .button HTML=Load', {
                         click: (e) => {
-                            console.log('load_maps');
                             IPC.send('load_maps');
                         }
-                    }, [
-                        ['div .help_screen_main_text HTML=CLICK TO LOAD MAP'],
-                        ['div .help_screen_support_text HTML=If you have not selected a map folder, you will be prompted to'],
-                    ]]
+                    }],
+                    ['div #load_state .button HTML=Load State', {
+                        click: (e) => {
+                            // if (!this.current_map) return;
+                            // this.current_map.loadState();
+                            Toast.message('Save/Load State is temporarily disabled');
+                        }
+                    }],
+                    ['div .button_spacer'],
+                    ['div #save_map .button HTML=Save'],
+                    ['div #save_all_maps .button HTML=Save All'],
+                    ['div #save_state .button HTML=Save State'],
+                    ['div .button_spacer'],
+                    ['div .checkbox_container', [
+                        new Checkbox('create_one_way_wall', {
+                            store_key: 'create_one_way_wall',
+                            store_event: 'create_one_way_wall_toggled'
+                        }).render(),
+                        ['div .checkbox_label HTML=One-Way Wall (modify existing wall)'],
+                    ]],
                 ]],
-                ['div #map_containers HTML=CLICK TO LOAD MAP'],
 
-                this.ControlsManager.render(),
+                // Help Manager gets created and added
+                // new HelpManager().render(),
 
-                new MapListManager({
-                    onMapLoad: this.onMapLoad.bind(this)
-                }).render(),
+                // Text Manager gets created and added
+                this.TextManager.render(),
+
+                ['div #map_tabs'],
+            ]],
+            ['div .container_body', [
+                ['div #map_main_section', [
+                    ['div #no_map_screen .help_screen', [
+                        ['div #no_map_screen_load .help_screen_action', {
+                            click: (e) => {
+                                IPC.send('load_maps');
+                            }
+                        }, [
+                            ['div .help_screen_main_text HTML=CLICK TO LOAD MAP'],
+                            ['div .help_screen_support_text HTML=If you have not selected a map folder, you will be prompted to'],
+                        ]]
+                    ]],
+                    ['div #map_containers HTML=CLICK TO LOAD MAP'],
+
+                    this.ControlsManager.render(),
+
+                    new MapListManager({
+                        onMapLoad: this.onMapLoad.bind(this)
+                    }).render(),
+                ]]
             ]]
-        ]]);
+        ], this, this.node);
     }
 }
 

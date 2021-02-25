@@ -1,9 +1,3 @@
-const {
-    createElement,
-    configureElement,
-    cacheElements
-} = require('./dom');
-
 const Helpers = {
     percentage: function () {
         return Math.floor(Math.random() * (100 - 1) + 1);
@@ -267,23 +261,6 @@ const Helpers = {
             x: segment.p1.x + ((segment.p2.x - segment.p1.x) * 0.5),
             y: segment.p1.y + ((segment.p2.y - segment.p1.y) * 0.5)
         };
-    },
-
-    cacheElements: function (obj, cache_list) {
-        cacheElements(obj, cache_list)
-    },
-
-    createElement: function (type, classes, opts = {}) {
-        return createElement(type, classes, opts);
-    },
-
-    c: function (type, classes, opts = {}) {
-        console.log(classes);
-        return createElement(type, classes, opts);
-    },
-
-    configureElement: function (node, opts = {}) {
-        return configureElement(node, opts);
     },
 
     HSVtoRGB: function (hsv) {

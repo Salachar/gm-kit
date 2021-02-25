@@ -1,11 +1,5 @@
-const {
-    createElement
-} = Lib.helpers;
-
 class Container {
     constructor (opts = {}) {
-        const { render = true } = opts;
-
         this.node = null;
         this.tab = null;
 
@@ -15,7 +9,6 @@ class Container {
 
         this.createNode(this.type);
         this.createTab(this.type);
-        if (render) this.render();
 
         if (opts.active === true) {
             this.parent.setActiveContainer(this);
@@ -37,21 +30,14 @@ class Container {
     onKeyUp () {}
 
     createNode (class_name) {
-        this.node = createElement('div', `${class_name} container`, {
-            addTo: document.getElementById('containers')
-        });
+        const parent = document.getElementById('containers');
+        this.node = Lib.dom.generate([`div ${class_name} .container`], null, parent);
     }
 
     createTab (tab_title) {
-        this.tab = createElement('div', 'tab', {
-            html: tab_title,
-            addTo: document.getElementById('tabs'),
-            events: {
-                click: (e) => {
-                    this.parent.setActiveContainer(this);
-                }
-            }
-        });
+        this.tab = Lib.dom.generate([`div .tab HTML=${tab_title}`, {
+            click: (e) => this.parent.setActiveContainer(this)
+        }], null, document.getElementById('tabs'));
     }
 
     setActive () {
@@ -64,12 +50,6 @@ class Container {
         this.active = false;
         this.tab.classList.remove('active');
         this.node.classList.remove('active');
-    }
-
-    render () {
-        this.node.innerHTML = this.template();
-        // this.container_header = this.node.getElementsByClassName('container_header')[0];
-        // this.container_body = this.node.getElementsByClassName('container_body')[0];
     }
 }
 

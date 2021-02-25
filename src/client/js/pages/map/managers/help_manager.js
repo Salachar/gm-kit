@@ -51,60 +51,8 @@ const HELP_INFO = [{
     text: '** Only holding ALT will cause this action on the display window'
 }];
 
-// There is a good chance I will be adding these back in
-// , {
-//     key: 'LEFT *',
-//     text: 'Scroll the map to the left'
-// }, {
-//     key: 'RIGHT *',
-//     text: 'Scroll the map to the right'
-// }, {
-//     key: 'TOP *',
-//     text: 'Scroll the map to the top'
-// }, {
-//     key: 'BOTTOM *',
-//     text: 'Scroll the map to the bottom'
-// }
-
-const {
-    c,
-    createElement,
-    cacheElements,
-    listener
-} = Lib.dom;
-
 class HelpManager {
-    constructor () {
-        cacheElements(this, [
-            'help_box',
-            'help_table'
-        ]);
-
-        // this.populate();
-        // this.setEvents();
-    }
-
-    // populate () {
-    //     HELP_INFO.forEach((help_item) => {
-    //         let help_item_node = createElement('tr', 'help_section', {
-    //             addTo: this.el_help_table
-    //         });
-    //         createElement('td', 'help_key', {
-    //             html: help_item.key,
-    //             addTo: help_item_node
-    //         });
-    //         createElement('td', 'help_desc', {
-    //             html: help_item.text,
-    //             addTo: help_item_node
-    //         });
-    //     });
-    // }
-
-    setEvents () {
-        listener('help', 'click', (e) => {
-            this.el_help_box.classList.toggle('hide');
-        });
-    }
+    constructor () {}
 
     render () {
         return ['div .help_container', [
@@ -128,76 +76,11 @@ class HelpManager {
                 ]],
             ]]
         ]];
-
-        // return ['div', '.help_container', {}, [
-        //     ['div', '#help .button', {
-        //         html: 'Help',
-        //         events: {
-        //             click: (e) => {
-        //                 document.getElementById('help_box').classList.toggle('hide');
-        //             }
-        //         },
-        //     }],
-        //     ['div', '#help_box .hide', {}, [
-        //         ['table', '#help_table', {}, [
-        //             ['tr', '', {}, [
-        //                 ['th', '.help_key', {
-        //                     html: 'Key',
-        //                 }],
-        //                 ['th'],
-        //             ]],
-        //             ...HELP_INFO.map((help_item) => {
-        //                 return ['tr', '.help_section', {}, [
-        //                     ['td', '.help_key', {
-        //                         html: help_item.key,
-        //                     }],
-        //                     ['td', '.help_desc', {
-        //                         html: help_item.text,
-        //                     }],
-        //                 ]]
-        //             })
-        //         ]],
-        //     ]]
-        // ]];
-
-        // return ['div', '#help_box .hide', {}, [
-        //     ['table', '#help_table', {}, [
-        //         ['tr', '', {}, [
-        //             ['th', '.help_key', {
-        //                 html: 'Key',
-        //             }],
-        //             ['th'],
-        //         ]],
-        //         ...HELP_INFO.map((help_item) => {
-        //             return ['tr', '.help_section', {}, [
-        //                 ['td', '.help_key', {
-        //                     html: help_item.key,
-        //                 }],
-        //                 ['td', '.help_desc', {
-        //                     html: help_item.text,
-        //                 }],
-        //             ]]
-        //         })
-        //     ]],
-        // ]];
     }
 
     static getHelpInfo () {
         return HELP_INFO;
     }
-
-    // static template () {
-    //     return `
-    //         <div id="help_box" class="hide">
-    //             <table id="help_table">
-    //                 <tr>
-    //                     <th class="help_key">Key</th>
-    //                     <th></th>
-    //                 </tr>
-    //             </table>
-    //         </div>
-    //     `;
-    // }
 }
 
 module.exports = HelpManager;

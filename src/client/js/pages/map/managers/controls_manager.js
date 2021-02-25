@@ -1,7 +1,3 @@
-const {
-    deselect
-} = Lib.input;
-
 const NumberInput = require('../../../lib/inputs/numberInput');
 const ArrowInput = require('../../../lib/inputs/arrowInput');
 const Checkbox = require('../../../lib/inputs/checkbox');
@@ -90,7 +86,7 @@ class ControlsManager {
                                 [`span .hotkey_key HTML=${help_item.key}`],
                                 [`span .hotkey_desc HTML=${help_item.text}`],
                             ]]
-                        })
+                        }).filter(e => e),
                     ]],
                 ]],
 

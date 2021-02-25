@@ -1,5 +1,7 @@
 const electron = require('electron');
 const app = electron.app;
+app.commandLine.appendSwitch('--autoplay-policy','no-user-gesture-required');
+
 const BrowserWindow = electron.BrowserWindow;
 const IPC = electron.ipcMain;
 
@@ -77,7 +79,6 @@ function sendMaps () {
 }
 
 function sendAudio () {
-    // console.log('send audio');
     const list = AudioHelpers.generateList();
     if (!list) {
         WINDOW.webContents.send('audio_list_error', list);
@@ -109,11 +110,6 @@ function chooseAudioDirectory () {
 
 IPC.on('app_loaded', (e) => {
     WINDOW.webContents.send('config', global.shared.CONFIG);
-});
-
-IPC.on('lifx_access_code', (e, lifx_access_code) => {
-    global.shared.CONFIG.lifx_access_code = lifx_access_code;
-    FileHelpers.writeConfig();
 });
 
 IPC.on('open_map_dialog_modal', (e) => {

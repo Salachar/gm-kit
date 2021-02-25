@@ -1,5 +1,8 @@
-class Checkbox {
+const Base = require('./base');
+class Checkbox extends Base {
   constructor (identifiers, props = {}) {
+    super(props);
+
     this.props = {
       identifiers: identifiers || '',
       ...props,
@@ -24,7 +27,7 @@ class Checkbox {
             node.classList.remove('checked');
         }
 
-        Lib.input.handleStore({
+        this.handleStore({
           store_key,
           store_event,
         }, new_value);

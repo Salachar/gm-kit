@@ -1,19 +1,16 @@
 const {
-    createElement
-} = Lib.dom;
-
-const {
     clear
 } = Lib.canvas;
 
 class Base {
     constructor (name, opts = {}) {
         const { map_data = {}, map_instance, manager } = opts;
-        const { type } = map_data
 
         this.name = name;
         this.map_data = map_data;
-        this.map_type = type;
+
+        this.map_type = map_data.video ? 'video' : 'image';
+
         this.map_instance = map_instance;
         this.manager = manager;
 
@@ -21,16 +18,18 @@ class Base {
     }
 
     create () {
+        const class_name = `.${this.name}_canvas .map_canvas`;
+
+        // Create a video layer instead of a canvas if using
+        // a video instead of an image
         if (this.name === 'image' && this.map_type === 'video') {
-            this.video = createElement('video', `${this.name}_canvas map_canvas`, {
-                addTo: this.manager.canvas_container
-            });
+            this.video = Lib.dom.generate([`video ${class_name}`], null, this.manager.canvas_container);
+            // TODO: Maybe add controls for map video audio?
+            this.video.muted = true;
             return;
         }
 
-        this.canvas = createElement('canvas', `${this.name}_canvas map_canvas`, {
-            addTo: this.manager.canvas_container
-        });
+        this.canvas = Lib.dom.generate([`canvas ${class_name}`], null, this.manager.canvas_container);
         this.context = this.canvas.getContext('2d');
     }
 

@@ -66,7 +66,6 @@ class DisplayManager {
 
     setEvents () {
         window.addEventListener('message', (e) => {
-            // console.log(e);
             const data = e.data;
             if (data.event === 'display_map') {
                 this.onMapLoad(data.data);
@@ -77,7 +76,6 @@ class DisplayManager {
                 return;
             }
             if (data.event === 'store_data_set') {
-                console.log(data);
                 return Store.set(data.data);
             }
             Store.fire(e.data.event, e.data.data, e.data.key);

@@ -1,7 +1,3 @@
-const {
-    configureElement,
-} = Lib.dom;
-
 const Base = require('./base');
 class ImageCanvas extends Base {
     constructor (opts = {}) {
@@ -23,13 +19,14 @@ class ImageCanvas extends Base {
 
     load () {
         return new Promise((resolve, reject) => {
+            console.log(this.map_data);
+
             if (!this.map_data.image && !this.map_data.video) {
                 reject();
                 return;
             }
 
             if (this.map_type === 'video') {
-                console.log(this.map_data.video);
                 this.video.src = this.map_data.video;
                 this.video.loop = true;
                 this.video.play();
@@ -87,16 +84,12 @@ class ImageCanvas extends Base {
             this.brightness = data.brightness;
         }
         if (CONFIG.is_player_screen) {
-            configureElement(this.canvas, {
-                css: {
-                    filter: `brightness(${this.brightness}%)`
-                }
-            });
+            this.canvas.style.filter = `brightness(${this.brightness}%)`;
         }
     }
 
     draw () {
-        if (this.map_type === 'video') return;
+        if (this.map_type === 'video') return this;
 
         this.context.drawImage(this.image, 0, 0, this.width, this.height);
         return this;

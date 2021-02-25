@@ -1,5 +1,4 @@
 const {
-    createElement,
     copyPoint,
     copy,
     resetSnap,
@@ -16,8 +15,6 @@ const ObjectManager = require('./managers/object');
 class MapInstance {
     constructor (map = {}, options = {}) {
         this.map = map;
-
-        console.log(map);
 
         this.map.json = this.map.json || {};
         this.map.json.meta = this.map.json.meta || {};
@@ -60,9 +57,8 @@ class MapInstance {
 
         this.el_tab = null;
 
-        this.node = createElement('div', map.name + '_map map_container', {
-            addTo: document.getElementById('map_containers')
-        });
+        const parent_node = document.getElementById('map_containers');
+        this.node = Lib.dom.generate([`div .${map.name}_map .map_container`], null, parent_node);
 
         const opts = {
             map_data: map,

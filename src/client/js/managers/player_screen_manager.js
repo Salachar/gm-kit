@@ -27,7 +27,6 @@ class PlayerScreenManager {
     }
 
     onShowPlayerScreen () {
-        console.log('stuff');
         this.create().show();
     }
 

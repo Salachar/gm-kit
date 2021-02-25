@@ -1,7 +1,6 @@
 const Store = require('./lib/store');
 window.Store = Store;
 
-// const DOM = require('./lib/dom');
 const Lib = require('./lib');
 window.Lib = Lib;
 
@@ -24,9 +23,9 @@ const {
     listener,
 } = Lib.dom;
 
-const {
-    numberInput,
-} = Lib.input;
+// const {
+//     numberInput,
+// } = Lib.input;
 
 class AppManager {
     constructor () {
@@ -49,7 +48,7 @@ class AppManager {
 
         getWindowDimensions();
 
-        // this.setEvents();
+        this.setEvents();
 
         Store.register({
             'save_map': this.saveMap.bind(this),
@@ -78,17 +77,17 @@ class AppManager {
     }
 
     setEvents () {
-        const html_styles = getComputedStyle(this.el_html);
-        const html_font_size = html_styles.getPropertyValue('font-size');
-        const font_size = parseInt(html_font_size, 10);
+        // const html_styles = getComputedStyle(this.el_html);
+        // const html_font_size = html_styles.getPropertyValue('font-size');
+        // const font_size = parseInt(html_font_size, 10);
 
-        numberInput("ui_scale", {
-            step: 0.5,
-            min: 7,
-            init: font_size,
-            store_key: "ui_scale",
-            store_event: "ui_scale_change"
-        });
+        // numberInput("ui_scale", {
+        //     step: 0.5,
+        //     min: 7,
+        //     init: font_size,
+        //     store_key: "ui_scale",
+        //     store_event: "ui_scale_change"
+        // });
 
         listener(window, 'message', (e) => {
             const event = (e.data || {}).event;
@@ -142,8 +141,6 @@ window.onload = () => {
         for (let c in config_json) {
             CONFIG[c] = config_json[c];
         }
-
-        // window.DOM = DOM;
 
         window.SoundManager = new SoundManager();
         window.QuadrantManager = new QuadrantManager();

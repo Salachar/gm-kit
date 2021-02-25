@@ -1,7 +1,3 @@
-const {
-    createElement
-} = Lib.helpers;
-
 const Base = require('./base');
 class TextManager extends Base {
     constructor (opts = {}) {
@@ -67,18 +63,13 @@ class TextManager extends Base {
 
     addIcon (text_data) {
         ((data) => {
-            const text_marker = createElement('div', 'text_marker', {
-                addTo: this.el_text_container,
-                html: '?',
-                events: {
-                    click: (e) => {
-                        this.showTextInput(data.position);
-                    }
-                }
-            });
-            text_marker.style.top = data.position.y + 'px';
-            text_marker.style.left = data.position.x + 'px';
-            this.text_icons[data.key] = text_marker;
+            this.text_icons[data.key] = Lib.dom.generate(['div .text_marker HTML=?', {
+                click: (e) => this.showTextInput(data.position),
+                styles: {
+                    top: data.position.y + 'px',
+                    left: data.position.x + 'px'
+                },
+            }], null, this.el_text_container);
         })(text_data);
     }
 
@@ -100,9 +91,7 @@ class TextManager extends Base {
     }
 
     render () {
-        this.el_text_container = createElement('div', 'text_container', {
-            addTo: this.map_instance.node
-        });
+        this.el_text_container = Lib.dom.generate(['div .text_container'], this, this.map_instance.node);
     }
 }
 

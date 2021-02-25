@@ -1,5 +1,8 @@
-class NumberInput {
+const Base = require('./base');
+class NumberInput extends Base {
   constructor (identifiers, props = {}) {
+    super(props);
+
     this.guid = Lib.guid.generate();
 
     this.timer = null;
@@ -49,10 +52,10 @@ class NumberInput {
     if (typeof min === 'number' && value > max) value = max;
 
     if (set) {
-      input.value = value.toFixed(Lib.input.getDecimalCount(step));
+      input.value = value.toFixed(this.getDecimalCount(step));
     }
 
-    Lib.input.handleStore({
+    this.handleStore({
       store_key,
       store_event,
     }, value);

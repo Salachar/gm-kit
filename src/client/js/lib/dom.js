@@ -12,120 +12,29 @@ const DOM = {
         });
     },
 
-    cacheElements (obj, cache_list) {
-        cache_list.forEach((id) => {
-            obj['el_' + id] = document.getElementById(id);
-        });
-    },
+    generate: function (html_array = [], component, appendTo) {
+        const is_array = Array.isArray(html_array);
+        const is_obj = typeof html_array === 'object';
 
-    createElement: function (type, classes, opts = {}) {
-        let node = document.createElement(type);
+        // garbage
+        if (!is_array && !is_obj) return null;
+        // [] : empty array
+        if (is_array && !html_array.length) return null;
+        // node
+        if (!is_array && is_obj) {
+            appendTo.appendChild(html_array);
+            return html_array;
+        }
 
-        (classes || '').split(' ').forEach((class_name) => {
-            node.classList.add(class_name);
-        });
-
-        DOM.configureElement(node, opts);
-
-        if (opts.prependTo) {
-            if (!opts.prependTo.length) opts.prependTo = [opts.prependTo];
-            opts.prependTo.forEach((container) => {
-                container.insertBefore(node, container.firstChild);
+        const is_first_item_obj = typeof html_array[0] === 'object';
+        // array or object/node both identify as object
+        // [node, node] or [['div'], ['div']]
+        if (is_first_item_obj) {
+            html_array.forEach((child_html_array) => {
+                DOM.generate(child_html_array, component, appendTo);
             });
+            return;
         }
-
-        if (opts.addTo) {
-            let container = opts.addTo;
-            if (typeof container === 'string') {
-                container = document.getElementById(container);
-            }
-            container.appendChild(node);
-        }
-
-        return node;
-    },
-
-    configureElement: function (node, opts = {}) {
-        if (opts.attributes) {
-            for (let attr in opts.attributes) {
-                if (opts.attributes[attr]) {
-                    node.setAttribute(attr, opts.attributes[attr]);
-                }
-            }
-        }
-
-        if (opts.dataset) {
-            for (let data in opts.dataset) {
-                if (opts.dataset[data]) {
-                    node.dataset[data] = opts.dataset[data];
-                }
-            }
-        }
-        // You know, incase the fucking html is the number 0
-        if (typeof opts.html !== "undefined") {
-            node.innerHTML = opts.html;
-        }
-
-        if (opts.events) {
-            for (let event in opts.events) {
-                node.addEventListener(event, opts.events[event]);
-            }
-        }
-
-        if (opts.css) {
-            for (let style in opts.css) {
-                node.style[style] = opts.css[style];
-            }
-        }
-
-        return node;
-    },
-
-    c: function (parent, html_array = []) {
-        const [
-            tag,
-            identifiers = '',
-            opts = {},
-            children = []
-        ] = html_array;
-
-        let node = document.createElement(tag);
-
-        (identifiers || '').split(' ').forEach((identifier) => {
-            if (identifier[0] === '#') {
-                node.id = identifier.replace('#','');
-            }
-            if (identifier[0] === '.') {
-                node.classList.add( identifier.replace('.',''));
-            }
-        });
-
-        // You know, incase the fucking html is the number 0
-        if (typeof opts.html !== "undefined") {
-            node.innerHTML = opts.html;
-        }
-
-        if (opts.events) {
-            for (let event in opts.events) {
-                node.addEventListener(event, opts.events[event]);
-            }
-        }
-
-        parent.appendChild(node);
-
-        if (children.length) {
-            children.forEach((child_html_array) => {
-                DOM.c(node, child_html_array);
-            });
-        }
-
-        return node;
-    },
-
-    ctwo: function (parent, html_array = [], component) {
-        // console.log(html_array);
-        // console.log(html_array);
-        if (!Array.isArray(html_array) || !html_array.length) return;
 
         const [
             markup,
@@ -142,14 +51,6 @@ const DOM = {
             html = markup.split('HTML=')[1];
             split_markup.pop();
         }
-
-        // let last_markup = split_markup[split_markup.length - 1];
-        // // console.log(last_markup);
-        // let html = '';
-        // if (last_markup && last_markup.match('HTML=')) {
-        //     html = split_markup.pop().replace('HTML=', '');
-        //     console.log(html);
-        // }
 
         // identifier being #id or .class
         split_markup.forEach((identifier) => {
@@ -198,25 +99,40 @@ const DOM = {
         }
 
         // The most common events
-        if (opts.click) {
-            node.addEventListener('click', opts.click);
-        }
-        if (opts.mousedown) {
-            node.addEventListener('mousedown', opts.mousedown);
-        }
-        if (opts.mouseup) {
-            node.addEventListener('mouseup', opts.mouseup);
-        }
-        if (opts.mouseleave) {
-            node.addEventListener('mouseleave', opts.mouseleave);
-        }
-        if (opts.keydown) {
-            node.addEventListener('keydown', opts.keydown);
-        }
-
-        if (opts.contextmenu) {
-            node.addEventListener('contextmenu', opts.contextmenu);
-        }
+        // if (opts.click) {
+        //     node.addEventListener('click', opts.click);
+        // }
+        // if (opts.mousedown) {
+        //     node.addEventListener('mousedown', opts.mousedown);
+        // }
+        // if (opts.mouseup) {
+        //     node.addEventListener('mouseup', opts.mouseup);
+        // }
+        // if (opts.mouseleave) {
+        //     node.addEventListener('mouseleave', opts.mouseleave);
+        // }
+        // if (opts.keydown) {
+        //     node.addEventListener('keydown', opts.keydown);
+        // }
+        // if (opts.contextmenu) {
+        //     node.addEventListener('contextmenu', opts.contextmenu);
+        // }
+        // if (opts.mouseenter) {
+        //     node.addEventListener('mouseenter', opts.mouseenter);
+        // }
+        [
+            'click',
+            'mousedown',
+            'mouseup',
+            'mouseleave',
+            'keydown',
+            'contextmenu',
+            'mouseenter',
+        ].forEach((event_type) => {
+            if (opts[event_type]) {
+                node.addEventListener(event_type, opts[event_type]);
+            }
+        })
 
         if (opts.onchange) {
             node.addEventListener('change', opts.onchange);
@@ -227,10 +143,22 @@ const DOM = {
             node.addEventListener('mouseleave', opts.mouseend);
         }
 
-
-
-        if (typeof opts.value !== opts.value) {
+        if (typeof opts.value !== "undefined") {
             node.value = opts.value;
+        }
+
+        if (opts.styles) {
+            for (let style in opts.styles) {
+                node.style[style] = opts.styles[style];
+            }
+        }
+
+        if (opts.attributes) {
+            for (let attr in opts.attributes) {
+                if (opts.attributes[attr]) {
+                    node.setAttribute(attr, opts.attributes[attr]);
+                }
+            }
         }
 
         if (opts.events) {
@@ -239,11 +167,11 @@ const DOM = {
             }
         }
 
-        parent.appendChild(node);
+        if (appendTo) appendTo.appendChild(node);
 
         if (children.length) {
             children.forEach((child_html_array) => {
-                DOM.ctwo(node, child_html_array, component);
+                DOM.generate(child_html_array, component, node);
             });
         }
 

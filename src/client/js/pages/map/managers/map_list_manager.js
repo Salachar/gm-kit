@@ -1,21 +1,8 @@
-const {
-    createElement,
-    listener
-} = Lib.dom;
-
 class MapListManager {
     constructor (opts = {}) {
         this.map_list = null;
 
         this.onMapLoad = opts.onMapLoad;
-
-        // this.node = document.getElementById('map_list_modal');
-
-        // this.el_modal_wrap = document.getElementById('map_list_modal_wrap');
-        // this.el_modal_body = document.getElementById('map_list_modal_body');
-
-        // this.el_map_list = document.getElementById('map_list_modal_body_list');
-        // this.el_map_preview = document.getElementById('map_list_modal_body_preview');
 
         // Reference to the current map hovered over for preview images
         this.current_map_hover = null;
@@ -23,90 +10,37 @@ class MapListManager {
         // List of maps that have been checked for mass open
         this.selected_maps = {};
 
-        // this.addInfoTitle();
         this.setIPCEvents();
     }
 
-    // addInfoTitle () {
-    //     if (!CONFIG.params.map_dir) return;
-    //     const modal_title = this.node.getElementsByClassName('modal_title')[0];
-    //     if (!modal_title) return;
-    //     modal_title.setAttribute('title', CONFIG.params.map_dir);
-    // }
+    setIPCEvents () {
+        IPC.on('maps_loaded', (e, map_list) => {
+            this.map_list = map_list;
+            this.createFileTree(map_list);
+        });
 
-    createFileTree (map_list) {
-        const el_map_list = document.getElementById('map_list_modal_body_list');
-        el_map_list.innerHTML = '';
-        this.addSection(map_list, el_map_list);
-        this.openModal();
+        IPC.on('map_loaded', (e, maps) => {
+            this.onMapLoad(maps);
+            this.closeModal();
+        });
     }
 
-    addSection (sections, node) {
-        for (let s in sections) {
-            const section_node = createElement('div', 'map_list_section', {
-                addTo: node
-            });
-            createElement('div', 'map_list_section_title', {
-                html: s.replace(/_/g, ' '),
-                addTo: section_node
-            });
-            const section_container = createElement('div', 'map_list_section_container', {
-                addTo: section_node
-            });
+    addMap (map) {
+        this.selected_maps[map.name] = map;
+    }
 
-            if (s.match(/complete|image|video|json/)) {
-                for (let f in sections[s]) {
-                    // Closure to make sure reference to map is kept
-                    ((map) => {
-                        const map_node = createElement('div', 'map_list_map', {
-                            html: map.name,
-                            addTo: section_container,
-                            events: {
-                                click: (e) => {
-                                    console.log('stuff');
-                                    if (e.defaultPrevented) return;
-                                    let selected_map = {};
-                                    selected_map[map.name] = map;
-                                    IPC.send('load_map', selected_map);
-                                }
-                            }
-                        });
+    removeMap (map) {
+        delete this.selected_maps[map.name];
+    }
 
-                        createElement('div', 'checkbox', {
-                            addTo: map_node,
-                            events: {
-                                click: (e) => {
-                                    e.preventDefault();
-                                    const node = e.currentTarget;
-                                    if (e.currentTarget.classList.contains('checked')) {
-                                        node.classList.remove('checked');
-                                        this.removeMap(map);
-                                    } else {
-                                        node.classList.add('checked');
-                                        this.addMap(map);
-                                    }
-                                }
-                            }
-                        });
+    openModal () {
+        this.refs.map_list_modal_wrap.classList.remove('hidden');
+    }
 
-                        map_node.addEventListener('mouseenter', (e) => {
-                            this.current_map_hover = map.image;
-                            ((image_source) => {
-                                let img = new Image;
-                                img.onload = () => {
-                                    if (image_source !== this.current_map_hover) return;
-                                    const el_map_preview = document.getElementById('map_list_modal_body_preview');
-                                    el_map_preview.style.backgroundImage = `url("${img.src}")`;
-                                }
-                                img.src = image_source;
-                            })(map.image);
-                        });
-                    })(sections[s][f]);
-                }
-            } else {
-                this.addSection(sections[s], section_container);
-            }
-        }
+    closeModal () {
+        this.refs.map_list_modal_wrap.classList.add('hidden');
+        this.refs.map_list_modal_body_list.innerHTML = '';
+        this.refs.map_list_search.value = '';
     }
 
     searchMaps (sections, search_string) {
@@ -136,52 +70,77 @@ class MapListManager {
         this.createFileTree(sections_copy);
     }
 
-    addMap (map) {
-        this.selected_maps[map.name] = map;
+    createFileTree (map_list) {
+        this.refs.map_list_modal_body_list.innerHTML = '';
+        console.log(map_list);
+        Lib.dom.generate(this.generateSectionNodes(map_list), this, this.refs.map_list_modal_body_list);
+        this.openModal();
     }
 
-    removeMap (map) {
-        delete this.selected_maps[map.name];
-    }
-
-    openModal () {
-        const modal_wrap = document.getElementById('map_list_modal_wrap')
-        modal_wrap.classList.remove('hidden');
-    }
-
-    closeModal () {
-        const modal_wrap = document.getElementById('map_list_modal_wrap')
-        modal_wrap.classList.add('hidden');
-        const el_map_list = document.getElementById('map_list_modal_body_list');
-        el_map_list.innerHTML = '';
-        document.getElementById('map_list_search').value = '';
-    }
-
-    setIPCEvents () {
-        IPC.on('maps_loaded', (e, map_list) => {
-            this.map_list = map_list;
-            this.createFileTree(map_list);
-        });
-
-        IPC.on('map_loaded', (e, maps) => {
-            this.onMapLoad(maps);
-            this.closeModal();
-        });
-    }
-
-    renderMapList () {
-
+    generateSectionNodes (sections) {
+        return Object.keys(sections).map((s) => {
+            return Lib.dom.generate(['div .map_list_section', [
+                [`div .map_list_section_title HTML=${s.replace(/_/g, ' ')}`],
+                ['div .map_list_section_container', [
+                    s.match(/complete|image|video|json/) ? Object.keys(sections[s]).map((f) => {
+                        const map = sections[s][f];
+                        return Lib.dom.generate([`div .map_list_map HTML=${map.name}`, {
+                          click: (e) => {
+                              if (e.defaultPrevented) return;
+                              let selected_map = {};
+                              selected_map[map.name] = map;
+                              IPC.send('load_map', selected_map);
+                          },
+                          mouseenter: (e) => {
+                              if (!map.image) {
+                                  console.log(`No image to display for map: ${map.name}`);
+                                  this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+                                  return;
+                              }
+                              this.current_map_hover = map.image;
+                              ((image_source) => {
+                                  let img = new Image;
+                                  img.onload = () => {
+                                      if (image_source !== this.current_map_hover) return;
+                                      this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+                                  }
+                                  img.src = image_source;
+                              })(map.image);
+                          }
+                        }, [
+                            ['div .checkbox', {
+                                click: (e) => {
+                                    e.preventDefault();
+                                    const node = e.currentTarget;
+                                    if (e.currentTarget.classList.contains('checked')) {
+                                        node.classList.remove('checked');
+                                        this.removeMap(map);
+                                    } else {
+                                        node.classList.add('checked');
+                                        this.addMap(map);
+                                    }
+                                }
+                            }]
+                        ]])
+                    }) : this.generateSectionNodes(sections[s])
+                ]]
+            ]])
+        })
     }
 
     render () {
-        return ['div #map_list_modal_wrap .hidden', [
+        return Lib.dom.generate(['div #map_list_modal_wrap .hidden', [
             ['div #map_list_modal .modal', [
                 ['div .modal_header', [
                     ['div .modal_title', [
                         ['span .modal_title_info HTML=&#9432;'],
-                        ['span .modal_title_text HTML=Select Map:'],
+                        ['span .modal_title_text HTML=Select Map:', {
+                            attributes: {
+                                title: CONFIG.params.map_dir
+                            }
+                        }],
                     ]],
-                    ['div .modal_header_button', [
+                    ['div .modal_header_buttons', [
                         ['input #map_list_search .text_input', {
                             onchange: (e) => {
                                 const search_string = e.currentTarget.value;
@@ -204,7 +163,7 @@ class MapListManager {
                     ['div #map_list_modal_body_list']
                 ]],
             ]],
-        ]];
+        ]], this);
     }
 }
 module.exports = MapListManager;
