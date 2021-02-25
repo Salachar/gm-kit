@@ -136,17 +136,13 @@ const FileHelpers = {
                     console.log('Issue reading file, skipping...');
                 }
             }
-            return false;
         }
 
         // No extensions to check
         try {
             let check_file = `${file_no_extension}.${type}`;
             if (fs.existsSync(`${dir}/${check_file}`)) return check_file;
-            return false;
         } catch (e) { console.log(e); }
-
-        return false;
     },
 
     readDir: function (dir, opts = {}) {

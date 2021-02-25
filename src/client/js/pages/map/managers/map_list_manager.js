@@ -107,23 +107,19 @@ class MapListManager {
         return node_array;
     }
 
-    // generateSectionNodes (sections) {
-    //     // This version puts all maps under a "Files" folder in each section
-    //     return Object.keys(sections).map((s) => {
-    //         return Lib.dom.generate(['div .map_list_section', [
-    //             [`div .map_list_section_title HTML=${s.replace(/_/g, ' ')}`],
-    //             ['div .map_list_section_container', [
-    //                 s.match(/complete|image|video|json|files/) ? Object.keys(sections[s]).map((f) => {
-    //                     const map = sections[s][f];
-    //                     return this.generateFileNode(map);
-    //                 }) : this.generateSectionNodes(sections[s])
-    //             ]]
-    //         ]])
-    //     })
-    // }
-
     generateFileNode (map) {
-        return Lib.dom.generate([`div .map_list_map HTML=${map.name}`, {
+        let mapname = map.name;
+        let classname = '.map_list_map';
+        if (map.video) {
+            // mapname += ' (VIDEO)';
+            classname += ' .map_list_map_video';
+        }
+        if (map.json) {
+            // mapname += ' (M)';
+            classname += ' .map_list_map_json';
+        }
+
+        return Lib.dom.generate([`div ${classname} HTML=${mapname}`, {
             click: (e) => {
                 if (e.defaultPrevented) return;
                 let selected_map = {};

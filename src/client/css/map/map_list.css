@@ -62,6 +62,10 @@
     padding-left: 2rem;
 }
 
+.map_list_map_json {
+    /* color: red; */
+}
+
 .map_list_map:hover {
     background-color: #666;
 }

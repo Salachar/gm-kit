@@ -30,44 +30,50 @@ const MapHelpers = {
         const [file_name, file_type] = item.split('.');
 
         // If the file is a DM image, skip it
-        if (file_name.match(/DM_|_DM/)) return;
+        if (file_name.match(/DM_|_DM| DM|DM |(DM)/)) return;
 
         // For non-DM images, Search for the DM version of the map
         // DM_map.ext or map_DM.ext
-        let dm_version = FileHelpers.getFile({
-            dir: dir,
-            file: `DM_${file_name}.${file_type}`
-        }) || FileHelpers.getFile({
-            dir: dir,
-            file: `${file_name}_DM.${file_type}`
+        let dm_version = null;
+        ['DM_', '_DM', ' DM', 'DM ', '(DM)', '[DM]'].forEach((dm_ext) => {
+            let prepend_file_check = FileHelpers.getFile({
+                dir: dir,
+                file: `${dm_ext}${file_name}.${file_type}`
+            });
+            let append_file_check = FileHelpers.getFile({
+                dir: dir,
+                file: `${file_name}${dm_ext}.${file_type}`
+            });
+            if (prepend_file_check) dm_version = prepend_file_check;
+            if (append_file_check) dm_version = append_file_check;
         });
+
+        // let dm_version = FileHelpers.getFile({
+        //     dir: dir,
+        //     file: `DM_${file_name}.${file_type}`
+        // }) || FileHelpers.getFile({
+        //     dir: dir,
+        //     file: `${file_name}_DM.${file_type}`
+        // });
 
         // Create the file object
         let file_obj = {
             name: file_name,
             [type]: item,
             dm_version: dm_version,
-            type: type,
         };
 
         // Check to see if there a JSON file for the map image
-        const json_exists = FileHelpers.getMatchingFile({
+        const json_file = FileHelpers.getMatchingFile({
             dir: dir,
             file: item,
             type: 'json'
         });
 
-        // Temporary for better identification of map type
-        if (file_obj.video) file_obj.name += ' (video)';
-
-        if (json_exists) {
-            file_obj.json = json_exists;
-            file_obj.name += ' (walls)';
-            // file_obj.type = 'complete';
+        if (json_file) {
+            file_obj.json = json_file;
             this.addToMapList(dir, file_obj);
         } else {
-            // file_obj.type = 'image_only';
-            // file_obj.type = type;
             this.addToMapList(dir, file_obj);
         }
     },
@@ -86,8 +92,6 @@ const MapHelpers = {
         });
 
         let dir_split = relative_directory.split(path.sep);
-        // Add the final "image_only" or "complete" categorization to the path
-        // dir_split.push(file_obj.type);
         dir_split.push('files');
 
         let curr = this.list;
