@@ -32,7 +32,7 @@ const MapHelpers = {
         // If the file is a DM image, skip it
         if (file_name.match(/DM_|_DM/)) return;
 
-        // Search for the DM version of the map
+        // For non-DM images, Search for the DM version of the map
         // DM_map.ext or map_DM.ext
         let dm_version = FileHelpers.getFile({
             dir: dir,
@@ -46,7 +46,8 @@ const MapHelpers = {
         let file_obj = {
             name: file_name,
             [type]: item,
-            dm_version: dm_version
+            dm_version: dm_version,
+            type: type,
         };
 
         // Check to see if there a JSON file for the map image
@@ -61,11 +62,12 @@ const MapHelpers = {
 
         if (json_exists) {
             file_obj.json = json_exists;
-            file_obj.type = 'complete';
+            file_obj.name += ' (walls)';
+            // file_obj.type = 'complete';
             this.addToMapList(dir, file_obj);
         } else {
             // file_obj.type = 'image_only';
-            file_obj.type = type;
+            // file_obj.type = type;
             this.addToMapList(dir, file_obj);
         }
     },
@@ -85,7 +87,8 @@ const MapHelpers = {
 
         let dir_split = relative_directory.split(path.sep);
         // Add the final "image_only" or "complete" categorization to the path
-        dir_split.push(file_obj.type);
+        // dir_split.push(file_obj.type);
+        dir_split.push('files');
 
         let curr = this.list;
         for (let i = 0; i <= dir_split.length; ++i) {

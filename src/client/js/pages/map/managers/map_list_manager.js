@@ -48,7 +48,7 @@ class MapListManager {
         search(sections_copy);
         function search (sections) {
             for (let s in sections) {
-                if (s.match(/complete|image|video|json/)) {
+                if (s.match(/complete|image|video|files|json/)) {
                     for (let f in sections[s]) {
                         let map = sections[s][f];
                         let name = map.name.toLowerCase();
@@ -72,60 +72,95 @@ class MapListManager {
 
     createFileTree (map_list) {
         this.refs.map_list_modal_body_list.innerHTML = '';
-        console.log(map_list);
         Lib.dom.generate(this.generateSectionNodes(map_list), this, this.refs.map_list_modal_body_list);
         this.openModal();
     }
 
     generateSectionNodes (sections) {
-        return Object.keys(sections).map((s) => {
-            return Lib.dom.generate(['div .map_list_section', [
-                [`div .map_list_section_title HTML=${s.replace(/_/g, ' ')}`],
+        // This version will put files under the section name directly
+        // and not under "files" or "image", etc...
+
+        let node_array = [];
+
+        // check for the loose files section so we can put them at the top
+        if (sections.files) {
+            Object.keys(sections.files).forEach((f) => {
+                const map = sections.files[f];
+                node_array.push(this.generateFileNode(map));
+            })
+        }
+
+        Object.keys(sections).forEach((section_name) => {
+            // Skip the "files" section, we've already handled it
+            if (section_name === 'files') return;
+
+            const section_node = Lib.dom.generate(['div .map_list_section', [
+                [`div .map_list_section_title HTML=${section_name.replace(/_/g, ' ')}`],
                 ['div .map_list_section_container', [
-                    s.match(/complete|image|video|json/) ? Object.keys(sections[s]).map((f) => {
-                        const map = sections[s][f];
-                        return Lib.dom.generate([`div .map_list_map HTML=${map.name}`, {
-                          click: (e) => {
-                              if (e.defaultPrevented) return;
-                              let selected_map = {};
-                              selected_map[map.name] = map;
-                              IPC.send('load_map', selected_map);
-                          },
-                          mouseenter: (e) => {
-                              if (!map.image) {
-                                  console.log(`No image to display for map: ${map.name}`);
-                                  this.refs.map_list_modal_body_preview.style.backgroundImage = '';
-                                  return;
-                              }
-                              this.current_map_hover = map.image;
-                              ((image_source) => {
-                                  let img = new Image;
-                                  img.onload = () => {
-                                      if (image_source !== this.current_map_hover) return;
-                                      this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
-                                  }
-                                  img.src = image_source;
-                              })(map.image);
-                          }
-                        }, [
-                            ['div .checkbox', {
-                                click: (e) => {
-                                    e.preventDefault();
-                                    const node = e.currentTarget;
-                                    if (e.currentTarget.classList.contains('checked')) {
-                                        node.classList.remove('checked');
-                                        this.removeMap(map);
-                                    } else {
-                                        node.classList.add('checked');
-                                        this.addMap(map);
-                                    }
-                                }
-                            }]
-                        ]])
-                    }) : this.generateSectionNodes(sections[s])
+                    this.generateSectionNodes(sections[section_name])
                 ]]
-            ]])
-        })
+            ]]);
+
+            node_array.push(section_node);
+        });
+
+        return node_array;
+    }
+
+    // generateSectionNodes (sections) {
+    //     // This version puts all maps under a "Files" folder in each section
+    //     return Object.keys(sections).map((s) => {
+    //         return Lib.dom.generate(['div .map_list_section', [
+    //             [`div .map_list_section_title HTML=${s.replace(/_/g, ' ')}`],
+    //             ['div .map_list_section_container', [
+    //                 s.match(/complete|image|video|json|files/) ? Object.keys(sections[s]).map((f) => {
+    //                     const map = sections[s][f];
+    //                     return this.generateFileNode(map);
+    //                 }) : this.generateSectionNodes(sections[s])
+    //             ]]
+    //         ]])
+    //     })
+    // }
+
+    generateFileNode (map) {
+        return Lib.dom.generate([`div .map_list_map HTML=${map.name}`, {
+            click: (e) => {
+                if (e.defaultPrevented) return;
+                let selected_map = {};
+                selected_map[map.name] = map;
+                IPC.send('load_map', selected_map);
+            },
+            mouseenter: (e) => {
+                if (!map.image) {
+                    console.log(`No image to display for map: ${map.name}`);
+                    this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+                    return;
+                }
+                this.current_map_hover = map.image;
+                ((image_source) => {
+                    let img = new Image;
+                    img.onload = () => {
+                        if (image_source !== this.current_map_hover) return;
+                        this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+                    }
+                    img.src = image_source;
+                })(map.image);
+            }
+          }, [
+              ['div .checkbox', {
+                  click: (e) => {
+                      e.preventDefault();
+                      const node = e.currentTarget;
+                      if (e.currentTarget.classList.contains('checked')) {
+                          node.classList.remove('checked');
+                          this.removeMap(map);
+                      } else {
+                          node.classList.add('checked');
+                          this.addMap(map);
+                      }
+                  }
+              }]
+          ]])
     }
 
     render () {
