@@ -1,3 +1,64 @@
+@import "./variables.css";
+
+@import "./lib/toast.css";
+@import "./modal.css";
+
+@import "./lib/inputs/inputs.css";
+
+@import "./pages/map/map.css";
+@import "./pages/info/info.css";
+@import "./pages/audio/audio.css";
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html {
+    font-size: 10px;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: arial;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: var(--main-bg-color);
+    color: var(--main-font-color);
+}
+
+#dimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background-color: black;
+    opacity: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#ui_scale {
+    float: right;
+    margin: 0.5rem;
+    width: 10rem;
+}
+
 /**********************************************************
     TABS
 **********************************************************/
@@ -104,50 +165,4 @@
     right: 0;
     height: var(--container-header-height);
     background-color: var(--container-header-bg);
-}
-
-
-
-/**********************************************************
-    HELP SCREEN
-**********************************************************/
-
-.help_screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    transition: 0.3s top ease;
-    overflow: scroll;
-    z-index: var(--help-z);
-    background-color: #666;
-}
-
-.help_screen_action {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    border-radius: 3rem;
-    border: 0.4rem dashed #EEE;
-    color: #EEE;
-    padding: 3rem;
-    cursor: pointer;
-    text-align: center;
-}
-
-.help_screen_action:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-.help_screen_main_text {
-    font-size: 3rem;
-    font-style: italic;
-}
-
-.help_screen_support_text {
-    margin-top: 2rem;
-    font-size: 2rem;
-    font-style: italic;
 }

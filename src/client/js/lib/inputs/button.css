@@ -1,0 +1,46 @@
+.button {
+  display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
+  margin: 0.5rem 0 0 0.5rem;
+  padding: 0 calc(var(--button-standard-height) / 2);
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  height: var(--button-standard-height);
+  line-height: var(--button-standard-height);
+  color: #EEE;
+  font-size: var(--font-small);
+  background-color: var(--button-bg-color);
+}
+
+.button:hover {
+  background-color: var(--button-hover-color);
+}
+
+.button:active {
+  background-color: var(--button-active-color);
+}
+
+.button_spacer {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 1px;
+  height: var(--button-standard-height);
+  background-color: white;
+  margin: 0.5rem 1rem;
+  opacity: 0.75;
+}
+
+.button.large {
+  height: 3rem;
+  line-height: 3rem;
+  font-size: var(--font-large);
+}
+
+.button_text, .input_text {
+  text-align: center;
+  margin-bottom: 0.25rem;
+  font-size: var(--font-medium);
+  opacity: 0.5;
+}

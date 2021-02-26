@@ -1,0 +1,21 @@
+@import "./arrowInput.css";
+@import "./button.css";
+@import "./checkbox.css";
+@import "./colorpicker.css";
+@import "./numberInput.css";
+@import "./radio.css";
+
+/**********************************************************
+    TEXT INPUT
+**********************************************************/
+
+.text_input {
+    margin: 0.5rem 0 0 0.5rem;
+    height: var(--input-height);
+    padding: 0 0 0 0.5rem;
+    border: 0;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+    box-sizing: border-box;
+    font-size: var(--font-medium);
+}

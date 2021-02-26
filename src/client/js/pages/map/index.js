@@ -146,7 +146,9 @@ class MapContainer extends Container {
     }
 
     setActiveMap (map_name) {
+        Store.fire('onmaphide');
         Store.key = map_name;
+        Store.fire('onmapshow');
 
         if (this.current_map) {
             this.current_map.active = false;

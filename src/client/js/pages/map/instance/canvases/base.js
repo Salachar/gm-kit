@@ -25,7 +25,7 @@ class Base {
         if (this.name === 'image' && this.map_type === 'video') {
             this.video = Lib.dom.generate([`video ${class_name}`], null, this.manager.canvas_container);
             // TODO: Maybe add controls for map video audio?
-            this.video.muted = true;
+            // this.video.muted = true;
             return;
         }
 

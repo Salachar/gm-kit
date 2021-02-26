@@ -13,8 +13,18 @@ class ImageCanvas extends Base {
         this.brightness = (this.map_data.json.meta || {}).brightness || 100;
 
         Store.register({
+            'onmapshow': this.onMapShow.bind(this),
+            'onmaphide': this.onMapHide.bind(this),
             'brightness_(ps)': this.updateBrightness.bind(this),
         }, this.map_instance.name);
+    }
+
+    onMapShow () {
+        if (this.video) this.video.play();
+    }
+
+    onMapHide () {
+        if (this.video) this.video.pause();
     }
 
     load () {
