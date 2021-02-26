@@ -44,8 +44,6 @@ class ColorPicker extends Base {
       },
       },[['canvas .color_picker_canvas', {
         oncreate: (canvas) => {
-          console.log(this.container);
-
           this.canvas = canvas;
           let context = canvas.getContext('2d');
           this.context = context;

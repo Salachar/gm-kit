@@ -15,6 +15,8 @@ const MapContainer = require('./pages/map');
 const InfoContainer = require('./pages/info');
 const AudioContainer = require('./pages/audio');
 
+const NumberInput = require('./lib/inputs/numberInput');
+
 const {
     getWindowDimensions,
 } = Lib.helpers;
@@ -23,12 +25,11 @@ const {
     listener,
 } = Lib.dom;
 
-// const {
-//     numberInput,
-// } = Lib.input;
-
 class AppManager {
     constructor () {
+        this.el_html = document.getElementsByTagName('html')[0];
+        this.render();
+
         this.active_container = null;
 
         this.containers = {
@@ -44,14 +45,11 @@ class AppManager {
             }),
         };
 
-        this.el_html = document.getElementsByTagName('html')[0];
-
         getWindowDimensions();
 
         this.setEvents();
 
         Store.register({
-            'save_map': this.saveMap.bind(this),
             "ui_scale_change": this.onUIScaleChange.bind(this)
         });
     }
@@ -70,25 +68,7 @@ class AppManager {
         this.active_container = container;
     }
 
-    saveMap () {
-        const map_data = this.containers.map.getMapData();
-        if (!map_data) return Toast.error('There is no map to save');
-        IPC.send('save_map', map_data);
-    }
-
     setEvents () {
-        // const html_styles = getComputedStyle(this.el_html);
-        // const html_font_size = html_styles.getPropertyValue('font-size');
-        // const font_size = parseInt(html_font_size, 10);
-
-        // numberInput("ui_scale", {
-        //     step: 0.5,
-        //     min: 7,
-        //     init: font_size,
-        //     store_key: "ui_scale",
-        //     store_event: "ui_scale_change"
-        // });
-
         listener(window, 'message', (e) => {
             const event = (e.data || {}).event;
             if (!event) return;
@@ -106,29 +86,31 @@ class AppManager {
             this.active_container.keyUp(e.keyCode);
         }, {prevent_default: true});
 
-        listener('save_map', 'click', (e) => {
-            this.saveMap();
-        });
-
-        listener('save_all_maps', 'click', (e) => {
-            const map_data = this.containers.map.getAllMapData();
-            if (!map_data) return Toast.error('There are no maps to save');
-            IPC.send('save_map', map_data);
-        });
-
-        listener('save_state', 'click', (e) => {
-            // const map = this.containers.map.current_map;
-            // const map_data = this.containers.map.getMapData();
-            // const state_data = this.containers.map.getMapStateData();
-            // map_data[map.name].json.state = state_data;
-            // IPC.send('save_map', map_data);
-            Toast.message('Save/Load State is temporarily disabled');
-        });
-
         IPC.on('message', (e, message = {}) => {
             const { type = 'message' } = message;
             Toast[type](message.text);
         });
+    }
+
+    render () {
+        const html_styles = getComputedStyle(this.el_html);
+        const html_font_size = html_styles.getPropertyValue('font-size');
+        const font_size = parseInt(html_font_size, 10);
+
+        Lib.dom.generate([
+            ['div #toast'],
+            ['div #header', [
+                ['div #tabs'],
+                new NumberInput("#ui_scale", {
+                    step: 0.5,
+                    min: 7,
+                    init: font_size,
+                    store_key: "ui_scale",
+                    store_event: "ui_scale_change"
+                })
+            ]],
+            ['div #containers']
+        ], this, document.getElementById('root'));
     }
 }
 
@@ -142,11 +124,12 @@ window.onload = () => {
             CONFIG[c] = config_json[c];
         }
 
+        window.AppManager = new AppManager();
+
         window.SoundManager = new SoundManager();
         window.QuadrantManager = new QuadrantManager();
         window.Toast = new ToastMesseger();
         window.Mouse = new Mouse();
-        window.AppManager = new AppManager();
     });
 };
 

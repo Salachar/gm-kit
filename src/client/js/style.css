@@ -3,7 +3,7 @@
 @import "./lib/toast.css";
 @import "./modal.css";
 
-@import "./lib/inputs/inputs.css";
+@import "./lib/inputs/base.css";
 
 @import "./pages/map/map.css";
 @import "./pages/info/info.css";

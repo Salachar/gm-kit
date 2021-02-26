@@ -30,6 +30,7 @@ class MapContainer extends Container {
         // this.HelpManager = new HelpManager();
 
         Store.register({
+            'save_map': this.saveMap.bind(this),
             'mouse_leave': this.onMouseLeave.bind(this),
             'show_map_controls': this.showMapControls.bind(this),
             'hide_map_controls': this.hideMapControls.bind(this)
@@ -143,6 +144,12 @@ class MapContainer extends Container {
 
         this.setActiveMap(map_keys[map_keys.length - 1]);
         document.getElementById('no_map_screen').classList.add('hidden');
+    }
+
+    saveMap () {
+        const map_data = this.getMapData();
+        if (!map_data) return Toast.error('There is no map to save');
+        IPC.send('save_map', map_data);
     }
 
     setActiveMap (map_name) {
@@ -266,9 +273,28 @@ class MapContainer extends Container {
                         }
                     }],
                     ['div .button_spacer'],
-                    ['div #save_map .button HTML=Save'],
-                    ['div #save_all_maps .button HTML=Save All'],
-                    ['div #save_state .button HTML=Save State'],
+                    ['div #save_map .button HTML=Save', {
+                        click: (e) => {
+                            this.saveMap();
+                        }
+                    }],
+                    ['div #save_all_maps .button HTML=Save All', {
+                        click: (e) => {
+                            const map_data = this.getAllMapData();
+                            if (!map_data) return Toast.error('There are no maps to save');
+                            IPC.send('save_map', map_data);
+                        }
+                    }],
+                    ['div #save_state .button HTML=Save State', {
+                        click: (e) => {
+                            // const map = this.current_map;
+                            // const map_data = this.getMapData();
+                            // const state_data = this.getMapStateData();
+                            // map_data[map.name].json.state = state_data;
+                            // IPC.send('save_map', map_data);
+                            Toast.message('Save/Load State is temporarily disabled');
+                        }
+                    }],
                     ['div .button_spacer'],
                     new Checkbox('create_one_way_wall', {
                         text: 'One-Way Wall (modify existing wall)',
