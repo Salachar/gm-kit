@@ -5,8 +5,6 @@ const Checkbox = require('../../../lib/inputs/checkbox');
 const RadioInput = require('../../../lib/inputs/radio');
 const ColorPicker = require('../../../lib/inputs/colorpicker');
 
-const HelpManager = require('./help_manager');
-
 class ControlsManager {
     constructor (opts = {}) {
         this.open = false;
@@ -31,11 +29,7 @@ class ControlsManager {
             ['div #map_controls_toggle .menu_icon', {
                 click: (e) => {
                     this.open = !this.open;
-                    if (this.open) {
-                        Store.fire('show_map_controls');
-                    } else {
-                        Store.fire('hide_map_controls');
-                    }
+                    Store.fire(`${this.open ? 'show' : 'hide'}_map_controls`);
                 }
             }, [
                 ['div .menu_icon_bar .menu_icon_bar_1'],
@@ -46,94 +40,88 @@ class ControlsManager {
             ['div #map_controls_body', [
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Player Screen'],
-                    ['div .map_control_section_body', [
-                        new Button('#show_on_player_screen', {
-                            text: 'Show on Player Screen',
-                            store_event: 'show_player_screen',
-                        }),
-                        new Button('#show_entire_map', {
-                            text: 'Show Entire Map',
-                            store_event: 'show_entire_map',
-                        }),
-                        new Button('#toggle_map_fit', {
-                            text: 'Toggle Map Fit',
-                            store_event: 'toggle_map_fit-(PS)',
-                        }),
-                        // new ArrowInput('#scroll_buttons', {
-                        //     text: 'Scroll the Player Screen',
-                        //     step: 2,
-                        //     interval: 10,
-                        //     store_key: 'offset',
-                        //     store_event: 'scroll_(PS)'
-                        // }),
-                        new NumberInput('#map_zoom_input', {
-                            text: 'Zoom',
-                            step: 0.025,
-                            interval: 20,
-                            store_key: 'zoom',
-                            store_event: 'zoom_(ps)',
-                            parent: this,
-                        }),
-                        new NumberInput('#player_screen_brightness', {
-                            text: 'Brightness',
-                            min: 0,
-                            max: 200,
-                            default_value: 100,
-                            interval: 30,
-                            store_key: 'brightness',
-                            store_event: 'brightness_(ps)',
-                            parent: this,
-                        }),
-                    ]],
+                    new Button('#show_on_player_screen', {
+                        text: 'Show on Player Screen',
+                        store_event: 'show_player_screen',
+                    }),
+                    new Button('#show_entire_map', {
+                        text: 'Show Entire Map',
+                        store_event: 'show_entire_map',
+                    }),
+                    new Button('#toggle_map_fit', {
+                        text: 'Toggle Map Fit',
+                        store_event: 'toggle_map_fit-(PS)',
+                    }),
+                    // new ArrowInput('#scroll_buttons', {
+                    //     text: 'Scroll the Player Screen',
+                    //     step: 2,
+                    //     interval: 10,
+                    //     store_key: 'offset',
+                    //     store_event: 'scroll_(PS)'
+                    // }),
+                    new NumberInput('#map_zoom_input', {
+                        text: 'Zoom',
+                        step: 0.025,
+                        interval: 20,
+                        store_key: 'zoom',
+                        store_event: 'zoom_(ps)',
+                        parent: this,
+                    }),
+                    new NumberInput('#player_screen_brightness', {
+                        text: 'Brightness',
+                        min: 0,
+                        max: 200,
+                        default_value: 100,
+                        interval: 30,
+                        store_key: 'brightness',
+                        store_event: 'brightness_(ps)',
+                        parent: this,
+                    }),
                 ]],
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
-                    ['div .map_control_section_body', [
-                        new Button('#grid_toggle', {
-                            text: 'Toggle Grid',
-                            store_event: 'toggle_grid_(ps)',
-                        }),
-                        new NumberInput('#grid_size_input', {
-                            text: 'Size',
-                            step: 0.25,
-                            default_value: 50,
-                            store_key: 'size',
-                            store_event: 'grid_size_update_(ps)',
-                            parent: this,
-                        }),
-                        new ArrowInput('#grid_shift', {
-                            step: 1,
-                            store_key: 'offset',
-                            store_event: 'grid_offset_update_(ps)'
-                        }),
-                    ]],
+                    new Button('#grid_toggle', {
+                        text: 'Toggle Grid',
+                        store_event: 'toggle_grid_(ps)',
+                    }),
+                    new NumberInput('#grid_size_input', {
+                        text: 'Size',
+                        step: 0.25,
+                        default_value: 50,
+                        store_key: 'size',
+                        store_event: 'grid_size_update_(ps)',
+                        parent: this,
+                    }),
+                    new ArrowInput('#grid_shift', {
+                        step: 1,
+                        store_key: 'offset',
+                        store_event: 'grid_offset_update_(ps)'
+                    }),
                 ]],
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Spell Markers'],
-                    ['div .map_control_section_body', [
-                        new NumberInput('#spell_marker_size', {
-                            text: '* Requires Grid',
-                            step: 5,
-                            init: 20,
-                            store_key: 'spell_marker_size'
-                        }),
-                        new RadioInput('#spell_marker_shape', {
-                            options: ['line', 'square', 'circle', 'cone'],
-                            store_key: 'spell_marker_shape',
-                            store_event: 'spell_marker_shape_updated-(ps)',
-                            parent: this,
-                        }),
-                        new ColorPicker('#spell_marker_color', {
-                            store_key: 'spell_marker_color'
-                        }),
-                        new Checkbox('show_affected_tiles', {
-                            text: 'Highlight Affected Tiles',
-                            store_key: 'show_affected_tiles show_affected_tiles_checked',
-                            store_event: 'show_affected_tiles_toggled-(ps)'
-                        }),
-                    ]],
+                    new NumberInput('#spell_marker_size', {
+                        text: '* Requires Grid',
+                        step: 5,
+                        init: 20,
+                        store_key: 'spell_marker_size'
+                    }),
+                    new RadioInput('#spell_marker_shape', {
+                        options: ['line', 'square', 'circle', 'cone'],
+                        store_key: 'spell_marker_shape',
+                        store_event: 'spell_marker_shape_updated-(ps)',
+                        parent: this,
+                    }),
+                    new ColorPicker('#spell_marker_color', {
+                        store_key: 'spell_marker_color'
+                    }),
+                    new Checkbox('show_affected_tiles', {
+                        text: 'Highlight Affected Tiles',
+                        store_key: 'show_affected_tiles show_affected_tiles_checked',
+                        store_event: 'show_affected_tiles_toggled-(ps)'
+                    }),
                 ]],
             ]],
         ]];

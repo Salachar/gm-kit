@@ -40,6 +40,7 @@
     padding: 0.3rem 0.5rem;
     background-color: #555;
     text-transform: capitalize;
+    cursor: pointer;
 }
 
 .map_list_section_container {
@@ -52,39 +53,36 @@
     line-height: 1.5rem;
     font-size: var(--font-medium);
     position: relative;
-    /* padding: 0.2rem 0.2rem 0.2rem 2rem; */
-    cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 2rem;
-
     padding-left: 2rem;
 }
 
-.map_list_map_json {
-    /* color: red; */
+.map_list_map_indicator {
+    position: relative;
+    height: 1.5rem;
+    width: 1.5rem;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+}
+
+.map_list_map_name_wrapper {
+    cursor: pointer;
 }
 
 .map_list_map:hover {
     background-color: #666;
 }
 
-.map_list_map:active {
-    background-color: #EEE;
-    color: #444;
-}
-
 .map_list_map .checkbox {
-    /* height: 1.5rem;
-    width: 1.5rem; */
-
     display: block;
     position: absolute;
     top: 50%;
     left: 0;
     transform: translateY(-50%);
-
-    /* margin: 0; */
-    /* margin-left: 0.3rem; */
 }

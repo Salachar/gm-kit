@@ -7,6 +7,8 @@ class MapListManager {
         // Reference to the current map hovered over for preview images
         this.current_map_hover = null;
 
+        this.collapsed_sections = {};
+
         // List of maps that have been checked for mass open
         this.selected_maps = {};
 
@@ -95,12 +97,27 @@ class MapListManager {
             // Skip the "files" section, we've already handled it
             if (section_name === 'files') return;
 
-            const section_node = Lib.dom.generate(['div .map_list_section', [
-                [`div .map_list_section_title HTML=${section_name.replace(/_/g, ' ')}`],
-                ['div .map_list_section_container', [
-                    this.generateSectionNodes(sections[section_name])
+            const section_node = Lib.dom.generate(
+                ['div .map_list_section', [
+                    [`div .map_list_section_title HTML=${section_name.replace(/_/g, ' ')}`, {
+                        click: (e) => {
+                            const container = e.target.nextSibling;
+                            if (!container) return;
+                            container.classList.toggle('hidden');
+                            this.collapsed_sections[section_name] = container.classList.contains('hidden');
+                        }
+                    }],
+                    ['div .map_list_section_container', {
+                        oncreate: (node) => {
+                            if (this.collapsed_sections[section_name]) {
+                                node.classList.add('hidden');
+                            }
+                        }
+                    }, [
+                        this.generateSectionNodes(sections[section_name])
+                    ]]
                 ]]
-            ]]);
+            );
 
             node_array.push(section_node);
         });
@@ -109,57 +126,53 @@ class MapListManager {
     }
 
     generateFileNode (map) {
-        let mapname = map.name;
-        let classname = '.map_list_map';
-        if (map.video) {
-            // mapname += ' (VIDEO)';
-            mapname = '[VIDEO] ' + mapname;
-            classname += ' .map_list_map_video';
-        }
-        if (map.json) {
-            // mapname += ' (M)';
-            mapname = '[WALLS] ' + mapname;
-            classname += ' .map_list_map_json';
-        }
-
-        return Lib.dom.generate([`div ${classname} HTML=${mapname}`, {
-            click: (e) => {
-                if (e.defaultPrevented) return;
-                let selected_map = {};
-                selected_map[map.name] = map;
-                IPC.send('load_map', selected_map);
-            },
-            mouseenter: (e) => {
-                if (!map.image) {
-                    console.log(`No image to display for map: ${map.name}`);
-                    this.refs.map_list_modal_body_preview.style.backgroundImage = '';
-                    return;
-                }
-                this.current_map_hover = map.image;
-                ((image_source) => {
-                    let img = new Image;
-                    img.onload = () => {
-                        if (image_source !== this.current_map_hover) return;
-                        this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+        return Lib.dom.generate(
+            ['div .map_list_map', {
+                mouseenter: (e) => {
+                    if (!map.image) {
+                        console.log(`No image to display for map: ${map.name}`);
+                        this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+                        return;
                     }
-                    img.src = image_source;
-                })(map.image);
-            }
-          }, [
-              ['div .checkbox', {
-                  click: (e) => {
-                      e.preventDefault();
-                      const node = e.currentTarget;
-                      if (e.currentTarget.classList.contains('checked')) {
-                          node.classList.remove('checked');
-                          this.removeMap(map);
-                      } else {
-                          node.classList.add('checked');
-                          this.addMap(map);
-                      }
-                  }
-              }]
-          ]])
+                    this.current_map_hover = map.image;
+                    ((image_source) => {
+                        let img = new Image;
+                        img.onload = () => {
+                            if (image_source !== this.current_map_hover) return;
+                            this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+                        }
+                        img.src = image_source;
+                    })(map.image);
+                }
+            }, [
+                ['div .checkbox', {
+                    click: (e) => {
+                        e.preventDefault();
+                        const node = e.currentTarget;
+                        if (e.currentTarget.classList.contains('checked')) {
+                            node.classList.remove('checked');
+                            this.removeMap(map);
+                        } else {
+                            node.classList.add('checked');
+                            this.addMap(map);
+                        }
+                    }
+                }],
+                ['div .map_list_map_name_wrapper', {
+                    click: (e) => {
+                        if (e.defaultPrevented) return;
+                        let selected_map = {};
+                        selected_map[map.name] = map;
+                        IPC.send('load_map', selected_map);
+                    },
+                }, [
+                    [`span .map_list_map_indicator HTML=${map.json ? 'W' : ''}`],
+                    [`span .map_list_map_indicator HTML=${map.dm_version ? 'D' : ''}`],
+                    [`span .map_list_map_indicator HTML=${map.video ? 'V' : ''}`],
+                    [`span .map_list_map_name HTML=${map.name}`],
+                ]],
+            ]
+        ]);
     }
 
     render () {
