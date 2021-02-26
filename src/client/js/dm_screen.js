@@ -104,7 +104,7 @@ class AppManager {
                 new NumberInput("#ui_scale", {
                     step: 0.5,
                     min: 7,
-                    init: font_size,
+                    default_value: font_size,
                     store_key: "ui_scale",
                     store_event: "ui_scale_change"
                 })

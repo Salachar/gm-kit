@@ -72,9 +72,9 @@ class NumberInput extends Base {
       text,
     } = this.props;
 
-    return Lib.dom.generate(['div .input_container', [
+    return Lib.dom.generate([`div ${identifiers} .input_container`, [
       text && [`div .input_text HTML=${text}`],
-      [`div ${identifiers} .number_input_container`, [
+      [`div .number_input_container`, [
         [`div .number_input_button .arrow_left`, {
           mousedown: (e) => this.fireInput(-1),
           mouseend: (e) => this.stopTimer(),
