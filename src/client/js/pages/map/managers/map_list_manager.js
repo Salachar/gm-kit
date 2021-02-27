@@ -166,7 +166,7 @@ class MapListManager {
                         IPC.send('load_map', selected_map);
                     },
                 }, [
-                    [`span .map_list_map_indicator HTML=${map.json ? 'W' : ''}`],
+                    [`span .map_list_map_indicator HTML=${map.json_exists ? 'W' : ''}`],
                     [`span .map_list_map_indicator HTML=${map.dm_version ? 'D' : ''}`],
                     [`span .map_list_map_indicator HTML=${map.video ? 'V' : ''}`],
                     [`span .map_list_map_name HTML=${map.name}`],
@@ -183,7 +183,7 @@ class MapListManager {
                         ['span .modal_title_info HTML=&#9432;'],
                         ['span .modal_title_text HTML=Select Map:', {
                             attributes: {
-                                title: CONFIG.params.map_dir
+                                title: CONFIG.map_directory
                             }
                         }],
                     ]],

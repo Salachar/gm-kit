@@ -1,5 +1,5 @@
 {
-  "name": "Map-Editor",
+  "name": "GK Kit",
   "version": "1.0.0",
   "description": "Electron based D&D dynamic lighting application",
   "main": "src/electron/electron.js",

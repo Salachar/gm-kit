@@ -68,6 +68,13 @@ class AppManager {
         this.active_container = container;
     }
 
+    getFontSize () {
+        const html_styles = getComputedStyle(this.el_html);
+        const html_font_size = html_styles.getPropertyValue('font-size');
+        const font_size = parseInt(html_font_size, 10);
+        return font_size;
+    }
+
     setEvents () {
         listener(window, 'message', (e) => {
             const event = (e.data || {}).event;
@@ -93,18 +100,23 @@ class AppManager {
     }
 
     render () {
-        const html_styles = getComputedStyle(this.el_html);
-        const html_font_size = html_styles.getPropertyValue('font-size');
-        const font_size = parseInt(html_font_size, 10);
-
         Lib.dom.generate([
+            ['div #set_directory .hidden HTML=SET DIRECTORY', {
+                oncreate: (node) => {
+                    const directory_set = CONFIG.params.data_dir === 'true';
+                    if (!directory_set) node.classList.remove('hidden');
+                },
+                click: (e) => {
+                    IPC.send('choose_main_directory');
+                }
+            }],
             ['div #toast'],
             ['div #header', [
                 ['div #tabs'],
                 new NumberInput("#ui_scale", {
                     step: 0.5,
                     min: 7,
-                    default_value: font_size,
+                    default_value: this.getFontSize(),
                     store_key: "ui_scale",
                     store_event: "ui_scale_change"
                 })
@@ -115,6 +127,8 @@ class AppManager {
 }
 
 window.onload = () => {
+    console.log(CONFIG);
+
     IPC.send('app_loaded');
 
     IPC.on('config', (e, config_json) => {

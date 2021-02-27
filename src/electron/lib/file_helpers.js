@@ -184,14 +184,6 @@ const FileHelpers = {
             callback(folder_path);
         });
     },
-
-    writeConfig: function () {
-        fs.writeFileSync(
-            global.shared.CONFIG_DATA.directory,
-            JSON.stringify(global.shared.CONFIG, null, 4),
-            'utf-8'
-        );
-    }
-
 };
+
 module.exports = FileHelpers;
