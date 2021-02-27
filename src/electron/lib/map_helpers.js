@@ -5,6 +5,9 @@ const path = require('path');
 
 const FileHelpers = require('./file_helpers');
 
+const DM_VARIATIONS = ['DM_', '_DM', ' DM', 'DM ', '(DM)', '[DM]'];
+const DM_VARIATIONS_LENGTH = DM_VARIATIONS.length;
+
 const MapHelpers = {
     directory: null,
     list: null,
@@ -34,26 +37,27 @@ const MapHelpers = {
         if (file_name.match(/DM_|_DM| DM|DM |(DM)/)) return;
 
         // For non-DM images, Search for the DM version of the map
-        // DM_map.ext or map_DM.ext
         let dm_version = null;
-        ['DM_', '_DM', ' DM', 'DM ', '(DM)', '[DM]'].forEach((dm_ext) => {
-            let prepend_file_check = FileHelpers.getFile({
+        for (let i = 0; i < DM_VARIATIONS_LENGTH; ++i) {
+            const dm_ext = DM_VARIATIONS[i];
+            dm_version = FileHelpers.getFile({
                 dir: dir,
                 file: `${dm_ext}${file_name}.${file_type}`
             });
-            let append_file_check = FileHelpers.getFile({
+            if (dm_version) break;
+            dm_version = FileHelpers.getFile({
                 dir: dir,
                 file: `${file_name}${dm_ext}.${file_type}`
             });
-            if (prepend_file_check) dm_version = prepend_file_check;
-            if (append_file_check) dm_version = append_file_check;
-        });
+            if (dm_version) break;
+        }
 
         // Create the file object
         let file_obj = {
             name: file_name,
             [type]: item,
             dm_version: dm_version,
+            type: type,
         };
 
         // Check to see if there a JSON file for the map image
