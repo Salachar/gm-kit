@@ -30,7 +30,7 @@ class MapContainer extends Container {
         // this.HelpManager = new HelpManager();
 
         Store.register({
-            'save_map': this.saveMap.bind(this),
+            'save_maps': this.saveMaps.bind(this),
             'mouse_leave': this.onMouseLeave.bind(this),
             'show_map_controls': this.showMapControls.bind(this),
             'hide_map_controls': this.hideMapControls.bind(this)
@@ -146,10 +146,10 @@ class MapContainer extends Container {
         document.getElementById('no_map_screen').classList.add('hidden');
     }
 
-    saveMap () {
+    saveMaps () {
         const map_data = this.getMapData();
         if (!map_data) return Toast.error('There is no map to save');
-        IPC.send('save_map', map_data);
+        IPC.send('save_maps', map_data);
     }
 
     setActiveMap (map_name) {
@@ -262,7 +262,7 @@ class MapContainer extends Container {
                     ['div .button_spacer'],
                     ['div #load_files .button HTML=Load', {
                         click: (e) => {
-                            IPC.send('load_maps');
+                            IPC.send('load_map_list');
                         }
                     }],
                     ['div #load_state .button HTML=Load State', {
@@ -273,16 +273,16 @@ class MapContainer extends Container {
                         }
                     }],
                     ['div .button_spacer'],
-                    ['div #save_map .button HTML=Save', {
+                    ['div .button HTML=Save', {
                         click: (e) => {
-                            this.saveMap();
+                            this.saveMaps();
                         }
                     }],
                     ['div #save_all_maps .button HTML=Save All', {
                         click: (e) => {
                             const map_data = this.getAllMapData();
                             if (!map_data) return Toast.error('There are no maps to save');
-                            IPC.send('save_map', map_data);
+                            IPC.send('save_maps', map_data);
                         }
                     }],
                     ['div #save_state .button HTML=Save State', {
@@ -291,7 +291,7 @@ class MapContainer extends Container {
                             // const map_data = this.getMapData();
                             // const state_data = this.getMapStateData();
                             // map_data[map.name].json.state = state_data;
-                            // IPC.send('save_map', map_data);
+                            // IPC.send('save_maps', map_data);
                             Toast.message('Save/Load State is temporarily disabled');
                         }
                     }],
@@ -316,7 +316,7 @@ class MapContainer extends Container {
                     ['div #no_map_screen .help_screen', [
                         ['div #no_map_screen_load .help_screen_action', {
                             click: (e) => {
-                                IPC.send('load_maps');
+                                IPC.send('load_map_list');
                             }
                         }, [
                             ['div .help_screen_main_text HTML=CLICK TO LOAD MAP'],

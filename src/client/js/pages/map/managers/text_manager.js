@@ -28,7 +28,7 @@ class TextManager {
                                 key: this.current_text_data.key
                             });
                             this.close();
-                            Store.fire('save_map');
+                            Store.fire('save_maps');
                         }
                     }],
                     ['div #text_block_delete .button HTML=DELETE', {

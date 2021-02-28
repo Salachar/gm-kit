@@ -97,17 +97,22 @@ class AppManager {
             const { type = 'message' } = message;
             Toast[type](message.text);
         });
+
+        IPC.on('json_directory_chosen', (e) => {
+            console.log(e);
+            this.refs.choose_json_directory.classList.add('hidden');
+        });
     }
 
     render () {
         Lib.dom.generate([
-            ['div #set_directory .hidden HTML=SET DIRECTORY', {
+            ['div #choose_json_directory .hidden HTML=SET DIRECTORY', {
                 oncreate: (node) => {
                     const directory_set = CONFIG.params.data_dir === 'true';
                     if (!directory_set) node.classList.remove('hidden');
                 },
                 click: (e) => {
-                    IPC.send('choose_main_directory');
+                    IPC.send('choose_json_directory');
                 }
             }],
             ['div #toast'],

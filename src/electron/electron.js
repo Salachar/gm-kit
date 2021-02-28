@@ -1,5 +1,7 @@
 const electron = require('electron');
 const app = electron.app;
+
+// This need to be set so that video maps will autoplay on the player screen
 app.commandLine.appendSwitch('--autoplay-policy','no-user-gesture-required');
 
 const BrowserWindow = electron.BrowserWindow;

@@ -16,12 +16,12 @@ class MapListManager {
     }
 
     setIPCEvents () {
-        IPC.on('maps_loaded', (e, map_list) => {
+        IPC.on('map_list_loaded', (e, map_list) => {
             this.map_list = map_list;
             this.createFileTree(map_list);
         });
 
-        IPC.on('map_loaded', (e, maps) => {
+        IPC.on('maps_loaded', (e, maps) => {
             this.onMapLoad(maps);
             this.closeModal();
         });
@@ -161,9 +161,9 @@ class MapListManager {
                 ['div .map_list_map_name_wrapper', {
                     click: (e) => {
                         if (e.defaultPrevented) return;
-                        let selected_map = {};
-                        selected_map[map.name] = map;
-                        IPC.send('load_map', selected_map);
+                        let selected_maps = {};
+                        selected_maps[map.name] = map;
+                        IPC.send('load_maps', selected_maps);
                     },
                 }, [
                     [`span .map_list_map_indicator HTML=${map.json_exists ? 'W' : ''}`],
@@ -195,10 +195,10 @@ class MapListManager {
                             }
                         }],
                         ['div #map_list_modal_folder .button HTML=MAP DIRECTORY', {
-                            click: (e) => IPC.send('open_map_dialog_modal')
+                            click: (e) => IPC.send('choose_map_directory')
                         }],
                         ['div #map_list_modal_open .button HTML=OPEN SELECTED', {
-                            click: (e) => IPC.send('load_map', this.selected_maps)
+                            click: (e) => IPC.send('load_maps', this.selected_maps)
                         }],
                     ]],
                     ['div #map_list_modal_close .modal_close', {

@@ -111,7 +111,7 @@ class AudioPlayer {
             }),
 
             ['div #choose_audio_directory .button HTML=Choose Audio Directory', {
-                click: (e) => IPC.send('open_audio_dialog_modal'),
+                click: (e) => IPC.send('choose_audio_directory'),
             }],
 
             ['div #audio_player_progress', {

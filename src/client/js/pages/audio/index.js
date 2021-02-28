@@ -24,13 +24,13 @@ class AudioContainer extends Container {
     onMount () {
         this.setIPCEvents();
         if (CONFIG.audio_directory) {
-            IPC.send('audio_loaded');
+            IPC.send('audio_page_loaded');
         }
     }
 
     setIPCEvents () {
-        IPC.on('audio_folder_chosen', (e) => {
-            IPC.send('audio_loaded');
+        IPC.on('audio_directory_chosen', (e) => {
+            IPC.send('audio_page_loaded');
         });
         // Audio Data is loaded first, then the files
         IPC.on('data_loaded', (e, data_json) => {
@@ -276,7 +276,7 @@ class AudioContainer extends Container {
             ['div .container_body', [
                 ['div #no_audio_screen .help_screen', [
                     ['div #no_audio_screen_load .help_screen_action', {
-                        click: (e) => IPC.send('open_audio_dialog_modal'),
+                        click: (e) => IPC.send('choose_audio_directory'),
                     }, [
                         ['div .help_scren_main_text HTML=CLICK TO PICK AUDIO FOLDER'],
                     ]]

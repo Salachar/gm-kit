@@ -16,12 +16,12 @@ class AudioManager {
     }
 
     setIPCEvents () {
-        IPC.on('audio_loaded', (e) => {
+        IPC.on('audio_page_loaded', (e) => {
             this.loadAudioJSON();
             this.sendAudio();
         });
 
-        IPC.on('save_audio_data', (e, audio_data) => {
+        IPC.on('save_audio_json', (e, audio_data) => {
             this.saveAudioJSON(audio_data);
         });
     }
@@ -74,18 +74,11 @@ class AudioManager {
                 this.investigateFile(dir, item);
             },
             onError: (error) => {
-                console.log('AudioHelper generateList error');
-                console.log(error);
-                // global.shared.WINDOW.webContents.send('audio_list_error');
                 this.list = {};
             }
         });
 
-        // console.log
-
-        if (!Object.keys(this.list).length) {
-            return null;
-        }
+        if (!Object.keys(this.list).length) return null;
         return this.list;
     }
 

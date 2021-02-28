@@ -60,7 +60,7 @@ class AudioData {
     }
 
     save () {
-        IPC.send('save_audio_data', {
+        IPC.send('save_audio_json', {
             tracks: this.tracks,
             previous: this.previous,
             collapse: this.collapse,

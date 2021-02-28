@@ -15,19 +15,22 @@ class Config {
       this.userdata_path = app.getPath('userData');
       this.path = path.join(this.userdata_path, this.file_name);
 
-      IPC.on('choose_main_directory', (e) => {
+      IPC.on('choose_json_directory', (e) => {
         this.chooseDirectory('json', () => {
           this.createMapsFolder();
+          global.shared.WINDOW.webContents.send('json_directory_chosen');
         });
       });
 
-      IPC.on('open_map_dialog_modal', (e) => {
-        this.chooseDirectory('map');
+      IPC.on('choose_map_directory', (e) => {
+        this.chooseDirectory('map', () => {
+          global.shared.WINDOW.webContents.send('map_directory_chosen');
+        });
       });
 
-      IPC.on('open_audio_dialog_modal', (e) => {
+      IPC.on('choose_audio_directory', (e) => {
         this.chooseDirectory('audio', () => {
-          global.shared.WINDOW.webContents.send('audio_folder_chosen');
+          global.shared.WINDOW.webContents.send('audio_directory_chosen');
         });
       });
 
@@ -54,13 +57,12 @@ class Config {
           this.createMapsFolder();
       } catch (e) {
           this.data = {};
-          console.log('Unable to parse data for supposed config');
-          console.log(e);
+          console.log('Unable to parse data for config');
       }
   }
 
   write () {
-      fs.writeFileSync(this.path, JSON.stringify(this.data));
+      fs.writeFileSync(this.path, JSON.stringify(this.data, null, 2));
   }
 
   createMapsFolder () {
