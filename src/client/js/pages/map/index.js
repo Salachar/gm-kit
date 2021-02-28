@@ -261,7 +261,7 @@ class MapContainer extends Container {
                         },
                     }),
 
-                    ['div .button_spacer'],
+                    ['div .spacer'],
 
                     new Button('#load_files', {
                         text: 'Load',
@@ -276,7 +276,7 @@ class MapContainer extends Container {
                         }
                     }),
 
-                    ['div .button_spacer'],
+                    ['div .spacer'],
 
                     new Button('#save_files', {
                         text: 'Save',
@@ -302,7 +302,7 @@ class MapContainer extends Container {
                         }
                     }),
 
-                    ['div .button_spacer'],
+                    ['div .spacer'],
 
                     new Checkbox('create_one_way_wall', {
                         text: 'One-Way Wall (modify existing wall)',

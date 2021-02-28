@@ -60,7 +60,7 @@
     padding: 0 1.5rem;
 }
 
-#map_controls_container .button {
+.map_controls_button {
     margin: 0;
     margin-bottom: 0.5rem;
     width: 100%;
@@ -77,10 +77,6 @@
     text-transform: uppercase;
     font-size: 1.2rem;
     margin-bottom: 1rem;
-}
-
-.map_section_spacer {
-    height: 1rem;
 }
 
 #grid_size_input {

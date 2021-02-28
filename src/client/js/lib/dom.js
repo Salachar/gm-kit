@@ -22,6 +22,10 @@ const DOM = {
         if (is_array && !html_array.length) return null;
         // node
         if (!is_array && is_obj) {
+            // if (component) {
+            //     if (!component.refs) component.refs = {};
+            //     component.refs[html_array.id] = html_array;
+            // }
             appendTo.appendChild(html_array);
             return html_array;
         }

@@ -40,15 +40,15 @@ class ControlsManager {
             ['div #map_controls_body', [
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Player Screen'],
-                    new Button('#show_on_player_screen', {
+                    new Button('#show_on_player_screen .map_controls_button', {
                         text: 'Show on Player Screen',
                         store_event: 'show_player_screen',
                     }),
-                    new Button('#show_entire_map', {
+                    new Button('#show_entire_map .map_controls_button', {
                         text: 'Show Entire Map',
                         store_event: 'show_entire_map',
                     }),
-                    new Button('#toggle_map_fit', {
+                    new Button('#toggle_map_fit .map_controls_button', {
                         text: 'Toggle Map Fit',
                         store_event: 'toggle_map_fit-(PS)',
                     }),
@@ -81,7 +81,7 @@ class ControlsManager {
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
-                    new Button('#grid_toggle', {
+                    new Button('#grid_toggle .map_controls_button', {
                         text: 'Toggle Grid',
                         store_event: 'toggle_grid_(ps)',
                     }),

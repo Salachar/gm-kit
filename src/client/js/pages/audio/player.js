@@ -1,3 +1,4 @@
+const Button = require('../../lib/inputs/button');
 const NumberInput = require('../../lib/inputs/numberInput');
 
 class AudioPlayer {
@@ -65,13 +66,13 @@ class AudioPlayer {
     play () {
         this.paused = false;
         this.player.play();
-        this.refs.audio_player_play_pause.innerHTML = 'PAUSE';
+        this.refs.audio_player_play_pause.text('PAUSE');
     }
 
     pause () {
         this.paused = true;
         this.player.pause();
-        this.refs.audio_player_play_pause.innerHTML = 'PLAY';
+        this.refs.audio_player_play_pause.text('PLAY');
     }
 
     clear () {
@@ -81,8 +82,10 @@ class AudioPlayer {
 
     render () {
         return Lib.dom.generate(['div #audio_player', [
-            ['div #audio_player_play_pause .button HTML=PAUSE', {
-                click: (e) => {
+            new Button('#audio_player_play_pause', {
+                parent: this,
+                text: 'PAUSE',
+                onclick: (e) => {
                     if (!this.player.src) return;
                     this.paused = !this.paused;
                     if (this.paused) {
@@ -90,18 +93,17 @@ class AudioPlayer {
                     } else {
                         this.play();
                     }
-                }
-            }],
-
-            ['div #audio_player_loop .button HTML=LOOP: ON', {
-                click: (e) => {
+                },
+            }),
+            new Button('#audio_player_loop', {
+                text: 'LOOP: ON',
+                onclick: (e) => {
                     this.loop = !this.loop;
                     this.player.loop = this.loop;
                     let text = (this.loop) ? 'LOOP: ON' : 'LOOP: OFF';
                     e.target.innerHTML = text;
                 }
-            }],
-
+            }),
             new NumberInput('#audio_player_volume', {
                 step: 0.01,
                 min: 0,
@@ -109,10 +111,10 @@ class AudioPlayer {
                 store_key: 'audio_volume',
                 store_event: 'audio_volume_change'
             }),
-
-            ['div #choose_audio_directory .button HTML=Choose Audio Directory', {
-                click: (e) => IPC.send('choose_audio_directory'),
-            }],
+            new Button('#choose_audio_directory', {
+                text: 'Choose Audio Directory',
+                onclick: (e) => IPC.send('choose_audio_directory'),
+            }),
 
             ['div #audio_player_progress', {
                 click: (e) => {

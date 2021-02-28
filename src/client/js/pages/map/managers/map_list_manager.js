@@ -1,3 +1,5 @@
+const Button = require('../../../lib/inputs/button');
+
 class MapListManager {
     constructor (opts = {}) {
         this.map_list = null;
@@ -192,12 +194,14 @@ class MapListManager {
                                 this.searchMaps(this.map_list, search_string);
                             }
                         }],
-                        ['div #map_list_modal_folder .button HTML=MAP DIRECTORY', {
-                            click: (e) => IPC.send('choose_map_directory')
-                        }],
-                        ['div #map_list_modal_open .button HTML=OPEN SELECTED', {
-                            click: (e) => IPC.send('load_maps', this.selected_maps)
-                        }],
+                        new Button('#map_list_modal_folder', {
+                            text: 'MAP DIRECTORY',
+                            ipc_event: 'choose_map_directory',
+                        }),
+                        new Button('#map_list_modal_open', {
+                            text: 'OPEN SELECTED',
+                            onclick: (e) => IPC.send('load_maps', this.selected_maps),
+                        }),
                     ]],
                     ['div #map_list_modal_close .modal_close', {
                         click: (e) => this.closeModal()

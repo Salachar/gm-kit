@@ -1,8 +1,9 @@
 const Container = require('../base');
 
-const generators = require('./generators');
+const Button = require('../../lib/inputs/button');
 const NumberInput = require('../../lib/inputs/numberInput');
-const Lib = require('../../lib');
+
+const generators = require('./generators');
 
 class InfoContainer extends Container {
     constructor (opts = {}) {
@@ -52,8 +53,9 @@ class InfoContainer extends Container {
 
         Object.keys(generators).forEach((generator_key) => {
             const generator = generators[generator_key];
-            name_buttons.push([`div .info_button .button HTML=Male ${generator.title}`, {
-                click: (e) => {
+            name_buttons.push(new Button('.info_button', {
+                text: `Male ${generator.title}`,
+                onclick: (e) => {
                     for (var i = 0; i < this.amount_per_click; ++i) {
                         this.addResult({
                             type: 'Male ' + generator.title,
@@ -61,9 +63,10 @@ class InfoContainer extends Container {
                         });
                     }
                 }
-            }]);
-            name_buttons.push([`div .info_button .button HTML=Female ${generator.title}`, {
-                click: (e) => {
+            }),);
+            name_buttons.push(new Button('.info_button', {
+                text: `Female ${generator.title}`,
+                onclick: (e) => {
                     for (var i = 0; i < this.amount_per_click; ++i) {
                         this.addResult({
                             type: 'Female ' + generator.title,
@@ -71,7 +74,7 @@ class InfoContainer extends Container {
                         });
                     }
                 }
-            }]);
+            }),);
         });
 
         return name_buttons;
@@ -80,14 +83,16 @@ class InfoContainer extends Container {
     render () {
         Lib.dom.generate(['div .page', [
             ['div .container_header', [
-                ['div #clear_results_all .button HTML=Clear All Results', {
-                    click: (e) => {
+                new Button('#clear_results_all', {
+                    text: 'Clear All Results',
+                    onclick: (e) => {
                         this.el_results.innerHTML = '';
                         this.results = [];
                     }
-                }],
-                ['div #clear_results .button HTML=Clear Unmarked Results', {
-                    click: (e) => {
+                }),
+                new Button('#clear_results', {
+                    text: 'Clear Unmarked Results',
+                    onclick: (e) => {
                         this.results = this.results.filter((result) => {
                             if (!result.node.classList.contains('marked')) {
                                 result.node.remove();
@@ -96,7 +101,7 @@ class InfoContainer extends Container {
                             }
                         });
                     }
-                }],
+                }),
                 new NumberInput("#info_click_amount", {
                     min: 1,
                     init: this.amount_per_click,

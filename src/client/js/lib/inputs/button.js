@@ -1,42 +1,48 @@
 const Base = require('./base');
 class Button extends Base {
-  constructor (identifiers = '', props = {}) {
-    super(identifiers, props);
+    constructor (identifiers = '', props = {}) {
+        super(identifiers, props);
 
-    this.props = {
-      identifiers: identifiers || '',
-      ...props,
-    };
+        this.props = {
+            identifiers: identifiers || '',
+            ...props,
+        };
 
-    return this.render();
-  }
+        return this.render();
+    }
 
-  render () {
-    const {
-      identifiers,
-      store_event,
-      ipc_event,
-      onclick,
-      text,
-    } = this.props;
+    text (newText) {
+        this.node.innerHTML = newText;
+    }
 
-    return Lib.dom.generate([`div ${identifiers} .button HTML=${text}`, {
-      click: (e) => {
-        if (onclick) {
-          onclick();
-          return;
-        }
-        if (store_event) {
-          this.handleStore({
+    render () {
+        const {
+            identifiers,
             store_event,
-          });
-        }
-        if (ipc_event) {
-          IPC.send(ipc_event);
-        }
-      }
-    }]);
-  }
+            ipc_event,
+            onclick,
+            text,
+        } = this.props;
+
+        this.node = Lib.dom.generate([`div ${identifiers} .button HTML=${text}`, {
+            click: (e) => {
+                if (onclick) {
+                    onclick(e);
+                    return;
+                }
+                if (store_event) {
+                    this.handleStore({
+                        store_event,
+                    });
+                }
+                if (ipc_event) {
+                    IPC.send(ipc_event);
+                }
+            }
+        }]);
+
+        return this.node;
+    }
 }
 
 module.exports = Button;

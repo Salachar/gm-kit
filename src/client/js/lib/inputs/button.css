@@ -22,16 +22,6 @@
   background-color: var(--button-active-color);
 }
 
-.button_spacer {
-  display: inline-block;
-  box-sizing: border-box;
-  width: 1px;
-  height: var(--button-standard-height);
-  background-color: white;
-  margin: 0.5rem 1rem;
-  opacity: 0.75;
-}
-
 .button.large {
   height: 3rem;
   line-height: 3rem;

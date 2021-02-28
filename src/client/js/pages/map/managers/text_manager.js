@@ -1,3 +1,5 @@
+const Button = require('../../../lib/inputs/button');
+
 class TextManager {
     constructor (opts = {}) {
         this.open = false;
@@ -21,8 +23,9 @@ class TextManager {
         return Lib.dom.generate(['div #text_block_container', [
             ['div .text_block_header', [
                 ['div .text_block_header_buttons', [
-                    ['div #text_block_save .button HTML=SAVE', {
-                        click: (e) => {
+                    new Button('#text_block_save', {
+                        text: 'SAVE',
+                        onclick: (e) => {
                             this.current_text_data.receiver.addText({
                                 text: this.refs.text_block_textarea.value,
                                 key: this.current_text_data.key
@@ -30,15 +33,16 @@ class TextManager {
                             this.close();
                             Store.fire('save_maps');
                         }
-                    }],
-                    ['div #text_block_delete .button HTML=DELETE', {
-                        click: (e) => {
+                    }),
+                    new Button('#text_block_delete', {
+                        text: 'DELETE',
+                        onclick: (e) => {
                             this.current_text_data.receiver.removeText({
                                 key: this.current_text_data.key,
                                 position: this.current_text_data.position
                             });
                         }
-                    }]
+                    }),
                 ]],
                 ['div #text_block_close', {
                     click: (e) => this.close()
