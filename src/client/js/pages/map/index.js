@@ -27,7 +27,7 @@ class MapContainer extends Container {
 
         this.TextManager = new TextManager();
         this.ControlsManager = new ControlsManager();
-        // this.HelpManager = new HelpManager();
+        this.HelpManager = new HelpManager();
 
         Store.register({
             'save_maps': this.saveMaps.bind(this),
@@ -254,12 +254,14 @@ class MapContainer extends Container {
         Lib.dom.generate([
             ['div .container_header', [
                 ['div #controls', [
-                    // ['div', '#help .button', {
-                    //     html: 'Help'
-                    // }],
-                    // new HelpManager().render(),
+                    new Button('#help', {
+                        text: 'Help',
+                        onclick: (e) => {
+                            this.HelpManager.toggle();
+                        },
+                    }),
 
-                    // ['div .button_spacer'],
+                    ['div .button_spacer'],
 
                     new Button('#load_files', {
                         text: 'Load',
@@ -310,7 +312,7 @@ class MapContainer extends Container {
                 ]],
 
                 // Help Manager gets created and added
-                // new HelpManager().render(),
+                this.HelpManager.render(),
 
                 // Text Manager gets created and added
                 this.TextManager.render(),

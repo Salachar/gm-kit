@@ -1,3 +1,5 @@
+const Lib = require("../../../lib");
+
 const HELP_INFO = [{
     key: '* +',
     text: 'Zoom in on the currently selected map'
@@ -54,28 +56,25 @@ const HELP_INFO = [{
 class HelpManager {
     constructor () {}
 
+    toggle () {
+        this.refs.help_box.classList.toggle('hide');
+    }
+
     render () {
-        return ['div .help_container', [
-            ['div #help .button HTML=Help', {
-                click: (e) => {
-                    document.getElementById('help_box').classList.toggle('hide');
-                }
-            }],
-            ['div #help_box .hide', [
-                ['table #help_table', [
-                    ['tr', [
-                        ['th .help_key HTML=Key'],
-                        ['th'],
-                    ]],
-                    ...HELP_INFO.map((help_item) => {
-                        return ['tr .help_section', [
-                            [`td .help_key HTML=${help_item.key}`],
-                            [`td .help_desc HTML=${help_item.text}`],
-                        ]]
-                    })
+        return Lib.dom.generate(['div #help_box .hide', [
+            ['table #help_table', [
+                ['tr', [
+                    ['th .help_key HTML=Key'],
+                    ['th'],
                 ]],
-            ]]
-        ]];
+                ...HELP_INFO.map((help_item) => {
+                    return ['tr .help_section', [
+                        [`td .help_key HTML=${help_item.key}`],
+                        [`td .help_desc HTML=${help_item.text}`],
+                    ]]
+                })
+            ]],
+        ]], this);
     }
 
     static getHelpInfo () {
