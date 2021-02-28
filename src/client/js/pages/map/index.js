@@ -5,6 +5,7 @@ const HelpManager = require('./managers/help_manager');
 const MapListManager = require('./managers/map_list_manager');
 const TextManager = require('./managers/text_manager');
 
+const Button = require('../../lib/inputs/button');
 const Checkbox = require('../../lib/inputs/checkbox');
 
 const MapInstance = require('./instance');
@@ -19,7 +20,6 @@ class MapContainer extends Container {
         super({
             ...opts,
             type: 'map',
-            render: false,
         });
 
         this.maps = {};
@@ -259,33 +259,37 @@ class MapContainer extends Container {
                     // }],
                     // new HelpManager().render(),
 
-                    ['div .button_spacer'],
-                    ['div #load_files .button HTML=Load', {
-                        click: (e) => {
-                            IPC.send('load_map_list');
-                        }
-                    }],
-                    ['div #load_state .button HTML=Load State', {
-                        click: (e) => {
+                    // ['div .button_spacer'],
+
+                    new Button('#load_files', {
+                        text: 'Load',
+                        ipc_event: 'load_map_list',
+                    }),
+                    new Button('#load_state', {
+                        text: 'Load State',
+                        onclick: (e) => {
                             // if (!this.current_map) return;
                             // this.current_map.loadState();
                             Toast.message('Save/Load State is temporarily disabled');
                         }
-                    }],
+                    }),
+
                     ['div .button_spacer'],
-                    ['div .button HTML=Save', {
-                        click: (e) => {
-                            this.saveMaps();
-                        }
-                    }],
-                    ['div #save_all_maps .button HTML=Save All', {
-                        click: (e) => {
+
+                    new Button('#save_files', {
+                        text: 'Save',
+                        onclick: (e) => this.saveMaps(),
+                    }),
+                    new Button('#save_all_maps', {
+                        text: 'Save All',
+                        onclick: (e) => {
                             const map_data = this.getAllMapData();
                             if (!map_data) return Toast.error('There are no maps to save');
                             IPC.send('save_maps', map_data);
                         }
-                    }],
-                    ['div #save_state .button HTML=Save State', {
+                    }),
+                    new Button('#save_state', {
+                        text: 'Save State',
                         click: (e) => {
                             // const map = this.current_map;
                             // const map_data = this.getMapData();
@@ -294,8 +298,10 @@ class MapContainer extends Container {
                             // IPC.send('save_maps', map_data);
                             Toast.message('Save/Load State is temporarily disabled');
                         }
-                    }],
+                    }),
+
                     ['div .button_spacer'],
+
                     new Checkbox('create_one_way_wall', {
                         text: 'One-Way Wall (modify existing wall)',
                         store_key: 'create_one_way_wall',

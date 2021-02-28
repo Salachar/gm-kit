@@ -8,7 +8,6 @@ class AudioContainer extends Container {
         super({
             ...opts,
             type: 'audio',
-            render: false,
         });
 
         this.data = new AudioData({
@@ -278,7 +277,7 @@ class AudioContainer extends Container {
                     ['div #no_audio_screen_load .help_screen_action', {
                         click: (e) => IPC.send('choose_audio_directory'),
                     }, [
-                        ['div .help_scren_main_text HTML=CLICK TO PICK AUDIO FOLDER'],
+                        ['div .help_screen_main_text HTML=CLICK TO CHOOSE AUDIO FOLDER'],
                     ]]
                 ]],
 

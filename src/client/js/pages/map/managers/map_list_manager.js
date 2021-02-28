@@ -25,6 +25,10 @@ class MapListManager {
             this.onMapLoad(maps);
             this.closeModal();
         });
+
+        IPC.on('map_directory_chosen', (e) => {
+            IPC.send('load_map_list');
+        });
     }
 
     addMap (map) {
@@ -73,7 +77,6 @@ class MapListManager {
     }
 
     createFileTree (map_list) {
-        console.log(map_list);
         this.refs.map_list_modal_body_list.innerHTML = '';
         Lib.dom.generate(this.generateSectionNodes(map_list), this, this.refs.map_list_modal_body_list);
         this.openModal();
@@ -180,12 +183,7 @@ class MapListManager {
             ['div #map_list_modal .modal', [
                 ['div .modal_header', [
                     ['div .modal_title', [
-                        ['span .modal_title_info HTML=&#9432;'],
-                        ['span .modal_title_text HTML=Select Map:', {
-                            attributes: {
-                                title: CONFIG.map_directory
-                            }
-                        }],
+                        ['span .modal_title_text HTML=Select Map:'],
                     ]],
                     ['div .modal_header_buttons', [
                         ['input #map_list_search .text_input', {

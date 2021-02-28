@@ -32,12 +32,12 @@
 }
 
 .help_screen_main_text {
-  font-size: 3rem;
+  font-size: 2rem;
   font-style: italic;
 }
 
 .help_screen_support_text {
-  margin-top: 2rem;
-  font-size: 2rem;
+  margin-top: 1rem;
+  font-size: 1.5rem;
   font-style: italic;
 }

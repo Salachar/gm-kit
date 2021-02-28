@@ -9,7 +9,6 @@ class InfoContainer extends Container {
         super({
             ...opts,
             type: 'info',
-            render: false,
         });
 
         this.amount_per_click = 5;

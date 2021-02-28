@@ -35,10 +35,6 @@
     font-size: var(--font-large);
 }
 
-.modal_title_info {
-    cursor: pointer;
-}
-
 .modal_header_buttons {
     position: absolute;
     top: 0;

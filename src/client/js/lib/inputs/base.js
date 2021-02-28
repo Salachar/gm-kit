@@ -1,5 +1,5 @@
 class InputBase {
-    constructor (identifiers, props = {}) {
+    constructor (identifiers = '', props = {}) {
         let id = null;
         identifiers.split(' ').forEach((identifier) => {
             if (identifier[0] === '#') {

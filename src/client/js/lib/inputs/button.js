@@ -1,6 +1,6 @@
 const Base = require('./base');
 class Button extends Base {
-  constructor (identifiers, props = {}) {
+  constructor (identifiers = '', props = {}) {
     super(identifiers, props);
 
     this.props = {
@@ -15,6 +15,7 @@ class Button extends Base {
     const {
       identifiers,
       store_event,
+      ipc_event,
       onclick,
       text,
     } = this.props;
@@ -29,6 +30,9 @@ class Button extends Base {
           this.handleStore({
             store_event,
           });
+        }
+        if (ipc_event) {
+          IPC.send(ipc_event);
         }
       }
     }]);
