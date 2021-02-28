@@ -1,8 +1,7 @@
-const Container = require('../base');
-
 const AudioPlayer = require('./player');
 const AudioData = require('./data');
 
+const Container = require('../base');
 class AudioContainer extends Container {
     constructor (opts = {}) {
         super({
@@ -32,11 +31,11 @@ class AudioContainer extends Container {
             IPC.send('audio_page_loaded');
         });
         // Audio Data is loaded first, then the files
-        IPC.on('data_loaded', (e, data_json) => {
+        IPC.on('audio_json_loaded', (e, data_json) => {
             this.data.set(data_json);
         });
         // Files are loaded second
-        IPC.on('files_loaded', (e, files_json) => {
+        IPC.on('audio_list_loaded', (e, files_json) => {
             this.refs.no_audio_screen.classList.add('hidden');
             this.buildAudioList(files_json);
         });
@@ -55,7 +54,6 @@ class AudioContainer extends Container {
 
     clearPrevious () {
         this.refs.previous_body.innerHTML = '';
-        // this.data.previous = {};
     }
 
     clearAll () {
@@ -64,7 +62,7 @@ class AudioContainer extends Container {
         this.clearPrevious();
     }
 
-    onSearch (search_string) {
+    onSearch (e) {
         let search_string = e.currentTarget.value;
         if (search_string.length < 2) {
             this.refs.search_body.innerHTML = '';
@@ -274,27 +272,24 @@ class AudioContainer extends Container {
             ]],
             ['div .container_body', [
                 ['div #no_audio_screen .help_screen', [
-                    ['div #no_audio_screen_load .help_screen_action', {
+                    ['div .help_screen_action', {
                         click: (e) => IPC.send('choose_audio_directory'),
                     }, [
                         ['div .help_screen_main_text HTML=CLICK TO CHOOSE AUDIO FOLDER'],
                     ]]
                 ]],
 
-                ['div #tracks_section .section', [
+                ['div .tracks_section .section', [
                     ['div .section_title HTML=tracks'],
                     ['div #tracks_body .section_body'],
                 ]],
 
-                ['div #search_section .section', [
+                ['div .search_section .section', [
                     ['div .section_title HTML=search'],
-                    ['div #search_input_wrap', [
-                        ['input #search_input .text_input', {
-                            click: (e) => {
-                                this.onSearch(e.currentTarget.value);
-                            }
-                        }],
-                    ]],
+                    ['input .search_input .text_input', {
+                        placeholder: 'ENTER TRACK/TAG/FOLDER',
+                        onchange: (e) => this.onSearch(e)
+                    }],
                     ['div #search_body .section_body'],
                 ]],
 

@@ -195,11 +195,11 @@ class MapListManager {
                             }
                         }],
                         new Button('#map_list_modal_folder', {
-                            text: 'MAP DIRECTORY',
+                            text: 'CHANGE MAP DIRECTORY',
                             ipc_event: 'choose_map_directory',
                         }),
                         new Button('#map_list_modal_open', {
-                            text: 'OPEN SELECTED',
+                            text: 'OPEN SELECTED MAPS',
                             onclick: (e) => IPC.send('load_maps', this.selected_maps),
                         }),
                     ]],

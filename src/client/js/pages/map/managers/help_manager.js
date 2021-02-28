@@ -34,23 +34,8 @@ const HELP_INFO = [{
     text: 'Remove object closest to the mouse position (within a certain distance)',
     common: true
 }, {
-    key: 'W',
-    text: 'Toggle walls on main window when lighting is on<br>This is entirely optional and only affects the GM screen'
-}, {
-    key: '** S',
-    text: 'Create the Player Screen, if there is map open it will display it<br>If the Player Screen is already open, this will display the current map on the GM Screen'
-}, {
-    key: '* [',
-    text: 'Decrease dimmer on the Player Screen (artifical screen brightness)'
-}, {
-    key: '* ]',
-    text: 'Increase dimmer on the Player Screen (artifical screen brightness)'
-}, {
     key: '',
-    text: '* Holding ALT will cause this action on the display window'
-}, {
-    key: '',
-    text: '** Only holding ALT will cause this action on the display window'
+    text: '* Will work on Player Screen if it is focused',
 }];
 
 class HelpManager {

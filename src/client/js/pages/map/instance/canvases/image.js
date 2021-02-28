@@ -29,8 +29,6 @@ class ImageCanvas extends Base {
 
     load () {
         return new Promise((resolve, reject) => {
-            console.log(this.map_data);
-
             if (!this.map_data.image && !this.map_data.video) {
                 reject();
                 return;

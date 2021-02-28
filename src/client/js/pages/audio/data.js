@@ -80,7 +80,7 @@ class AudioData {
 
             this.parent.player.volume = this.volume;
         } catch (e) {
-            console.log(e.message);
+            console.log(e);
         }
     }
 }

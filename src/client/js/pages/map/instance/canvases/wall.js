@@ -20,19 +20,6 @@ class WallCanvas extends Base {
         }, this.map_instance.name);
     }
 
-    toggleWalls () {
-        if (!Store.get('lighting_enabled')) {
-            Toast.message('Walls can only be toggled when light is enabled');
-            return;
-        }
-        this.draw_walls = !this.draw_walls;
-        if (this.draw_walls) {
-            this.drawWallLines();
-        } else {
-            clear(this.wall_context);
-        }
-    }
-
     draw () {
         clear(this.context);
         if (!this.draw_walls) return this;

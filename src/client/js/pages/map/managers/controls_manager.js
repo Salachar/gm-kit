@@ -19,9 +19,10 @@ class ControlsManager {
     }
 
     update (map) {
-        this.refs.grid_size_input.set(map.managers.canvas.canvases.grid.attributes.size);
-        this.refs.map_zoom_input.set(map.player_screen_zoom);
-        this.refs.player_screen_brightness.set(map.managers.canvas.canvases.image.brightness);
+        this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
+        this.refs.grid_size_input.value = map.managers.canvas.canvases.grid.attributes.size;
+        this.refs.map_zoom_input.value = map.player_screen_zoom;
+        this.refs.player_screen_brightness.value = map.managers.canvas.canvases.image.brightness;
     }
 
     render () {
@@ -44,21 +45,18 @@ class ControlsManager {
                         text: 'Show on Player Screen',
                         store_event: 'show_player_screen',
                     }),
-                    new Button('#show_entire_map .map_controls_button', {
+                    new Checkbox('#show_entire_map', {
+                        parent: this,
                         text: 'Show Entire Map',
-                        store_event: 'show_entire_map',
+                        store_key: 'show_entire_map_enabled',
+                        store_event: 'show_entire_map'
                     }),
-                    new Button('#toggle_map_fit .map_controls_button', {
-                        text: 'Toggle Map Fit',
-                        store_event: 'toggle_map_fit-(PS)',
+                    new Checkbox('#fit_map_to_screen', {
+                        parent: this,
+                        text: 'Fit Map To Screen',
+                        store_key: 'fit_map_to_screen_enabled',
+                        store_event: 'fit_map_to_screen-(PS)'
                     }),
-                    // new ArrowInput('#scroll_buttons', {
-                    //     text: 'Scroll the Player Screen',
-                    //     step: 2,
-                    //     interval: 10,
-                    //     store_key: 'offset',
-                    //     store_event: 'scroll_(PS)'
-                    // }),
                     new NumberInput('#map_zoom_input', {
                         text: 'Zoom',
                         step: 0.025,
@@ -81,9 +79,11 @@ class ControlsManager {
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
-                    new Button('#grid_toggle .map_controls_button', {
-                        text: 'Toggle Grid',
-                        store_event: 'toggle_grid_(ps)',
+                    new Checkbox('#enable_grid', {
+                        parent: this,
+                        text: 'Enable Grid',
+                        store_key: 'overlay_grid_enabled',
+                        store_event: 'overlay_grid_toggled_(ps)'
                     }),
                     new NumberInput('#grid_size_input', {
                         text: 'Size',
@@ -117,7 +117,7 @@ class ControlsManager {
                     new ColorPicker('#spell_marker_color', {
                         store_key: 'spell_marker_color'
                     }),
-                    new Checkbox('show_affected_tiles', {
+                    new Checkbox('#show_affected_tiles', {
                         text: 'Highlight Affected Tiles',
                         store_key: 'show_affected_tiles show_affected_tiles_checked',
                         store_event: 'show_affected_tiles_toggled-(ps)'

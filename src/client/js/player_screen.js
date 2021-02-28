@@ -82,8 +82,9 @@ class DisplayManager {
         });
 
         document.body.addEventListener('keydown', (e) => {
+            // Currently only allow + or - for zooming on the player map
             let key = e.keyCode;
-            if (key === KEYS.PLUS || key === KEYS.MINUS || key === KEYS.LEFT || key === KEYS.UP || key === KEYS.DOWN || key === KEYS.RIGHT ) {
+            if (key === KEYS.PLUS || key === KEYS.MINUS) {
                 if (this.current_map) {
                     this.current_map.onKeyDown(key);
                 }

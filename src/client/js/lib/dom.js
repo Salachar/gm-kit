@@ -157,6 +157,10 @@ const DOM = {
             }
         }
 
+        if (opts.placeholder) {
+            node.placeholder = opts.placeholder;
+        }
+
         if (opts.attributes) {
             for (let attr in opts.attributes) {
                 if (opts.attributes[attr]) {

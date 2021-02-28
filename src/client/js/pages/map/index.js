@@ -68,16 +68,6 @@ class MapContainer extends Container {
                     this.enableSegmentQuickPlace();
                 }
                 break;
-            case KEYS.LEFT_BRACKET:
-                Store.fire('dim_down');
-                break;
-            case KEYS.RIGHT_BRACKET:
-                Store.fire('dim_up');
-                break;
-            case KEYS.S:
-                if (KEY_DOWN[KEYS.ALT]) {
-                    Store.fire('show_player_screen');
-                }
             default:
                 // console.log('APP >> Keydown: Unhandled keyCode: ' + keyCode);
                 break;

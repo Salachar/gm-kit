@@ -23,8 +23,3 @@
     left: var(--standard-padding);
     bottom: calc(var(--standard-padding) * 2);
 }
-
-#audio_player_loop {
-    left: calc((var(--standard-padding) * 2) + 8rem);
-    bottom: calc(var(--standard-padding) * 2);
-}

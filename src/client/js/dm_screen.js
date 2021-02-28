@@ -87,9 +87,11 @@ class AppManager {
         });
 
         listener(document.body, 'keydown', (e) => {
-            if (KEY_DOWN[e.keyCode]) return;
-            KEY_DOWN[e.keyCode] = true;
-            this.active_container.keyDown(e.keyCode);
+            const key = e.keyCode;
+            const zooming = (key === KEYS.PLUS || key === KEYS.MINUS);
+            if (KEY_DOWN[key] && !zooming) return;
+            KEY_DOWN[key] = true;
+            this.active_container.keyDown(key);
         }, {prevent_default: false});
 
         listener(document.body, 'keyup', (e) => {
@@ -103,7 +105,6 @@ class AppManager {
         });
 
         IPC.on('json_directory_chosen', (e) => {
-            console.log(e);
             this.refs.choose_json_directory.classList.add('hidden');
         });
     }
@@ -144,8 +145,6 @@ class AppManager {
 }
 
 window.onload = () => {
-    console.log(CONFIG);
-
     IPC.send('app_loaded');
 
     IPC.on('config', (e, config_json) => {

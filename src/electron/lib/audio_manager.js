@@ -28,27 +28,24 @@ class AudioManager {
 
     sendAudio () {
         const list = this.generateList();
-        // console.log(list);
         if (!list) {
             global.shared.WINDOW.webContents.send('audio_list_error', list);
         } else {
-            global.shared.WINDOW.webContents.send('files_loaded', list);
+            global.shared.WINDOW.webContents.send('audio_list_loaded', list);
         }
     }
 
     loadAudioJSON () {
-        console.log('load');
         try {
             const audio_path = path.join(GMConfig.json_directory, 'audio_data.json');
             let audio_data = fs.readFileSync(audio_path, {
                 encoding: 'utf-8'
             });
-            // console.log(audio_data);
-            global.shared.WINDOW.webContents.send('data_loaded', JSON.parse(audio_data));
+            global.shared.WINDOW.webContents.send('audio_json_loaded', JSON.parse(audio_data));
         } catch (e) {
             console.log(e);
             console.log('No audio_data.json file found');
-            global.shared.WINDOW.webContents.send('data_loaded', {});
+            global.shared.WINDOW.webContents.send('audio_json_loaded', {});
         }
     }
 

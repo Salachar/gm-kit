@@ -165,10 +165,11 @@ class LightManager extends Base {
         return this.light_polys;
     }
 
-    showEntireMap () {
+    showEntireMap (data) {
         // If there is no player screen, there is nothing to toggle
         if (!window.player_screen) return;
-        this.show_entire_map = !this.show_entire_map;
+        // this.show_entire_map = !this.show_entire_map;
+        this.show_entire_map = data.show_entire_map_enabled;
         if (this.show_entire_map) {
             Store.fire('show_entire_map_(PS)');
         } else {

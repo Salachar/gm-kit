@@ -27,7 +27,7 @@ class GridCanvas extends Base {
         }, this.map_instance.name);
 
         Store.register({
-            "toggle_grid_(ps)": this.toggle.bind(this),
+            "overlay_grid_toggled_(ps)": this.toggle.bind(this),
             "grid_size_update_(ps)": this.update.bind(this),
             "grid_offset_update_(ps)": this.update.bind(this),
         }, this.map_instance.name);
@@ -51,8 +51,8 @@ class GridCanvas extends Base {
         this.draw();
     }
 
-    toggle () {
-        this.attributes.show = !this.attributes.show;
+    toggle (data) {
+        this.attributes.show = data.overlay_grid_enabled;
         this.draw();
     }
 

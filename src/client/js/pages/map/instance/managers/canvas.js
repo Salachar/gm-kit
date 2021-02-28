@@ -73,7 +73,6 @@ class CanvasManager extends Base{
             'light_poly_update_(PS)': this.onLightPolyUpdate.bind(this),
             "show_entire_map_(PS)": this.showEntireMapPC.bind(this),
             "hide_entire_map_(PS)": this.hideEntireMapPC.bind(this),
-            'scroll_(PS)': this.scrollPlayerScreen.bind(this),
         }, this.map_instance.name);
     }
 
@@ -94,11 +93,6 @@ class CanvasManager extends Base{
     refreshPlacements () {
         this.canvases.control.draw();
         this.canvases.wall.draw();
-    }
-
-    scrollPlayerScreen (data) {
-        this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + data.offset.x;
-        this.canvas_container.scrollTop = this.canvas_container.scrollTop + data.offset.y;
     }
 
     drawOneWayArrow (opts = {}) {
@@ -228,26 +222,3 @@ class CanvasManager extends Base{
     }
 };
 module.exports = CanvasManager;
-
-
-
-// 'scroll_up': this.scrollUp.bind(this),
-// 'scroll_right': this.scrollRight.bind(this),
-// 'scroll_down': this.scrollDown.bind(this),
-// 'scroll_left': this.scrollLeft.bind(this),
-
-// scrollLeft (scroll_amount) {
-//     this.canvas_container.scrollLeft = this.canvas_container.scrollLeft - (scroll_amount || CONFIG.scroll_speed);
-// }
-
-// scrollRight (scroll_amount) {
-//     this.canvas_container.scrollLeft = this.canvas_container.scrollLeft + (scroll_amount || CONFIG.scroll_speed);
-// }
-
-// scrollUp (scroll_amount) {
-//     this.canvas_container.scrollTop = this.canvas_container.scrollTop - (scroll_amount || CONFIG.scroll_speed);
-// }
-
-// scrollDown (scroll_amount) {
-//     this.canvas_container.scrollTop = this.canvas_container.scrollTop + (scroll_amount || CONFIG.scroll_speed);
-// }

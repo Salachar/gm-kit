@@ -1,20 +1,16 @@
-#search_section {
+.search_section {
     top: var(--standard-padding);
     right: var(--standard-padding);
     width: var(--side-section-width);
     bottom: calc(50% + (var(--standard-padding) / 2));
 }
 
-#search_body {
-    top: calc(var(--section-title-height) + 2.5rem);
-}
-
-#search_input_wrap {
+.search_input {
     box-sizing: border-box;
-    padding-bottom: 0.5rem;
-}
-
-#search_input {
     margin: 0;
     width: 100%;
+}
+
+#search_body {
+    top: calc(var(--section-title-height) + 2.5rem);
 }

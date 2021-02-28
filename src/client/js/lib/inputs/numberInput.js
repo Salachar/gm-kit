@@ -18,9 +18,14 @@ class NumberInput extends Base {
         return this.render();
     }
 
-    set (value) {
+    get value () {
         const input = document.getElementById(`number_input_${this.guid}`);
-        input.value = value;
+        return parseFloat(input.value) || 0;
+    }
+
+    set value (new_value) {
+        const input = document.getElementById(`number_input_${this.guid}`);
+        input.value = new_value;
     }
 
     stopTimer () {

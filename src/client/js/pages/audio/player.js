@@ -1,4 +1,5 @@
 const Button = require('../../lib/inputs/button');
+const Checkbox = require('../../lib/inputs/checkbox');
 const NumberInput = require('../../lib/inputs/numberInput');
 
 class AudioPlayer {
@@ -6,13 +7,12 @@ class AudioPlayer {
         this.parent = opts.parent;
 
         this.paused = false;
-        this.loop = true;
 
         this.time = 0;
         this.duration = 0;
 
         this.player = new Audio();
-        this.player.loop = this.loop;
+        this.player.loop = true;
 
         Store.register({
             'audio_volume_change': this.onVolumeChange.bind(this),
@@ -48,8 +48,7 @@ class AudioPlayer {
 
     set volume (new_volume) {
         this.player.volume = new_volume.toFixed(2);
-        const input = this.refs.audio_player_volume.getElementsByClassName('number_input')[0];
-        input.value = this.player.volume;
+        this.refs.audio_player_volume.value = this.player.volume;
     }
 
     get volume () {
@@ -95,21 +94,20 @@ class AudioPlayer {
                     }
                 },
             }),
-            new Button('#audio_player_loop', {
-                text: 'LOOP: ON',
-                onclick: (e) => {
-                    this.loop = !this.loop;
-                    this.player.loop = this.loop;
-                    let text = (this.loop) ? 'LOOP: ON' : 'LOOP: OFF';
-                    e.target.innerHTML = text;
+            new Checkbox('#audio_player_loop', {
+                text: 'LOOP',
+                checked: this.player.loop,
+                onchange: (checked) => {
+                    this.player.loop = checked;
                 }
             }),
             new NumberInput('#audio_player_volume', {
+                parent: this,
                 step: 0.01,
                 min: 0,
                 max: 1,
                 store_key: 'audio_volume',
-                store_event: 'audio_volume_change'
+                store_event: 'audio_volume_change',
             }),
             new Button('#choose_audio_directory', {
                 text: 'Choose Audio Directory',

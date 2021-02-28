@@ -23,6 +23,7 @@ class TextManager extends Base {
     }
 
     get open () {
+        if (CONFIG.is_player_screen) return false;
         return this.map_instance.manager.TextManager.open;
     }
 

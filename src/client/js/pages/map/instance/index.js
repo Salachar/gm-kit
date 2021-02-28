@@ -89,15 +89,16 @@ class MapInstance {
             'remove_one_way': this.onRemoveOneWay.bind(this),
             'add_text_block': this.onAddTextBlock.bind(this),
             'zoom_(ps)': this.playerScreenZoom.bind(this),
-            'toggle_map_fit': this.toggleMapFit.bind(this),
+            'fit_map_to_screen': this.fitMapToScreen.bind(this),
         }, this.name);
     }
 
-    toggleMapFit () {
+    fitMapToScreen (data) {
         getWindowDimensions();
 
         let window_ratio = (CONFIG.window_width / CONFIG.window_height) || 1;
-        this.map_fit = !this.map_fit;
+        // this.map_fit = !this.map_fit;
+        this.map_fit = data.fit_map_to_screen_enabled;
 
         if (!this.map_fit) {
             this.setZoom(this.pre_fit_zoom || 1);
@@ -315,8 +316,6 @@ class MapInstance {
             Store.fire(events[key], event_data);
         } else if (key === KEYS.DELETE) {
             this.onDelete(Mouse.point);
-        } else if (key === KEYS.W) {
-            this.managers.canvas.toggleWalls();
         }
     }
 

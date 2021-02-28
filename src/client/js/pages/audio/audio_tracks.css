@@ -1,4 +1,4 @@
-#tracks_section {
+.tracks_section {
     top: var(--standard-padding);
     left: var(--standard-padding);
     bottom: var(--standard-padding);
