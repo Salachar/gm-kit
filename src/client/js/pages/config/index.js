@@ -1,7 +1,6 @@
-const Container = require('../base');
-
 const Button = require('../../lib/inputs/button');
 
+const Container = require('../base');
 class ConfigContainer extends Container {
     constructor (opts = {}) {
         super({

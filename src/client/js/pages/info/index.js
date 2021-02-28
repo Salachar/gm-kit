@@ -1,10 +1,9 @@
-const Container = require('../base');
-
 const Button = require('../../lib/inputs/button');
 const NumberInput = require('../../lib/inputs/numberInput');
 
 const generators = require('./generators');
 
+const Container = require('../base');
 class InfoContainer extends Container {
     constructor (opts = {}) {
         super({

@@ -1,4 +1,3 @@
-const Lib = require('..');
 const Base = require('./base');
 class Checkbox extends Base {
     constructor (identifiers, props = {}) {

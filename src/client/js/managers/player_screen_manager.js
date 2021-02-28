@@ -97,7 +97,6 @@ class PlayerScreenManager {
         }
         return params;
     }
-
 }
 
 module.exports = new PlayerScreenManager();

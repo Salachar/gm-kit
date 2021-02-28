@@ -79,4 +79,5 @@ class Mouse {
         this.right = false;
     }
 };
+
 module.exports = Mouse;

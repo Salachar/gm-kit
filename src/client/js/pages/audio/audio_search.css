@@ -6,7 +6,7 @@
 }
 
 #search_body {
-     top: calc(var(--section-title-height) + 2.5rem);
+    top: calc(var(--section-title-height) + 2.5rem);
 }
 
 #search_input_wrap {
