@@ -72,25 +72,27 @@ class NumberInput extends Base {
             text,
         } = this.props;
 
-        return Lib.dom.generate([`div ${identifiers} .input_container`, [
-            text && [`div .input_text HTML=${text}`],
-            [`div .number_input_container`, [
-                [`div .number_input_button .arrow_left`, {
-                    mousedown: (e) => this.fireInput(-1),
-                    mouseend: (e) => this.stopTimer(),
-                }],
-                !isNaN(min) && [`div .number_input_info .number_input_min HTML=${min}`],
-                [`input #number_input_${this.guid} .number_input`, {
-                    value: default_value,
-                    onchange: (e) => this.checkValue(),
-                }],
-                !isNaN(max) && [`div .number_input_info .number_input_max HTML=${max}`],
-                [`div .number_input_button .arrow_right`, {
-                    mousedown: (e) => this.fireInput(1),
-                    mouseend: (e) => this.stopTimer(),
-                }],
+        return Lib.dom.generate(
+            [`div ${identifiers} .input_container`, [
+                text && [`div .input_text HTML=${text}`],
+                [`div .number_input_container`, [
+                    [`div .number_input_button .arrow_left`, {
+                        mousedown: (e) => this.fireInput(-1),
+                        mouseend: (e) => this.stopTimer(),
+                    }],
+                    !isNaN(min) && [`div .number_input_info .number_input_min HTML=${min}`],
+                    [`input #number_input_${this.guid} .number_input`, {
+                        value: default_value,
+                        onchange: (e) => this.checkValue(),
+                    }],
+                    !isNaN(max) && [`div .number_input_info .number_input_max HTML=${max}`],
+                    [`div .number_input_button .arrow_right`, {
+                        mousedown: (e) => this.fireInput(1),
+                        mouseend: (e) => this.stopTimer(),
+                    }],
+                ]],
             ]],
-        ]]);
+        );
     }
 }
 

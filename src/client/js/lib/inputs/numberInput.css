@@ -1,5 +1,11 @@
-.number_input {
+.number_input_container {
+    position: relative;
     width: 100%;
+    height: 2rem;
+}
+
+.number_input {
+    width: 60%;
     text-align: center;
     display: inline-block;
     vertical-align: top;
@@ -10,15 +16,17 @@
     color: white;
     box-sizing: border-box;
     font-size: var(--font-medium);
+    height: 2rem;
+    position: absolute;
+    top: 0;
+    left: 20%;
 }
 
 .number_input_button {
     cursor: pointer;
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
+    position: absolute;
     height: var(--input-height);
-    width: var(--input-height);
+    width: 20%;
     text-align: center;
     background-color: var(--button-bg-color);
 }
@@ -39,49 +47,23 @@
     right: 0;
     bottom: 0;
     line-height: var(--input-height);
+    font-weight: bold;
 }
 
-.number_input_container {
-    position: relative;
-    width: 100%;
-    height: 2rem;
-}
-
-.number_input_container .number_input_button {
-    width: 20%;
-}
-
-.number_input_container .arrow_left {
-    position: absolute;
-    top: 0;
+.number_input_button.arrow_left {
     left: 0;
-    height: 2rem;
 }
 
-.number_input_container .arrow_right {
-    position: absolute;
-    top: 0;
+.number_input_button.arrow_right {
     right: 0;
-    height: 2rem;
 }
 
-.number_input_container .number_input {
-    position: absolute;
-    top: 0;
-    left: 20%;
-    width: 60%;
-}
-
-.number_input_container .arrow_left:before {
+.number_input_button.arrow_left:before {
     content: '\2212' !important;
-    font-size: 2.25rem;
-    font-weight: bold;
 }
 
-.number_input_container .arrow_right:before {
+.number_input_button.arrow_right:before {
     content: '\002B' !important;
-    font-size: 2.25rem;
-    font-weight: bold;
 }
 
 .number_input_info {

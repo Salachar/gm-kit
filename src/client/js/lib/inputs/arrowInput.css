@@ -1,6 +1,5 @@
 .arrow_buttons {
-    text-align: center;
-    height: 2rem;
+    height: var(--input-height);;
 }
 
 .arrow_button {

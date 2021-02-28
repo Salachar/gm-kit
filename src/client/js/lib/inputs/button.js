@@ -24,22 +24,24 @@ class Button extends Base {
             text,
         } = this.props;
 
-        this.node = Lib.dom.generate([`div ${identifiers} .button HTML=${text}`, {
-            click: (e) => {
-                if (onclick) {
-                    onclick(e);
-                    return;
-                }
-                if (store_event) {
-                    this.handleStore({
-                        store_event,
-                    });
-                }
-                if (ipc_event) {
-                    IPC.send(ipc_event);
-                }
-            }
-        }]);
+        this.node = Lib.dom.generate(
+            [`button ${identifiers} .button HTML=${text}`, {
+                click: (e) => {
+                    if (onclick) {
+                        onclick(e);
+                        return;
+                    }
+                    if (store_event) {
+                        this.handleStore({
+                            store_event,
+                        });
+                    }
+                    if (ipc_event) {
+                        IPC.send(ipc_event);
+                    }
+                },
+            }],
+        );
 
         return this.node;
     }
