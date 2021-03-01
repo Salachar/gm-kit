@@ -8,6 +8,7 @@
 @import "./pages/map/map.css";
 @import "./pages/info/info.css";
 @import "./pages/audio/audio.css";
+@import "./pages/config/config.css";
 
 *::-webkit-scrollbar {
     display: none;

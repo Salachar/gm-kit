@@ -71,8 +71,6 @@ class AudioData {
     set (data) {
         if (!data) return;
         try {
-            delete data.track;
-
             this.tracks = data.tracks || {};
             this.previous = data.previous || {};
             this.collapse = data.collapse || {};

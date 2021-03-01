@@ -38,10 +38,8 @@ class AudioManager {
     loadAudioJSON () {
         try {
             const audio_path = path.join(GMConfig.json_directory, 'audio_data.json');
-            let audio_data = fs.readFileSync(audio_path, {
-                encoding: 'utf-8'
-            });
-            global.shared.WINDOW.webContents.send('audio_json_loaded', JSON.parse(audio_data));
+            let audio_data = FileHelpers.read(audio_path, { json: true });
+            global.shared.WINDOW.webContents.send('audio_json_loaded', audio_data);
         } catch (e) {
             console.log(e);
             console.log('No audio_data.json file found');
@@ -95,14 +93,15 @@ class AudioManager {
     investigateFile (dir, item) {
         let curr = this.list;
         let file_name = item.split('.')[0];
-        let relative_directory = dir.replace(GMConfig.audio_directory, "").replace(path.sep, '');
+        let relative_directory = dir.replace(GMConfig.audio_directory, '').replace(path.sep, '');
 
         relative_directory.split(path.sep).forEach((path_seg) => {
             curr = curr[path_seg];
         });
 
-        const key = this.generateKey(relative_directory, file_name);
-        const formatted_name = file_name.replace(/_/g, ' ').replace(/^[-\d\s]*/,"");
+        let key = '' + relative_directory + file_name;
+        key = key.toLowerCase().replace(/[^0-9|A-Za-z]/g, '');
+
         const file_path = path.join(GMConfig.audio_directory, relative_directory, item);
 
         if (!curr) curr = this.list;
@@ -110,27 +109,9 @@ class AudioManager {
         curr.files[file_name] = {
             type: 'audio',
             key: key,
-            name: formatted_name,
+            name: file_name,
             path: file_path,
         };
-    }
-
-    generateKey (relative_directory, file_name) {
-        const re = new RegExp(String.fromCharCode(160), "g");
-        let key = relative_directory + '/' + file_name;
-        key = JSON.parse(JSON.stringify(key));
-        key = key.replace(re, " ");
-        key = key.toLowerCase();
-        key = key.replace(/ /g,'_');
-        key = key.replace(/\//g,'_');
-        key = key.replace(/__/g,'_');
-        key = key.replace(/-/g,'');
-        key = key.replace(/\(/g,'');
-        key = key.replace(/\)/g,'');
-        key = key.replace(/\./g,'');
-        key = key.replace(/'/g,'');
-        key = key.replace(/,/g,'');
-        return key;
     }
 }
 

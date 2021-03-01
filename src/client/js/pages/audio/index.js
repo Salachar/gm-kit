@@ -69,19 +69,29 @@ class AudioContainer extends Container {
             return;
         }
 
-        let search_split = search_string.split(' ');
+
         let matches = [];
 
         for (let t in this.data.tracks) {
             const track = this.data.tracks[t];
+            // Dont include the track if the directory doesnt match
+            // Audio json can end up having data from multiple audio directories
+            if (track.source.indexOf(CONFIG.audio_directory) === -1) continue;
 
+            // Check the source
             if (track.source.toLowerCase().indexOf(search_string) !== -1) {
+                matches.push(track);
+                continue;
+            }
+            // Check the name
+            if (track.name.toLowerCase().indexOf(search_string) !== -1) {
                 matches.push(track);
                 continue;
             }
 
             let super_tag = track.tags.join('_').toLowerCase();
             let match = true;
+            let search_split = search_string.split(' ');
             for (let s = 0; s < search_split.length; ++s) {
                 if (super_tag.indexOf(search_split[s]) === -1) {
                     match = false;
@@ -93,6 +103,7 @@ class AudioContainer extends Container {
         }
 
         this.refs.search_body.innerHTML = '';
+
         matches.forEach((match) => {
             this.createAudioTrackNode({
                 track: match,

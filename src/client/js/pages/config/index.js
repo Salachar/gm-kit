@@ -8,6 +8,8 @@ class ConfigContainer extends Container {
             type: 'config',
         });
 
+        console.log(CONFIG);
+
         this.render();
     }
 
@@ -17,20 +19,20 @@ class ConfigContainer extends Container {
 
             ]],
             ['div .container_body', [
-              new Button('.choose_json_directory', {
-                text: 'Choose JSON Directory',
-                ipc_event: 'choose_json_directory',
-              }),
-              new Button('.choose_map_directory', {
-                text: 'Choose Map Directory',
-                ipc_event: 'choose_map_directory',
-              }),
-              new Button('.choose_audio_directory', {
-                text: 'Choose Audio Directory',
-                ipc_event: 'choose_audio_directory',
-              }),
+                new Button('.choose_directory_button', {
+                    text: 'Choose JSON Directory',
+                    ipc_event: 'choose_json_directory',
+                }),
+                new Button('.choose_directory_button', {
+                    text: 'Choose Map Directory',
+                    ipc_event: 'choose_map_directory',
+                }),
+                new Button('.choose_directory_button', {
+                    text: 'Choose Audio Directory',
+                    ipc_event: 'choose_audio_directory',
+                }),
             ]]
-        ]], null, this.node);
+        ]], this, this.node);
     }
 }
 
