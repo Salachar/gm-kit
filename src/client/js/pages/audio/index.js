@@ -44,33 +44,21 @@ class AudioContainer extends Container {
         });
     }
 
-    clearTracks () {
+    clearAll () {
         this.refs.tracks_body.innerHTML = '';
-    }
-
-    clearSearch () {
         this.refs.search_body.innerHTML = '';
-    }
-
-    clearPrevious () {
         this.refs.previous_body.innerHTML = '';
     }
 
-    clearAll () {
-        this.clearTracks();
-        this.clearSearch();
-        this.clearPrevious();
-    }
-
     onSearch (e) {
-        let search_string = e.currentTarget.value;
+        const search_string = e.currentTarget.value;
+
         if (search_string.length < 2) {
             this.refs.search_body.innerHTML = '';
             return;
         }
 
-
-        let matches = [];
+        const matches = [];
 
         for (let t in this.data.tracks) {
             const track = this.data.tracks[t];
@@ -155,15 +143,13 @@ class AudioContainer extends Container {
     createTrackSection (opts = {}) {
         Lib.dom.generate(['div .audio_file_section', [
             [`div .audio_file_section_title HTML=${opts.section.name}`, {
-                // click: (e) => {
-                //     el_new_section_body.classList.toggle('collapse');
-                //     if (el_new_section_body.classList.contains('collapse')) {
-                //         this.data.collapse[opts.section.name] = true;
-                //     } else {
-                //         this.data.collapse[opts.section.name] = false;
-                //     }
-                //     this.data.save();
-                // }
+                click: (e) => {
+                    const container = e.target.nextSibling;
+                    if (!container) return;
+                    container.classList.toggle('collapse');
+                    this.data.collapse[opts.section.name] = container.classList.contains('collapse');
+                    this.data.save();
+                }
             }],
             [`div .audio_file_section_body ${this.data.collapse[opts.section.name] ? '.collapse' : ''}`, {
                 oncreate: (node) => {
@@ -175,7 +161,7 @@ class AudioContainer extends Container {
                             this.data.add(track);
                             let el_new_audio_file = this.createAudioTrackNode({
                                 initial: opts.initial || false,
-                                parent: opts.parent_node,
+                                parent: node,
                                 track: this.data.tracks[track.key]
                             });
 
