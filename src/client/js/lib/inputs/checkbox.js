@@ -31,12 +31,15 @@ class Checkbox extends Base {
             identifiers,
             store_key,
             store_event,
+            title,
             text,
             onchange,
         } = this.props;
 
-        return Lib.dom.generate(['div .checkbox_container', [
-            [`div ${identifiers} .checkbox`, {
+        return Lib.dom.generate([`div ${identifiers} .checkbox_container`, {
+            title: title,
+        }, [
+            [`div .checkbox`, {
                 oncreate: (node) => {
                     this.checkbox = node;
                     if (checked) node.classList.add('checked');
@@ -63,7 +66,11 @@ class Checkbox extends Base {
                     }
                 }
             }],
-            [`div .checkbox_label HTML=${text}`],
+            [`div .checkbox_label HTML=${text}`, {
+                click: (e) => {
+                    e.target.previousSibling.click();
+                }
+            }],
         ]], this);
     }
 }

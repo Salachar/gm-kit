@@ -157,6 +157,10 @@ const DOM = {
             }
         }
 
+        if (opts.title) {
+            node.title = opts.title;
+        }
+
         if (opts.placeholder) {
             node.placeholder = opts.placeholder;
         }

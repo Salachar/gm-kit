@@ -5,6 +5,7 @@
     height: var(--checkbox-height);
     font-size: var(--font-medium);
     line-height:  var(--checkbox-height);
+    cursor: pointer;
 }
 
 .checkbox {
@@ -15,8 +16,7 @@
     width:  var(--checkbox-height);
     color: white;
     box-sizing: border-box;
-    border: 1px solid #EEE;
-    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     font-size: var(--font-large);
     line-height:  var(--checkbox-height);
     text-align: center;

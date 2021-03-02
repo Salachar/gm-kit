@@ -295,7 +295,8 @@ class MapContainer extends Container {
                     ['div .spacer'],
 
                     new Checkbox('create_one_way_wall', {
-                        text: 'One-Way Wall (modify existing wall)',
+                        title: 'Modifies an existing wall',
+                        text: 'One-Way Wall',
                         store_key: 'create_one_way_wall',
                         store_event: 'create_one_way_wall_toggled',
                     }),

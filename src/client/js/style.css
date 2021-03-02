@@ -167,3 +167,11 @@ body {
     height: var(--container-header-height);
     background-color: var(--container-header-bg);
 }
+
+.hr_pad {
+    padding: 0.5rem;
+}
+
+.hr_mb {
+    margin-bottom: 0.5rem;
+}

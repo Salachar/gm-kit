@@ -45,19 +45,19 @@ class ControlsManager {
                         text: 'Show on Player Screen',
                         store_event: 'show_player_screen',
                     }),
-                    new Checkbox('#show_entire_map', {
+                    new Checkbox('#show_entire_map .hr_pad', {
                         parent: this,
                         text: 'Show Entire Map',
                         store_key: 'show_entire_map_enabled',
                         store_event: 'show_entire_map'
                     }),
-                    new Checkbox('#fit_map_to_screen', {
+                    new Checkbox('#fit_map_to_screen .hr_pad', {
                         parent: this,
                         text: 'Fit Map To Screen',
                         store_key: 'fit_map_to_screen_enabled',
                         store_event: 'fit_map_to_screen-(PS)'
                     }),
-                    new NumberInput('#map_zoom_input', {
+                    new NumberInput('#map_zoom_input .hr_mb', {
                         text: 'Zoom',
                         step: 0.025,
                         interval: 20,
@@ -79,7 +79,7 @@ class ControlsManager {
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
-                    new Checkbox('#enable_grid', {
+                    new Checkbox('#enable_grid .hr_pad', {
                         parent: this,
                         text: 'Enable Grid',
                         store_key: 'overlay_grid_enabled',
@@ -114,10 +114,10 @@ class ControlsManager {
                         store_event: 'spell_marker_shape_updated-(ps)',
                         parent: this,
                     }),
-                    new ColorPicker('#spell_marker_color', {
+                    new ColorPicker('#spell_marker_color .hr_mb', {
                         store_key: 'spell_marker_color'
                     }),
-                    new Checkbox('#show_affected_tiles', {
+                    new Checkbox('#show_affected_tiles .hr_pad', {
                         text: 'Highlight Affected Tiles',
                         store_key: 'show_affected_tiles show_affected_tiles_checked',
                         store_event: 'show_affected_tiles_toggled-(ps)'
