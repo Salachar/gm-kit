@@ -10,7 +10,6 @@
 
     height: var(--button-standard-height);
     line-height: var(--button-standard-height);
-    margin: 0.5rem 0 0 0.5rem;
     padding: 0 calc(var(--button-standard-height) / 2);
     color: #EEE;
     font-size: var(--font-small);

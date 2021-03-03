@@ -41,23 +41,23 @@ class ControlsManager {
             ['div #map_controls_body', [
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Player Screen'],
-                    new Button('#show_on_player_screen .map_controls_button', {
+                    new Button('.map_controls_button', {
                         text: 'Show on Player Screen',
                         store_event: 'show_player_screen',
                     }),
-                    new Checkbox('#show_entire_map .hr_pad', {
+                    new Checkbox('.hr_pad', {
                         parent: this,
                         text: 'Show Entire Map',
                         store_key: 'show_entire_map_enabled',
                         store_event: 'show_entire_map'
                     }),
-                    new Checkbox('#fit_map_to_screen .hr_pad', {
+                    new Checkbox('.hr_pad', {
                         parent: this,
                         text: 'Fit Map To Screen',
                         store_key: 'fit_map_to_screen_enabled',
                         store_event: 'fit_map_to_screen-(PS)'
                     }),
-                    new NumberInput('#map_zoom_input .hr_mb', {
+                    new NumberInput('.hr_mb', {
                         text: 'Zoom',
                         step: 0.025,
                         interval: 20,
@@ -65,7 +65,7 @@ class ControlsManager {
                         store_event: 'zoom_(ps)',
                         parent: this,
                     }),
-                    new NumberInput('#player_screen_brightness', {
+                    new NumberInput({
                         text: 'Brightness',
                         min: 0,
                         max: 200,
@@ -79,13 +79,13 @@ class ControlsManager {
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
-                    new Checkbox('#enable_grid .hr_pad', {
+                    new Checkbox('.hr_pad', {
                         parent: this,
                         text: 'Enable Grid',
                         store_key: 'overlay_grid_enabled',
                         store_event: 'overlay_grid_toggled_(ps)'
                     }),
-                    new NumberInput('#grid_size_input', {
+                    new NumberInput('.fr_mb', {
                         text: 'Size',
                         step: 0.25,
                         default_value: 50,
@@ -93,7 +93,7 @@ class ControlsManager {
                         store_event: 'grid_size_update_(ps)',
                         parent: this,
                     }),
-                    new ArrowInput('#grid_shift', {
+                    new ArrowInput({
                         step: 1,
                         store_key: 'offset',
                         store_event: 'grid_offset_update_(ps)'
@@ -102,22 +102,22 @@ class ControlsManager {
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Spell Markers'],
-                    new NumberInput('#spell_marker_size', {
+                    new NumberInput({
                         text: '* Requires Grid',
                         step: 5,
                         init: 20,
                         store_key: 'spell_marker_size'
                     }),
-                    new RadioInput('#spell_marker_shape', {
+                    new RadioInput('.spell_marker_shape', {
                         options: ['line', 'square', 'circle', 'cone'],
                         store_key: 'spell_marker_shape',
                         store_event: 'spell_marker_shape_updated-(ps)',
                         parent: this,
                     }),
-                    new ColorPicker('#spell_marker_color .hr_mb', {
+                    new ColorPicker('.spell_marker_color .hr_mb', {
                         store_key: 'spell_marker_color'
                     }),
-                    new Checkbox('#show_affected_tiles .hr_pad', {
+                    new Checkbox('.hr_pad', {
                         text: 'Highlight Affected Tiles',
                         store_key: 'show_affected_tiles show_affected_tiles_checked',
                         store_event: 'show_affected_tiles_toggled-(ps)'

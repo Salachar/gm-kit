@@ -243,8 +243,8 @@ class MapContainer extends Container {
     render () {
         Lib.dom.generate([
             ['div .container_header', [
-                ['div #controls', [
-                    new Button('#help', {
+                ['div .header_controls', [
+                    new Button({
                         text: 'Help',
                         onclick: (e) => {
                             this.HelpManager.toggle();
@@ -253,11 +253,11 @@ class MapContainer extends Container {
 
                     ['div .spacer'],
 
-                    new Button('#load_files', {
+                    new Button({
                         text: 'Load',
                         ipc_event: 'load_map_list',
                     }),
-                    new Button('#load_state', {
+                    new Button({
                         text: 'Load State',
                         onclick: (e) => {
                             // if (!this.current_map) return;
@@ -268,11 +268,11 @@ class MapContainer extends Container {
 
                     ['div .spacer'],
 
-                    new Button('#save_files', {
+                    new Button({
                         text: 'Save',
                         onclick: (e) => this.saveMaps(),
                     }),
-                    new Button('#save_all_maps', {
+                    new Button({
                         text: 'Save All',
                         onclick: (e) => {
                             const map_data = this.getAllMapData();
@@ -280,7 +280,7 @@ class MapContainer extends Container {
                             IPC.send('save_maps', map_data);
                         }
                     }),
-                    new Button('#save_state', {
+                    new Button({
                         text: 'Save State',
                         click: (e) => {
                             // const map = this.current_map;
@@ -294,7 +294,7 @@ class MapContainer extends Container {
 
                     ['div .spacer'],
 
-                    new Checkbox('create_one_way_wall', {
+                    new Checkbox({
                         title: 'Modifies an existing wall',
                         text: 'One-Way Wall',
                         store_key: 'create_one_way_wall',

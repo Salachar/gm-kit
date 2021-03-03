@@ -81,38 +81,40 @@ class AudioPlayer {
 
     render () {
         return Lib.dom.generate(['div #audio_player', [
-            new Button('#audio_player_play_pause', {
-                parent: this,
-                text: 'PAUSE',
-                onclick: (e) => {
-                    if (!this.player.src) return;
-                    this.paused = !this.paused;
-                    if (this.paused) {
-                        this.pause();
-                    } else {
-                        this.play();
+            ['div .header_controls', [
+                new Button('#audio_player_play_pause', {
+                    parent: this,
+                    text: 'PAUSE',
+                    onclick: (e) => {
+                        if (!this.player.src) return;
+                        this.paused = !this.paused;
+                        if (this.paused) {
+                            this.pause();
+                        } else {
+                            this.play();
+                        }
+                    },
+                }),
+                new Checkbox('#audio_player_loop', {
+                    text: 'LOOP',
+                    checked: this.player.loop,
+                    onchange: (checked) => {
+                        this.player.loop = checked;
                     }
-                },
-            }),
-            new Checkbox('#audio_player_loop', {
-                text: 'LOOP',
-                checked: this.player.loop,
-                onchange: (checked) => {
-                    this.player.loop = checked;
-                }
-            }),
-            new NumberInput('#audio_player_volume', {
-                parent: this,
-                step: 0.01,
-                min: 0,
-                max: 1,
-                store_key: 'audio_volume',
-                store_event: 'audio_volume_change',
-            }),
-            new Button('#choose_audio_directory', {
-                text: 'Choose Audio Directory',
-                onclick: (e) => IPC.send('choose_audio_directory'),
-            }),
+                }),
+                new NumberInput('#audio_player_volume', {
+                    parent: this,
+                    step: 0.01,
+                    min: 0,
+                    max: 1,
+                    store_key: 'audio_volume',
+                    store_event: 'audio_volume_change',
+                }),
+                new Button('#choose_audio_directory', {
+                    text: 'Choose Audio Directory',
+                    onclick: (e) => IPC.send('choose_audio_directory'),
+                }),
+            ]],
 
             ['div #audio_player_progress', {
                 click: (e) => {

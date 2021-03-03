@@ -263,7 +263,7 @@ class AudioContainer extends Container {
     }
 
     render () {
-        Lib.dom.generate(['div .page', [
+        Lib.dom.generate([
             ['div .container_header', [
                 this.player.render(),
             ]],
@@ -304,7 +304,7 @@ class AudioContainer extends Container {
                     ['div #previous_body .section_body'],
                 ]],
             ]]
-        ]], this, this.node);
+        ], this, this.node);
 
         this.onMount();
     }

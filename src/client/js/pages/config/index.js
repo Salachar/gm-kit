@@ -14,7 +14,7 @@ class ConfigContainer extends Container {
     }
 
     render () {
-        Lib.dom.generate(['div .page', [
+        Lib.dom.generate([
             ['div .container_header', [
 
             ]],
@@ -32,7 +32,7 @@ class ConfigContainer extends Container {
                     ipc_event: 'choose_audio_directory',
                 }),
             ]]
-        ]], this, this.node);
+        ], this, this.node);
     }
 }
 

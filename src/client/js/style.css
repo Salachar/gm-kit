@@ -172,6 +172,9 @@ body {
     padding: 0.5rem;
 }
 
+.fr_mb {
+    margin-bottom: 1rem;
+}
 .hr_mb {
     margin-bottom: 0.5rem;
 }

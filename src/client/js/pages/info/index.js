@@ -80,33 +80,35 @@ class InfoContainer extends Container {
     }
 
     render () {
-        Lib.dom.generate(['div .page', [
+        Lib.dom.generate([
             ['div .container_header', [
-                new Button('#clear_results_all', {
-                    text: 'Clear All Results',
-                    onclick: (e) => {
-                        this.el_results.innerHTML = '';
-                        this.results = [];
-                    }
-                }),
-                new Button('#clear_results', {
-                    text: 'Clear Unmarked Results',
-                    onclick: (e) => {
-                        this.results = this.results.filter((result) => {
-                            if (!result.node.classList.contains('marked')) {
-                                result.node.remove();
-                            } else {
-                                return result;
-                            }
-                        });
-                    }
-                }),
-                new NumberInput("#info_click_amount", {
-                    min: 1,
-                    init: this.amount_per_click,
-                    store_key: "info_generator_amount",
-                    store_event: "info_generator_amount_change"
-                }),
+                ['div .header_controls', [
+                    new Button('#clear_results_all', {
+                        text: 'Clear All Results',
+                        onclick: (e) => {
+                            this.el_results.innerHTML = '';
+                            this.results = [];
+                        }
+                    }),
+                    new Button('#clear_results', {
+                        text: 'Clear Unmarked Results',
+                        onclick: (e) => {
+                            this.results = this.results.filter((result) => {
+                                if (!result.node.classList.contains('marked')) {
+                                    result.node.remove();
+                                } else {
+                                    return result;
+                                }
+                            });
+                        }
+                    }),
+                    new NumberInput("#info_click_amount", {
+                        min: 1,
+                        init: this.amount_per_click,
+                        store_key: "info_generator_amount",
+                        store_event: "info_generator_amount_change"
+                    }),
+                ]],
             ]],
             ['div .container_body', [
                 ['div #info_buttons', {
@@ -122,7 +124,7 @@ class InfoContainer extends Container {
                     }
                 }],
             ]]
-        ]], null, this.node);
+        ], null, this.node);
     }
 }
 

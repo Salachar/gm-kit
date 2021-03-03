@@ -2,7 +2,7 @@
     CONTROLS
 **********************************************************/
 
-#controls {
+.header_controls {
     position: absolute;
     top: 0;
     left: 0;
@@ -17,9 +17,21 @@
     overflow: hidden;
 }
 
-#controls > .checkbox_container {
+.header_controls .checkbox_container {
     margin-top: 0.75rem;
 }
+
+.header_controls .button {
+    margin: 0.5rem 0 0 0.5rem;
+}
+
+.header_controls .input_container {
+    margin: 0.5rem 0 0 0.5rem;
+}
+
+
+
+
 
 #help_box {
     position: absolute;

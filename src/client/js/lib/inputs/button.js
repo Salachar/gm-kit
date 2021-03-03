@@ -1,6 +1,11 @@
 const Base = require('./base');
 class Button extends Base {
     constructor (identifiers = '', props = {}) {
+        if (typeof identifiers === 'object') {
+            props = identifiers;
+            identifiers = '';
+        }
+
         super(identifiers, props);
 
         this.props = {

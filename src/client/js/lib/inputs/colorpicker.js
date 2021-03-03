@@ -10,6 +10,11 @@ const {
 const Base = require('./base');
 class ColorPicker extends Base {
     constructor (identifiers, props = {}) {
+        if (typeof identifiers === 'object') {
+            props = identifiers;
+            identifiers = '';
+        }
+
         super(identifiers, props);
 
         this.container = null;

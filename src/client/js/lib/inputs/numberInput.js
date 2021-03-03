@@ -1,6 +1,11 @@
 const Base = require('./base');
 class NumberInput extends Base {
     constructor (identifiers, props = {}) {
+        if (typeof identifiers === 'object') {
+            props = identifiers;
+            identifiers = '';
+        }
+
         super(identifiers, props);
 
         this.guid = Lib.guid.generate();
