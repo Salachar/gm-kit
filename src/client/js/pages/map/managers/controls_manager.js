@@ -57,7 +57,7 @@ class ControlsManager {
                         store_key: 'fit_map_to_screen_enabled',
                         store_event: 'fit_map_to_screen-(PS)'
                     }),
-                    new NumberInput('.hr_mb', {
+                    new NumberInput('#map_zoom_input .hr_mb', {
                         text: 'Zoom',
                         step: 0.025,
                         interval: 20,
@@ -65,7 +65,7 @@ class ControlsManager {
                         store_event: 'zoom_(ps)',
                         parent: this,
                     }),
-                    new NumberInput({
+                    new NumberInput('#player_screen_brightness', {
                         text: 'Brightness',
                         min: 0,
                         max: 200,
@@ -79,13 +79,13 @@ class ControlsManager {
 
                 ['div .map_control_section', [
                     ['div .map_control_section_header HTML=Grid Overlay'],
-                    new Checkbox('.hr_pad', {
+                    new Checkbox('#enable_grid .hr_pad', {
                         parent: this,
                         text: 'Enable Grid',
                         store_key: 'overlay_grid_enabled',
                         store_event: 'overlay_grid_toggled_(ps)'
                     }),
-                    new NumberInput('.fr_mb', {
+                    new NumberInput('#grid_size_input .hr_mb', {
                         text: 'Size',
                         step: 0.25,
                         default_value: 50,
@@ -94,6 +94,7 @@ class ControlsManager {
                         parent: this,
                     }),
                     new ArrowInput({
+                        text: 'Position',
                         step: 1,
                         store_key: 'offset',
                         store_event: 'grid_offset_update_(ps)'

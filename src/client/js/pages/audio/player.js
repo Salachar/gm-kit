@@ -102,9 +102,11 @@ class AudioPlayer {
                         this.player.loop = checked;
                     }
                 }),
-                new NumberInput('#audio_player_volume', {
+                new NumberInput('#audio_player_volume .inline', {
+                    text: 'Volume',
                     parent: this,
                     step: 0.01,
+                    interval: 300,
                     min: 0,
                     max: 1,
                     store_key: 'audio_volume',

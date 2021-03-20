@@ -1,13 +1,15 @@
-.number_input_container {
+.number_inputs {
     position: relative;
     width: 100%;
     height: 2rem;
+}
+.input_container.inline .number_inputs {
+    display: inline-block;
 }
 
 .number_input {
     width: 60%;
     text-align: center;
-    display: inline-block;
     vertical-align: top;
     height: var(--input-height);
     padding: 0 0.5rem;

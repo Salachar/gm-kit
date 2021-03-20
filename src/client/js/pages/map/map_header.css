@@ -19,15 +19,16 @@
 
 .header_controls .checkbox_container {
     margin-top: 0.75rem;
+    margin-left: 0.5rem;
 }
 
 .header_controls .button {
     margin: 0.5rem 0 0 0.5rem;
 }
 
-.header_controls .input_container {
+/* .header_controls .input_container {
     margin: 0.5rem 0 0 0.5rem;
-}
+} */
 
 
 
@@ -68,7 +69,7 @@
     width: 1px;
     height: var(--button-standard-height);
     background-color: white;
-    margin: 0.5rem 1rem;
+    margin: 0.5rem 0.5rem 0.5rem 1rem;
     opacity: 0.75;
 }
 

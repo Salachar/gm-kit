@@ -54,14 +54,11 @@ class ArrowInput extends Base {
     }
 
     render () {
-        const {
-            identifiers,
-            text,
-        } = this.props;
+        const { text } = this.props;
 
-        return Lib.dom.generate(['div .input_container', [
+        return Lib.dom.generate(['div .arrow_input_container', [
             text && [`div .input_text HTML=${text}`],
-            [`div ${identifiers} .arrow_buttons`, [
+            [`div .arrow_buttons`, [
                 ['div .arrow_button .arrow_top', {
                     mousedown: (e) => this.fireInput(0, -1),
                     mouseend: (e) => this.stopTimer(),
