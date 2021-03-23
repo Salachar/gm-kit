@@ -12,9 +12,7 @@
 }
 
 #audio_player_volume {
-    /* display: inline-block; */
-    /* width: 15rem; */
-    margin: 0.5rem 0 0 0.5rem;
+    margin: 0.5rem 0 0 1rem;
 }
 
 #audio_player_progress {

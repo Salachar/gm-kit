@@ -131,9 +131,10 @@ class AppManager {
             ['div #toast'],
             ['div #header', [
                 ['div #tabs'],
-                new NumberInput("#ui_scale", {
+                new NumberInput("#ui_scale .inline", {
                     step: 0.5,
                     min: 7,
+                    interval: 300,
                     default_value: this.getFontSize(),
                     store_key: "ui_scale",
                     store_event: "ui_scale_change"

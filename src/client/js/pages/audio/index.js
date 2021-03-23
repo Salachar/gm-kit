@@ -179,7 +179,8 @@ class AudioContainer extends Container {
                                         tag: tag,
                                         parent_node: el_new_audio_file,
                                         save: true,
-                                        removable: true
+                                        removable: true,
+                                        key: track.key,
                                     });
                                     e.currentTarget.value = '';
                                 }
@@ -210,7 +211,6 @@ class AudioContainer extends Container {
 
         return Lib.dom.generate([`div .audio_file HTML=${opts.track.name}`, {
             dataset: {
-                tag: opts.tag,
                 key: opts.track.key
             },
             click: (e) => {
@@ -229,7 +229,8 @@ class AudioContainer extends Container {
                         tag: tag,
                         parent_node: node,
                         save: false,
-                        removable: opts.initial
+                        removable: opts.initial,
+                        key: opts.track.key,
                     });
                 });
             },
@@ -242,6 +243,10 @@ class AudioContainer extends Container {
 
         Lib.dom.generate([`div ${tag_class} HTML=${opts.tag}`, [
             opts.removable && ['div .audio_file_tag_remove', {
+                dataset: {
+                    key: opts.key,
+                    tag: opts.tag,
+                },
                 click: (e) => {
                     e.preventDefault();
                     const key = e.currentTarget.dataset.key;

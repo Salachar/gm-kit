@@ -97,8 +97,8 @@ class MapInstance {
         getWindowDimensions();
 
         let window_ratio = (CONFIG.window_width / CONFIG.window_height) || 1;
-        // this.map_fit = !this.map_fit;
-        this.map_fit = data.fit_map_to_screen_enabled;
+        this.map_fit = !this.map_fit;
+        // this.map_fit = data.fit_map_to_screen_enabled;
 
         if (!this.map_fit) {
             this.setZoom(this.pre_fit_zoom || 1);

@@ -3,11 +3,12 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 41.5rem;
+    width: 39rem;
 }
 
 .info_button {
-    width: 20rem;
+    width: 18rem;
+    margin: 1rem 0 0 1rem;
 }
 
 .info_button:hover {
@@ -19,7 +20,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 41.5rem;
+    left: 39rem;
     background-color: #CCC;
     overflow-y: scroll;
     color: #222;
@@ -55,7 +56,5 @@
 }
 
 #info_click_amount {
-    display: inline-block;
-    width: 15rem;
     margin: 0.5rem 0 0 0.5rem;
 }

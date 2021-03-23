@@ -5,6 +5,11 @@
 }
 .input_container.inline .number_inputs {
     display: inline-block;
+    width: 12rem;
+}
+.input_container.inline .input_text {
+    line-height: var(--input-height);
+    margin-right: 0.5rem;
 }
 
 .number_input {

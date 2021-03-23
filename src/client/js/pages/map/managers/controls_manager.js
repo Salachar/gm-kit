@@ -19,7 +19,10 @@ class ControlsManager {
     }
 
     update (map) {
+        // Checkboxes
         this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
+
+        // Number inputs
         this.refs.grid_size_input.value = map.managers.canvas.canvases.grid.attributes.size;
         this.refs.map_zoom_input.value = map.player_screen_zoom;
         this.refs.player_screen_brightness.value = map.managers.canvas.canvases.image.brightness;
@@ -45,13 +48,13 @@ class ControlsManager {
                         text: 'Show on Player Screen',
                         store_event: 'show_player_screen',
                     }),
-                    new Checkbox('.hr_pad', {
+                    new Button('.map_controls_button', {
                         parent: this,
                         text: 'Show Entire Map',
                         store_key: 'show_entire_map_enabled',
                         store_event: 'show_entire_map'
                     }),
-                    new Checkbox('.hr_pad', {
+                    new Button('.map_controls_button', {
                         parent: this,
                         text: 'Fit Map To Screen',
                         store_key: 'fit_map_to_screen_enabled',

@@ -102,9 +102,9 @@ class InfoContainer extends Container {
                             });
                         }
                     }),
-                    new NumberInput("#info_click_amount", {
+                    new NumberInput("#info_click_amount .inline", {
                         min: 1,
-                        init: this.amount_per_click,
+                        default_value: this.amount_per_click,
                         store_key: "info_generator_amount",
                         store_event: "info_generator_amount_change"
                     }),
