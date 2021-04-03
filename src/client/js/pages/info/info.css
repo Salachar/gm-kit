@@ -4,6 +4,7 @@
     left: 0;
     bottom: 0;
     width: 39rem;
+    background-color: var(--color-el-1);
 }
 
 .info_button {
@@ -21,9 +22,11 @@
     right: 0;
     bottom: 0;
     left: 39rem;
-    background-color: #CCC;
     overflow-y: scroll;
     color: #222;
+
+    --info-even: rgba(100, 149, 237, 0.2);
+    --info-odd: rgba(100, 149, 237, 0.4);
 }
 
 .result {

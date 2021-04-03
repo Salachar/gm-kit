@@ -15,7 +15,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #666;
+    /* background-color: #666; */
     overflow: hidden;
 }
 
@@ -43,19 +43,20 @@
     bottom: 0;
     transition: 0.3s top ease;
     overflow: scroll;
-}
 
-.canvas_container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: scroll;
+    /* Map container children z order */
+    --image-canvas-z: 1;
+    --spell-canvas-z: 2;
+    --grid-canvas-z: 3;
+    --shroud-canvas-z: 4;
+    --shadow-canvas-z: 5;
+    --lights-canvas-z: 6;
+    --wall-canvas-z: 7;
+    --control-canvas-z: 8;
+    --text-block-marker-z: 9;
 }
 
 .map_canvas {
-    transform: translateZ(0);
     position: absolute;
     top: 0;
     left: 0;

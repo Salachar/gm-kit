@@ -5,12 +5,12 @@
     right: 0;
     width: 50%;
     height: 30rem;
-    transform: translateY(-120%);
+    transform: translateX(100%);
     transition: all .2s ease;
 }
 
 #text_block_container.show {
-    transform: translateY(0);
+    transform: translateX(0);
     transition: all .2s ease;
 }
 

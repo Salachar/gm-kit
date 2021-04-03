@@ -12,20 +12,19 @@ const DM_VARIATIONS_LENGTH = DM_VARIATIONS.length;
 
 class MapManager {
     constructor () {
-        this.list = null;
+        this.list = {};
 
         this.setIPCEvents();
     }
 
     setIPCEvents () {
         IPC.on('load_map_list', (e) => {
-            if (!GMConfig.map_directory) {
-                GMConfig.chooseDirectory('map', (folder_path) => {
-                    global.shared.WINDOW.webContents.send('map_list_loaded', this.generateList());
-                });
-            } else {
-                global.shared.WINDOW.webContents.send('map_list_loaded', this.generateList());
-            }
+            this.loadMapList();
+        });
+
+        IPC.on('refresh_map_list', (e) => {
+            this.list = {};
+            this.loadMapList();
         });
 
         IPC.on('load_maps', (e, maps = {}) => {
@@ -60,6 +59,20 @@ class MapManager {
                 text: `${message} sucessfully saved`
             });
         });
+    }
+
+    loadMapList () {
+        if (!GMConfig.map_directory) {
+            GMConfig.chooseDirectory('map', (folder_path) => {
+                global.shared.WINDOW.webContents.send('map_list_loaded', this.generateList());
+            });
+        } else {
+            if (Object.keys(this.list || {}).length) {
+                global.shared.WINDOW.webContents.send('map_list_loaded', this.list);
+            } else {
+                global.shared.WINDOW.webContents.send('map_list_loaded', this.generateList());
+            }
+        }
     }
 
     generateList () {

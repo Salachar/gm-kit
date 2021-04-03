@@ -202,6 +202,10 @@ class MapListManager {
                             text: 'OPEN SELECTED MAPS',
                             onclick: (e) => IPC.send('load_maps', this.selected_maps),
                         }),
+                        new Button('#refresh_map_list', {
+                            text: 'REFRESH MAP LIST',
+                            ipc_event: 'refresh_map_list',
+                        }),
                     ]],
                     ['div #map_list_modal_close .modal_close', {
                         click: (e) => this.closeModal()

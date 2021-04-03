@@ -12,7 +12,8 @@
 }
 
 #audio_player_volume {
-    margin: 0.5rem 0 0 1rem;
+    margin: 0.5rem 1rem 0 1rem;
+    float: right;
 }
 
 #audio_player_progress {

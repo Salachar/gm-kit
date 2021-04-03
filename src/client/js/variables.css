@@ -1,4 +1,27 @@
 :root {
+    /* --color-main: #121212; */
+    --color-main: #242424;
+    /* --color-main: #363636; */
+    /* --color-main: #1F2933; */
+
+    /* --color-el-0: rgba(255, 255, 255, 0);
+    --color-el-1: rgba(255, 255, 255, 0.1);
+    --color-el-2: rgba(255, 255, 255, 0.2);
+    --color-el-3: rgba(255, 255, 255, 0.3); */
+
+
+    --color-el-0: var(--color-main);
+    --color-el-1: #363636;
+    --color-el-2: #484848;
+    --color-el-3: #606060;
+    --color-el-4: #727272;
+    --color-el-5: #848484;
+
+    --color-button-bg: var(--color-el-3);
+
+    --color-main-header: var(--color-el-0);
+    --color-container-header: var(--color-el-1);
+
     --main-font-color: #ffffff;
 
     --font-huge: 1.5rem;
@@ -9,17 +32,10 @@
     --hover-color: rgba(100, 149, 237, 0.5);
     --active-color: rgba(100, 149, 237, 1);
 
-    --info-even: rgba(100, 149, 237, 0.2);
-    --info-odd: rgba(100, 149, 237, 0.4);
-
-    --main-bg-color: #222;
     --standard-padding: 1.5rem;
-    --section-bg-color: #333;
     --section-text-color: rgba(255,255,255,0.8);
     --side-section-width: 35rem;
     --section-title-height: 2rem;
-
-    --faded-text-color: rgba(255,255,255,0.5);
 
     --checkbox-height: 1.5rem;
 
@@ -29,7 +45,6 @@
 
     /* Inputs  */
     --input-height: 2rem;
-    --button-bg-color: #333;
     --button-hover-color: rgba(100, 149, 237, 0.5);
     --button-active-color: rgba(100, 149, 237, 1);
     --button-standard-height: 2rem;
@@ -39,15 +54,10 @@
 
     /* Main header */
     --main-header-height: 3rem;
-    --main-header-bg-color: #111111;
     --main-header-font-color: #FFFFFF;
 
     /* Container header */
     --container-header-height: 6rem;
-    --container-header-bg: #444444;
-
-    /* Container body */
-    --container-body-bg-color: #666666;
 
     /* Important Z-Index orderings */
     --toast-z: 60;
@@ -59,17 +69,6 @@
     --text-block-container-z: 15;
     --map-controls-height: 3rem;
     --map-tabs-height: 3rem;
-
-    /* Map containers contents */
-    --image-canvas-z: 1;
-    --spell-canvas-z: 2;
-    --grid-canvas-z: 3;
-    --shroud-canvas-z: 4;
-    --shadow-canvas-z: 5;
-    --lights-canvas-z: 6;
-    --wall-canvas-z: 7;
-    --control-canvas-z: 8;
-    --text-block-marker-z: 9;
 
     --help-z: 12;
 }

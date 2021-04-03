@@ -10,7 +10,7 @@
     width: 25%;
     font-size: 1.25rem;
     text-align: center;
-    background-color: var(--button-bg-color);
+    background-color: var(--color-button-bg);
 }
 
 .arrow_button:last-child {

@@ -112,10 +112,6 @@ class AudioPlayer {
                     store_key: 'audio_volume',
                     store_event: 'audio_volume_change',
                 }),
-                new Button('#choose_audio_directory', {
-                    text: 'Choose Audio Directory',
-                    onclick: (e) => IPC.send('choose_audio_directory'),
-                }),
             ]],
 
             ['div #audio_player_progress', {

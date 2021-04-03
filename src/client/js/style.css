@@ -35,19 +35,8 @@ html, body {
 }
 
 body {
-    background-color: var(--main-bg-color);
+    background-color: var(--color-main);
     color: var(--main-font-color);
-}
-
-#dimmer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 100;
-    background-color: black;
-    opacity: 0;
 }
 
 .hidden {
@@ -71,7 +60,7 @@ body {
     height: var(--main-header-height);
     z-index: var(--main-header-z);
     color: var(--main-header-font-color);
-    background-color: var(--main-header-bg-color);
+    background-color: var(--color-el-0);
 }
 
 #tabs {
@@ -94,9 +83,8 @@ body {
     text-transform: uppercase;
     font-weight: bold;
 }
-
 .tab.active {
-    background-color: var(--container-header-bg);
+    background-color: var(--color-el-1);
     opacity: 1;
 }
 
@@ -113,6 +101,7 @@ body {
     right: 0;
     bottom: 0;
     z-index: var(--containers-z);
+    background-color: var(--color-el-0);
 }
 
 .container {
@@ -128,12 +117,6 @@ body {
     display: block;
 }
 
-.page {
-    width: 100%;
-    height: 100%;
-    /* overflow: ; */
-}
-
 
 
 /**********************************************************
@@ -146,7 +129,7 @@ body {
     top: 0;
     right: 0;
     height: var(--container-header-height);
-    background-color: var(--container-header-bg);
+    background-color: var(--color-el-1);
 }
 
 .container_body {
@@ -155,22 +138,11 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--container-body-bg-color);
-}
-
-.container_footer {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    height: var(--container-header-height);
-    background-color: var(--container-header-bg);
 }
 
 .hr_pad {
     padding: 0.5rem;
 }
-
 .fr_mb {
     margin-bottom: 1rem;
 }

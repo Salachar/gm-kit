@@ -10,7 +10,7 @@
     right: 0;
     height: var(--map-controls-height);
     font-size: 0.7rem;
-    background-color: #444;
+    /* background-color: #444; */
     box-sizing: border-box;
     transition: 0.3s all ease;
     white-space: nowrap;
@@ -30,10 +30,6 @@
     margin: 0.5rem 0 0 0.5rem;
 } */
 
-
-
-
-
 #help_box {
     position: absolute;
     top: var(--container-header-height);
@@ -46,7 +42,7 @@
 }
 
 #help_box.hide {
-    transform: translateY(-120%);
+    transform: translateX(-100%);
 }
 
 #help_table td {
@@ -85,7 +81,7 @@
     left: 0;
     right: 0;
     height: var(--map-tabs-height);;
-    background-color: #444;
+    /* background-color: #444; */
     z-index: 20;
     overflow-y: hidden;
     overflow-x: scroll;

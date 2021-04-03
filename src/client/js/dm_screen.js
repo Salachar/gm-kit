@@ -132,6 +132,7 @@ class AppManager {
             ['div #header', [
                 ['div #tabs'],
                 new NumberInput("#ui_scale .inline", {
+                    text: 'UI Size',
                     step: 0.5,
                     min: 7,
                     interval: 300,

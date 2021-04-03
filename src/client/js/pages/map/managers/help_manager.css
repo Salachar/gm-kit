@@ -7,7 +7,7 @@
   transition: 0.3s top ease;
   overflow: scroll;
   z-index: var(--help-z);
-  background-color: #666;
+  /* background-color: #666; */
 }
 
 .help_screen_action {

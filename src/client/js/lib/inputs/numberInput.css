@@ -35,7 +35,7 @@
     height: var(--input-height);
     width: 20%;
     text-align: center;
-    background-color: var(--button-bg-color);
+    background-color: var(--color-button-bg);
 }
 
 .number_input_button:hover {

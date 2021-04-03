@@ -12,7 +12,6 @@
     bottom: 0;
     right: 0;
     line-height: calc(var(--section-title-height) * 0.75);
-    color: var(--faded-text-color);
     cursor: pointer;
 }
 

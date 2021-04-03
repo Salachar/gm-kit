@@ -7,13 +7,12 @@
     box-sizing: border-box;
     display: inline-block;
     vertical-align: top;
-
     height: var(--button-standard-height);
     line-height: var(--button-standard-height);
     padding: 0 calc(var(--button-standard-height) / 2);
     color: #EEE;
     font-size: var(--font-small);
-    background-color: var(--button-bg-color);
+    background-color: var(--color-button-bg);
 }
 
 .button:hover {

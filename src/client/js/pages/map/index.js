@@ -322,7 +322,7 @@ class MapContainer extends Container {
                             ['div .help_screen_support_text HTML=If you have not selected a map folder, you will be prompted to'],
                         ]]
                     ]],
-                    ['div #map_containers HTML=CLICK TO LOAD MAP'],
+                    ['div #map_containers'],
 
                     this.ControlsManager.render(),
 
