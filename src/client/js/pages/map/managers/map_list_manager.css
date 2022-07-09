@@ -1,0 +1,88 @@
+#map_list_modal_wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+}
+
+#map_dir_location {
+    cursor: pointer;
+}
+
+#map_list_modal_body_list {
+    position: absolute;
+    top: 0;
+    left: 30%;
+    right: 0;
+    bottom: 0;
+    overflow: scroll;
+}
+
+#map_list_modal_body_preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    bottom: 0;
+    overflow: scroll;
+    background-color: rgba(0,0,0,0.5);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.map_list_section_title {
+    height: 1.25rem;
+    line-height: 1.25rem;
+    padding: 0.3rem 0.5rem;
+    background-color: #555;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.map_list_section_container {
+    margin: 0.25rem 0;
+    padding-left: 2rem;
+}
+
+.map_list_map {
+    height: 1.5rem;
+    line-height: 1.5rem;
+    font-size: var(--font-medium);
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 2rem;
+    padding-left: 2rem;
+}
+
+.map_list_map_indicator {
+    position: relative;
+    height: 1.5rem;
+    width: 1.5rem;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+}
+
+.map_list_map_name_wrapper {
+    cursor: pointer;
+}
+
+.map_list_map:hover {
+    background-color: #666;
+}
+
+.map_list_map .checkbox {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}

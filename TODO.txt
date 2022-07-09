@@ -1,3 +1,10 @@
+Grid size container is now using new inline number input
+need a way to set value on in
+  probably just keep a reference to it
+help text button and main container combined and screws up the visuals
+   needs to be fixed
+
+
 Refactor Issues:
     Switching map doesnt update lighting properly
     Brightness is broken

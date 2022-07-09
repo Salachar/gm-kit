@@ -1,0 +1,51 @@
+.arrow_buttons {
+    height: var(--input-height);;
+}
+
+.arrow_button {
+    cursor: pointer;
+    position: relative;
+    float: left;
+    height: var(--input-height);
+    width: 25%;
+    font-size: 1.25rem;
+    text-align: center;
+    background-color: var(--color-button-bg);
+}
+
+.arrow_button:last-child {
+    margin-right: 0
+}
+
+.arrow_button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.arrow_button:active {
+    background-color: var(--button-active-color);
+}
+
+.arrow_button:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    line-height: 2rem;
+}
+
+.arrow_top:before {
+    content: '\25B2';
+}
+
+.arrow_left:before {
+    content: '\25C4';
+}
+
+.arrow_bottom:before {
+    content: '\25BC';
+}
+
+.arrow_right:before {
+    content: '\25B6';
+}

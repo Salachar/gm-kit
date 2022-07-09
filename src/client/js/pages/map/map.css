@@ -1,0 +1,98 @@
+@import "./map_header.css";
+
+@import "./managers/controls_manager.css";
+@import "./managers/help_manager.css";
+@import "./managers/map_list_manager.css";
+@import "./managers/text_manager.css";
+
+/**********************************************************
+    CANVASES
+**********************************************************/
+
+#map_containers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background-color: #666; */
+    overflow: hidden;
+}
+
+#map_containers.display {
+    top: 0;
+}
+
+#map_main_section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s all ease;
+}
+#map_main_section.open {
+    right: 20rem;
+}
+
+.map_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.3s top ease;
+    overflow: scroll;
+
+    /* Map container children z order */
+    --image-canvas-z: 1;
+    --spell-canvas-z: 2;
+    --grid-canvas-z: 3;
+    --shroud-canvas-z: 4;
+    --shadow-canvas-z: 5;
+    --lights-canvas-z: 6;
+    --wall-canvas-z: 7;
+    --control-canvas-z: 8;
+    --text-block-marker-z: 9;
+}
+
+.map_canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.image_canvas {
+    z-index: var(--image-canvas-z);
+}
+
+.spell_canvas {
+    z-index: var(--spell-canvas-z);
+}
+
+.grid_canvas {
+    z-index: var(--grid-canvas-z);
+}
+
+.shroud_canvas {
+    z-index: var(--shroud-canvas-z);
+}
+
+.shadow_canvas {
+    z-index: var(--shadow-canvas-z);
+}
+
+.lights_canvas {
+    z-index: var(--lights-canvas-z);
+}
+
+.wall_canvas {
+    z-index: var(--wall-canvas-z);
+}
+
+.control_canvas {
+    z-index: var(--control-canvas-z);
+    cursor: crosshair;
+}

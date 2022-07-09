@@ -1,0 +1,78 @@
+.modal_wrap {
+    overflow: hidden;
+}
+
+.modal {
+    position: absolute;
+    top: 8rem;
+    left: 2rem;
+    right: 2rem;
+    bottom: 8rem;
+    background-color: #444;
+    color: white;
+    overflow: hidden;
+}
+
+.modal_header {
+    height: var(--modal-header-height);
+    line-height: var(--modal-header-height);
+    font-size: 1rem;
+    padding-left: 0.5rem;
+    padding-right: calc(var(--modal-header-height) + 0.5rem);
+    background-color: #888;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.modal_title {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding-left: 1rem;
+    font-size: var(--font-large);
+}
+
+.modal_header_buttons {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: calc(var(--modal-header-height) + 0.5rem);
+}
+
+.modal_header_buttons .button {
+    margin: 0.5rem 0 0 0.5rem;
+}
+
+.modal_close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: var(--modal-header-height);
+    height: var(--modal-header-height);
+    cursor: pointer;
+    text-align: center;
+    line-height: var(--modal-header-height);
+    color: white;
+}
+
+.modal_close:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.modal_close:before {
+    font-size: 1.5rem;
+    content: '\00d7';
+}
+
+.modal_body {
+    position: absolute;
+    top: var(--modal-header-height);
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow: hidden;
+    background-color: #444;
+}

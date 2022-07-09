@@ -1,0 +1,40 @@
+@import "./arrowInput.css";
+@import "./button.css";
+@import "./checkbox.css";
+@import "./colorpicker.css";
+@import "./numberInput.css";
+@import "./radio.css";
+
+.input_container {
+    display: block;
+}
+.input_container.inline {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.input_text {
+    text-align: center;
+    margin-bottom: 0.25rem;
+    font-size: var(--font-medium);
+    opacity: 0.5;
+}
+.input_container.inline .input_text {
+    display: inline-block;
+    vertical-align: top;
+}
+
+/**********************************************************
+    TEXT INPUT
+**********************************************************/
+
+.text_input {
+    margin: 0.5rem 0 0 0.5rem;
+    height: var(--input-height);
+    padding: 0 0 0 0.5rem;
+    border: 0;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+    box-sizing: border-box;
+    font-size: var(--font-medium);
+}
