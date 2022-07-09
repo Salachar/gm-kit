@@ -49,7 +49,11 @@ function createWindow () {
         // height: 1300,
         width: 1280,
         height: 720,
-        icon: __dirname + '/map.png'
+        icon: __dirname + '/map.png',
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+        }
     });
     WINDOW.setMenu(null);
     WINDOW.setPosition(100, 100);
@@ -92,7 +96,8 @@ function sendAudio () {
 app.on('ready', createWindow);
 
 function chooseMapDirectory () {
-    FileHelpers.chooseDirectory(function (folder_path) {
+    FileHelpers.chooseDirectory((folder_path) => {
+        console.log(folder_path);
         global.shared.CONFIG.map_directory = folder_path;
         FileHelpers.writeConfig();
         sendMaps();
@@ -100,7 +105,7 @@ function chooseMapDirectory () {
 }
 
 function chooseAudioDirectory () {
-    FileHelpers.chooseDirectory(function (folder_path) {
+    FileHelpers.chooseDirectory((folder_path) => {
         global.shared.CONFIG.audio_directory = folder_path;
         FileHelpers.writeConfig();
         WINDOW.webContents.send('audio_folder_chosen');
