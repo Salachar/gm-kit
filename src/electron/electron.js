@@ -29,6 +29,7 @@ function createWindow () {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            enableRemoteModule: true,
         },
     });
     WINDOW.setMenu(null);
@@ -48,6 +49,24 @@ function createWindow () {
     WINDOW.webContents.openDevTools();
     WINDOW.on('closed', function () {
         app.quit();
+    });
+
+    WINDOW.webContents.setWindowOpenHandler(({ url }) => {
+        return {
+            action: 'allow',
+            overrideBrowserWindowOptions: {
+                width: 1280,
+                height: 720,
+                top: 360,
+                left: 10,
+                icon: __dirname + '/map.png',
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                    enableRemoteModule: true,
+                },
+            }
+        };
     });
 }
 

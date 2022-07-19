@@ -5,12 +5,8 @@ class PlayerScreenManager {
         this.window = null;
 
         this.window_options = {
-            // autoHideMenuBar: 1,
-            // titleBarStyle: 'hidden',
-            width: 800,
-            height: 600,
-            top: 360,
-            left: 10,
+            autoHideMenuBar: 1,
+            titleBarStyle: 'hidden',
         };
 
         Store.register({
