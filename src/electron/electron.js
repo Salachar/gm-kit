@@ -23,8 +23,10 @@ let WINDOW = null;
 
 function createWindow () {
     WINDOW = new BrowserWindow({
-        width: 1280,
-        height: 720,
+        width: 1600,
+        height: 900,
+        x: 100,
+        y: 100,
         icon: __dirname + '/map.png',
         webPreferences: {
             nodeIntegration: true,
@@ -33,7 +35,7 @@ function createWindow () {
         },
     });
     WINDOW.setMenu(null);
-    WINDOW.setPosition(20, 20);
+    // WINDOW.setPosition(20, 20);
 
     global.shared.WINDOW = WINDOW;
 
@@ -57,8 +59,8 @@ function createWindow () {
             overrideBrowserWindowOptions: {
                 width: 1280,
                 height: 720,
-                top: 360,
-                left: 10,
+                x: 150,
+                y: 150,
                 icon: __dirname + '/map.png',
                 webPreferences: {
                     nodeIntegration: true,

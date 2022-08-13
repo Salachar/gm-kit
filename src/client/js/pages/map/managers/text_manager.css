@@ -1,96 +1,96 @@
 #text_block_container {
-    z-index: var(--text-block-container-z);
-    position: absolute;
-    top: var(--container-header-height);;
-    right: 0;
-    width: 50%;
-    height: 30rem;
-    transform: translateX(100%);
-    transition: all .2s ease;
+  z-index: var(--text-block-container-z);
+  position: absolute;
+  top: var(--container-header-height);;
+  right: 0;
+  width: 50%;
+  height: 30rem;
+  transform: translateX(100%);
+  transition: all .2s ease;
 }
 
 #text_block_container.show {
-    transform: translateX(0);
-    transition: all .2s ease;
+  transform: translateX(0);
+  transition: all .2s ease;
 }
 
 .text_block_header {
-    height: var(--modal-header-height);
-    font-size: var(--font-medium);
-    line-height: var(--modal-header-height);;
-    padding-left: 0.5rem;
-    padding-right: 2.2rem;
-    background-color: #888;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+  height: var(--modal-header-height);
+  font-size: var(--font-medium);
+  line-height: var(--modal-header-height);;
+  padding-left: 0.5rem;
+  padding-right: 2.2rem;
+  background-color: #888;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .text_block_header_buttons {
-    display: inline-block;
+  display: inline-block;
 }
 
 .text_block_body {
-    position: absolute;
-    top: var(--modal-header-height);
-    right: 0;
-    left: 0;
-    bottom: 0;
-    overflow: hidden;
+  position: absolute;
+  top: var(--modal-header-height);
+  right: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
 }
 
 #text_block_textarea {
-    resize: none;
-    margin: 0;
-    border: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 0.5rem;
-    background-color: rgba(80, 80, 80, 0.9);
-    color: white;
-    font-size: var(--font-medium);
+  resize: none;
+  margin: 0;
+  border: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  background-color: rgba(80, 80, 80, 0.9);
+  color: white;
+  font-size: var(--font-medium);
 }
 
 #text_block_close {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: var(--modal-header-height);;
-    height: var(--modal-header-height);;
-    cursor: pointer;
-    text-align: center;
-    line-height: var(--modal-header-height);;
-    color: white;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: var(--modal-header-height);;
+  height: var(--modal-header-height);;
+  cursor: pointer;
+  text-align: center;
+  line-height: var(--modal-header-height);;
+  color: white;
 }
 
 #text_block_close:hover {
-    background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 #text_block_close:before {
-    font-size: 1.5rem;
-    content: '\00d7';
+  font-size: 1.5rem;
+  content: '\00d7';
 }
 
 /* This is the little ? icon that shows on the map */
 .text_marker {
-    cursor: pointer;
-    box-sizing: border-box;
-    position: absolute;
-    z-index: var(--text-block-marker-z);
-    font-size: 2rem;
-    color: white;
-    height: 3rem;
-    width: 3rem;
-    border: 0.25rem solid white;
-    border-radius: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    text-align: center;
-    line-height: 2.5rem;
-    background-color: #444;
+  cursor: pointer;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: var(--text-block-marker-z);
+  font-size: 2rem;
+  color: white;
+  height: 3rem;
+  width: 3rem;
+  border: 0.25rem solid white;
+  border-radius: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  text-align: center;
+  line-height: 2.5rem;
+  background-color: #444;
 }

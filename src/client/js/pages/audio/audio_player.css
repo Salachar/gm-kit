@@ -1,68 +1,68 @@
 @import "audio_player_buttons.css";
 
 #audio_player {
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 5;
-    white-space: nowrap;
-    overflow: hidden;
-    height: 6rem;
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 5;
+  white-space: nowrap;
+  overflow: hidden;
+  height: 6rem;
 }
 
 #audio_player_volume {
-    margin: 0.5rem 1rem 0 1rem;
-    float: right;
+  margin: 0.5rem 1rem 0 1rem;
+  float: right;
 }
 
 #audio_player_progress {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    height: 3rem;
-    box-sizing: border-box;
-    cursor: pointer;
-    color: rgba(255,255,255,0.9);
-    border-top: 2px solid rgba(255,255,255,0.5);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 3rem;
+  box-sizing: border-box;
+  cursor: pointer;
+  color: rgba(255,255,255,0.9);
+  border-top: 2px solid rgba(255,255,255,0.5);
 }
 
 #audio_player_progress_played {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 0%;
-    background-color: var(--hover-color);
-    z-index: 6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  background-color: var(--hover-color);
+  z-index: 6;
 }
 
 #audio_player_current_time,
 #audio_player_duration {
-    position: absolute;
-    height: 3rem;
-    line-height: 3rem;
-    top: 0;
-    z-index: 7;
+  position: absolute;
+  height: 3rem;
+  line-height: 3rem;
+  top: 0;
+  z-index: 7;
 }
 
 #audio_player_current_time {
-    left: 1rem;
+  left: 1rem;
 }
 
 #audio_player_duration {
-    right: 1rem;
+  right: 1rem;
 }
 
 #audio_player_now_playing {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    text-align: center;
-    opacity: 0.5;
-    line-height: 3rem;
-    z-index: 7;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  opacity: 0.5;
+  line-height: 3rem;
+  z-index: 7;
 }

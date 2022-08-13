@@ -1,25 +1,25 @@
 .audio_file {
-    padding: 0 1rem;
-    cursor: pointer;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
-    height: 1.75rem;
-    font-size: 1rem;
-    line-height: 1.75rem;
-    color: rgba(255,255,255,0.9);
+  padding: 0 1rem;
+  cursor: pointer;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  height: 1.75rem;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  color: rgba(255,255,255,0.9);
 }
 
 .audio_file.selected {
-    background-color: var(--selected-bg-color);
+  background-color: var(--selected-bg-color);
 }
 
 .audio_file:hover {
-    background-color: var(--hover-bg-color);
+  background-color: var(--hover-bg-color);
 }
 
 .audio_file:active {
-    background-color: var(--active-bg-color);
+  background-color: var(--active-bg-color);
 }

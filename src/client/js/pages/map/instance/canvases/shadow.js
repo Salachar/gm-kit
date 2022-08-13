@@ -1,36 +1,36 @@
 const {
-    clear
+  clear,
 } = Lib.canvas;
 
 const Base = require('./base');
 class ShadowCanvas extends Base {
-    constructor (opts = {}) {
-        super('shadow', opts);
+  constructor (opts = {}) {
+    super('shadow', opts);
 
-        // if (options.load_fog) {
-        //     Store.fire('load_fog', {
-        //         fog: options.load_fog
-        //     });
-        // }
+    // if (options.load_fog) {
+    //     Store.fire('load_fog', {
+    //         fog: options.load_fog
+    //     });
+    // }
 
-        // Store.register({
-        //     'load_fog': this.loadFog.bind(this),
-        // }, this.map_instance.name);
-    }
+    // Store.register({
+    //     'load_fog': this.loadFog.bind(this),
+    // }, this.map_instance.name);
+  }
 
-    get data () {
-        return {};
-    }
+  get data () {
+    return {};
+  }
 
-    draw () {
-        // The shadow drawn on the light layer, what the players haven't seen
-        clear(this.context).rect(this.context, {
-            alpha: CONFIG.display.fog[CONFIG.window].hidden.opacity,
-            color: CONFIG.display.fog[CONFIG.window].hidden.color
-        });
+  draw () {
+    // The shadow drawn on the light layer, what the players haven't seen
+    clear(this.context).rect(this.context, {
+      alpha: CONFIG.display.fog[CONFIG.window].hidden.opacity,
+      color: CONFIG.display.fog[CONFIG.window].hidden.color,
+    });
 
-        return this;
-    }
+    return this;
+  }
 }
 
 module.exports = ShadowCanvas;

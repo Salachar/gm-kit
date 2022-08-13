@@ -1,16 +1,17 @@
 .search_section {
-    top: var(--standard-padding);
-    right: var(--standard-padding);
-    width: var(--side-section-width);
-    bottom: calc(50% + (var(--standard-padding) / 2));
+  top: var(--standard-padding);
+  right: var(--standard-padding);
+  width: var(--side-section-width);
+  bottom: calc(50% + (var(--standard-padding) / 2));
 }
 
 .search_input {
-    box-sizing: border-box;
-    margin: 0;
-    width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  width: 100%;
+  outline: 0;
 }
 
 #search_body {
-    top: calc(var(--section-title-height) + 2.5rem);
+  top: calc(var(--section-title-height) + 2.5rem);
 }
