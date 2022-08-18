@@ -11,9 +11,6 @@ class MapListManager {
 
     this.collapsed_sections = {};
 
-    // List of maps that have been checked for mass open
-    this.selected_maps = {};
-
     this.setIPCEvents();
   }
 
@@ -25,20 +22,12 @@ class MapListManager {
 
     IPC.on('maps_loaded', (e, maps) => {
       this.onMapLoad(maps);
-      this.closeModal();
+      // this.closeModal();
     });
 
     IPC.on('map_directory_chosen', (e) => {
       IPC.send('load_map_list');
     });
-  }
-
-  addMap (map) {
-    this.selected_maps[map.name] = map;
-  }
-
-  removeMap (map) {
-    delete this.selected_maps[map.name];
   }
 
   openModal () {
@@ -79,7 +68,9 @@ class MapListManager {
 
   createFileTree (map_list) {
     this.refs.map_list_modal_body_list.innerHTML = '';
-    Lib.dom.generate(this.generateSectionNodes(map_list), this, this.refs.map_list_modal_body_list);
+    // There is always one folder at the top level, and we dont want to display it
+    const top_level_folder = map_list[Object.keys(map_list)[0]];
+    Lib.dom.generate(this.generateSectionNodes(top_level_folder), this, this.refs.map_list_modal_body_list);
     this.openModal();
   }
 
@@ -157,23 +148,13 @@ class MapListManager {
             this.current_map_hover = map.video;
             const video_preview = document.createElement('video');
             video_preview.src = map.video;
+            video_preview.autoplay = true;
+            video_preview.loop = true;
+            video_preview.muted = true;
             this.refs.map_list_modal_body_preview.appendChild(video_preview);
           }
         }
       }, [
-        ['div .checkbox', {
-          click: (e) => {
-            e.preventDefault();
-            const node = e.currentTarget;
-            if (e.currentTarget.classList.contains('checked')) {
-              node.classList.remove('checked');
-              this.removeMap(map);
-            } else {
-              node.classList.add('checked');
-              this.addMap(map);
-            }
-          }
-        }],
         ['div .map_list_map_name_wrapper', {
           click: (e) => {
             if (e.defaultPrevented) return;
@@ -182,11 +163,6 @@ class MapListManager {
             IPC.send('load_maps', selected_maps);
           },
         }, [
-          // [`span .map_list_map_indicator HTML=${map.json_exists ? 'W' : ''}`],
-          // [`span .map_list_map_indicator HTML=${map.dm_version ? 'D' : ''}`],
-          // [`span .map_list_map_indicator HTML=${map.video ? 'V' : ''}`],
-          // [`span .map_list_map_name HTML=${map.name}`],
-
           [`span .map_list_map_indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
           [`span .map_list_map_indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
           [`span .map_list_map_indicator ${map.video ? '.lit_up' : ''} HTML=V`],
@@ -198,41 +174,28 @@ class MapListManager {
 
   render () {
     return Lib.dom.generate(['div #map_list_modal_wrap .hidden', [
-      ['div #map_list_modal .modal', [
+      ['div #map_list_modal_body_preview'],
+      ['div .map_list_container', [
         ['div .modal_header', [
-          ['div .modal_title', [
-            ['span .modal_title_text HTML=Select Map:'],
-          ]],
-          ['div .modal_header_buttons', [
-            ['input #map_list_search .text_input', {
-              onchange: (e) => {
-                const search_string = e.currentTarget.value;
-                this.searchMaps(this.map_list, search_string);
-              }
-            }],
-            new Button('#map_list_modal_folder', {
-              text: 'CHANGE MAP DIRECTORY',
-              ipc_event: 'choose_map_directory',
-            }),
-            new Button('#map_list_modal_open', {
-              text: 'OPEN SELECTED MAPS',
-              onclick: (e) => IPC.send('load_maps', this.selected_maps),
-            }),
-            new Button('#refresh_map_list', {
-              text: 'REFRESH MAP LIST',
-              ipc_event: 'refresh_map_list',
-            }),
-          ]],
-          ['div #map_list_modal_close .modal_close', {
+          ['input #map_list_search .map_search_input', {
+            attributes: {
+              placeholder: "SEARCH",
+            },
+            onchange: (e) => {
+              let search_string = e.currentTarget.value || "";
+              search_string = search_string.trim();
+              search_string = search_string.toLowerCase();
+              this.searchMaps(this.map_list, search_string);
+            }
+          }],
+          ['div #map_list_modal_close .modal_close HTML=CLOSE', {
             click: (e) => this.closeModal()
           }],
         ]],
-        ['div #map_list_modal_body .modal_body', [
-          ['div #map_list_modal_body_preview'],
-          ['div #map_list_modal_body_list']
-        ]],
-      ]],
+        ['div #map_list_modal_body_list'],
+      ]]
     ]], this);
   }
 }
+
 module.exports = MapListManager;

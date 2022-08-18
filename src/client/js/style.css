@@ -1,8 +1,6 @@
 @import "./variables.css";
 
 @import "./lib/toast.css";
-@import "./modal.css";
-
 @import "./lib/inputs/base.css";
 
 @import "./pages/map/map.css";

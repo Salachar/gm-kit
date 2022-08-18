@@ -30,6 +30,10 @@ class ConfigContainer extends Container {
           text: 'Choose Map Directory',
           ipc_event: 'choose_map_directory',
         }),
+        new Button('.choose_directory_button', {
+          text: 'REFRESH MAP LIST',
+          ipc_event: 'refresh_map_list',
+        }),
 
         [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.audio_directory}`],
         new Button('.choose_directory_button', {
