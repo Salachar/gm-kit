@@ -19,45 +19,43 @@ class ControlsManager {
   }
 
   update (map) {
-    // Checkboxes
     this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
-    // Number inputs
     this.refs.grid_size_input.value = map.managers.canvas.canvases.grid.attributes.size;
     this.refs.map_zoom_input.value = map.player_screen_zoom;
     this.refs.player_screen_brightness.value = map.managers.canvas.canvases.image.brightness;
   }
 
   render () {
-    return ['div #map_controls_container', [
-      ['div #map_controls_toggle .menu_icon', {
+    return ['#map_controls_container', [
+      ['.menu_icon', {
         click: (e) => {
           this.open = !this.open;
           Store.fire(`${this.open ? 'show' : 'hide'}_map_controls`);
         }
       }, [
-        ['div .menu_icon_bar .menu_icon_bar_1'],
-        ['div .menu_icon_bar .menu_icon_bar_2'],
-        ['div .menu_icon_bar .menu_icon_bar_3'],
+        ['.bar'],
+        ['.bar'],
+        ['.bar'],
       ]],
 
-      ['div #map_controls_body', [
-        ['div .map_control_section', [
-          ['div .map_control_section_header HTML=Player Screen'],
+      ['.body', [
+        ['.section', [
+          ['.header HTML=Player Screen'],
           new Button('.map_controls_button', {
             text: 'Show on Player Screen',
             store_event: 'show_player_screen',
           }),
           new Button('.map_controls_button', {
-            parent: this,
             text: 'Show Entire Map',
-            store_key: 'show_entire_map_enabled',
             store_event: 'show_entire_map'
           }),
           new Button('.map_controls_button', {
-            parent: this,
             text: 'Fit Map To Screen',
-            store_key: 'fit_map_to_screen_enabled',
             store_event: 'fit_map_to_screen-(PS)'
+          }),
+          new Button('.map_controls_button', {
+            text: 'Flip Map Vertically',
+            store_event: 'flip_map_vertically-(PS)'
           }),
           new NumberInput('#map_zoom_input .hr_mb', {
             text: 'Zoom',
@@ -79,8 +77,8 @@ class ControlsManager {
           }),
         ]],
 
-        ['div .map_control_section', [
-          ['div .map_control_section_header HTML=Grid Overlay'],
+        ['.section', [
+          ['.header HTML=Grid Overlay'],
           new Checkbox('#enable_grid .hr_pad', {
             parent: this,
             text: 'Enable Grid',
@@ -103,15 +101,15 @@ class ControlsManager {
           }),
         ]],
 
-        ['div .map_control_section', [
-          ['div .map_control_section_header HTML=Spell Markers'],
+        ['.section', [
+          ['.header HTML=Spell Markers'],
           new NumberInput({
             text: '* Requires Grid',
             step: 5,
             init: 20,
             store_key: 'spell_marker_size'
           }),
-          new RadioInput('.spell_marker_shape', {
+          new RadioInput('#spell_marker_shape', {
             options: ['line', 'square', 'circle', 'cone'],
             store_key: 'spell_marker_shape',
             store_event: 'spell_marker_shape_updated-(ps)',

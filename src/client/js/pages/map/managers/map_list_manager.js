@@ -93,8 +93,8 @@ class MapListManager {
       if (section_name === 'files') return;
 
       const section_node = Lib.dom.generate(
-        ['div .map_list_section', [
-          [`div .map_list_section_title HTML=${section_name.replace(/_/g, ' ')}`, {
+        ['.map_list_section', [
+          [`.header HTML=${section_name.replace(/_/g, ' ')}`, {
             click: (e) => {
               const container = e.target.nextSibling;
               if (!container) return;
@@ -102,7 +102,7 @@ class MapListManager {
               this.collapsed_sections[section_name] = container.classList.contains('hidden');
             }
           }],
-          ['div .map_list_section_container', {
+          ['.content', {
             oncreate: (node) => {
               if (this.collapsed_sections[section_name]) {
                 node.classList.add('hidden');
@@ -122,12 +122,12 @@ class MapListManager {
 
   generateFileNode (map) {
     return Lib.dom.generate(
-      ['div .map_list_map', {
+      ['.map', {
         mouseenter: (e) => {
-          this.refs.map_list_modal_body_preview.innerHTML = '';
+          this.refs.map_preview.innerHTML = '';
 
           if (!map.image && !map.video) {
-            this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+            this.refs.map_preview.style.backgroundImage = '';
             return;
           }
 
@@ -137,47 +137,48 @@ class MapListManager {
               let img = new Image;
               img.onload = () => {
                 if (image_source !== this.current_map_hover) return;
-                this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+                this.refs.map_preview.style.backgroundImage = `url("${img.src}")`;
               }
               img.src = image_source;
             })(map.image);
           }
 
           if (map.video) {
-            this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+            this.refs.map_preview.style.backgroundImage = '';
             this.current_map_hover = map.video;
             const video_preview = document.createElement('video');
             video_preview.src = map.video;
             video_preview.autoplay = true;
             video_preview.loop = true;
             video_preview.muted = true;
-            this.refs.map_list_modal_body_preview.appendChild(video_preview);
+            this.refs.map_preview.appendChild(video_preview);
           }
         }
       }, [
-        ['div .map_list_map_name_wrapper', {
+        ['.name_wrapper', {
           click: (e) => {
             if (e.defaultPrevented) return;
             let selected_maps = {};
             selected_maps[map.name] = map;
             IPC.send('load_maps', selected_maps);
+            this.closeModal();
           },
         }, [
-          [`span .map_list_map_indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
-          [`span .map_list_map_indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
-          [`span .map_list_map_indicator ${map.video ? '.lit_up' : ''} HTML=V`],
-          [`span .map_list_map_name HTML=${map.name}`],
+          [`span .indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
+          [`span .indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
+          [`span .indicator ${map.video ? '.lit_up' : ''} HTML=V`],
+          [`span .name HTML=${map.name}`],
         ]],
       ]
     ]);
   }
 
   render () {
-    return Lib.dom.generate(['div #map_list_modal_wrap .hidden', [
-      ['div #map_list_modal_body_preview'],
-      ['div .map_list_container', [
-        ['div .modal_header', [
-          ['input #map_list_search .map_search_input', {
+    return Lib.dom.generate(['#map_list_modal_wrap .hidden', [
+      ['#map_preview'],
+      ['.container', [
+        ['.header', [
+          ['input #map_list_search .search_input', {
             attributes: {
               placeholder: "SEARCH",
             },
@@ -188,11 +189,11 @@ class MapListManager {
               this.searchMaps(this.map_list, search_string);
             }
           }],
-          ['div #map_list_modal_close .modal_close HTML=CLOSE', {
+          ['.close HTML=CLOSE', {
             click: (e) => this.closeModal()
           }],
         ]],
-        ['div #map_list_modal_body_list'],
+        ['#map_list_modal_body_list'],
       ]]
     ]], this);
   }

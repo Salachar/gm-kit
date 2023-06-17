@@ -8,17 +8,15 @@ class ConfigContainer extends Container {
       type: 'config',
     });
 
-    console.log(CONFIG);
-
     this.render();
   }
 
   render () {
     Lib.dom.generate([
-      ['div .container_header', [
+      ['.container_header', [
 
       ]],
-      ['div .container_body', [
+      ['.container_body', [
         [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.json_directory}`],
         new Button('.choose_directory_button', {
           text: 'Choose JSON Directory',

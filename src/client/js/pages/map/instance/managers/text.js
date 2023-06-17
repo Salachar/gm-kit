@@ -64,7 +64,7 @@ class TextManager extends Base {
 
   addIcon (text_data) {
     ((data) => {
-      this.text_icons[data.key] = Lib.dom.generate(['div .text_marker HTML=?', {
+      this.text_icons[data.key] = Lib.dom.generate(['.text_marker HTML=?', {
         click: (e) => this.showTextInput(data.position),
         styles: {
           top: data.position.y + 'px',
@@ -92,7 +92,7 @@ class TextManager extends Base {
   }
 
   render () {
-    this.el_text_container = Lib.dom.generate(['div .text_container'], this, this.map_instance.node);
+    this.el_text_container = Lib.dom.generate(['.text_container'], this, this.map_instance.node);
   }
 }
 

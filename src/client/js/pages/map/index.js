@@ -213,7 +213,7 @@ class MapContainer extends Container {
         this.setActiveMap(name);
       },
     }, [
-      ['div .map_tab_close', {
+      ['.map_tab_close', {
         click: (e) => {
           e.preventDefault();
           this.removeMap(name);
@@ -229,12 +229,6 @@ class MapContainer extends Container {
     return map_data;
   }
 
-  getMapStateData () {
-    if (!this.current_map) return;
-    let state_data = this.current_map.state;
-    return state_data;
-  }
-
   getAllMapData () {
     if (!Object.keys(this.maps).length) return;
     let map_data = {};
@@ -246,8 +240,8 @@ class MapContainer extends Container {
 
   render () {
     Lib.dom.generate([
-      ['div .container_header', [
-        ['div .header_controls', [
+      ['.container_header', [
+        ['.header_controls', [
           new Button({
             text: 'Help',
             onclick: (e) => {
@@ -255,23 +249,14 @@ class MapContainer extends Container {
             },
           }),
 
-          ['div .spacer'],
+          ['.spacer'],
 
           new Button({
             text: 'Load',
             ipc_event: 'load_map_list',
           }),
 
-          new Button({
-            text: 'Load State',
-            onclick: (e) => {
-              // if (!this.current_map) return;
-              // this.current_map.loadState();
-              Toast.message('Save/Load State is temporarily disabled');
-            }
-          }),
-
-          ['div .spacer'],
+          ['.spacer'],
 
           new Button({
             text: 'Save',
@@ -287,19 +272,7 @@ class MapContainer extends Container {
             }
           }),
 
-          new Button({
-            text: 'Save State',
-            click: (e) => {
-              // const map = this.current_map;
-              // const map_data = this.getMapData();
-              // const state_data = this.getMapStateData();
-              // map_data[map.name].json.state = state_data;
-              // IPC.send('save_maps', map_data);
-              Toast.message('Save/Load State is temporarily disabled');
-            }
-          }),
-
-          ['div .spacer'],
+          ['.spacer'],
 
           new Checkbox({
             title: 'Modifies an existing wall',
@@ -315,22 +288,22 @@ class MapContainer extends Container {
         // Text Manager gets created and added
         this.TextManager.render(),
 
-        ['div #map_tabs'],
+        ['#map_tabs'],
       ]],
 
-      ['div .container_body', [
-        ['div #map_main_section', [
-          ['div #no_map_screen .help_screen', [
-            ['div #no_map_screen_load .help_screen_action', {
+      ['.container_body', [
+        ['#map_main_section', [
+          ['#no_map_screen .help_screen', [
+            ['#no_map_screen_load .help_screen_action', {
               click: (e) => {
                 IPC.send('load_map_list');
               }
             }, [
-              ['div .help_screen_main_text HTML=CLICK TO LOAD MAP'],
-              ['div .help_screen_support_text HTML=If you have not selected a map folder, you will be prompted to'],
+              ['.help_screen_main_text HTML=CLICK TO LOAD MAP'],
+              ['.help_screen_support_text HTML=If you have not selected a map folder, you will be prompted to'],
             ]]
           ]],
-          ['div #map_containers'],
+          ['#map_containers'],
 
           this.ControlsManager.render(),
 

@@ -231,38 +231,9 @@ class MapInstance {
     };
   }
 
-  get state () {
-    const state_light_data = Object.keys(this.managers.light.lights).map((key) => {
-      return {
-        x: this.managers.light.lights[key].x,
-        y: this.managers.light.lights[key].y,
-      };
-    });
-
-    return {
-      lights: state_light_data,
-      fog: this.managers.canvas.canvases.shadow.data,
-    };
-  }
-
   get full_data () {
     let data = this.data;
-    data.json.state = this.state;
     return data;
-  }
-
-  loadState () {
-    const state = ((this.map || {}).json || {}).state || {};
-    if (state.fog) {
-      Store.fire('load_fog', {
-        fog: state.fog,
-      });
-    }
-    if (state.lights) {
-      Store.fire('load_lights', {
-        lights: state.lights,
-      });
-    }
   }
 
   hide () {

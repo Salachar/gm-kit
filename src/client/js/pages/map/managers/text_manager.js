@@ -20,9 +20,9 @@ class TextManager {
   }
 
   render () {
-    return Lib.dom.generate(['div #text_block_container', [
-      ['div .text_block_header', [
-        ['div .text_block_header_buttons', [
+    return Lib.dom.generate(['#text_block_container', [
+      ['.text_block_header', [
+        ['.text_block_header_buttons', [
           new Button('#text_block_save', {
             text: 'SAVE',
             onclick: (e) => {
@@ -44,11 +44,11 @@ class TextManager {
             },
           }),
         ]],
-        ['div #text_block_close', {
+        ['#text_block_close', {
           click: (e) => this.close()
         }],
       ]],
-      ['div .text_block_body', [
+      ['.text_block_body', [
         ['textarea #text_block_textarea']
       ]],
     ]], this);

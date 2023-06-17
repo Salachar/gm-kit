@@ -57,8 +57,6 @@ class Base {
   }
 
   resize (width, height) {
-    // TODO : something video
-
     if (this.video) {
       this.video.setAttribute('width', width);
       this.video.setAttribute('height', height);

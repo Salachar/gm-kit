@@ -111,7 +111,7 @@ class AppManager {
 
   render () {
     Lib.dom.generate([
-      ['div #choose_json_directory .help_screen .hidden', {
+      ['#choose_json_directory .help_screen .hidden', {
         oncreate: (node) => {
           const directory_set = CONFIG.params.data_dir === 'true';
           if (!directory_set) node.classList.remove('hidden');
@@ -120,17 +120,17 @@ class AppManager {
           zIndex: 9999,
         },
       }, [
-        ['div .help_screen_action', {
+        ['.help_screen_action', {
           click: (e) => IPC.send('choose_json_directory'),
         }, [
-          ['div .help_screen_main_text HTML=CLICK TO CHOOSE SAVE FOLDER'],
-          ['div .help_screen_support_text HTML=This is where audio and map data will be saved (all .json files)'],
+          ['.help_screen_main_text HTML=CLICK TO CHOOSE SAVE FOLDER'],
+          ['.help_screen_support_text HTML=This is where audio and map data will be saved (all .json files)'],
         ]]
       ]],
 
-      ['div #toast'],
-      ['div #header', [
-        ['div #tabs'],
+      ['#toast'],
+      ['#header', [
+        ['#tabs'],
         new NumberInput("#ui_scale .inline", {
           text: 'UI Size',
           step: 0.5,
@@ -141,7 +141,7 @@ class AppManager {
           store_event: "ui_scale_change",
         }),
       ]],
-      ['div #containers'],
+      ['#containers'],
     ], this, document.getElementById('root'));
   }
 }

@@ -46,7 +46,7 @@ class HelpManager {
   }
 
   render () {
-    return Lib.dom.generate(['div #help_box .hide', [
+    return Lib.dom.generate(['#help_box .hide', [
       ['table #help_table', [
         ['tr', [
           ['th .help_key HTML=Key'],

@@ -46,8 +46,12 @@ const DOM = {
       params_two = null,
     ] = html_array;
 
-    let split_markup = markup.split(' ');
-    const tag = split_markup.shift();
+    let tag = "div";
+    const first_char = markup[0];
+    const split_markup = markup.split(' ');
+    if (first_char !== "." && first_char !== "#") {
+      tag = split_markup.shift();
+    }
     let node = document.createElement(tag);
 
     let html = '';

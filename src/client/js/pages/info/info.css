@@ -1,22 +1,26 @@
-#info_buttons {
+.info_buttons {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   width: 39rem;
   background-color: var(--color-el-1);
+
+  .info_button {
+    width: 18rem;
+    margin: 1rem 0 0 1rem;
+
+    &:hover {
+      background-color: var(--hover-color);
+    }
+  }
 }
 
-.info_button {
-  width: 18rem;
-  margin: 1rem 0 0 1rem;
+.info_click_amount {
+  margin: 0.5rem 0 0 0.5rem;
 }
 
-.info_button:hover {
-  background-color: var(--hover-color);
-}
-
-#info_results {
+.info_results {
   position: absolute;
   top: 0;
   right: 0;
@@ -27,38 +31,35 @@
 
   --info-even: rgba(100, 149, 237, 0.2);
   --info-odd: rgba(100, 149, 237, 0.4);
+
+  .result {
+    color: white;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 5px;
+    box-sizing: border-box;
+
+    &.marked {
+      background-color: var(--info-odd);
+
+      &:nth-child(even) {
+        background-color: var(--info-even);
+      }
+    }
+
+    &:nth-child(even) {
+      background-color: rgba(0,0,0,0.075);
+    }
+
+    .key {
+      float: left;
+      width: 20%;
+    }
+
+    .value {
+      float: right;
+      width: 78%;
+    }
+  }
 }
 
-.result {
-  color: white;
-  cursor: pointer;
-  overflow: hidden;
-  padding: 5px;
-  box-sizing: border-box;
-}
-
-.result.marked {
-  background-color: var(--info-odd);
-}
-
-.result:nth-child(even) {
-  background-color: rgba(0,0,0,0.075);
-}
-
-.result.marked:nth-child(even) {
-  background-color: var(--info-even);
-}
-
-.result_key {
-  float: left;
-  width: 20%;
-}
-
-.result_value {
-  float: right;
-  width: 78%;
-}
-
-#info_click_amount {
-  margin: 0.5rem 0 0 0.5rem;
-}

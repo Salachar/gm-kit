@@ -32,7 +32,7 @@ class InfoContainer extends Container {
     }
 
     addResult (result) {
-        Lib.dom.generate(['div .result', {
+        Lib.dom.generate(['.result', {
             oncreate: (node) => {
                 this.results.push({
                     type: result.type,
@@ -40,10 +40,10 @@ class InfoContainer extends Container {
                     node: node
                 });
             },
-            click: (e) => e.currentTarget.classList.add('marked'),
+            click: (e) => e.currentTarget.classList.toggle('marked'),
         }, [
-            [`span .result_key HTML=${result.type}`],
-            [`span .result_value HTML=${result.value}`],
+            [`span .key HTML=${result.type}`],
+            [`span .value HTML=${result.value}`],
         ]], null, this.el_results);
     }
 
@@ -81,8 +81,8 @@ class InfoContainer extends Container {
 
     render () {
         Lib.dom.generate([
-            ['div .container_header', [
-                ['div .header_controls', [
+            ['.container_header', [
+                ['.header_controls', [
                     new Button('#clear_results_all', {
                         text: 'Clear All Results',
                         onclick: (e) => {
@@ -102,7 +102,7 @@ class InfoContainer extends Container {
                             });
                         }
                     }),
-                    new NumberInput("#info_click_amount .inline", {
+                    new NumberInput(".info_click_amount .inline", {
                         min: 1,
                         default_value: this.amount_per_click,
                         store_key: "info_generator_amount",
@@ -110,15 +110,15 @@ class InfoContainer extends Container {
                     }),
                 ]],
             ]],
-            ['div .container_body', [
-                ['div #info_buttons', {
+            ['.container_body', [
+                ['.info_buttons', {
                     oncreate: (node) => {
                         this.el_buttons = node;
                     }
                 }, [
                     ...this.renderNameButtons(),
                 ]],
-                ['div #info_results', {
+                ['.info_results', {
                     oncreate: (node) => {
                         this.el_results = node;
                     }
