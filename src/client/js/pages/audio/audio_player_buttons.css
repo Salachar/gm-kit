@@ -1,4 +1,0 @@
-#audio_player_play_pause {
-  left: var(--standard-padding);
-  bottom: calc(var(--standard-padding) * 2);
-}

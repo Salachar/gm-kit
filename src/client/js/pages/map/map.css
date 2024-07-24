@@ -1,9 +1,7 @@
 @import "./map_header.css";
 
 @import "./managers/controls_manager.css";
-@import "./managers/help_manager.css";
 @import "./managers/map_list_manager.css";
-@import "./managers/text_manager.css";
 
 /**********************************************************
     CANVASES

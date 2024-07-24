@@ -1,9 +1,7 @@
 const Container = require('../base');
 
 const ControlsManager = require('./managers/controls_manager');
-const HelpManager = require('./managers/help_manager');
 const MapListManager = require('./managers/map_list_manager');
-const TextManager = require('./managers/text_manager');
 
 const Button = require('../../lib/inputs/button');
 const Checkbox = require('../../lib/inputs/checkbox');
@@ -25,9 +23,7 @@ class MapContainer extends Container {
     this.maps = {};
     this.current_map = null;
 
-    this.TextManager = new TextManager();
     this.ControlsManager = new ControlsManager();
-    this.HelpManager = new HelpManager();
 
     Store.register({
       'save_maps': this.saveMaps.bind(this),
@@ -144,7 +140,6 @@ class MapContainer extends Container {
     }
 
     this.setActiveMap(map_keys[map_keys.length - 1]);
-    document.getElementById('no_map_screen').classList.add('hidden');
   }
 
   saveMaps () {
@@ -204,7 +199,6 @@ class MapContainer extends Container {
 
     if (!map_keys.length) {
       Store.clearKeys();
-      document.getElementById('no_map_screen').classList.remove('hidden');
     }
   }
 
@@ -236,12 +230,6 @@ class MapContainer extends Container {
     return map_data;
   }
 
-  getMapStateData () {
-    if (!this.current_map) return;
-    let state_data = this.current_map.state;
-    return state_data;
-  }
-
   getAllMapData () {
     if (!Object.keys(this.maps).length) return;
     let map_data = {};
@@ -256,26 +244,8 @@ class MapContainer extends Container {
       ['div .container_header', [
         ['div .header_controls', [
           new Button({
-            text: 'Help',
-            onclick: (e) => {
-              this.HelpManager.toggle();
-            },
-          }),
-
-          ['div .spacer'],
-
-          new Button({
             text: 'Load',
             ipc_event: 'load_map_list',
-          }),
-
-          new Button({
-            text: 'Load State',
-            onclick: (e) => {
-              // if (!this.current_map) return;
-              // this.current_map.loadState();
-              Toast.message('Save/Load State is temporarily disabled');
-            }
           }),
 
           ['div .spacer'],
@@ -294,18 +264,6 @@ class MapContainer extends Container {
             }
           }),
 
-          new Button({
-            text: 'Save State',
-            click: (e) => {
-              // const map = this.current_map;
-              // const map_data = this.getMapData();
-              // const state_data = this.getMapStateData();
-              // map_data[map.name].json.state = state_data;
-              // IPC.send('save_maps', map_data);
-              Toast.message('Save/Load State is temporarily disabled');
-            }
-          }),
-
           ['div .spacer'],
 
           new Checkbox({
@@ -316,27 +274,11 @@ class MapContainer extends Container {
           }),
         ]],
 
-        // Help Manager gets created and added
-        this.HelpManager.render(),
-
-        // Text Manager gets created and added
-        this.TextManager.render(),
-
         ['div #map_tabs'],
       ]],
 
       ['div .container_body', [
         ['div #map_main_section', [
-          ['div #no_map_screen .help_screen', [
-            ['div #no_map_screen_load .help_screen_action', {
-              click: (e) => {
-                IPC.send('load_map_list');
-              }
-            }, [
-              ['div .help_screen_main_text HTML=CLICK TO LOAD MAP'],
-              ['div .help_screen_support_text HTML=If you have not selected a map folder, you will be prompted to'],
-            ]]
-          ]],
           ['div #map_containers'],
 
           this.ControlsManager.render(),

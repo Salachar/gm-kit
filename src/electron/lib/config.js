@@ -28,12 +28,6 @@ class Config {
             });
         });
 
-        IPC.on('choose_audio_directory', (e) => {
-            this.chooseDirectory('audio', () => {
-            global.shared.WINDOW.webContents.send('audio_directory_chosen');
-            });
-        });
-
         this.init();
     }
 
@@ -77,15 +71,6 @@ class Config {
 
     set map_directory (dir) {
         this.data.map_directory = dir;
-    }
-
-    get audio_directory () {
-        const { audio_directory } = this.data;
-        return audio_directory || '';
-    }
-
-    set audio_directory (dir) {
-        this.data.audio_directory = dir;
     }
 
     get json_directory () {

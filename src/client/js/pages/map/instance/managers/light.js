@@ -21,7 +21,6 @@ class LightManager extends Base {
     Store.register({
       'add_light': this.onAddLight.bind(this),
       'light_move': this.onLightMove.bind(this),
-      'load_lights': this.loadLights.bind(this),
       'deselect_light': this.deselectLight.bind(this),
       'show_entire_map': this.showEntireMap.bind(this),
     }, this.map_instance.name);
@@ -203,12 +202,6 @@ class LightManager extends Base {
 
   deselectLight () {
     this.selected_light = null;
-  }
-
-  loadLights (data) {
-    data.lights.forEach((light) => {
-      this.addLight(light);
-    });
   }
 
   addLight (opts) {

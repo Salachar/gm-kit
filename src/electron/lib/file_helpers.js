@@ -8,7 +8,6 @@ const FileHelpers = {
     file_extensions: {
         image: ['.png', '.jpg', '.jpeg', '.bmp'],
         video: ['.mp4'],
-        audio: ['.mp3', '.mp4', '.wav']
     },
 
     read (path, opts = {}) {

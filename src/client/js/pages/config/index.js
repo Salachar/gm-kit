@@ -24,7 +24,6 @@ class ConfigContainer extends Container {
           text: 'Choose JSON Directory',
           ipc_event: 'choose_json_directory',
         }),
-
         [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.map_directory}`],
         new Button('.choose_directory_button', {
           text: 'Choose Map Directory',
@@ -33,12 +32,6 @@ class ConfigContainer extends Container {
         new Button('.choose_directory_button', {
           text: 'REFRESH MAP LIST',
           ipc_event: 'refresh_map_list',
-        }),
-
-        [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.audio_directory}`],
-        new Button('.choose_directory_button', {
-          text: 'Choose Audio Directory',
-          ipc_event: 'choose_audio_directory',
         }),
       ]]
     ], this, this.node);

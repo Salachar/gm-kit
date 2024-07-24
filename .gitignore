@@ -1,9 +1,3 @@
 node_modules/
-maps/
-build/
-dist/
 package-lock.json
-TODO.txt
-lifxaccess
-
 .DS_Store

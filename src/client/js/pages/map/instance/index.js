@@ -9,7 +9,6 @@ const {
 const CanvasManager = require('./managers/canvas');
 const SegmentManager = require('./managers/segment');
 const LightManager = require('./managers/light');
-const TextManager = require('./managers/text');
 const ObjectManager = require('./managers/object');
 
 class MapInstance {
@@ -18,10 +17,6 @@ class MapInstance {
 
     this.map.json = this.map.json || {};
     this.map.json.meta = this.map.json.meta || {};
-
-    // Link back to the main map manager if its needed
-    // TextManager uses this at the moment
-    this.manager = options.manager;
 
     // The path to the image for the map
     // this.image = map.image || null;
@@ -69,7 +64,6 @@ class MapInstance {
       canvas: new CanvasManager(opts),
       light: new LightManager(opts),
       object: new ObjectManager(opts),
-      text: new TextManager(opts),
     };
 
     Store.register({
@@ -85,9 +79,7 @@ class MapInstance {
       'zoom_out': this.onZoomOut.bind(this),
       'remove_light': this.onRemoveLight.bind(this),
       'remove_segment': this.onRemoveSegment.bind(this),
-      'remove_text_block': this.onRemoveTextBlock.bind(this),
       'remove_one_way': this.onRemoveOneWay.bind(this),
-      'add_text_block': this.onAddTextBlock.bind(this),
       'zoom_(ps)': this.playerScreenZoom.bind(this),
       'fit_map_to_screen': this.fitMapToScreen.bind(this),
     }, this.name);
@@ -142,10 +134,6 @@ class MapInstance {
     this.node.style.zoom = this.zoom;
   }
 
-  onAddTextBlock () {
-    this.managers.text.showTextInput();
-  }
-
   onAddSegment (data) {
     this.managers.segment.addSegment({
       segment: data.add_segment,
@@ -194,10 +182,6 @@ class MapInstance {
     this.updateLighting();
   }
 
-  onRemoveTextBlock (data) {
-    this.managers.text.removeText(data.object.segment);
-  }
-
   set tab (tab) {
     this.el_tab = tab;
   }
@@ -221,7 +205,6 @@ class MapInstance {
       },
       json: {
         segments: this.managers.segment.sanitizedSegments(),
-        text: this.managers.text.data,
         grid: this.managers.canvas.canvases.grid.attributes,
       },
       meta: {
@@ -249,20 +232,6 @@ class MapInstance {
     let data = this.data;
     data.json.state = this.state;
     return data;
-  }
-
-  loadState () {
-    const state = ((this.map || {}).json || {}).state || {};
-    if (state.fog) {
-      Store.fire('load_fog', {
-        fog: state.fog,
-      });
-    }
-    if (state.lights) {
-      Store.fire('load_lights', {
-        lights: state.lights,
-      });
-    }
   }
 
   hide () {
@@ -293,11 +262,9 @@ class MapInstance {
   }
 
   onKeyDown (key) {
-    if (this.managers.text.open) return;
     const event_data = { point: Mouse.point };
 
     const events = {
-      [KEYS.QUESTION]: 'add_text_block',
       [KEYS.MINUS]: 'zoom_out',
       [KEYS.PLUS]: 'zoom_in',
       [KEYS.SHIFT]: 'quick_place_started',
@@ -320,7 +287,6 @@ class MapInstance {
   }
 
   onKeyUp (key) {
-    // if (this.managers.text.open) return;
     const event_data = { point: Mouse.point };
 
     const events = {
@@ -356,12 +322,6 @@ class MapInstance {
 
     if (Store.get('spell_marker_shape')) {
       Store.fire('place_spell_marker-(ps)');
-      return;
-    }
-
-    // The user clicked on the map while the text input was open
-    if (this.managers.text.open) {
-      this.managers.text.close();
       return;
     }
 
