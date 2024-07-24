@@ -8,14 +8,6 @@ const ColorPicker = require('../../../lib/inputs/colorpicker');
 class ControlsManager {
   constructor (opts = {}) {
     this.open = false;
-
-    Store.register({
-      'deselect_spell_marker': this.deselectSpellMarker.bind(this),
-    });
-  }
-
-  deselectSpellMarker () {
-    this.refs.spell_marker_shape.deselect();
   }
 
   update (map) {
@@ -100,30 +92,6 @@ class ControlsManager {
             step: 1,
             store_key: 'offset',
             store_event: 'grid_offset_update_(ps)'
-          }),
-        ]],
-
-        ['div .map_control_section', [
-          ['div .map_control_section_header HTML=Spell Markers'],
-          new NumberInput({
-            text: '* Requires Grid',
-            step: 5,
-            init: 20,
-            store_key: 'spell_marker_size'
-          }),
-          new RadioInput('.spell_marker_shape', {
-            options: ['line', 'square', 'circle', 'cone'],
-            store_key: 'spell_marker_shape',
-            store_event: 'spell_marker_shape_updated-(ps)',
-            parent: this,
-          }),
-          new ColorPicker('.spell_marker_color .hr_mb', {
-            store_key: 'spell_marker_color'
-          }),
-          new Checkbox('.hr_pad', {
-            text: 'Highlight Affected Tiles',
-            store_key: 'show_affected_tiles show_affected_tiles_checked',
-            store_event: 'show_affected_tiles_toggled-(ps)'
           }),
         ]],
       ]],

@@ -90,12 +90,6 @@
   font-size: 1.25rem;
 }
 
-.spell_marker_shape .checkbox_container {
-  display: inline-block;
-  width: 40%;
-  padding: 0.5rem 0 0 0.5rem;
-}
-
 .hotkey_section {
   margin-bottom: 1rem;
 }
@@ -105,10 +99,4 @@
 }
 .hotkey_desc {
   font-size: var(--font-medium);
-}
-
-.spell_marker_color {
-  margin-top: 1rem;
-  width: 100%;
-  height: 2rem;
 }

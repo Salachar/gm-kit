@@ -320,11 +320,6 @@ class MapInstance {
     // We aren't doing anything with context menus at the moment, so ignore all but left nouse
     if (!Mouse.left) return;
 
-    if (Store.get('spell_marker_shape')) {
-      Store.fire('place_spell_marker-(ps)');
-      return;
-    }
-
     // Check to see if the user has clicked on a light
     let is_light_selected = this.managers.light.checkForLights();
     if (is_light_selected) return;
@@ -422,8 +417,6 @@ class MapInstance {
       Store.fire('deselect_door');
     }
 
-    if (Store.get('spell_marker_shape')) return;
-
     if (CONFIG.move_mode) return;
 
     if (Store.get('create_one_way_wall')) return;
@@ -470,14 +463,6 @@ class MapInstance {
   }
 
   mouseMove () {
-    if (Store.get('spell_marker_shape')) {
-      return Store.fire('draw_spell_marker-(ps)', {
-        spell: {
-          origin: copyPoint(Mouse)
-        }
-      });
-    }
-
     // Move point mode, CTRL is being held
     if (CONFIG.move_mode) {
       if (Mouse.down && Store.get('control_point')) {

@@ -51,23 +51,13 @@ class MapContainer extends Container {
 
   onKeyDown (keyCode) {
     switch (keyCode) {
-      // case KEYS.CONTROL:
-      //   this.enableSegmentMove();
-      //   Store.fire('move_mode_toggled');
-      //   break;
       case KEYS.C:
         this.enableSegmentMove();
         Store.fire('move_mode_toggled');
         break;
 
       case KEYS.SHIFT:
-        if (Store.get('spell_marker_shape') && !Store.get('show_affected_tiles_checked')) {
-          Store.fire('show_affected_tiles_toggled-(ps)', {
-            'show_affected_tiles': true
-          });
-        } else {
-          this.enableSegmentQuickPlace();
-        }
+        this.enableSegmentQuickPlace();
         break;
 
       default:
@@ -90,13 +80,7 @@ class MapContainer extends Container {
         break;
 
       case KEYS.SHIFT:
-        if (Store.get('spell_marker_shape') && !Store.get('show_affected_tiles_checked')) {
-          Store.fire('show_affected_tiles_toggled-(ps)', {
-            'show_affected_tiles': false
-          });
-        } else {
-          this.disableSegmentQuickPlace();
-        }
+        this.disableSegmentQuickPlace();
         break;
 
       default:

@@ -44,7 +44,7 @@
 
   /* Map container children z order */
   --image-canvas-z: 1;
-  --spell-canvas-z: 2;
+  /* --spell-canvas-z: 2; */
   --grid-canvas-z: 3;
   --shroud-canvas-z: 4;
   --shadow-canvas-z: 5;
@@ -66,9 +66,9 @@
   z-index: var(--image-canvas-z);
 }
 
-.spell_canvas {
+/* .spell_canvas {
   z-index: var(--spell-canvas-z);
-}
+} */
 
 .grid_canvas {
   z-index: var(--grid-canvas-z);

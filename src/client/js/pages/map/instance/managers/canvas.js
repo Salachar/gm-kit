@@ -12,7 +12,6 @@ const GridCanvas = require('../canvases/grid');
 const ShroudCanvas = require('../canvases/shroud');
 const ShadowCanvas = require('../canvases/shadow');
 const ImageCanvas = require('../canvases/image');
-const SpellCanvas = require('../canvases/spell');
 const LightsCanvas = require('../canvases/lights');
 const WallCanvas = require('../canvases/wall');
 const ControlCanvas = require('../canvases/control');
@@ -35,7 +34,6 @@ class CanvasManager extends Base{
       shroud: new ShroudCanvas(canvas_opts),
       shadow: new ShadowCanvas(canvas_opts),
       image: new ImageCanvas(canvas_opts),
-      spell: new SpellCanvas(canvas_opts),
       lights: new LightsCanvas(canvas_opts),
       wall: new WallCanvas(canvas_opts),
       control: new ControlCanvas(canvas_opts),
