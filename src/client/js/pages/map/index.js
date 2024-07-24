@@ -55,7 +55,11 @@ class MapContainer extends Container {
 
   onKeyDown (keyCode) {
     switch (keyCode) {
-      case KEYS.CONTROL:
+      // case KEYS.CONTROL:
+      //   this.enableSegmentMove();
+      //   Store.fire('move_mode_toggled');
+      //   break;
+      case KEYS.C:
         this.enableSegmentMove();
         Store.fire('move_mode_toggled');
         break;
@@ -82,7 +86,10 @@ class MapContainer extends Container {
 
   onKeyUp (keyCode) {
     switch (keyCode) {
-      case KEYS.CONTROL:
+      // case KEYS.CONTROL:
+      //   this.disableSegmentMove();
+      //   break;
+      case KEYS.C:
         this.disableSegmentMove();
         break;
 
