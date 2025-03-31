@@ -12,8 +12,6 @@ const SoundManager = require('./managers/sound_manager');
 const QuadrantManager = require('./managers/quadrant_manager');
 
 const MapContainer = require('./pages/map');
-const InfoContainer = require('./pages/info');
-const AudioContainer = require('./pages/audio');
 const ConfigContainer = require('./pages/config');
 
 const NumberInput = require('./lib/inputs/numberInput');
@@ -37,12 +35,6 @@ class AppManager {
       map: new MapContainer({
         parent: this,
         active: true,
-      }),
-      info: new InfoContainer({
-        parent: this,
-      }),
-      audio: new AudioContainer({
-        parent: this,
       }),
       config: new ConfigContainer({
         parent: this,
@@ -124,7 +116,7 @@ class AppManager {
           click: (e) => IPC.send('choose_json_directory'),
         }, [
           ['div .help_screen_main_text HTML=CLICK TO CHOOSE SAVE FOLDER'],
-          ['div .help_screen_support_text HTML=This is where audio and map data will be saved (all .json files)'],
+          ['div .help_screen_support_text HTML=This is where map data will be saved (all .json files)'],
         ]]
       ]],
 

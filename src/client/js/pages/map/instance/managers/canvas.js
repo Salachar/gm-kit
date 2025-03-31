@@ -73,7 +73,13 @@ class CanvasManager extends Base{
       'light_poly_update_(PS)': this.onLightPolyUpdate.bind(this),
       "show_entire_map_(PS)": this.showEntireMapPC.bind(this),
       "hide_entire_map_(PS)": this.hideEntireMapPC.bind(this),
+
+      'animated_map_volume_change': this.onAnimatedMapVolumeChange.bind(this),
     }, this.map_instance.name);
+  }
+
+  onAnimatedMapVolumeChange (data) {
+    this.canvases.image.setVolume(data.animated_map_volume);
   }
 
   onLightPolyUpdate (data) {

@@ -17,6 +17,7 @@ class Base {
 
     this.map_instance = map_instance;
     this.manager = manager;
+    this.video = null;
 
     this.create();
   }
@@ -29,12 +30,22 @@ class Base {
     if (this.name === 'image' && this.map_type === 'video') {
       this.video = Lib.dom.generate([`video ${class_name}`], null, this.manager.canvas_container);
       // TODO: Maybe add controls for map video audio?
-      // this.video.muted = true;
+      this.video.muted = true;
       return;
     }
 
     this.canvas = Lib.dom.generate([`canvas ${class_name}`], null, this.manager.canvas_container);
     this.context = this.canvas.getContext('2d');
+  }
+
+  setVolume (newVolume) {
+    console.log(newVolume)
+    if (newVolume === 0) {
+      this.video.muted = true;
+    } else {
+      this.video.muted = false;
+      this.video.volume = newVolume / 100;
+    }
   }
 
   clear () {

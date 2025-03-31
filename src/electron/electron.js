@@ -13,7 +13,6 @@ const url = require('url');
 
 // Instantiated as singletons
 const GMMapManager = require('./lib/map_manager');
-const GMAudioManager = require('./lib/audio_manager');
 const GMConfig = require('./lib/config');
 
 global.shared = {

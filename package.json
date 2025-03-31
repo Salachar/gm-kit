@@ -10,7 +10,7 @@
   },
   "author": "Raymond Davidson",
   "devDependencies": {
-    "electron": "^19.0.8"
+    "electron": "*"
   },
   "dependencies": {
     "electron-context-menu": "^3.4.0"

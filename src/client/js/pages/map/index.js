@@ -1,9 +1,7 @@
 const Container = require('../base');
 
 const ControlsManager = require('./managers/controls_manager');
-const HelpManager = require('./managers/help_manager');
 const MapListManager = require('./managers/map_list_manager');
-const TextManager = require('./managers/text_manager');
 
 const Button = require('../../lib/inputs/button');
 const Checkbox = require('../../lib/inputs/checkbox');
@@ -25,9 +23,7 @@ class MapContainer extends Container {
     this.maps = {};
     this.current_map = null;
 
-    this.TextManager = new TextManager();
     this.ControlsManager = new ControlsManager();
-    this.HelpManager = new HelpManager();
 
     Store.register({
       'save_maps': this.saveMaps.bind(this),
@@ -269,15 +265,6 @@ class MapContainer extends Container {
             ipc_event: 'load_map_list',
           }),
 
-          new Button({
-            text: 'Load State',
-            onclick: (e) => {
-              // if (!this.current_map) return;
-              // this.current_map.loadState();
-              Toast.message('Save/Load State is temporarily disabled');
-            }
-          }),
-
           ['div .spacer'],
 
           new Button({
@@ -294,18 +281,6 @@ class MapContainer extends Container {
             }
           }),
 
-          new Button({
-            text: 'Save State',
-            click: (e) => {
-              // const map = this.current_map;
-              // const map_data = this.getMapData();
-              // const state_data = this.getMapStateData();
-              // map_data[map.name].json.state = state_data;
-              // IPC.send('save_maps', map_data);
-              Toast.message('Save/Load State is temporarily disabled');
-            }
-          }),
-
           ['div .spacer'],
 
           new Checkbox({
@@ -315,12 +290,6 @@ class MapContainer extends Container {
             store_event: 'create_one_way_wall_toggled',
           }),
         ]],
-
-        // Help Manager gets created and added
-        this.HelpManager.render(),
-
-        // Text Manager gets created and added
-        this.TextManager.render(),
 
         ['div #map_tabs'],
       ]],

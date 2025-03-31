@@ -42,6 +42,15 @@ class ControlsManager {
 
       ['div #map_controls_body', [
         ['div .map_control_section', [
+          new NumberInput('#animated_map_volume', {
+            text: 'Animated Map Volume',
+            min: 0,
+            max: 100,
+            default_value: 0,
+            store_key: 'animated_map_volume',
+            store_event: 'animated_map_volume_change',
+            parent: this,
+          }),
           ['div .map_control_section_header HTML=Player Screen'],
           new Button('.map_controls_button', {
             text: 'Show on Player Screen',

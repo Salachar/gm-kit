@@ -30,7 +30,7 @@ class Store {
     parseEvent (fired_event) {
         // -(ps) events get sent to the player screen with the ps tags
         // removed, so it will be processed like normal
-        return fired_event.replace('-(ps)', '').replace('-(PS)', '');;
+        return fired_event.replace('-(ps)', '').replace('-(PS)', '');
     }
 
     fire (fired_event, data, key) {

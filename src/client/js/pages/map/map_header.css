@@ -10,7 +10,6 @@
   right: 0;
   height: var(--map-controls-height);
   font-size: 0.7rem;
-  /* background-color: #444; */
   box-sizing: border-box;
   transition: 0.3s all ease;
   white-space: nowrap;
@@ -24,39 +23,6 @@
 
 .header_controls .button {
   margin: 0.5rem 0 0 0.5rem;
-}
-
-/* .header_controls .input_container {
-  margin: 0.5rem 0 0 0.5rem;
-} */
-
-#help_box {
-  position: absolute;
-  top: var(--container-header-height);
-  left: 0;
-  z-index: var(--help-box-z);
-  background-color: #444;
-  color: #EEE;
-  transition: 0.3s all ease;
-  padding: 0 1rem 2rem 0.5rem;
-}
-
-#help_box.hide {
-  transform: translateX(-100%);
-}
-
-#help_table td {
-  padding: 0.25rem 0.4rem;
-}
-
-.help_key {
-  font-weight: bold;
-  text-align: right;
-  vertical-align: top;
-}
-
-.help_desc {
-  max-width: 40rem;
 }
 
 .spacer {
@@ -75,11 +41,10 @@
 
 #map_tabs {
   position: absolute;
-  top: var(--map-controls-height);;
+  top: var(--map-controls-height);
   left: 0;
   right: 0;
-  height: var(--map-tabs-height);;
-  /* background-color: #444; */
+  height: var(--map-tabs-height);
   z-index: 20;
   overflow-y: hidden;
   overflow-x: scroll;
