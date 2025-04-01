@@ -73,6 +73,11 @@ class ControlsManager {
             store_key: 'fit_map_to_screen_enabled',
             store_event: 'fit_map_to_screen-(PS)'
           }),
+          new Button('.map_controls_button', {
+            parent: this,
+            text: 'Flip Map Vertically',
+            store_event: 'flip_map_vertically-(PS)'
+          }),
           new NumberInput('#map_zoom_input .hr_mb', {
             text: 'Zoom',
             step: 0.025,

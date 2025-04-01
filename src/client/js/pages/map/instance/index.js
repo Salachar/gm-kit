@@ -74,7 +74,14 @@ class MapInstance {
       'remove_one_way': this.onRemoveOneWay.bind(this),
       'zoom_(ps)': this.playerScreenZoom.bind(this),
       'fit_map_to_screen': this.fitMapToScreen.bind(this),
+      'flip_map_vertically': this.flipMapVertically.bind(this),
     }, this.name);
+  }
+
+  flipMapVertically (data) {
+    console.log('flip');
+    console.log(this.node)
+    this.node.style.transform = this.node.style.transform === "scaleY(-1)" ? "scaleY(1)" : "scaleY(-1)";
   }
 
   fitMapToScreen (data) {

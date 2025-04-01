@@ -182,21 +182,27 @@ class CanvasManager extends Base{
 
       // Cut the lights out of the shroud context (just refreshed) so we can
       // see all the way through to what is currently lit up
-      this.drawLightPolygons(this.canvases.shroud.context, light_polys);
+      // this.drawLightPolygons(this.canvases.shroud.context, light_polys);
+      this.drawLightPolygons(this.canvases.shroud.context, light_polys, 'bright_intersects');
 
       // The light context has not been refreshed, so cutting the lights out here
       // will continue to cut out of the full opaque canvas created on light enable
-      this.drawLightPolygons(this.canvases.shadow.context, light_polys);
+      // this.drawLightPolygons(this.canvases.shadow.context, light_polys);
+      this.drawLightPolygons(this.canvases.shadow.context, light_polys, 'dim_intersects');
     });
   }
 
-  drawLightPolygons (context, polys) {
+  drawLightPolygons (context, polys, poly_key = 'intersects') {
     if (!polys.length) return;
     for (let polys_i = 0; polys_i < polys.length; ++polys_i) {
-      line(context, {
-        points: polys[polys_i].intersects,
-        cutout: true,
-      });
+      try {
+        line(context, {
+          points: polys[polys_i][poly_key],
+          cutout: true,
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
     // Draw new content over old content (default). This is just resetting the
     // composite operation for good measure.

@@ -46,13 +46,21 @@ class LightManager extends Base {
           x : light.x,
           y : light.y,
         },
-        intersects : light.intersects || []
+        intersects : light.intersects || [],
+        bright_intersects: light.bright_intersects || [],
+        dim_intersects: light.dim_intersects || [],
       };
     }
 
     const light_quadrant_key = QuadrantManager.getQuadrant(this.map_instance, light);
 
     let intersects = [];
+
+    let bright_intersects = [];
+    let dim_intersects = [];
+    const bright_limit = 150; // 150 in pixels
+    const dim_limit = 450; // 450 pixels
+
     // Go through all of the angle quadrants TL, TR, BR, BL
     for (let quadrants_i = 0; quadrants_i < QuadrantManager.angle_quadrants.length; ++quadrants_i) {
       // Get the actual key for the quadrant (TL | TR | BR | BL)
@@ -116,9 +124,39 @@ class LightManager extends Base {
         // t1 is the distance, if there is no distance, something weird happened.
         // Either way, just ignore the wall and move on.
         if (closestPoint.t1 !== null) {
+          // intersects.push({
+          //   x: Math.round(closestPoint.x),
+          //   y: Math.round(closestPoint.y)
+          // });
+
+          const sqr_dist = sqr(light.x - closestPoint.x) + sqr(light.y - closestPoint.y);
+          if (sqr_dist > sqr(bright_limit)) {
+              bright_intersects.push({
+                  x: Math.round(light.x + (vector.x * bright_limit)),
+                  y: Math.round(light.y + (vector.y * bright_limit))
+              });
+          } else {
+              bright_intersects.push({
+                  x: Math.round(closestPoint.x),
+                  y: Math.round(closestPoint.y)
+              });
+          }
+
+          if (sqr_dist > sqr(dim_limit)) {
+              dim_intersects.push({
+                  x: Math.round(light.x + (vector.x * dim_limit)),
+                  y: Math.round(light.y + (vector.y * dim_limit))
+              });
+          } else {
+              dim_intersects.push({
+                  x: Math.round(closestPoint.x),
+                  y: Math.round(closestPoint.y)
+              });
+          }
+
           intersects.push({
-            x: Math.round(closestPoint.x),
-            y: Math.round(closestPoint.y)
+              x: Math.round(closestPoint.x),
+              y: Math.round(closestPoint.y)
           });
         }
       };
@@ -128,12 +166,17 @@ class LightManager extends Base {
     // rays hit. Connecting all those points together gives the polygon "lit area" that
     // this light can see.
     light.intersects = intersects;
+    light.bright_intersects = bright_intersects;
+    light.dim_intersects = dim_intersects;
+
     return {
       pos : {
         x : light.x,
         y : light.y
       },
-      intersects : intersects
+      intersects,
+      bright_intersects,
+      dim_intersects,
     };
   }
 

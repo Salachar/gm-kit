@@ -16,7 +16,7 @@ class ObjectManager extends Base {
   removeClosest (data = {}) {
     const point = data.point || copyPoint(Mouse);
     // Get the closest of each type of item, in order of priority
-    let close_objects = ['light', 'segment', 'text_block'].map((search_type) => {
+    let close_objects = ['light', 'segment'].map((search_type) => {
       return this.findClosest(search_type, point) || null;
     }).filter(x => x);
 
@@ -36,14 +36,15 @@ class ObjectManager extends Base {
       }
     });
 
+    // Nothing was found
+    if (!closest_object.type) return;
+
     // Only allows lights to be removed if lighting is enabled
     if (Store.get('lighting_enabled') && !closest_object.type.match(/light/)) return;
 
-    if (closest_object.type) {
-      Store.fire('remove_' + closest_object.type, {
-        object: closest_object
-      });
-    }
+    Store.fire('remove_' + closest_object.type, {
+      object: closest_object
+    });
   }
 
   findClosest (type, point, distance_limit) {
@@ -61,13 +62,6 @@ class ObjectManager extends Base {
         search_array = [];
         for (let l in this.map_instance.managers.light.lights) {
           search_array.push(this.map_instance.managers.light.lights[l]);
-        }
-        break;
-
-      case 'text_block':
-        search_array = [];
-        for (let t in this.map_instance.managers.text.text_blocks) {
-          search_array.push(this.map_instance.managers.text.text_blocks[t]);
         }
         break;
     }
