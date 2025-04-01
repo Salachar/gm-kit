@@ -12,6 +12,11 @@ class LightManager extends Base {
     this.selected_light = null;
     this.light_width = 10;
 
+    // This is mostly a random garbage start value that will
+    // generally be less than the actual sight limit
+    this.bright_limit = 200;
+    this.dim_limit = this.bright_limit * 2;
+
     this.show_entire_map = false;
 
     const lights_data = (this.map_data || {}).lights_data || {};
@@ -24,7 +29,13 @@ class LightManager extends Base {
       'load_lights': this.loadLights.bind(this),
       'deselect_light': this.deselectLight.bind(this),
       'show_entire_map': this.showEntireMap.bind(this),
+      'sight_limit': this.onSightLimit.bind(this),
     }, this.map_instance.name);
+  }
+
+  onSightLimit (data) {
+    this.bright_limit = data.sight_limit;
+    this.dim_limit = this.bright_limit * 2;
   }
 
   onAddLight (data) {
@@ -55,11 +66,8 @@ class LightManager extends Base {
     const light_quadrant_key = QuadrantManager.getQuadrant(this.map_instance, light);
 
     let intersects = [];
-
     let bright_intersects = [];
     let dim_intersects = [];
-    const bright_limit = 150; // 150 in pixels
-    const dim_limit = 450; // 450 pixels
 
     // Go through all of the angle quadrants TL, TR, BR, BL
     for (let quadrants_i = 0; quadrants_i < QuadrantManager.angle_quadrants.length; ++quadrants_i) {
@@ -124,16 +132,11 @@ class LightManager extends Base {
         // t1 is the distance, if there is no distance, something weird happened.
         // Either way, just ignore the wall and move on.
         if (closestPoint.t1 !== null) {
-          // intersects.push({
-          //   x: Math.round(closestPoint.x),
-          //   y: Math.round(closestPoint.y)
-          // });
-
           const sqr_dist = sqr(light.x - closestPoint.x) + sqr(light.y - closestPoint.y);
-          if (sqr_dist > sqr(bright_limit)) {
+          if (sqr_dist > sqr(this.bright_limit)) {
               bright_intersects.push({
-                  x: Math.round(light.x + (vector.x * bright_limit)),
-                  y: Math.round(light.y + (vector.y * bright_limit))
+                  x: Math.round(light.x + (vector.x * this.bright_limit)),
+                  y: Math.round(light.y + (vector.y * this.bright_limit))
               });
           } else {
               bright_intersects.push({
@@ -142,10 +145,10 @@ class LightManager extends Base {
               });
           }
 
-          if (sqr_dist > sqr(dim_limit)) {
+          if (sqr_dist > sqr(this.dim_limit)) {
               dim_intersects.push({
-                  x: Math.round(light.x + (vector.x * dim_limit)),
-                  y: Math.round(light.y + (vector.y * dim_limit))
+                  x: Math.round(light.x + (vector.x * this.dim_limit)),
+                  y: Math.round(light.y + (vector.y * this.dim_limit))
               });
           } else {
               dim_intersects.push({
@@ -153,7 +156,6 @@ class LightManager extends Base {
                   y: Math.round(closestPoint.y)
               });
           }
-
           intersects.push({
               x: Math.round(closestPoint.x),
               y: Math.round(closestPoint.y)

@@ -407,12 +407,6 @@ class SegmentManager extends Base {
         door.open = true;
       }
 
-      if (!door.open) {
-        SoundManager.play('close_door');
-      } else {
-        SoundManager.play('open_door');
-      }
-
       Store.fire('door_activated');
     }
   }

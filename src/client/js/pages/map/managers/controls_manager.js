@@ -26,6 +26,7 @@ class ControlsManager {
     if (map.managers.canvas.canvases.image.video) {
       this.refs.animated_map_volume.value = map.managers.canvas.canvases.image.video.volume;
     }
+    this.refs.sight_limit.value = map.managers.light.bright_limit;
     this.refs.grid_size_input.value = map.managers.canvas.canvases.grid.attributes.size;
     this.refs.map_zoom_input.value = map.player_screen_zoom;
     this.refs.player_screen_brightness.value = map.managers.canvas.canvases.image.brightness;
@@ -77,6 +78,15 @@ class ControlsManager {
             parent: this,
             text: 'Flip Map Vertically',
             store_event: 'flip_map_vertically-(PS)'
+          }),
+          new NumberInput('#sight_limit .hr_mb', {
+            text: 'Sight Limit',
+            step: 5,
+            default_value: 200,
+            interval: 100,
+            store_key: 'sight_limit',
+            store_event: 'sight_limit',
+            parent: this,
           }),
           new NumberInput('#map_zoom_input .hr_mb', {
             text: 'Zoom',

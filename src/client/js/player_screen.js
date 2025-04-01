@@ -6,7 +6,6 @@ window.Lib = Lib;
 
 const Mouse = require('./lib/mouse');
 
-const SoundManager = require('./managers/sound_manager');
 const QuadrantManager = require('./managers/quadrant_manager');
 const MapInstance = require('./pages/map/instance');
 
@@ -97,7 +96,6 @@ window.onload = () => {
   CONFIG.is_player_screen = true;
   CONFIG.window = 'player_screen';
 
-  window.SoundManager = new SoundManager();
   window.QuadrantManager = new QuadrantManager();
   window.DisplayManager = new DisplayManager();
   window.Mouse = new Mouse();

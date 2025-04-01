@@ -8,7 +8,6 @@ const ToastMesseger = require('./lib/toast');
 const Mouse = require('./lib/mouse');
 
 const PlayerScreenManager = require('./managers/player_screen_manager');
-const SoundManager = require('./managers/sound_manager');
 const QuadrantManager = require('./managers/quadrant_manager');
 
 const MapContainer = require('./pages/map');
@@ -150,7 +149,6 @@ window.onload = () => {
 
     window.AppManager = new AppManager();
 
-    window.SoundManager = new SoundManager();
     window.QuadrantManager = new QuadrantManager();
     window.Toast = new ToastMesseger();
     window.Mouse = new Mouse();
