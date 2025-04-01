@@ -75,7 +75,14 @@ class CanvasManager extends Base{
       "hide_entire_map_(PS)": this.hideEntireMapPC.bind(this),
 
       'animated_map_volume_change': this.onAnimatedMapVolumeChange.bind(this),
+      'sight_limit': this.onSightLimit.bind(this),
     }, this.map_instance.name);
+  }
+
+  onSightLimit (data) {
+    this.drawLight({
+      force_update: true
+    });
   }
 
   onAnimatedMapVolumeChange (data) {

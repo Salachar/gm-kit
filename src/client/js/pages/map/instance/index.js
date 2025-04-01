@@ -79,8 +79,6 @@ class MapInstance {
   }
 
   flipMapVertically (data) {
-    console.log('flip');
-    console.log(this.node)
     this.node.style.transform = this.node.style.transform === "scaleY(-1)" ? "scaleY(1)" : "scaleY(-1)";
   }
 
@@ -89,7 +87,6 @@ class MapInstance {
 
     let window_ratio = (CONFIG.window_width / CONFIG.window_height) || 1;
     this.map_fit = !this.map_fit;
-    // this.map_fit = data.fit_map_to_screen_enabled;
 
     if (!this.map_fit) {
       this.setZoom(this.pre_fit_zoom || 1);
