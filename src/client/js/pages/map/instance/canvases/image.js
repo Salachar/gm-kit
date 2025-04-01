@@ -39,7 +39,6 @@ class ImageCanvas extends Base {
         this.video.loop = true;
         this.video.play();
 
-
         this.width = 1920;
         this.height = 1080;
         this.ratio = 16 / 9;

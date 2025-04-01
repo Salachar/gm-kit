@@ -229,11 +229,20 @@ class MapInstance {
   hide () {
     this.node.classList.add('hidden');
     if (this.tab) this.tab.classList.remove('selected');
+    // Mute
   }
 
   show () {
     this.node.classList.remove('hidden');
     if (this.tab) this.tab.classList.add('selected');
+  }
+
+  mute () {
+    this.managers.canvas.mute();
+  }
+
+  unmute () {
+    this.managers.canvas.unmute();
   }
 
   shutdown () {

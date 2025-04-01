@@ -15,6 +15,7 @@ class ControlsManager {
   }
 
   deselectSpellMarker () {
+    console.log(this.refs);
     this.refs.spell_marker_shape.deselect();
   }
 
@@ -22,6 +23,9 @@ class ControlsManager {
     // Checkboxes
     this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
     // Number inputs
+    if (map.managers.canvas.canvases.image.video) {
+      this.refs.animated_map_volume.value = map.managers.canvas.canvases.image.video.volume;
+    }
     this.refs.grid_size_input.value = map.managers.canvas.canvases.grid.attributes.size;
     this.refs.map_zoom_input.value = map.player_screen_zoom;
     this.refs.player_screen_brightness.value = map.managers.canvas.canvases.image.brightness;
@@ -45,7 +49,8 @@ class ControlsManager {
           new NumberInput('#animated_map_volume', {
             text: 'Animated Map Volume',
             min: 0,
-            max: 100,
+            max: 1,
+            step: 0.02,
             default_value: 0,
             store_key: 'animated_map_volume',
             store_event: 'animated_map_volume_change',
@@ -112,29 +117,29 @@ class ControlsManager {
           }),
         ]],
 
-        ['div .map_control_section', [
-          ['div .map_control_section_header HTML=Spell Markers'],
-          new NumberInput({
-            text: '* Requires Grid',
-            step: 5,
-            init: 20,
-            store_key: 'spell_marker_size'
-          }),
-          new RadioInput('.spell_marker_shape', {
-            options: ['line', 'square', 'circle', 'cone'],
-            store_key: 'spell_marker_shape',
-            store_event: 'spell_marker_shape_updated-(ps)',
-            parent: this,
-          }),
-          new ColorPicker('.spell_marker_color .hr_mb', {
-            store_key: 'spell_marker_color'
-          }),
-          new Checkbox('.hr_pad', {
-            text: 'Highlight Affected Tiles',
-            store_key: 'show_affected_tiles show_affected_tiles_checked',
-            store_event: 'show_affected_tiles_toggled-(ps)'
-          }),
-        ]],
+        // ['div .map_control_section', [
+        //   ['div .map_control_section_header HTML=Spell Markers'],
+        //   new NumberInput({
+        //     text: '* Requires Grid',
+        //     step: 5,
+        //     init: 20,
+        //     store_key: 'spell_marker_size'
+        //   }),
+        //   new RadioInput('#spell_marker_shape', {
+        //     options: ['line', 'square', 'circle', 'cone'],
+        //     store_key: 'spell_marker_shape',
+        //     store_event: 'spell_marker_shape_updated-(ps)',
+        //     parent: this,
+        //   }),
+        //   new ColorPicker('#spell_marker_color .hr_mb', {
+        //     store_key: 'spell_marker_color'
+        //   }),
+        //   new Checkbox('.hr_pad', {
+        //     text: 'Highlight Affected Tiles',
+        //     store_key: 'show_affected_tiles show_affected_tiles_checked',
+        //     store_event: 'show_affected_tiles_toggled-(ps)'
+        //   }),
+        // ]],
       ]],
     ]];
   }

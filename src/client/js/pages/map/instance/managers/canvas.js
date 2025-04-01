@@ -82,6 +82,14 @@ class CanvasManager extends Base{
     this.canvases.image.setVolume(data.animated_map_volume);
   }
 
+  mute () {
+    this.canvases.image.mute();
+  }
+
+  unmute () {
+    this.canvases.image.unmute();
+  }
+
   onLightPolyUpdate (data) {
     this.drawLight({
       force_update: true,
