@@ -79,7 +79,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 70%;
+  width: 60%;
   bottom: 0;
   overflow: scroll;
   background-color: var(--color-el-0);
@@ -95,7 +95,7 @@
 .map_list_container {
   position: absolute;
   top: 0;
-  left: 70%;
+  left: 60%;
   right: 0;
   bottom: 0;
 }
@@ -110,9 +110,10 @@
 }
 
 .map_list_section_title {
-  height: 1.25rem;
-  line-height: 1.25rem;
-  padding: 0.3rem 0.5rem;
+  height: 2rem;
+  line-height: 2rem;
+  font-size: 1.75rem;
+  padding: 0.5rem;
   background-color: var(--color-el-2);
   text-transform: capitalize;
   cursor: pointer;
@@ -124,37 +125,38 @@
 }
 
 .map_list_map {
-  height: 1.5rem;
-  line-height: 1.5rem;
   font-size: var(--font-medium);
   position: relative;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 2rem;
-}
+  padding: 1rem 2rem 1rem 0.5rem;
 
-.map_list_map_indicator {
-  position: relative;
-  height: 1.5rem;
-  width: 1.25rem;
-  display: inline-block;
-  vertical-align: top;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  opacity: 0.2;
-}
-.map_list_map_indicator.lit_up {
-  opacity: 1;
-}
+  & .indicator {
+    position: relative;
+    height: 1.5rem;
+    width: 1.25rem;
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0.2;
+  }
+  & .indicator.lit_up {
+    opacity: 1;
+  }
 
-.map_list_map_name {
-  padding-left: 0.5rem;
-}
+  & .name {
+    padding-left: 0.5rem;
+    cursor: pointer;
+  }
 
-.map_list_map_name_wrapper {
-  cursor: pointer;
+  & .variant {
+    margin: 1rem;
+    cursor: pointer;
+  }
 }
 
 .map_list_map:hover {

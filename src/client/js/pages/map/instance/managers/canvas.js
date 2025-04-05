@@ -76,8 +76,11 @@ class CanvasManager extends Base{
 
       'animated_map_volume_change': this.onAnimatedMapVolumeChange.bind(this),
       'sight_limit': this.onSightLimit.bind(this),
+      'disable_sight_limit': this.onSightLimit.bind(this),
     }, this.map_instance.name);
   }
+
+  // onSightLimit
 
   onSightLimit (data) {
     this.drawLight({

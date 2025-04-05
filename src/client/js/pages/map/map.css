@@ -12,13 +12,15 @@
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  right: 20rem;
   bottom: 0;
   overflow: hidden;
 }
 
+
 #map_containers.display {
   top: 0;
+  right: 0;
 }
 
 #map_main_section {

@@ -4,22 +4,38 @@ const ArrowInput = require('../../../lib/inputs/arrowInput');
 const Checkbox = require('../../../lib/inputs/checkbox');
 const RadioInput = require('../../../lib/inputs/radio');
 const ColorPicker = require('../../../lib/inputs/colorpicker');
+const MapTagInput = require('../../../lib/inputs/map_tag_input');
 
 class ControlsManager {
   constructor (opts = {}) {
-    this.open = false;
+    // Store.register({
+    //   'deselect_spell_marker': this.deselectSpellMarker.bind(this),
+    // });
 
-    Store.register({
-      'deselect_spell_marker': this.deselectSpellMarker.bind(this),
+    this.map = null;
+    this.map_tags = {};
+
+    this.setIPCEvents();
+  }
+
+  setIPCEvents () {
+    IPC.send('map_tags_request');
+
+    IPC.on('map_tags_response', (e, map_tags) => {
+      this.map_tags = map_tags;
+      if (this.map && this.refs.map_tags) {
+        this.refs.map_tags.update(this.map, map_tags);
+      }
     });
   }
 
   deselectSpellMarker () {
-    console.log(this.refs);
-    this.refs.spell_marker_shape.deselect();
+    // this.refs.spell_marker_shape.deselect();
   }
 
   update (map) {
+    this.map = map;
+    this.refs.map_tags.update(map, this.map_tags);
     // Checkboxes
     this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
     // Number inputs
@@ -34,19 +50,11 @@ class ControlsManager {
 
   render () {
     return ['div #map_controls_container', [
-      ['div #map_controls_toggle .menu_icon', {
-        click: (e) => {
-          this.open = !this.open;
-          Store.fire(`${this.open ? 'show' : 'hide'}_map_controls`);
-        }
-      }, [
-        ['div .menu_icon_bar .menu_icon_bar_1'],
-        ['div .menu_icon_bar .menu_icon_bar_2'],
-        ['div .menu_icon_bar .menu_icon_bar_3'],
-      ]],
-
       ['div #map_controls_body', [
         ['div .map_control_section', [
+          new MapTagInput('#map_tags', {
+            parent: this,
+          }),
           new NumberInput('#animated_map_volume', {
             text: 'Animated Map Volume',
             min: 0,
@@ -78,6 +86,12 @@ class ControlsManager {
             parent: this,
             text: 'Flip Map Vertically',
             store_event: 'flip_map_vertically-(PS)'
+          }),
+          new Checkbox('#disable_sight_limit .hr_pad', {
+            parent: this,
+            text: 'Disable Sight Limit',
+            store_key: 'disable_sight_limit',
+            store_event: 'disable_sight_limit',
           }),
           new NumberInput('#sight_limit .hr_mb', {
             text: 'Sight Limit',

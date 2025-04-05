@@ -14,6 +14,7 @@ class LightManager extends Base {
 
     // This is mostly a random garbage start value that will
     // generally be less than the actual sight limit
+    this.disable_sight_limit = false;
     this.bright_limit = 200;
     this.dim_limit = this.bright_limit * 2;
 
@@ -30,7 +31,12 @@ class LightManager extends Base {
       'deselect_light': this.deselectLight.bind(this),
       'show_entire_map': this.showEntireMap.bind(this),
       'sight_limit': this.onSightLimit.bind(this),
+      'disable_sight_limit': this.onDisableSightLimit.bind(this),
     }, this.map_instance.name);
+  }
+
+  onDisableSightLimit (data) {
+    this.disable_sight_limit = data.disable_sight_limit;
   }
 
   onSightLimit (data) {
@@ -132,34 +138,36 @@ class LightManager extends Base {
         // t1 is the distance, if there is no distance, something weird happened.
         // Either way, just ignore the wall and move on.
         if (closestPoint.t1 !== null) {
-          const sqr_dist = sqr(light.x - closestPoint.x) + sqr(light.y - closestPoint.y);
-          if (sqr_dist > sqr(this.bright_limit)) {
-              bright_intersects.push({
-                  x: Math.round(light.x + (vector.x * this.bright_limit)),
-                  y: Math.round(light.y + (vector.y * this.bright_limit))
-              });
-          } else {
-              bright_intersects.push({
-                  x: Math.round(closestPoint.x),
-                  y: Math.round(closestPoint.y)
-              });
-          }
+          const i_point = {
+            x: Math.round(closestPoint.x),
+            y: Math.round(closestPoint.y)
+          };
 
-          if (sqr_dist > sqr(this.dim_limit)) {
-              dim_intersects.push({
-                  x: Math.round(light.x + (vector.x * this.dim_limit)),
-                  y: Math.round(light.y + (vector.y * this.dim_limit))
-              });
+          intersects.push(i_point);
+
+          if (this.disable_sight_limit) {
+            bright_intersects.push(i_point);
+            dim_intersects.push(i_point);
           } else {
-              dim_intersects.push({
-                  x: Math.round(closestPoint.x),
-                  y: Math.round(closestPoint.y)
+            const sqr_dist = sqr(light.x - closestPoint.x) + sqr(light.y - closestPoint.y);
+            if (sqr_dist > sqr(this.bright_limit)) {
+              bright_intersects.push({
+                x: Math.round(light.x + (vector.x * this.bright_limit)),
+                y: Math.round(light.y + (vector.y * this.bright_limit))
               });
+            } else {
+              bright_intersects.push(i_point);
+            }
+
+            if (sqr_dist > sqr(this.dim_limit)) {
+              dim_intersects.push({
+                x: Math.round(light.x + (vector.x * this.dim_limit)),
+                y: Math.round(light.y + (vector.y * this.dim_limit))
+              });
+            } else {
+              dim_intersects.push(i_point);
+            }
           }
-          intersects.push({
-              x: Math.round(closestPoint.x),
-              y: Math.round(closestPoint.y)
-          });
         }
       };
     }

@@ -1,4 +1,4 @@
-const Button = require('../../../lib/inputs/button');
+const MapTagInput = require('../../../lib/inputs/map_tag_input');
 
 class MapListManager {
   constructor (opts = {}) {
@@ -15,14 +15,14 @@ class MapListManager {
   }
 
   setIPCEvents () {
-    IPC.on('map_list_loaded', (e, map_list) => {
-      this.map_list = map_list;
-      this.createFileTree(map_list);
+    IPC.on('map_list_loaded', (e, { maps, tags }) => {
+      this.map_list = maps;
+      this.map_tags = tags;
+      this.createFileTree(maps);
     });
 
     IPC.on('maps_loaded', (e, maps) => {
       this.onMapLoad(maps);
-      // this.closeModal();
     });
 
     IPC.on('map_directory_chosen', (e) => {
@@ -40,7 +40,45 @@ class MapListManager {
     this.refs.map_list_search.value = '';
   }
 
-  searchMaps (sections, search_string) {
+  selectMap (e, map) {
+    if (e.defaultPrevented) return;
+    e.preventDefault();
+    IPC.send('load_map', map);
+  }
+
+  updatePreview (e, map) {
+    this.refs.map_list_modal_body_preview.innerHTML = '';
+
+    if (!map.image && !map.video) {
+      this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+      return;
+    }
+
+    if (map.image) {
+      this.current_map_hover = map.image;
+      ((image_source) => {
+        let img = new Image;
+        img.onload = () => {
+          if (image_source !== this.current_map_hover) return;
+          this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+        }
+        img.src = image_source;
+      })(map.image);
+    }
+
+    if (map.video) {
+      this.refs.map_list_modal_body_preview.style.backgroundImage = '';
+      this.current_map_hover = map.video;
+      const video_preview = document.createElement('video');
+      video_preview.src = map.video;
+      video_preview.autoplay = true;
+      video_preview.loop = true;
+      video_preview.muted = true;
+      this.refs.map_list_modal_body_preview.appendChild(video_preview);
+    }
+  }
+
+  searchMaps (sections, search_string, map_tags) {
     let sections_copy = JSON.parse(JSON.stringify(sections));
     search(sections_copy);
     function search (sections) {
@@ -49,7 +87,31 @@ class MapListManager {
           for (let f in sections[s]) {
             let map = sections[s][f];
             let name = map.name.toLowerCase();
-            if (name.indexOf(search_string) === -1) {
+            let matchFound = false;
+
+            if (name.indexOf(search_string) !== -1) {
+              matchFound = true;
+            }
+
+            const tags = map_tags[map.name] || [];
+
+            tags.forEach((t) => {
+              let search_t = t.toLowerCase();
+              if (search_t.indexOf(search_string) !== -1) {
+                matchFound = true;
+              }
+            })
+
+            if (map.variants) {
+              // The map has variants, so we need to check those too.
+              // We can just check the shortned variant name.
+              for (let v in map.variants) {
+                if (v.toLowerCase().indexOf(search_string) !== -1) {
+                  matchFound = true;
+                }
+              }
+            }
+            if (!matchFound) {
               delete sections[s][f];
             }
           }
@@ -70,14 +132,16 @@ class MapListManager {
     this.refs.map_list_modal_body_list.innerHTML = '';
     // There is always one folder at the top level, and we dont want to display it
     const top_level_folder = map_list[Object.keys(map_list)[0]];
-    Lib.dom.generate(this.generateSectionNodes(top_level_folder), this, this.refs.map_list_modal_body_list);
+    if (top_level_folder) {
+      Lib.dom.generate(this.generateSectionNodes(top_level_folder), this, this.refs.map_list_modal_body_list);
+    } else {
+      console.log("There is no tree to render");
+      return;
+    }
     this.openModal();
   }
 
   generateSectionNodes (sections) {
-    // This version will put files under the section name directly
-    // and not under "files" or "image", etc...
-
     let node_array = [];
 
     // check for the loose files section so we can put them at the top
@@ -123,53 +187,26 @@ class MapListManager {
   generateFileNode (map) {
     return Lib.dom.generate(
       ['div .map_list_map', {
-        mouseenter: (e) => {
-          this.refs.map_list_modal_body_preview.innerHTML = '';
-
-          if (!map.image && !map.video) {
-            this.refs.map_list_modal_body_preview.style.backgroundImage = '';
-            return;
-          }
-
-          if (map.image) {
-            this.current_map_hover = map.image;
-            ((image_source) => {
-              let img = new Image;
-              img.onload = () => {
-                if (image_source !== this.current_map_hover) return;
-                this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
-              }
-              img.src = image_source;
-            })(map.image);
-          }
-
-          if (map.video) {
-            this.refs.map_list_modal_body_preview.style.backgroundImage = '';
-            this.current_map_hover = map.video;
-            const video_preview = document.createElement('video');
-            video_preview.src = map.video;
-            video_preview.autoplay = true;
-            video_preview.loop = true;
-            video_preview.muted = true;
-            this.refs.map_list_modal_body_preview.appendChild(video_preview);
-          }
-        }
+        mouseenter: (e) => this.updatePreview(e, map),
       }, [
-        ['div .map_list_map_name_wrapper', {
-          click: (e) => {
-            if (e.defaultPrevented) return;
-            let selected_maps = {};
-            selected_maps[map.name] = map;
-            IPC.send('load_maps', selected_maps);
-          },
-        }, [
-          [`span .map_list_map_indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
-          [`span .map_list_map_indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
-          [`span .map_list_map_indicator ${map.video ? '.lit_up' : ''} HTML=V`],
-          [`span .map_list_map_name HTML=${map.name}`],
+        [`span .indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
+        [`span .indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
+        [`span .indicator ${map.video ? '.lit_up' : ''} HTML=V`],
+        [`span .name HTML=${map.name}`, {
+          click: (e) => this.selectMap(e, map),
+        }],
+        map.variants && ['div .variants', [
+          (Object.keys(map.variants || {}).map((variant_name) => {
+            const variant = map.variants[variant_name];
+            return [`span .variant HTML=${variant_name}`, {
+              mouseenter: (e) => this.updatePreview(e, variant),
+              click: (e) => this.selectMap(e, variant),
+            }]
+          })),
         ]],
-      ]
-    ]);
+        new MapTagInput({ map, tags: this.map_tags }),
+      ]],
+    );
   }
 
   render () {
@@ -185,7 +222,7 @@ class MapListManager {
               let search_string = e.currentTarget.value || "";
               search_string = search_string.trim();
               search_string = search_string.toLowerCase();
-              this.searchMaps(this.map_list, search_string);
+              this.searchMaps(this.map_list, search_string, this.map_tags);
             }
           }],
           ['div #map_list_modal_close .modal_close HTML=CLOSE', {

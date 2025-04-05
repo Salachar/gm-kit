@@ -28,19 +28,9 @@ class MapContainer extends Container {
     Store.register({
       'save_maps': this.saveMaps.bind(this),
       'mouse_leave': this.onMouseLeave.bind(this),
-      'show_map_controls': this.showMapControls.bind(this),
-      'hide_map_controls': this.hideMapControls.bind(this),
     });
 
     this.render();
-  }
-
-  showMapControls () {
-    this.refs.map_main_section.classList.add('open');
-  }
-
-  hideMapControls () {
-    this.refs.map_main_section.classList.remove('open');
   }
 
   onMouseLeave () {
@@ -251,15 +241,6 @@ class MapContainer extends Container {
     Lib.dom.generate([
       ['div .container_header', [
         ['div .header_controls', [
-          new Button({
-            text: 'Help',
-            onclick: (e) => {
-              this.HelpManager.toggle();
-            },
-          }),
-
-          ['div .spacer'],
-
           new Button({
             text: 'Load',
             ipc_event: 'load_map_list',

@@ -14,6 +14,7 @@ const url = require('url');
 // Instantiated as singletons
 const GMMapManager = require('./lib/map_manager');
 const GMConfig = require('./lib/config');
+// const WebSocketManager = require('./lib/websocket_manager');
 
 global.shared = {
   WINDOW: null,

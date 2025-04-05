@@ -42,11 +42,8 @@
   width: 20rem;
   background-color: var(--color-el-1);
   z-index: 13;
-  transform: translateX(100%);
+  /* transform: translateX(100%); */
   box-sizing: border-box;
-}
-#map_controls_container.open {
-  transform: translateX(0%);
 }
 
 #map_controls_body {

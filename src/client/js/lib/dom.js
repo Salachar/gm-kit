@@ -112,7 +112,10 @@ const DOM = {
       'mouseenter',
     ].forEach((event_type) => {
       if (opts[event_type]) {
-        node.addEventListener(event_type, opts[event_type]);
+        // node.addEventListener(event_type, opts[event_type]);
+        node.addEventListener(event_type, (e) => {
+          opts[event_type](e, node);
+        });
       }
     })
 

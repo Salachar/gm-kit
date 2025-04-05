@@ -4,6 +4,7 @@
 @import "./colorpicker.css";
 @import "./numberInput.css";
 @import "./radio.css";
+@import "./map_tag_input.css";
 
 .input_container {
     display: block;
