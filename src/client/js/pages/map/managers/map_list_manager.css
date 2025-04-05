@@ -110,9 +110,9 @@
 }
 
 .map_list_section_title {
-  height: 2rem;
-  line-height: 2rem;
-  font-size: 1.75rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  font-size: 1.25rem;
   padding: 0.5rem;
   background-color: var(--color-el-2);
   text-transform: capitalize;
@@ -131,31 +131,44 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 2rem;
-  padding: 1rem 2rem 1rem 0.5rem;
+  padding: 1rem 2rem 1rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 1rem 0;
 
   & .indicator {
     position: relative;
-    height: 1.5rem;
-    width: 1.25rem;
     display: inline-block;
     vertical-align: top;
     box-sizing: border-box;
     text-align: center;
     font-weight: bold;
+    font-size: 1.5rem;
     opacity: 0.2;
+    margin-right: 0.5rem;
   }
   & .indicator.lit_up {
-    opacity: 1;
+    opacity: 0.75;
   }
 
   & .name {
     padding-left: 0.5rem;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+
+  & .variants {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem 0;
   }
 
   & .variant {
-    margin: 1rem;
+    display: inline-block;
+    font-size: 1.25rem;
+    margin: 0.25rem;
     cursor: pointer;
+    padding: 0 0.5rem;
   }
 }
 

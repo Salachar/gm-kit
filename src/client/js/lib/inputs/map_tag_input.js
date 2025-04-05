@@ -50,11 +50,12 @@ class MapTagInput {
   }
 
   update (map, map_tags) {
+    console.log(3);
     this.node_tags_list.innerHTML = "";
-    const tags = map_tags[map.name];
+    const tags = map_tags[map.name] || [];
     this.map = map;
     this.tags = tags;
-    tags.forEach((tag) => {
+    (tags || []).forEach((tag) => {
       this.addTag({
         tag: tag,
         parent_node: this.node_tags_list,
@@ -73,7 +74,6 @@ class MapTagInput {
   }) {
     let tag_class = '.map_tag';
     if (removable) tag_class += ' .removable';
-
     if (save) this.save({ key, tag });
 
     return Lib.dom.generate([`div ${tag_class} HTML=${tag}`, [
@@ -102,24 +102,6 @@ class MapTagInput {
 
     this.node = Lib.dom.generate(
       [`div ${identifiers} .map_tag_container`, [
-        ['input .map_tag_input', {
-          click: (e) => {
-            e.preventDefault();
-            return false;
-          },
-          keydown: (e, node) => {
-            if (e.code !== 'Enter') return;
-            let tag = e.currentTarget.value.trim();
-            if (!tag || tag === '') return;
-            this.addTag({
-              tag: tag,
-              parent_node: node.nextElementSibling,
-              save: true,
-              key: this.map.name,
-            });
-            e.currentTarget.value = '';
-          }
-        }],
         ['div .map_tag_list', {
           oncreate: (node) => {
             this.node_tags_list = node;
@@ -132,7 +114,25 @@ class MapTagInput {
               });
             });
           },
-        }]
+        }],
+        ['input .map_tag_input', {
+          click: (e) => {
+            e.preventDefault();
+            return false;
+          },
+          keydown: (e, node) => {
+            if (e.code !== 'Enter') return;
+            let tag = e.currentTarget.value.trim();
+            if (!tag || tag === '') return;
+            this.addTag({
+              tag: tag,
+              parent_node: node.previousElementSibling,
+              save: true,
+              key: this.map.name,
+            });
+            e.currentTarget.value = '';
+          }
+        }],
       ]],
     );
 

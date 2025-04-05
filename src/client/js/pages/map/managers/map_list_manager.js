@@ -16,6 +16,7 @@ class MapListManager {
 
   setIPCEvents () {
     IPC.on('map_list_loaded', (e, { maps, tags }) => {
+      console.log(maps);
       this.map_list = maps;
       this.map_tags = tags;
       this.createFileTree(maps);
@@ -198,7 +199,7 @@ class MapListManager {
         map.variants && ['div .variants', [
           (Object.keys(map.variants || {}).map((variant_name) => {
             const variant = map.variants[variant_name];
-            return [`span .variant HTML=${variant_name}`, {
+            return [`div .variant HTML=${variant_name}`, {
               mouseenter: (e) => this.updatePreview(e, variant),
               click: (e) => this.selectMap(e, variant),
             }]

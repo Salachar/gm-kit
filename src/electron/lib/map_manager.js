@@ -302,8 +302,11 @@ class MapManager {
               }
               // Add the variation
               let variation_name = file_name.replace(base_map_name, '').trim();
-              // strip off any leading hyphens, parens can stay
               variation_name = variation_name.replace(/^-+/, '').trim();
+              if (variation_name[0] === '(' || variation_name[0] === '[') {
+                variation_name = variation_name.slice(1, -1);
+              }
+
               files[base_map_name].variants[variation_name] = copy(file);
               // Remove the variation from the list
               delete files[file_key];
