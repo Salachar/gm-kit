@@ -241,19 +241,15 @@ class MapContainer extends Container {
     Lib.dom.generate([
       ['div .container_header', [
         ['div .header_controls', [
-          new Button({
+          new Button('.ml_1', {
             text: 'Load',
             ipc_event: 'load_map_list',
           }),
-
-          ['div .spacer'],
-
-          new Button({
+          new Button('.ml_1', {
             text: 'Save',
             onclick: (e) => this.saveMaps(),
           }),
-
-          new Button({
+          new Button('.ml_1', {
             text: 'Save All',
             onclick: (e) => {
               const map_data = this.getAllMapData();
@@ -261,10 +257,7 @@ class MapContainer extends Container {
               IPC.send('save_maps', map_data);
             }
           }),
-
-          ['div .spacer'],
-
-          new Checkbox({
+          new Checkbox('.ml_1', {
             title: 'Modifies an existing wall',
             text: 'One-Way Wall',
             store_key: 'create_one_way_wall',

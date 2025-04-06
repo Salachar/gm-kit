@@ -84,15 +84,19 @@ class MapListManager {
     search(sections_copy);
     function search (sections) {
       for (let s in sections) {
-        if (s.match(/complete|image|video|files|json/)) {
+        if (s === "files") {
           for (let f in sections[s]) {
             let map = sections[s][f];
             let name = map.name.toLowerCase();
+            let display_name = (map.display_name || "").toLowerCase();
+            let folder_name = (map.folder || "").toLowerCase();
             let matchFound = false;
 
-            if (name.indexOf(search_string) !== -1) {
-              matchFound = true;
-            }
+            if (name.indexOf(search_string) !== -1) matchFound = true;
+            if (display_name.indexOf(search_string) !== -1) matchFound = true;
+            if (folder_name.indexOf(search_string) !== -1) matchFound = true;
+
+            if (matchFound) continue;
 
             const tags = map_tags[map.name] || [];
 
@@ -101,7 +105,9 @@ class MapListManager {
               if (search_t.indexOf(search_string) !== -1) {
                 matchFound = true;
               }
-            })
+            });
+
+            if (matchFound) continue;
 
             if (map.variants) {
               // The map has variants, so we need to check those too.
@@ -112,6 +118,7 @@ class MapListManager {
                 }
               }
             }
+
             if (!matchFound) {
               delete sections[s][f];
             }
@@ -190,12 +197,16 @@ class MapListManager {
       ['div .map_list_map', {
         mouseenter: (e) => this.updatePreview(e, map),
       }, [
-        [`span .indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
-        [`span .indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
-        [`span .indicator ${map.video ? '.lit_up' : ''} HTML=V`],
-        [`span .name HTML=${map.name}`, {
-          click: (e) => this.selectMap(e, map),
-        }],
+        ['div', [
+          [`span .name HTML=${map.display_name || map.name}`, {
+            click: (e) => this.selectMap(e, map),
+          }],
+          ['div', [
+            [`span .indicator ${map.json_exists ? '.lit_up' : ''} HTML=W`],
+            [`span .indicator ${map.dm_version ? '.lit_up' : ''} HTML=D`],
+            [`span .indicator ${map.video ? '.lit_up' : ''} HTML=V`],
+          ]]
+        ]],
         map.variants && ['div .variants', [
           (Object.keys(map.variants || {}).map((variant_name) => {
             const variant = map.variants[variant_name];

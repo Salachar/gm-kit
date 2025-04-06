@@ -154,3 +154,12 @@ body {
 .hr_mb {
   margin-bottom: 0.5rem;
 }
+.mb_1 {
+  margin-bottom: 1rem;
+}
+.ml_1 {
+  margin-left: 1rem;
+}
+.mt_h {
+  margin-top: 0.5rem;
+}

@@ -286,6 +286,7 @@ class MapManager {
                 files[base_map_name] = {
                   ...copy(file),
                   name: base_map_name,
+                  display_name: this.createDisplayName(base_map_name),
                   json_directory_base: path.join(GMConfig.json_directory, 'maps', `${base_map_name}.json`),
                   json_directory_unique: path.join(GMConfig.json_directory, 'maps', `${base_map_name}.json`),
                   variants: {},
@@ -387,6 +388,20 @@ class MapManager {
     }
   }
 
+  createDisplayName (file_name) {
+    try {
+      const noGridded = file_name.replace(/Gridded-\d+x\d+/i, '');
+      const noGrid = noGridded.replace(/Grid-\d+x\d+/i, '');
+      const cleaned = noGrid.replace(/-?\d+dpi VTT/i, '');
+      const trimmed = cleaned.replace(/[-_!@#\$%^&*()+=\[\]{};':"\\|,.<>\/?~`]+$/, '');
+      const dehyphened = trimmed.replace(/-|_/g, ' ');
+      const spaced = dehyphened.replace(/([a-z])([A-Z])/g, '$1 $2');
+      return spaced.trim().toUpperCase();
+    } catch (e) {
+      return file_name;
+    }
+  }
+
   investigateFile (dir, item, type) {
     // type is 'video' or 'image' based on the types passed into readDir
     const [file_name, file_type] = item.split('.');
@@ -409,9 +424,11 @@ class MapManager {
     }
 
     const json_directory = path.join(GMConfig.json_directory, 'maps', `${file_name}.json`);
+
     // Create the file object
     let file_obj = {
       name: file_name,
+      display_name: this.createDisplayName(file_name),
       type: type,
       [type]: path.join(dir, item),
       dm_version: dm_version && path.join(dir, dm_version),

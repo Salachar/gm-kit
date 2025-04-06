@@ -2,9 +2,9 @@ const Button = require('../../../lib/inputs/button');
 const NumberInput = require('../../../lib/inputs/numberInput');
 const ArrowInput = require('../../../lib/inputs/arrowInput');
 const Checkbox = require('../../../lib/inputs/checkbox');
-const RadioInput = require('../../../lib/inputs/radio');
-const ColorPicker = require('../../../lib/inputs/colorpicker');
-const MapTagInput = require('../../../lib/inputs/map_tag_input');
+// const RadioInput = require('../../../lib/inputs/radio');
+// const ColorPicker = require('../../../lib/inputs/colorpicker');
+// const MapTagInput = require('../../../lib/inputs/map_tag_input');
 
 class ControlsManager {
   constructor (opts = {}) {
@@ -15,19 +15,19 @@ class ControlsManager {
     this.map = null;
     this.map_tags = {};
 
-    this.setIPCEvents();
+    // this.setIPCEvents();
   }
 
-  setIPCEvents () {
-    IPC.send('map_tags_request');
+  // setIPCEvents () {
+  //   IPC.send('map_tags_request');
 
-    IPC.on('map_tags_response', (e, map_tags) => {
-      this.map_tags = map_tags;
-      if (this.map && this.refs.map_tags) {
-        this.refs.map_tags.update(this.map, map_tags);
-      }
-    });
-  }
+  //   IPC.on('map_tags_response', (e, map_tags) => {
+  //     this.map_tags = map_tags;
+  //     if (this.map && this.refs.map_tags) {
+  //       this.refs.map_tags.update(this.map, map_tags);
+  //     }
+  //   });
+  // }
 
   deselectSpellMarker () {
     // this.refs.spell_marker_shape.deselect();
@@ -35,7 +35,7 @@ class ControlsManager {
 
   update (map) {
     this.map = map;
-    this.refs.map_tags.update(map, this.map_tags);
+    // this.refs.map_tags.update(map, this.map_tags);
     // Checkboxes
     this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
     // Number inputs
@@ -51,124 +51,110 @@ class ControlsManager {
   render () {
     return ['div #map_controls_container', [
       ['div #map_controls_body', [
-        ['div .map_control_section', [
-          new MapTagInput('#map_tags', {
-            parent: this,
-          }),
-          new NumberInput('#animated_map_volume', {
-            text: 'Animated Map Volume',
-            min: 0,
-            max: 1,
-            step: 0.02,
-            default_value: 0,
-            store_key: 'animated_map_volume',
-            store_event: 'animated_map_volume_change',
-            parent: this,
-          }),
-          ['div .map_control_section_header HTML=Player Screen'],
-          new Button('.map_controls_button', {
-            text: 'Show on Player Screen',
-            store_event: 'show_player_screen',
-          }),
-          new Button('.map_controls_button', {
-            parent: this,
-            text: 'Show Entire Map',
-            store_key: 'show_entire_map_enabled',
-            store_event: 'show_entire_map'
-          }),
-          new Button('.map_controls_button', {
-            parent: this,
-            text: 'Fit Map To Screen',
-            store_key: 'fit_map_to_screen_enabled',
-            store_event: 'fit_map_to_screen-(PS)'
-          }),
-          new Button('.map_controls_button', {
-            parent: this,
-            text: 'Flip Map Vertically',
-            store_event: 'flip_map_vertically-(PS)'
-          }),
-          new Checkbox('#disable_sight_limit .hr_pad', {
-            parent: this,
-            text: 'Disable Sight Limit',
-            store_key: 'disable_sight_limit',
-            store_event: 'disable_sight_limit',
-          }),
-          new NumberInput('#sight_limit .hr_mb', {
-            text: 'Sight Limit',
-            step: 5,
-            default_value: 200,
-            interval: 100,
-            store_key: 'sight_limit',
-            store_event: 'sight_limit',
-            parent: this,
-          }),
-          new NumberInput('#map_zoom_input .hr_mb', {
-            text: 'Zoom',
-            step: 0.025,
-            interval: 20,
-            store_key: 'zoom',
-            store_event: 'zoom_(ps)',
-            parent: this,
-          }),
-          new NumberInput('#player_screen_brightness', {
-            text: 'Brightness',
-            min: 0,
-            max: 200,
-            default_value: 100,
-            interval: 30,
-            store_key: 'brightness',
-            store_event: 'brightness_(ps)',
-            parent: this,
-          }),
-        ]],
-
-        ['div .map_control_section', [
-          ['div .map_control_section_header HTML=Grid Overlay'],
-          new Checkbox('#enable_grid .hr_pad', {
-            parent: this,
-            text: 'Enable Grid',
-            store_key: 'overlay_grid_enabled',
-            store_event: 'overlay_grid_toggled_(ps)'
-          }),
-          new NumberInput('#grid_size_input .hr_mb', {
-            text: 'Size',
-            step: 0.25,
-            default_value: 50,
-            store_key: 'size',
-            store_event: 'grid_size_update_(ps)',
-            parent: this,
-          }),
-          new ArrowInput({
-            text: 'Position',
-            step: 1,
-            store_key: 'offset',
-            store_event: 'grid_offset_update_(ps)'
-          }),
-        ]],
-
-        // ['div .map_control_section', [
-        //   ['div .map_control_section_header HTML=Spell Markers'],
-        //   new NumberInput({
-        //     text: '* Requires Grid',
-        //     step: 5,
-        //     init: 20,
-        //     store_key: 'spell_marker_size'
-        //   }),
-        //   new RadioInput('#spell_marker_shape', {
-        //     options: ['line', 'square', 'circle', 'cone'],
-        //     store_key: 'spell_marker_shape',
-        //     store_event: 'spell_marker_shape_updated-(ps)',
-        //     parent: this,
-        //   }),
-        //   new ColorPicker('#spell_marker_color .hr_mb', {
-        //     store_key: 'spell_marker_color'
-        //   }),
-        //   new Checkbox('.hr_pad', {
-        //     text: 'Highlight Affected Tiles',
-        //     store_key: 'show_affected_tiles show_affected_tiles_checked',
-        //     store_event: 'show_affected_tiles_toggled-(ps)'
-        //   }),
-        // ]],
+        new NumberInput('#animated_map_volume .mb_1', {
+          text: 'Animated Map Volume',
+          min: 0,
+          max: 1,
+          step: 0.02,
+          default_value: 0,
+          store_key: 'animated_map_volume',
+          store_event: 'animated_map_volume_change',
+          parent: this,
+        }),
+        new Button('.map_controls_button .mb_1', {
+          text: 'Show on Player Screen',
+          store_event: 'show_player_screen',
+        }),
+        new Button('.map_controls_button .mb_1', {
+          parent: this,
+          text: 'Show Entire Map',
+          store_key: 'show_entire_map_enabled',
+          store_event: 'show_entire_map'
+        }),
+        new Button('.map_controls_button .mb_1', {
+          parent: this,
+          text: 'Fit Map To Screen',
+          store_key: 'fit_map_to_screen_enabled',
+          store_event: 'fit_map_to_screen-(PS)'
+        }),
+        new Button('.map_controls_button .mb_1', {
+          parent: this,
+          text: 'Flip Map Vertically',
+          store_event: 'flip_map_vertically-(PS)'
+        }),
+        new Checkbox('#disable_sight_limit .hr_pad .mb_1', {
+          parent: this,
+          text: 'Disable Sight Limit',
+          store_key: 'disable_sight_limit',
+          store_event: 'disable_sight_limit',
+        }),
+        new NumberInput('#sight_limit .mb_1', {
+          text: 'Sight Limit',
+          step: 5,
+          default_value: 200,
+          interval: 100,
+          store_key: 'sight_limit',
+          store_event: 'sight_limit',
+          parent: this,
+        }),
+        new NumberInput('#map_zoom_input .mb_1', {
+          text: 'Zoom',
+          step: 0.025,
+          interval: 20,
+          store_key: 'zoom',
+          store_event: 'zoom_(ps)',
+          parent: this,
+        }),
+        new NumberInput('#player_screen_brightness .mb_1', {
+          text: 'Brightness',
+          min: 0,
+          max: 200,
+          default_value: 100,
+          interval: 30,
+          store_key: 'brightness',
+          store_event: 'brightness_(ps)',
+          parent: this,
+        }),
+        new Checkbox('#enable_grid .hr_pad .mb_1', {
+          parent: this,
+          text: 'Enable Grid',
+          store_key: 'overlay_grid_enabled',
+          store_event: 'overlay_grid_toggled_(ps)'
+        }),
+        new NumberInput('#grid_size_input .mb_1', {
+          text: 'Size',
+          step: 0.25,
+          default_value: 50,
+          store_key: 'size',
+          store_event: 'grid_size_update_(ps)',
+          parent: this,
+        }),
+        new ArrowInput('.mb_1', {
+          text: 'Position',
+          step: 1,
+          store_key: 'offset',
+          store_event: 'grid_offset_update_(ps)'
+        }),
+        // new NumberInput({
+        //   text: '* Requires Grid',
+        //   step: 5,
+        //   init: 20,
+        //   store_key: 'spell_marker_size'
+        // }),
+        // new RadioInput('#spell_marker_shape', {
+        //   options: ['line', 'square', 'circle', 'cone'],
+        //   store_key: 'spell_marker_shape',
+        //   store_event: 'spell_marker_shape_updated-(ps)',
+        //   parent: this,
+        // }),
+        // new ColorPicker('#spell_marker_color .hr_mb', {
+        //   store_key: 'spell_marker_color'
+        // }),
+        // new Checkbox('.hr_pad', {
+        //   text: 'Highlight Affected Tiles',
+        //   store_key: 'show_affected_tiles show_affected_tiles_checked',
+        //   store_event: 'show_affected_tiles_toggled-(ps)'
+        // }),
       ]],
     ]];
   }

@@ -14,25 +14,9 @@
   transition: 0.3s all ease;
   white-space: nowrap;
   overflow: hidden;
-}
-
-.header_controls .checkbox_container {
-  margin-top: 0.75rem;
-  margin-left: 0.5rem;
-}
-
-.header_controls .button {
-  margin: 0.5rem 0 0 0.5rem;
-}
-
-.spacer {
-  display: inline-block;
-  box-sizing: border-box;
-  width: 1px;
-  height: var(--button-standard-height);
-  background-color: white;
-  margin: 0.5rem 0.5rem 0.5rem 1rem;
-  opacity: 0.75;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 
 /**********************************************************
