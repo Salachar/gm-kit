@@ -31,6 +31,7 @@ class MapManager {
 
     IPC.on('refresh_map_list', (e) => {
       this.list = {};
+      this.loadMapTags();
       this.loadMapList();
     });
 

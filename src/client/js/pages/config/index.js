@@ -13,24 +13,17 @@ class ConfigContainer extends Container {
 
   render () {
     Lib.dom.generate([
-      ['div .container_header', [
-
-      ]],
+      ['div .container_header'],
       ['div .container_body', [
         [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.json_directory}`],
         new Button('.choose_directory_button', {
           text: 'Choose JSON Directory',
           ipc_event: 'choose_json_directory',
         }),
-
         [`div .text_bold .fr_ml .fr_mt HTML=${CONFIG.map_directory}`],
         new Button('.choose_directory_button', {
           text: 'Choose Map Directory',
           ipc_event: 'choose_map_directory',
-        }),
-        new Button('.choose_directory_button', {
-          text: 'REFRESH MAP LIST',
-          ipc_event: 'refresh_map_list',
         }),
       ]]
     ], this, this.node);

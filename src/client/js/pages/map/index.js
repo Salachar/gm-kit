@@ -246,6 +246,10 @@ class MapContainer extends Container {
             ipc_event: 'load_map_list',
           }),
           new Button('.ml_1', {
+            text: 'Refresh',
+            ipc_event: 'refresh_map_list',
+          }),
+          new Button('.ml_1', {
             text: 'Save',
             onclick: (e) => this.saveMaps(),
           }),
