@@ -85,12 +85,15 @@ class ImageCanvas extends Base {
   }
 
   updateBrightness (data) {
-    if (this.map_type === 'video') return;
     if (data && data.brightness) {
       this.brightness = data.brightness;
     }
     if (CONFIG.is_player_screen) {
-      this.canvas.style.filter = `brightness(${this.brightness}%)`;
+      if (this.map_type === 'video') {
+        this.video.style.filter = `brightness(${this.brightness}%)`;
+      } else {
+        this.canvas.style.filter = `brightness(${this.brightness}%)`;
+      }
     }
   }
 
