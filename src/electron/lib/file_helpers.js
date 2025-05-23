@@ -6,7 +6,7 @@ const path = require('path');
 
 const FileHelpers = {
     file_extensions: {
-        image: ['.png', '.jpg', '.jpeg', '.bmp'],
+        image: ['.png', '.jpg', '.jpeg', '.bmp', '.webp'],
         video: ['.mp4'],
         audio: ['.mp3', '.mp4', '.wav']
     },
