@@ -26,6 +26,7 @@ const KEYS = {
     S: 83,
     T: 84,
     W: 87,
+    Z: 90,
     QUESTION: 191, // Doesn't require shift, technically is "/"
     LEFT_BRACKET: 219,
     RIGHT_BRACKET: 221,

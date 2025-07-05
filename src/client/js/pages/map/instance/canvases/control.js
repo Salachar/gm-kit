@@ -38,8 +38,8 @@ class ControlCanvas extends Base {
     this.canvas.addEventListener('mousemove', (e) => {
       const rect = this.canvas.getBoundingClientRect();
       const pos = {
-        x: (e.clientX / this.map_instance.zoom) - rect.left,
-        y: (e.clientY / this.map_instance.zoom) - rect.top
+        x: (e.clientX - rect.left) / this.map_instance.zoom,
+        y: (e.clientY - rect.top) / this.map_instance.zoom,
       };
       Mouse.moveEvent(e, pos);
       this.map_instance.mouseMove();

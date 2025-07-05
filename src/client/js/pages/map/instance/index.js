@@ -295,7 +295,7 @@ class MapInstance {
     const event_data = { point: Mouse.point };
 
     const events = {
-      [KEYS.CONTROL]: 'move_point_ended',
+      [KEYS.Z]: 'move_point_ended',
       [KEYS.SHIFT]: 'quick_place_ended',
       [KEYS.LEFT]: 'arrow_left_release',
       [KEYS.RIGHT]: 'arrow_right_release',
