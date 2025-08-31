@@ -11,7 +11,7 @@ class WebSocketManager {
     this.setupEvents();
 
     const ip = this.getLocalIP();
-    console.log(`📡 WebSocket server listening at ws://${ip}:9001`);
+    console.log(`WebSocket server listening at ws://${ip}:9001`);
   }
 
   getLocalIP () {

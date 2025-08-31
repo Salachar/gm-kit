@@ -80,7 +80,6 @@ class PlayerScreenManager {
   }
 
   close () {
-    console.log('PlayerScreenManager >> close');
     this.current_map_data = null;
     this.window = null;
   }

@@ -50,7 +50,6 @@ class MapTagInput {
   }
 
   update (map, map_tags) {
-    console.log(3);
     this.node_tags_list.innerHTML = "";
     const tags = map_tags[map.name] || [];
     this.map = map;

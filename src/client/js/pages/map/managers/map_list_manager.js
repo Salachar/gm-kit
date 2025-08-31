@@ -16,7 +16,6 @@ class MapListManager {
 
   setIPCEvents () {
     IPC.on('map_list_loaded', (e, { maps, tags }) => {
-      console.log(maps);
       this.map_list = maps;
       this.map_tags = tags;
       this.createFileTree(maps);

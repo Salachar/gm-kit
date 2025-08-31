@@ -78,16 +78,6 @@ const FileHelpers = {
     },
 
     chooseDirectory: function (callback) {
-        // dialog.showOpenDialog(global.shared.WINDOW, {
-        //     properties: ['openDirectory']
-        // }, (folders) => {
-        //     if (!folders || !folders.length) {
-        //         console.log('User must have canceled folder selection');
-        //         return;
-        //     }
-        //     const folder_path = folders[0];
-        //     callback(folder_path);
-        // });
         dialog.showOpenDialog(global.shared.WINDOW, {
             properties: ['openDirectory']
         }).then((result) => {

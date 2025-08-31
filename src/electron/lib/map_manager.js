@@ -95,8 +95,7 @@ class MapManager {
       this.map_tags = FileHelpers.read(map_tags_path, { json: true });
       global.shared.WINDOW.webContents.send('map_tags_response', this.map_tags);
     } catch (e) {
-      console.log(e);
-      console.log('No map_tags.json file found');
+      console.log('No map_tags.json file found', e);
       global.shared.WINDOW.webContents.send('map_tags_response', {});
     }
   }
@@ -105,7 +104,6 @@ class MapManager {
     try {
       if (!key || !tag) return;
       if (!this.map_tags[key]) {
-        console.log("adding map for tags", key);
         this.map_tags[key] = [];
       }
       this.map_tags[key].push(tag);
@@ -113,8 +111,7 @@ class MapManager {
       fs.writeFileSync(map_tags_path, JSON.stringify(this.map_tags, null, 4), 'utf-8');
       global.shared.WINDOW.webContents.send('map_tags_response', this.map_tags);
     } catch (e) {
-      console.log(e)
-      console.log('Failed to save the map_tags file!');
+      console.log('Failed to save the map_tags file!', e);
     }
   }
 
@@ -131,8 +128,7 @@ class MapManager {
       fs.writeFileSync(map_tags_path, JSON.stringify(this.map_tags, null, 4), 'utf-8');
       global.shared.WINDOW.webContents.send('map_tags_response', this.map_tags);
     } catch (e) {
-      console.log(e)
-      console.log('Failed to save the map_tags file!');
+      console.log('Failed to save the map_tags file!', e);
     }
   }
 
