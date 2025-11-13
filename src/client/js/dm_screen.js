@@ -132,7 +132,11 @@ class AppManager {
           store_event: "ui_scale_change",
         }),
       ]],
-      ['div #containers'],
+      ['div #containers', {
+        click: (e) => {
+          CONFIG.canvas_actions = true;
+        }
+      }],
     ], this, document.getElementById('root'));
   }
 }

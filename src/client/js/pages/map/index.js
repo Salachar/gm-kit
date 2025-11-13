@@ -40,6 +40,8 @@ class MapContainer extends Container {
   }
 
   onKeyDown (keyCode) {
+    if (!CONFIG.canvas_actions) return;
+
     switch (keyCode) {
       case KEYS.Z:
         this.enableSegmentMove();
@@ -71,6 +73,8 @@ class MapContainer extends Container {
   }
 
   onKeyUp (keyCode) {
+    if (!CONFIG.canvas_actions) return;
+
     switch (keyCode) {
       case KEYS.Z:
         this.disableSegmentMove();

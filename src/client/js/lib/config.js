@@ -39,6 +39,8 @@ let CONFIG = {
     window_width: null,
     window_height: null,
 
+    canvas_actions: false,
+
     max_map_size: 3000,
 
     snap: {

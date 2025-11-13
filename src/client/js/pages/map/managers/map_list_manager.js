@@ -32,6 +32,7 @@ class MapListManager {
 
   openModal () {
     this.refs.map_list_modal_wrap.classList.remove('hidden');
+    CONFIG.canvas_actions = false;
   }
 
   closeModal () {

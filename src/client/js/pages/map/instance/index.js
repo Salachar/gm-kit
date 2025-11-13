@@ -267,6 +267,8 @@ class MapInstance {
   }
 
   onKeyDown (key) {
+    if (!CONFIG.canvas_actions) return;
+
     const event_data = { point: Mouse.point };
 
     const events = {
@@ -292,6 +294,8 @@ class MapInstance {
   }
 
   onKeyUp (key) {
+    if (!CONFIG.canvas_actions) return;
+
     const event_data = { point: Mouse.point };
 
     const events = {
