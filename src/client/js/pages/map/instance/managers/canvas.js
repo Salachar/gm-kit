@@ -228,7 +228,7 @@ class CanvasManager extends Base{
   }
 
   enableLight () {
-    if (!CONFIG.canvas_actions) return;
+    if (!CONFIG.is_player_screen && !CONFIG.canvas_actions) return;
     Store.set({lighting_enabled: true});
     Store.fire('prepare_segments');
     this.canvases.shroud.show();
