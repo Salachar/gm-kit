@@ -78,7 +78,7 @@ class SegmentManager extends Base {
           x: Math.round(segment.p2.x),
           y: Math.round(segment.p2.y)
         },
-        type: segment.type
+        type: segment.type || "wall",
       };
       if (segment.type === 'wall' && segment.one_way) {
         clean_segment.one_way = {
@@ -646,7 +646,7 @@ class SegmentManager extends Base {
         x: point.x,
         y: point.y
       },
-      type: segment.type
+      type: segment.type || "wall"
     };
 
     let new_seg_one = copy(new_segment_base);
