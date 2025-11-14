@@ -121,6 +121,12 @@ class ControlsManager {
           store_key: 'overlay_grid_enabled',
           store_event: 'overlay_grid_toggled_(ps)'
         }),
+        new Checkbox('#enable_grid .hr_pad .mb_1', {
+          parent: this,
+          text: 'Bright Grid (DM Only)',
+          store_key: 'bright_grid_enabled',
+          store_event: 'bright_grid_toggled'
+        }),
         new NumberInput('#grid_size_input .mb_1', {
           text: 'Size',
           step: 0.25,

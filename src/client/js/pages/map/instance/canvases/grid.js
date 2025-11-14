@@ -21,12 +21,18 @@ class GridCanvas extends Base {
       },
     };
 
+    this.bright = false;
+
     Store.set({
       grid: copy(this.attributes)
     }, this.map_instance.name);
 
     Store.register({
       "overlay_grid_toggled_(ps)": this.toggle.bind(this),
+      "bright_grid_toggled": () => {
+        this.bright = !this.bright;
+        this.draw();
+      },
       "grid_size_update_(ps)": this.update.bind(this),
       "grid_offset_update_(ps)": this.update.bind(this),
     }, this.map_instance.name);
@@ -71,7 +77,7 @@ class GridCanvas extends Base {
         }],
         alpha: 0.75,
         width: 2,
-        color: '#000000',
+        color: this.bright ? "#83f52c" : "#000",
       });
     }
 
@@ -87,7 +93,7 @@ class GridCanvas extends Base {
         }],
         alpha: 0.75,
         width: 2,
-        color: '#000000',
+        color: this.bright ? "#83f52c" : "#000",
       });
     }
 
