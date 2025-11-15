@@ -84,6 +84,10 @@ class MapManager {
         message = `Map:${maps[map_keys[0]].name}`;
       }
 
+      this.list = {};
+      this.loadMapTags();
+      this.loadMapList();
+
       global.shared.WINDOW.webContents.send('message', {
         type: 'success',
         text: `${message} sucessfully saved`
