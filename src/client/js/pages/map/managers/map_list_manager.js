@@ -15,10 +15,12 @@ class MapListManager {
   }
 
   setIPCEvents () {
-    IPC.on('map_list_loaded', (e, { maps, tags }) => {
+    IPC.on('map_list_loaded', (e, { maps, tags, modal_change = true }) => {
       this.map_list = maps;
       this.map_tags = tags;
-      this.createFileTree(maps);
+      if (modal_change) {
+        this.createFileTree(maps);
+      }
     });
 
     IPC.on('maps_loaded', (e, maps) => {
@@ -58,12 +60,16 @@ class MapListManager {
     if (map.image) {
       this.current_map_hover = map.image;
       ((image_source) => {
-        let img = new Image;
-        img.onload = () => {
-          if (image_source !== this.current_map_hover) return;
-          this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+        try {
+          let img = new Image;
+          img.onload = () => {
+            if (image_source !== this.current_map_hover) return;
+            this.refs.map_list_modal_body_preview.style.backgroundImage = `url("${img.src}")`;
+          }
+          img.src = image_source;
+        } catch (e) {
+          console.warn('Image Preview error');
         }
-        img.src = image_source;
       })(map.image);
     }
 

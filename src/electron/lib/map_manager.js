@@ -55,7 +55,7 @@ class MapManager {
 
     IPC.on('load_map', (e, map = {}) => {
       if (map.json_exists) {
-        map.json = FileHelpers.readJSON(map.json_directory);
+        map.json = FileHelpers.readJSON(map.json_directory_unique || map.json_directory);
       } else {
         map.json = {};
       }
@@ -68,6 +68,8 @@ class MapManager {
     });
 
     IPC.on('save_maps', (e, maps = {}) => {
+      console.log(maps);
+
       const map_keys = Object.keys(maps);
       map_keys.forEach((map_key) => {
         const map = maps[map_key];
@@ -86,7 +88,9 @@ class MapManager {
 
       this.list = {};
       this.loadMapTags();
-      this.loadMapList();
+      this.loadMapList({
+        modal_change: false,
+      });
 
       global.shared.WINDOW.webContents.send('message', {
         type: 'success',
@@ -95,7 +99,7 @@ class MapManager {
     });
   }
 
-  loadMapTags () {
+  loadMapTags (opts = {}) {
     try {
       const map_tags_path = path.join(GMConfig.json_directory, 'map_tags.json');
       if (!fs.existsSync(map_tags_path)) {
@@ -142,7 +146,7 @@ class MapManager {
     }
   }
 
-  loadMapList () {
+  loadMapList (opts = {}) {
     if (!GMConfig.map_directory) {
       GMConfig.chooseDirectory('map', (folder_path) => {
         global.shared.WINDOW.webContents.send('map_list_loaded', this.generateList());
@@ -152,11 +156,13 @@ class MapManager {
         global.shared.WINDOW.webContents.send('map_list_loaded', {
           maps: this.list,
           tags: this.map_tags,
+          ...opts,
         });
       } else {
         global.shared.WINDOW.webContents.send('map_list_loaded', {
           maps: this.generateList(),
           tags: this.map_tags,
+          ...opts,
         });
       }
     }

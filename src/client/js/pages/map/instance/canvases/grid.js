@@ -76,8 +76,8 @@ class GridCanvas extends Base {
           y: y,
         }],
         alpha: 0.75,
-        width: 2,
-        color: this.bright ? "#83f52c" : "#000",
+        width: 1,
+        color: this.bright ? "#83f52c" : "#222",
       });
     }
 
@@ -92,8 +92,8 @@ class GridCanvas extends Base {
           y: canvas_size.height,
         }],
         alpha: 0.75,
-        width: 2,
-        color: this.bright ? "#83f52c" : "#000",
+        width: 1,
+        color: this.bright ? "#83f52c" : "#222",
       });
     }
 
