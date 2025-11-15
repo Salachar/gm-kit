@@ -54,6 +54,7 @@ class PlayerScreenManager {
 
   show () {
     this.current_map_data = Store.get('current_map_data');
+    if (!this.current_map_data) return;
     this.window.postMessage({
       event: 'display_map',
       data: this.current_map_data,
