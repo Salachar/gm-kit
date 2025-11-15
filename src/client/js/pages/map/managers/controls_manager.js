@@ -121,7 +121,7 @@ class ControlsManager {
           store_key: 'overlay_grid_enabled',
           store_event: 'overlay_grid_toggled_(ps)'
         }),
-        new Checkbox('#enable_grid .hr_pad .mb_1', {
+        new Checkbox('#enable_bright_grid .hr_pad .mb_1', {
           parent: this,
           text: 'Bright Grid (DM Only)',
           store_key: 'bright_grid_enabled',

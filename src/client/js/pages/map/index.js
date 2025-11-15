@@ -253,12 +253,12 @@ class MapContainer extends Container {
             text: 'Refresh',
             ipc_event: 'refresh_map_list',
           }),
+          // new Button('.ml_1', {
+          //   text: 'Save',
+          //   onclick: (e) => this.saveMaps(),
+          // }),
           new Button('.ml_1', {
             text: 'Save',
-            onclick: (e) => this.saveMaps(),
-          }),
-          new Button('.ml_1', {
-            text: 'Save All',
             onclick: (e) => {
               const map_data = this.getAllMapData();
               if (!map_data) return Toast.error('There are no maps to save');

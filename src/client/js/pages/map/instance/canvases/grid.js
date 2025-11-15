@@ -29,8 +29,8 @@ class GridCanvas extends Base {
 
     Store.register({
       "overlay_grid_toggled_(ps)": this.toggle.bind(this),
-      "bright_grid_toggled": () => {
-        this.bright = !this.bright;
+      "bright_grid_toggled": (e) => {
+        this.bright = e.bright_grid_enabled;
         this.draw();
       },
       "grid_size_update_(ps)": this.update.bind(this),
