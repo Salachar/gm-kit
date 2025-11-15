@@ -51,7 +51,7 @@ class ControlsManager {
   render () {
     return ['div #map_controls_container', [
       ['div #map_controls_body', [
-        new Button('.map_controls_button .mb_1', {
+        new Button('.map_controls_button .mb_2', {
           text: 'Show on Player Screen',
           store_event: 'show_player_screen',
           size: "large",
