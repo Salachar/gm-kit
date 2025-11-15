@@ -73,7 +73,7 @@ class MapManager {
         const map = maps[map_key];
         try {
           const file_json = JSON.stringify(map.json, null, 4);
-          fs.writeFileSync(map.json_directory, file_json, 'utf-8');
+          fs.writeFileSync(map.json_directory || map.json_directory_unique, file_json, 'utf-8');
         } catch (e) {
           console.log('Unable to save map: ' + map.name);
         }
