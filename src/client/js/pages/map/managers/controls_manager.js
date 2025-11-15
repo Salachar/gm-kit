@@ -2,9 +2,11 @@ const Button = require('../../../lib/inputs/button');
 const NumberInput = require('../../../lib/inputs/numberInput');
 const ArrowInput = require('../../../lib/inputs/arrowInput');
 const Checkbox = require('../../../lib/inputs/checkbox');
+
+const Note = require('../../../lib/components/note');
+
 // const RadioInput = require('../../../lib/inputs/radio');
 // const ColorPicker = require('../../../lib/inputs/colorpicker');
-// const MapTagInput = require('../../../lib/inputs/map_tag_input');
 
 class ControlsManager {
   constructor (opts = {}) {
@@ -13,29 +15,14 @@ class ControlsManager {
     // });
 
     this.map = null;
-    this.map_tags = {};
-
-    // this.setIPCEvents();
   }
 
-  // setIPCEvents () {
-  //   IPC.send('map_tags_request');
-
-  //   IPC.on('map_tags_response', (e, map_tags) => {
-  //     this.map_tags = map_tags;
-  //     if (this.map && this.refs.map_tags) {
-  //       this.refs.map_tags.update(this.map, map_tags);
-  //     }
-  //   });
+  // deselectSpellMarker () {
+  //   this.refs.spell_marker_shape.deselect();
   // }
-
-  deselectSpellMarker () {
-    // this.refs.spell_marker_shape.deselect();
-  }
 
   update (map) {
     this.map = map;
-    // this.refs.map_tags.update(map, this.map_tags);
     // Checkboxes
     this.refs.enable_grid.checked = map.managers.canvas.canvases.grid.attributes.show;
     // Number inputs
@@ -55,6 +42,9 @@ class ControlsManager {
           text: 'Show on Player Screen',
           store_event: 'show_player_screen',
           size: "large",
+        }),
+        new Note('.mb_1', {
+          text: "Player Screen only controls",
         }),
         new Button('.map_controls_button .mb_1', {
           parent: this,
@@ -96,7 +86,7 @@ class ControlsManager {
           store_event: 'zoom_(ps)',
           parent: this,
         }),
-        new NumberInput('#player_screen_brightness .mb_1', {
+        new NumberInput('#player_screen_brightness .mb_2', {
           text: 'Brightness',
           min: 0,
           max: 200,
@@ -106,7 +96,10 @@ class ControlsManager {
           store_event: 'brightness_(ps)',
           parent: this,
         }),
-        new Checkbox('#enable_grid .hr_pad .mb_1', {
+        new Note('.mb_1', {
+          text: "Grid size and position can be saved",
+        }),
+        new Checkbox('#enable_grid .hr_pad', {
           parent: this,
           text: 'Enable Grid',
           store_key: 'overlay_grid_enabled',

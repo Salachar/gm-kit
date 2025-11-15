@@ -68,8 +68,6 @@ class MapManager {
     });
 
     IPC.on('save_maps', (e, maps = {}) => {
-      console.log(maps);
-
       const map_keys = Object.keys(maps);
       map_keys.forEach((map_key) => {
         const map = maps[map_key];
