@@ -246,11 +246,11 @@ class MapContainer extends Container {
       ['div .container_header', [
         ['div .header_controls', [
           new Button('.ml_1', {
-            text: 'Load',
+            text: 'Load Map List',
             ipc_event: 'load_map_list',
           }),
           new Button('.ml_1', {
-            text: 'Refresh',
+            text: 'Refresh Map List',
             ipc_event: 'refresh_map_list',
           }),
           // new Button('.ml_1', {
@@ -258,7 +258,7 @@ class MapContainer extends Container {
           //   onclick: (e) => this.saveMaps(),
           // }),
           new Button('.ml_1', {
-            text: 'Save',
+            text: 'Save Maps',
             onclick: (e) => {
               const map_data = this.getAllMapData();
               if (!map_data) return Toast.error('There are no maps to save');

@@ -66,7 +66,7 @@ class AppManager {
   getFontSize () {
     const html_styles = getComputedStyle(this.el_html);
     const html_font_size = html_styles.getPropertyValue('font-size');
-    const font_size = parseInt(html_font_size, 10);
+    const font_size = parseInt(html_font_size, 11);
     return font_size;
   }
 
@@ -122,18 +122,19 @@ class AppManager {
       ['div #toast'],
       ['div #header', [
         ['div #tabs'],
-        new NumberInput("#ui_scale .inline", {
-          text: 'UI Size',
-          step: 0.5,
-          min: 7,
-          interval: 300,
-          default_value: this.getFontSize(),
-          store_key: "ui_scale",
-          store_event: "ui_scale_change",
-        }),
+        // new NumberInput("#ui_scale .inline", {
+        //   text: 'UI Size',
+        //   step: 0.5,
+        //   min: 7,
+        //   interval: 300,
+        //   default_value: this.getFontSize(),
+        //   store_key: "ui_scale",
+        //   store_event: "ui_scale_change",
+        // }),
       ]],
       ['div #containers', {
         click: (e) => {
+          if (e.defaultPrevented) return;
           CONFIG.canvas_actions = true;
         }
       }],

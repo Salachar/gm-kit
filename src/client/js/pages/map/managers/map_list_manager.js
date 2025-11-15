@@ -230,6 +230,10 @@ class MapListManager {
             attributes: {
               placeholder: "SEARCH",
             },
+            click: (e) => {
+              e.preventDefault();
+              CONFIG.canvas_actions = false;
+            },
             onchange: (e) => {
               let search_string = e.currentTarget.value || "";
               search_string = search_string.trim();

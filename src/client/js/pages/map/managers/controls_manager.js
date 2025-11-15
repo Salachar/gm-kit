@@ -51,19 +51,10 @@ class ControlsManager {
   render () {
     return ['div #map_controls_container', [
       ['div #map_controls_body', [
-        new NumberInput('#animated_map_volume .mb_1', {
-          text: 'Animated Map Volume',
-          min: 0,
-          max: 1,
-          step: 0.02,
-          default_value: 0,
-          store_key: 'animated_map_volume',
-          store_event: 'animated_map_volume_change',
-          parent: this,
-        }),
         new Button('.map_controls_button .mb_1', {
           text: 'Show on Player Screen',
           store_event: 'show_player_screen',
+          size: "large",
         }),
         new Button('.map_controls_button .mb_1', {
           parent: this,
@@ -140,6 +131,16 @@ class ControlsManager {
           step: 1,
           store_key: 'offset',
           store_event: 'grid_offset_update_(ps)'
+        }),
+        new NumberInput('#animated_map_volume .mb_1', {
+          text: 'Animated Map Volume',
+          min: 0,
+          max: 1,
+          step: 0.02,
+          default_value: 0,
+          store_key: 'animated_map_volume',
+          store_event: 'animated_map_volume_change',
+          parent: this,
         }),
         // new NumberInput({
         //   text: '* Requires Grid',

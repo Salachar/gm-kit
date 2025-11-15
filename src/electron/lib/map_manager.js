@@ -41,10 +41,16 @@ class MapManager {
 
     IPC.on('save_map_tag', (e, tag_data = {}) => {
       this.saveMapTag(tag_data);
+      this.list = {};
+      this.loadMapTags();
+      this.loadMapList();
     });
 
     IPC.on('remove_map_tag', (e, tag_data = {}) => {
       this.removeMapTag(tag_data);
+      this.list = {};
+      this.loadMapTags();
+      this.loadMapList();
     });
 
     IPC.on('load_map', (e, map = {}) => {
