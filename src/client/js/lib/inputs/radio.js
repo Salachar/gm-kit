@@ -1,82 +1,82 @@
 const Lib = require('..');
 const Base = require('./base');
 class RadioInput extends Base {
-    constructor (identifiers, props = {}) {
-        if (typeof identifiers === 'object') {
-            props = identifiers;
-            identifiers = '';
-        }
-
-        super(identifiers, props);
-
-        this.radio_inputs = [];
-
-        this.props = {
-            identifiers: identifiers || '',
-            options: [],
-            ...props,
-        };
-
-        return this.render();
+  constructor (identifiers, props = {}) {
+    if (typeof identifiers === 'object') {
+      props = identifiers;
+      identifiers = '';
     }
 
-    deselect () {
-        this.radio_inputs.forEach((radio_input) => {
-            radio_input.classList.remove('checked');
-        });
-    }
+    super(identifiers, props);
 
-    render () {
-        const {
-            identifiers,
-            options,
-        } = this.props;
+    this.radio_inputs = [];
 
-        return Lib.dom.generate(
-            [`div ${identifiers} .radio_input`, [
-                ...options.map((option) => {
-                    let value = option;
-                    let label = option;
-                    if (typeof option === 'object') {
-                        value = option.value;
-                        label = option.label || value;
-                    }
+    this.props = {
+      identifiers: identifiers || '',
+      options: [],
+      ...props,
+    };
 
-                    return ['div .checkbox_container', [
-                        ['div .checkbox', {
-                            oncreate: (node) => {
-                                this.radio_inputs.push(node);
-                            },
-                            click: (e) => {
-                                const {
-                                    store_key,
-                                    store_event,
-                                } = this.props;
+    return this.render();
+  }
 
-                                const checkbox = e.target;
-                                const is_checked = checkbox.classList.contains('checked');
-                                this.radio_inputs.forEach((radio_input) => {
-                                    radio_input.classList.remove('checked');
-                                });
+  deselect () {
+    this.radio_inputs.forEach((radio_input) => {
+      radio_input.classList.remove('checked');
+    });
+  }
 
-                                let new_value = null;
+  render () {
+    const {
+      identifiers,
+      options,
+    } = this.props;
 
-                                if (!is_checked) {
-                                    checkbox.classList.add('checked');
-                                    new_value = value;
-                                }
+    return Lib.dom.generate(
+      [`div ${identifiers} .radio_input`, [
+        ...options.map((option) => {
+          let value = option;
+          let label = option;
+          if (typeof option === 'object') {
+            value = option.value;
+            label = option.label || value;
+          }
 
-                            this.handleStore({
-                                store_key,
-                                store_event
-                            }, value);
-                        }
-                    }],
-                    [`div .checkbox_label HTML=${label}`],
-                ]];
-            }),
-        ]]);
-    }
+          return ['div .checkbox_container', [
+            ['div .checkbox', {
+              oncreate: (node) => {
+                this.radio_inputs.push(node);
+              },
+              click: (e) => {
+                const {
+                  store_key,
+                  store_event,
+                } = this.props;
+
+                const checkbox = e.target;
+                const is_checked = checkbox.classList.contains('checked');
+                this.radio_inputs.forEach((radio_input) => {
+                  radio_input.classList.remove('checked');
+                });
+
+                let new_value = null;
+
+                if (!is_checked) {
+                  checkbox.classList.add('checked');
+                  new_value = value;
+                }
+
+              this.handleStore({
+                store_key,
+                store_event,
+              }, value);
+            }
+          }],
+          [`div .checkbox_label HTML=${label}`],
+        ]];
+      }),
+    ]]);
+  }
 }
 
 module.exports = RadioInput;

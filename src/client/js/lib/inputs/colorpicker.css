@@ -1,14 +1,14 @@
 .color_picker {
-    position: relative;
+  position: relative;
 }
 
 .color_picker_crosshair {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 4px;
-    border: 1px solid black;
-    border-radius: 100%;
-    transform: translateX(-50%) translateY(-50%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border: 1px solid black;
+  border-radius: 100%;
+  transform: translateX(-50%) translateY(-50%);
 }

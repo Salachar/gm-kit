@@ -27,6 +27,5 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
   height: auto !important;
-  /* background-color: var(--color-teal); */
   font-size: var(--font-medium);
 }

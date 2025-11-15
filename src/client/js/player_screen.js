@@ -43,12 +43,7 @@ class DisplayManager {
 
   addMap (map) {
     if (this.maps[map.name]) return;
-    // If lighting is not enabled on the main screen, do not load fog data, as it
-    // would be invalid
-    this.maps[map.name] = new MapInstance(map, {
-      // load_fog: (map.lights_data.enabled) ? map.json.state.fog : null
-      load_fog: map.json.state.fog
-    });
+    this.maps[map.name] = new MapInstance(map);
     this.maps[map.name].hide();
   }
 

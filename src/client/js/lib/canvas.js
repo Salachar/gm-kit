@@ -3,19 +3,13 @@ const {
     copyPoint
 } = require('./helpers');
 
-/*
-    NOTE (9/4/20): this.map_image_width used to be passed in for rect size for:
-        drawFogOfWar
-        drawShadow
-*/
-
 // Faster copyPoint only used in this file
 function fastCopy (point = {}) {
-    if (!point || typeof point.x !== 'number' || typeof point.y !== 'number') return null;
-    return {
-        x: point.x,
-        y: point.y
-    };
+  if (!point || typeof point.x !== 'number' || typeof point.y !== 'number') return null;
+  return {
+    x: point.x,
+    y: point.y
+  };
 }
 
 const Canvas = {

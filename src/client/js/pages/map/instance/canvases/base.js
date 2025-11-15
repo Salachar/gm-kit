@@ -25,11 +25,9 @@ class Base {
   create () {
     const class_name = `.${this.name}_canvas .map_canvas`;
 
-    // Create a video layer instead of a canvas if using
-    // a video instead of an image
+    // Create a video layer instead of a canvas if using a video instead of an image
     if (this.name === 'image' && this.map_type === 'video') {
       this.video = Lib.dom.generate([`video ${class_name}`], null, this.manager.canvas_container);
-      // TODO: Maybe add controls for map video audio?
       this.video.volume = 0;
       this.video.muted = true;
       return;
@@ -78,8 +76,6 @@ class Base {
   }
 
   resize (width, height) {
-    // TODO : something video
-
     if (this.video) {
       this.video.setAttribute('width', width);
       this.video.setAttribute('height', height);
