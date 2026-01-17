@@ -22,6 +22,9 @@ Once in the project folder:
 * Z/C (hold): Wall manipulation mode - While holding you can mouse hover over a wall and see a circle indicating the affected point - Wall ends can be grabbed and moved - Clicking in the middle splits the wall there creating two connected walls
 * BACKSPACE: Delete closest wall/door/light
 
+#### Partial Door Opening
+When Light Mode is enabled on the DM Screen ("E" key), either end of a door can be clicked (held) and moved. Door segment length will be maintained and rotate about the other endpoint. Toggling a door ("O" key) while partially open will reset to its original position in the closed state.
+
 ## File Naming Conventions
 #### Variants
 Variants are the same map with very subtle differences, they typically still share the same walls.

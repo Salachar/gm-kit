@@ -5,21 +5,22 @@ const Checkbox = require('../../../lib/inputs/checkbox');
 
 const Note = require('../../../lib/components/note');
 
-// const RadioInput = require('../../../lib/inputs/radio');
-// const ColorPicker = require('../../../lib/inputs/colorpicker');
+const RadioInput = require('../../../lib/inputs/radio');
+const ColorPicker = require('../../../lib/inputs/colorpicker');
 
 class ControlsManager {
   constructor (opts = {}) {
-    // Store.register({
-    //   'deselect_spell_marker': this.deselectSpellMarker.bind(this),
-    // });
+    Store.register({
+      'deselect_spell_marker': this.deselectSpellMarker.bind(this),
+    });
 
     this.map = null;
   }
 
-  // deselectSpellMarker () {
-  //   this.refs.spell_marker_shape.deselect();
-  // }
+  deselectSpellMarker () {
+    console.log('deselect')
+    this.refs.spell_marker_shape.deselect();
+  }
 
   update (map) {
     this.map = map;
@@ -73,7 +74,7 @@ class ControlsManager {
           text: 'Sight Limit',
           step: 5,
           default_value: 200,
-          interval: 100,
+          interval: 20,
           store_key: 'sight_limit',
           store_event: 'sight_limit',
           parent: this,
@@ -141,15 +142,15 @@ class ControlsManager {
         //   init: 20,
         //   store_key: 'spell_marker_size'
         // }),
-        // new RadioInput('#spell_marker_shape', {
-        //   options: ['line', 'square', 'circle', 'cone'],
-        //   store_key: 'spell_marker_shape',
-        //   store_event: 'spell_marker_shape_updated-(ps)',
-        //   parent: this,
-        // }),
-        // new ColorPicker('#spell_marker_color .hr_mb', {
-        //   store_key: 'spell_marker_color'
-        // }),
+        new RadioInput('#spell_marker_shape', {
+          options: ['line', 'square', 'circle', 'cone'],
+          store_key: 'spell_marker_shape',
+          store_event: 'spell_marker_shape_updated-(ps)',
+          parent: this,
+        }),
+        new ColorPicker('#spell_marker_color .hr_mb', {
+          store_key: 'spell_marker_color'
+        }),
         // new Checkbox('.hr_pad', {
         //   text: 'Highlight Affected Tiles',
         //   store_key: 'show_affected_tiles show_affected_tiles_checked',

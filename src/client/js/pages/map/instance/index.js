@@ -257,6 +257,10 @@ class MapInstance {
   }
 
   onDelete (point) {
+    if (Store.get('spell_marker_shape')) {
+      Store.fire('deselect_spell_marker');
+      return;
+    }
     if (CONFIG.move_mode) {
       this.managers.segment.removePoint(Store.get('control_point'));
       return;
@@ -330,6 +334,7 @@ class MapInstance {
     if (!Mouse.left) return;
 
     if (Store.get('spell_marker_shape')) {
+      console.log('spell shape place');
       Store.fire('place_spell_marker-(ps)');
       return;
     }

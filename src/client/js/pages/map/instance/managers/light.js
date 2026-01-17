@@ -25,31 +25,23 @@ class LightManager extends Base {
     this.lights_added = lights_data.lights_added || 0;
 
     Store.register({
-      'add_light': this.onAddLight.bind(this),
-      'light_move': this.onLightMove.bind(this),
+      'add_light': (data) => {
+        this.addLight(data.point);
+      },
+      'light_move': (data) => {
+        this.moveLight(data.light);
+      },
       'load_lights': this.loadLights.bind(this),
       'deselect_light': this.deselectLight.bind(this),
       'show_entire_map': this.showEntireMap.bind(this),
-      'sight_limit': this.onSightLimit.bind(this),
-      'disable_sight_limit': this.onDisableSightLimit.bind(this),
+      'sight_limit': (data) => {
+        this.bright_limit = data.sight_limit;
+        this.dim_limit = this.bright_limit * 2;
+      },
+      'disable_sight_limit': (data) => {
+        this.disable_sight_limit = data.disable_sight_limit;
+      },
     }, this.map_instance.name);
-  }
-
-  onDisableSightLimit (data) {
-    this.disable_sight_limit = data.disable_sight_limit;
-  }
-
-  onSightLimit (data) {
-    this.bright_limit = data.sight_limit;
-    this.dim_limit = this.bright_limit * 2;
-  }
-
-  onAddLight (data) {
-    this.addLight(data.point);
-  }
-
-  onLightMove (data) {
-    this.moveLight(data.light);
   }
 
   getLightPolygon (light, force_update) {
@@ -218,11 +210,9 @@ class LightManager extends Base {
     return this.light_polys;
   }
 
-  showEntireMap (data) {
-    // If there is no player screen, there is nothing to toggle
+  showEntireMap () {
     if (!window.player_screen) return;
     this.show_entire_map = !this.show_entire_map;
-    // this.show_entire_map = data.show_entire_map_enabled;
     if (this.show_entire_map) {
       Store.fire('show_entire_map_(PS)');
     } else {

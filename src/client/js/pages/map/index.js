@@ -26,7 +26,6 @@ class MapContainer extends Container {
     this.ControlsManager = new ControlsManager();
 
     Store.register({
-      'save_maps': this.saveMaps.bind(this),
       'mouse_leave': this.onMouseLeave.bind(this),
     });
 
@@ -37,6 +36,7 @@ class MapContainer extends Container {
     // Currently these do the same, probably will always remain redundant
     this.disableSegmentMove();
     this.disableSegmentQuickPlace();
+    Store.fire('deselect_spell_marker');
   }
 
   onKeyDown (keyCode) {
@@ -53,13 +53,7 @@ class MapContainer extends Container {
         break;
 
       case KEYS.SHIFT:
-        if (Store.get('spell_marker_shape') && !Store.get('show_affected_tiles_checked')) {
-          Store.fire('show_affected_tiles_toggled-(ps)', {
-            'show_affected_tiles': true
-          });
-        } else {
-          this.enableSegmentQuickPlace();
-        }
+        this.enableSegmentQuickPlace();
         break;
 
       default:
@@ -84,13 +78,7 @@ class MapContainer extends Container {
         break;
 
       case KEYS.SHIFT:
-        if (Store.get('spell_marker_shape') && !Store.get('show_affected_tiles_checked')) {
-          Store.fire('show_affected_tiles_toggled-(ps)', {
-            'show_affected_tiles': false
-          });
-        } else {
-          this.disableSegmentQuickPlace();
-        }
+        this.disableSegmentQuickPlace();
         break;
 
       default:
@@ -135,12 +123,6 @@ class MapContainer extends Container {
 
     this.setActiveMap(map_keys[map_keys.length - 1]);
     document.getElementById('no_map_screen').classList.add('hidden');
-  }
-
-  saveMaps () {
-    const map_data = this.getMapData();
-    if (!map_data) return Toast.error('There is no map to save');
-    IPC.send('save_maps', map_data);
   }
 
   setActiveMap (map_name) {
@@ -253,10 +235,6 @@ class MapContainer extends Container {
             text: 'Refresh Map List',
             ipc_event: 'refresh_map_list',
           }),
-          // new Button('.ml_1', {
-          //   text: 'Save',
-          //   onclick: (e) => this.saveMaps(),
-          // }),
           new Button('.ml_1', {
             text: 'Save Maps',
             onclick: (e) => {

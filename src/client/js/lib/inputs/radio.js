@@ -21,9 +21,19 @@ class RadioInput extends Base {
   }
 
   deselect () {
+    const {
+      store_key,
+      store_event,
+    } = this.props;
+
     this.radio_inputs.forEach((radio_input) => {
       radio_input.classList.remove('checked');
     });
+
+    this.handleStore({
+      store_key,
+      store_event,
+    }, null);
   }
 
   render () {
@@ -41,7 +51,6 @@ class RadioInput extends Base {
             value = option.value;
             label = option.label || value;
           }
-
           return ['div .checkbox_container', [
             ['div .checkbox', {
               oncreate: (node) => {
@@ -52,26 +61,27 @@ class RadioInput extends Base {
                   store_key,
                   store_event,
                 } = this.props;
-
                 const checkbox = e.target;
+                // The current state of the checkbox
+                // If true, we're moving to false
+                // If false, we're moving to true
                 const is_checked = checkbox.classList.contains('checked');
+                // Unselect all checkboxes
                 this.radio_inputs.forEach((radio_input) => {
                   radio_input.classList.remove('checked');
                 });
-
                 let new_value = null;
-
                 if (!is_checked) {
+                  // If the previous state was unchecked, move to checked
                   checkbox.classList.add('checked');
                   new_value = value;
                 }
-
-              this.handleStore({
-                store_key,
-                store_event,
-              }, value);
-            }
-          }],
+                this.handleStore({
+                  store_key,
+                  store_event,
+                }, new_value);
+              }
+            }],
           [`div .checkbox_label HTML=${label}`],
         ]];
       }),

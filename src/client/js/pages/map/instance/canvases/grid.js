@@ -28,9 +28,12 @@ class GridCanvas extends Base {
     }, this.map_instance.name);
 
     Store.register({
-      "overlay_grid_toggled_(ps)": this.toggle.bind(this),
-      "bright_grid_toggled": (e) => {
-        this.bright = e.bright_grid_enabled;
+      "overlay_grid_toggled_(ps)": (data) => {
+        this.attributes.show = data.overlay_grid_enabled;
+        this.draw();
+      },
+      "bright_grid_toggled": (data) => {
+        this.bright = data.bright_grid_enabled;
         this.draw();
       },
       "grid_size_update_(ps)": this.update.bind(this),
@@ -53,11 +56,6 @@ class GridCanvas extends Base {
       grid: copy(this.attributes)
     });
 
-    this.draw();
-  }
-
-  toggle (data) {
-    this.attributes.show = data.overlay_grid_enabled;
     this.draw();
   }
 
